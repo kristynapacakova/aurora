@@ -5,7 +5,7 @@ import LogoutButton from "./LogoutButton";
 // /studium/login.
 
 export const metadata = {
-  title: "Studio | Klára Jóga",
+  title: "Studio | AURORA jóga",
 };
 
 export default function StudioPage() {

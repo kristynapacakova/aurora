@@ -120,10 +120,11 @@ git push -u origin main
 4. Framework Preset se nastaví automaticky na **Next.js** — nic neměňte
 5. V sekci **Environment Variables** vložte stejné proměnné jako v
    `.env.local` (`NEXT_PUBLIC_FORMSPREE_ENDPOINT`, případně `RESEND_API_KEY`,
-   `RESEND_TO_EMAIL`, `RESEND_FROM_EMAIL`, `NEXT_PUBLIC_STUDIO_ACCESS_CODE`)
+   `RESEND_TO_EMAIL`, `RESEND_FROM_EMAIL`, `STUDIO_ACCESS_CODE`,
+   `STUDIO_COOKIE_SECRET`)
 6. Klikněte na **Deploy**
 
-Po dokončení nasazení získáte veřejnou URL (např. `https://klara-joga.vercel.app`).
+Po dokončení nasazení získáte veřejnou URL (např. `https://aurora-joga.vercel.app`).
 Při každém dalším `git push` do hlavní větve se web automaticky znovu nasadí.
 
 ## Užitečné příkazy

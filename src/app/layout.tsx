@@ -15,7 +15,7 @@ const jost = Jost({
 });
 
 export const metadata: Metadata = {
-  title: "Jóga s Klárou | Hatha a Vinyasa jóga",
+  title: "AURORA jóga | Hatha a Vinyasa jóga",
   description:
     "Lekce jógy pro tělo i mysl. Hatha, Vinyasa a jóga pro začátečníky. Přihlaste se na lekci ještě dnes.",
 };

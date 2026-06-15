@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Děkujeme za objednávku | Klára Jóga",
+  title: "Děkujeme za objednávku | AURORA jóga",
 };
 
 type Props = {
