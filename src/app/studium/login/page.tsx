@@ -35,7 +35,7 @@ export default function StudioLoginPage() {
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
           Členská sekce
         </p>
-        <h1 className="font-serif text-3xl sm:text-4xl">Studio</h1>
+        <h1 className="font-sans font-light text-3xl sm:text-4xl">Studio</h1>
         <p className="mt-4 text-sm text-foreground/70">
           Tato stránka je dostupná pouze pro členy. Zadejte prosím přístupový
           kód, který jste obdrželi e-mailem.

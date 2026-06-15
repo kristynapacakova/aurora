@@ -19,7 +19,7 @@ export default function StudioPage() {
         <p className="mb-3 text-center text-sm uppercase tracking-[0.3em] text-accent-dark">
           Členská sekce
         </p>
-        <h1 className="text-center font-serif text-4xl sm:text-5xl">
+        <h1 className="text-center font-sans font-light text-4xl sm:text-5xl">
           Lekce: Ranní jóga pro probuzení těla
         </h1>
 
@@ -40,7 +40,7 @@ export default function StudioPage() {
         </div>
 
         <div className="mt-8 rounded-2xl bg-background p-6 shadow-sm ring-1 ring-line sm:p-8">
-          <h2 className="font-serif text-2xl">O lekci</h2>
+          <h2 className="font-sans font-light text-2xl">O lekci</h2>
           <p className="mt-3 text-foreground/70 leading-relaxed">
             Tato 30minutová lekce vás provede sérií jemných protažení a
             dechových cvičení, které vás příjemně probudí a nastartují vaše

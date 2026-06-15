@@ -27,7 +27,7 @@ export default function Services() {
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
           Lekce
         </p>
-        <h2 className="font-serif text-4xl sm:text-5xl">Co u mě najdete</h2>
+        <h2 className="font-sans font-light text-4xl sm:text-5xl">Co u mě najdete</h2>
       </div>
 
       <div className="grid gap-10 sm:grid-cols-3">

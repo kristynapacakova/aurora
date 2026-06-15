@@ -80,7 +80,7 @@ export default function PricingForm() {
           <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
             Ceník
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl">Lekce a balíčky</h2>
+          <h2 className="font-sans font-light text-4xl sm:text-5xl">Lekce a balíčky</h2>
         </div>
 
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

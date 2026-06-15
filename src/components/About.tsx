@@ -24,7 +24,7 @@ export default function About() {
           <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
             O mně
           </p>
-          <h2 className="font-serif text-4xl sm:text-5xl">Ahoj, jsem Anežka</h2>
+          <h2 className="font-sans font-light text-4xl sm:text-5xl">Ahoj, jsem Anežka</h2>
           <p className="mt-6 text-foreground/70 leading-relaxed">
             Józe se věnuji už více než osm let a ráda vás provedu praxí, která
             propojuje dech, pohyb a klid mysli. Mé lekce jsou vhodné jak pro
