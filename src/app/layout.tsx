@@ -6,18 +6,26 @@ const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600"],
+  display: "swap",
 });
 
 const jost = Jost({
   variable: "--font-jost",
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "AURORA jóga | Hatha a Vinyasa jóga",
+  title: "AURORA jóga | Online jógové studio",
   description:
-    "Lekce jógy pro tělo i mysl. Hatha, Vinyasa a jóga pro začátečníky. Přihlaste se na lekci ještě dnes.",
+    "Prémiové online jógové studio. Živé streamy, knihovna nahrávek, cvičení na doma — kdykoli a kdekoli chceš.",
+  openGraph: {
+    title: "AURORA jóga | Online jógové studio",
+    description:
+      "Prémiové online jógové studio s živými lekce a knihovnou nahrávek.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -28,11 +36,9 @@ export default function RootLayout({
   return (
     <html
       lang="cs"
-      className={`${cormorant.variable} ${jost.variable} h-full antialiased`}
+      className={`${cormorant.variable} ${jost.variable} scroll-smooth antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        {children}
-      </body>
+      <body className="bg-cream text-ink font-sans">{children}</body>
     </html>
   );
 }
