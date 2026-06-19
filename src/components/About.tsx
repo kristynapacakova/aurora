@@ -6,21 +6,35 @@ export default function About() {
   return (
     <section id="o-mne" className="bg-sand py-24 sm:py-32">
       <div className="mx-auto max-w-6xl px-6">
-        <div className="grid grid-cols-1 items-center gap-16 md:grid-cols-2 md:gap-24">
-          {/* ── Fotka 1 — oblouk nahoře ── */}
+        <div className="grid grid-cols-1 items-start gap-16 md:grid-cols-2 md:gap-24">
+          {/* ── Fotky — překryté, oblouk + diagonální rohy ── */}
           <FadeUp delay={0.05}>
-            <div className="relative mx-auto max-w-sm">
+            <div className="relative mx-auto max-w-sm pb-24">
               {/*
                 Nahraďte src vlastní fotkou lektorky, např.:
                 src="/foto-anezka-2.jpg"
               */}
-              <div className="relative h-[500px] overflow-hidden rounded-t-full rounded-b-none">
+              <div className="relative h-[440px] w-full overflow-hidden rounded-t-full rounded-bl-none rounded-br-[5rem]">
                 <Image
                   src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=85"
                   alt="Anežka — lektorka jógy"
                   fill
                   className="object-cover"
                   sizes="(max-width: 768px) 100vw, 40vw"
+                />
+              </div>
+
+              {/*
+                Nahraďte src vlastní fotkou, např.:
+                src="/foto-anezka-3.jpg"
+              */}
+              <div className="absolute bottom-0 right-0 z-10 h-[300px] w-[78%] overflow-hidden rounded-tl-[5rem] rounded-tr-none rounded-br-none rounded-bl-[5rem] shadow-xl ring-8 ring-sand">
+                <Image
+                  src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=85"
+                  alt="Jóga — detail praxe"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 35vw"
                 />
               </div>
             </div>
@@ -64,27 +78,6 @@ export default function About() {
               </a>
             </FadeUp>
           </div>
-        </div>
-
-        {/* ── Fotka 2 — diagonální rohy ── */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-2 md:gap-24">
-          <FadeUp delay={0.1}>
-            <div className="relative mx-auto max-w-sm">
-              {/*
-                Nahraďte src vlastní fotkou, např.:
-                src="/foto-anezka-3.jpg"
-              */}
-              <div className="relative h-[420px] overflow-hidden rounded-none rounded-tr-[5rem] rounded-bl-[5rem]">
-                <Image
-                  src="https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=800&q=85"
-                  alt="Jóga — detail praxe"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                />
-              </div>
-            </div>
-          </FadeUp>
         </div>
       </div>
     </section>
