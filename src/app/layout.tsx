@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Jost, Corinthia } from "next/font/google";
+import { Roboto, Jost } from "next/font/google";
 import localFont from "next/font/local";
 import "./globals.css";
 
@@ -17,10 +17,12 @@ const serenity = localFont({
   display: "swap",
 });
 
-const corinthia = Corinthia({
+const corinthia = localFont({
+  src: [
+    { path: "../../public/fonts/corinthia/Corinthia-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../../public/fonts/corinthia/Corinthia-Bold.woff2", weight: "700", style: "normal" },
+  ],
   variable: "--font-corinthia-src",
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "700"],
   display: "swap",
 });
 
