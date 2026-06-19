@@ -52,7 +52,7 @@ export default function Studio() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
           {CARDS.map((card, i) => (
             <FadeUp key={card.title} delay={i * 0.12}>
-              <div className="group flex h-full flex-col rounded-3xl border border-line bg-cream p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)]">
+              <div className="group flex h-full flex-col rounded-none rounded-tr-[2.5rem] rounded-bl-[2.5rem] border border-line bg-cream p-8 transition-all duration-300 hover:-translate-y-1 hover:border-accent/60 hover:shadow-[0_8px_40px_-8px_rgba(0,0,0,0.08)]">
                 <span className="mb-6 text-2xl text-accent">{card.emoji}</span>
                 <span className="mb-3 inline-block rounded-full bg-sand px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-muted">
                   {card.tag}

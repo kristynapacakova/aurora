@@ -80,7 +80,7 @@ export default function Hero() {
           <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-sand opacity-60 blur-3xl" />
           <div className="absolute -bottom-8 -left-4 h-48 w-48 rounded-full bg-accent/20 blur-2xl" />
 
-          <div className="relative h-[480px] w-full max-w-md overflow-hidden rounded-[2.5rem] md:ml-8 md:mt-12">
+          <div className="relative h-[480px] w-full max-w-md overflow-hidden rounded-tl-[4rem] rounded-tr-md rounded-br-md rounded-bl-md md:ml-8 md:mt-12 md:rounded-tl-[6rem]">
             {/*
               Nahraďte src vlastní fotkou lektorky, např.:
               src="/foto-anezka.jpg"   (vložte soubor do složky public/)

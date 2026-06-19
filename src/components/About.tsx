@@ -8,9 +8,9 @@ export default function About() {
         {/* ── Fotka ── */}
         <FadeUp delay={0.05}>
           <div className="relative mx-auto max-w-sm">
-            {/* Dekorativní rámeček posunutý */}
-            <div className="absolute -left-4 -top-4 h-full w-full rounded-[2rem] border border-line" />
-            <div className="relative h-[500px] overflow-hidden rounded-[2rem]">
+            {/* Dekorativní rámeček posunutý — kopíruje tvar oblouku */}
+            <div className="absolute -left-4 -top-4 h-full w-full rounded-t-full rounded-b-none border border-line" />
+            <div className="relative h-[500px] overflow-hidden rounded-t-full rounded-b-none">
               {/*
                 Nahraďte src vlastní fotkou lektorky, např.:
                 src="/foto-anezka-2.jpg"
