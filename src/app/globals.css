@@ -24,8 +24,9 @@
   --color-accent-d: var(--accent-d);
   --color-line:     var(--line);
 
-  --font-serif: var(--font-corinthia);
+  --font-serif: var(--font-serenity);
   --font-sans:  var(--font-roboto);
+  --font-corinthia: var(--font-corinthia-src);
 }
 
 /* ─── Gradient utilita ───────────────────────────────────────────────────── */
@@ -54,7 +55,7 @@ body {
 
 /* ─── Typografie ──────────────────────────────────────────────────────────── */
 h1, h2, h3, h4 {
-  font-family: var(--font-corinthia), system-ui, sans-serif;
+  font-family: var(--font-serenity), system-ui, sans-serif;
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: -0.01em;

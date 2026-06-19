@@ -49,7 +49,7 @@ export default function About() {
             </FadeUp>
 
             <FadeUp delay={0.1}>
-              <h2 className="font-serif text-4xl text-ink sm:text-5xl">
+              <h2 className="font-corinthia text-5xl text-ink sm:text-6xl">
                 Ahoj, jsem Anežka
               </h2>
             </FadeUp>

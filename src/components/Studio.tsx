@@ -34,10 +34,8 @@ export default function Studio() {
             <p className="mb-4 text-xs uppercase tracking-[0.3em] text-accent">
               Co v online studiu najdeš
             </p>
-            <h2 className="font-serif text-4xl text-ink sm:text-5xl">
-              Jóga pro každý
-              <br />
-              den i náladu
+            <h2 className="font-corinthia text-5xl text-ink sm:text-6xl">
+              Jóga pro každý den i náladu
             </h2>
           </FadeUp>
           <FadeUp delay={0.1}>

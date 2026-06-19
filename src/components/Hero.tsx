@@ -28,7 +28,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-serif text-4xl leading-[1.1] text-ink sm:text-5xl lg:text-6xl"
+            className="font-corinthia text-5xl leading-[1.1] text-ink sm:text-6xl lg:text-7xl"
           >
             Pohyb, dech a klid mysli.
           </motion.h1>
@@ -73,7 +73,7 @@ export default function Hero() {
           transition={{ duration: 1.1, delay: 0.15, ease }}
           className="relative flex items-center justify-center"
         >
-          <div className="relative h-[480px] w-full max-w-md overflow-hidden rounded-none rounded-tl-[45%] md:ml-8 md:mt-12 md:h-[560px] md:max-w-lg">
+          <div className="relative h-[340px] w-full max-w-xl overflow-hidden rounded-none rounded-tl-[45%] md:ml-8 md:h-[400px]">
             {/*
               Nahraďte src vlastní fotkou lektorky, např.:
               src="/foto-anezka.jpg"   (vložte soubor do složky public/)
