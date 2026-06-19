@@ -21,6 +21,19 @@ export const USCREEN = {
 export const CONTACT = {
   email: "ahoj@aurorajoga.cz",
   instagram: "https://www.instagram.com/aurora.joga",
+  instagramHandle: "@aurora.joga",
   facebook: "https://www.facebook.com/aurora.joga",
   youtube: "https://www.youtube.com/@aurora.joga",
 } as const;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ŽIVÝ INSTAGRAM FEED — vyplňte po registraci na snapwidget.com
+//
+// 1. Zaregistrujte se zadarmo na https://snapwidget.com
+// 2. Připojte svůj Instagram účet a vytvořte nový widget (styl "Grid")
+// 3. V kódu pro vložení (Embed Code) zkopírujte adresu z atributu
+//    src="..." (vypadá jako https://snapwidget.com/embed/123456)
+// 4. Vložte ji sem místo prázdného řetězce — feed se pak bude
+//    automaticky aktualizovat s vašimi novými příspěvky.
+// ─────────────────────────────────────────────────────────────────────────────
+export const INSTAGRAM_WIDGET_URL = "";

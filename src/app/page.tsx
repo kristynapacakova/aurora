@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import About from "@/components/About";
 import Studio from "@/components/Studio";
 import Pricing from "@/components/Pricing";
+import InstagramFeed from "@/components/InstagramFeed";
 import Footer from "@/components/Footer";
 
 export default function Home() {
@@ -14,6 +15,7 @@ export default function Home() {
         <About />
         <Studio />
         <Pricing />
+        <InstagramFeed />
       </main>
       <Footer />
     </>

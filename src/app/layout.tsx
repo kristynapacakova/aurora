@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Roboto, Poppins } from "next/font/google";
+import { Roboto, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
 
 const roboto = Roboto({
@@ -9,8 +9,8 @@ const roboto = Roboto({
   display: "swap",
 });
 
-const poppins = Poppins({
-  variable: "--font-poppins",
+const cormorant = Cormorant_Garamond({
+  variable: "--font-cormorant",
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600"],
   style: ["normal", "italic"],
@@ -37,7 +37,7 @@ export default function RootLayout({
   return (
     <html
       lang="cs"
-      className={`${roboto.variable} ${poppins.variable} scroll-smooth antialiased`}
+      className={`${roboto.variable} ${cormorant.variable} scroll-smooth antialiased`}
     >
       <body className="bg-cream text-ink font-sans">{children}</body>
     </html>

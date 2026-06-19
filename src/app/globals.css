@@ -24,7 +24,7 @@
   --color-accent-d: var(--accent-d);
   --color-line:     var(--line);
 
-  --font-serif: var(--font-poppins);
+  --font-serif: var(--font-cormorant);
   --font-sans:  var(--font-roboto);
 }
 
@@ -54,7 +54,7 @@ body {
 
 /* ─── Typografie ──────────────────────────────────────────────────────────── */
 h1, h2, h3, h4 {
-  font-family: var(--font-poppins), system-ui, sans-serif;
+  font-family: var(--font-cormorant), Georgia, serif;
   font-weight: 400;
   line-height: 1.15;
   letter-spacing: -0.01em;
@@ -66,9 +66,9 @@ a {
   transition: color 0.2s ease;
 }
 
-/* ─── Nadpisy, tlačítka, navigace a popisky vždy v Jost ──────────────────── */
+/* ─── Nadpisy, tlačítka, navigace a popisky vždy v Cormorant Garamond ───── */
 .uppercase,
 button,
 nav a {
-  font-family: var(--font-poppins), system-ui, sans-serif;
+  font-family: var(--font-cormorant), Georgia, serif;
 }
