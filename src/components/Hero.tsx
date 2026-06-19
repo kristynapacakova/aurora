@@ -76,11 +76,7 @@ export default function Hero() {
           transition={{ duration: 1.1, delay: 0.15, ease }}
           className="relative flex items-center justify-center"
         >
-          {/* Dekorativní blob pozadí */}
-          <div className="absolute -right-8 -top-8 h-72 w-72 rounded-full bg-sand opacity-60 blur-3xl" />
-          <div className="absolute -bottom-8 -left-4 h-48 w-48 rounded-full bg-accent/20 blur-2xl" />
-
-          <div className="relative h-[480px] w-full max-w-md overflow-hidden rounded-tl-[4rem] rounded-tr-md rounded-br-md rounded-bl-md md:ml-8 md:mt-12 md:rounded-tl-[6rem]">
+          <div className="relative h-[480px] w-full max-w-md overflow-hidden rounded-none rounded-tl-[45%] md:ml-8 md:mt-12 md:h-[560px] md:max-w-lg">
             {/*
               Nahraďte src vlastní fotkou lektorky, např.:
               src="/foto-anezka.jpg"   (vložte soubor do složky public/)
@@ -105,7 +101,7 @@ export default function Hero() {
         className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
       >
         <span className="text-[10px] uppercase tracking-[0.3em] text-muted">
-          Scroll
+          Dolů
         </span>
         <motion.div
           animate={{ y: [0, 6, 0] }}
