@@ -25,7 +25,7 @@
   --color-line:     var(--line);
 
   --font-serif: var(--font-cormorant);
-  --font-sans:  var(--font-roboto);
+  --font-sans:  var(--font-serenity);
 }
 
 /* ─── Gradient utilita ───────────────────────────────────────────────────── */
@@ -47,7 +47,7 @@ html {
 body {
   background-color: var(--cream);
   color: var(--ink);
-  font-family: var(--font-roboto), system-ui, sans-serif;
+  font-family: var(--font-serenity), system-ui, sans-serif;
   font-weight: 300;
   line-height: 1.7;
 }
