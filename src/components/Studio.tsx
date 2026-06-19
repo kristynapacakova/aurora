@@ -37,7 +37,7 @@ export default function Studio() {
             <h2 className="font-serif text-4xl text-ink sm:text-5xl">
               Jóga pro každý
               <br />
-              <span className="italic">den i náladu</span>
+              den i náladu
             </h2>
           </FadeUp>
           <FadeUp delay={0.1}>

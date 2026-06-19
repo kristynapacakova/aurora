@@ -32,7 +32,7 @@ export default function Hero() {
           >
             Pohyb,
             <br />
-            <span className="italic">dech</span>
+            dech
             <br />a klid mysli.
           </motion.h1>
 
