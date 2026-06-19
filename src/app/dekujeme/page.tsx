@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "Děkujeme za objednávku | Klára Jóga",
+  title: "Děkujeme za objednávku | AURORA jóga",
 };
 
 type Props = {
@@ -17,7 +17,7 @@ export default async function DekujemePage({ searchParams }: Props) {
         <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
           Děkujeme
         </p>
-        <h1 className="font-serif text-4xl sm:text-5xl">
+        <h1 className="font-sans font-light text-4xl sm:text-5xl">
           Vaše objednávka byla přijata
         </h1>
 

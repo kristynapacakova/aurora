@@ -7,7 +7,9 @@ Minimalistický jednostránkový web pro lektorku jógy. Postaveno na **Next.js
 
 - `/` — hlavní stránka (Hero, O mně, Lekce, Ceník + objednávkový formulář)
 - `/dekujeme` — děkovná stránka s instrukcemi k QR platbě
-- `/studium` — chráněná členská sekce (přístupový kód)
+- `/studium` — chráněná členská sekce (přístupový kód, server-side middleware + cookie)
+- `/studium/login` — přihlašovací stránka do členské sekce
+- `src/proxy.ts` — middleware (proxy) ověřující session cookie pro `/studium`
 - `src/app/api/objednavka/route.ts` — API route pro odeslání objednávky e-mailem přes Resend (alternativa k Formspree)
 
 ## 1. Spuštění projektu lokálně
@@ -63,13 +65,20 @@ RESEND_FROM_EMAIL=objednavky@vasedomena.cz
 **Členská sekce `/studium`:**
 
 ```
-NEXT_PUBLIC_STUDIO_ACCESS_CODE=Namaste2026
+STUDIO_ACCESS_CODE=Namaste2026
+STUDIO_COOKIE_SECRET=nahodny-tajny-retezec
 ```
 
-Pokud proměnnou nevyplníte, použije se výchozí kód `Namaste2026`.
+- `STUDIO_ACCESS_CODE` je přístupový kód, který se ověřuje na serveru
+  (výchozí `Namaste2026`, pokud proměnnou nevyplníte).
+- `STUDIO_COOKIE_SECRET` je tajný klíč pro podepisování přihlašovací cookie.
+  Vygenerujte si vlastní náhodný řetězec, např. příkazem `openssl rand -hex 32`.
 
-> ⚠️ Tato ochrana je pouze na straně klienta (kód je součástí JS bundlu) a je
-> vhodná jen pro neveřejný odkaz pro členy, ne jako skutečné zabezpečení.
+Přístup je řešen přes `src/proxy.ts`: stránka `/studium` je chráněná a
+bez platné přihlašovací cookie přesměruje na `/studium/login`. Po zadání
+správného kódu API route `/api/studium-login` nastaví podepsanou `httpOnly`
+cookie platnou 30 dní. Odhlášení proběhne tlačítkem "Odhlásit se" (volá
+`/api/studium-logout`).
 
 ### Spuštění vývojového serveru
 
@@ -111,10 +120,11 @@ git push -u origin main
 4. Framework Preset se nastaví automaticky na **Next.js** — nic neměňte
 5. V sekci **Environment Variables** vložte stejné proměnné jako v
    `.env.local` (`NEXT_PUBLIC_FORMSPREE_ENDPOINT`, případně `RESEND_API_KEY`,
-   `RESEND_TO_EMAIL`, `RESEND_FROM_EMAIL`, `NEXT_PUBLIC_STUDIO_ACCESS_CODE`)
+   `RESEND_TO_EMAIL`, `RESEND_FROM_EMAIL`, `STUDIO_ACCESS_CODE`,
+   `STUDIO_COOKIE_SECRET`)
 6. Klikněte na **Deploy**
 
-Po dokončení nasazení získáte veřejnou URL (např. `https://klara-joga.vercel.app`).
+Po dokončení nasazení získáte veřejnou URL (např. `https://aurora-joga.vercel.app`).
 Při každém dalším `git push` do hlavní větve se web automaticky znovu nasadí.
 
 ## Užitečné příkazy

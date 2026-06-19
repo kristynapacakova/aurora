@@ -1,31 +1,77 @@
 @import "tailwindcss";
 
+/* ─── Barevná paleta ──────────────────────────────────────────────────────── */
 :root {
-  --background: #f7f4ee;
-  --foreground: #2e2b26;
-  --accent: #8a9a82;
-  --accent-dark: #5f6f57;
-  --sand: #e8e1d4;
-  --line: #ddd5c5;
+  --cream:     #f6f1e9;   /* hlavní pozadí */
+  --sand:      #ede6d8;   /* alternativní sekce */
+  --ink:       #000000;   /* text — černá */
+  --muted:     #4a4a4a;   /* sekundární text, stále černošedá */
+  --accent:    #efa598;   /* korálová — tlačítka, akcenty */
+  --accent-d:  #e08a7a;   /* tmavší korálová — hover */
+  --gradient-1: #efa598;  /* gradient start */
+  --gradient-2: #edc377;  /* gradient end */
+  --line:      #ddd4c0;   /* dělicí čáry, rámečky */
+  --white:     #ffffff;
 }
 
+/* ─── Tailwind v4 theme mapping ──────────────────────────────────────────── */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-dark: var(--accent-dark);
-  --color-sand: var(--sand);
-  --color-line: var(--line);
-  --font-serif: var(--font-cormorant);
-  --font-sans: var(--font-jost);
+  --color-cream:    var(--cream);
+  --color-sand:     var(--sand);
+  --color-ink:      var(--ink);
+  --color-muted:    var(--muted);
+  --color-accent:   var(--accent);
+  --color-accent-d: var(--accent-d);
+  --color-line:     var(--line);
+
+  --font-serif: var(--font-serenity);
+  --font-sans:  var(--font-roboto);
+  --font-corinthia: var(--font-corinthia-src);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-jost), sans-serif;
+/* ─── Gradient utilita ───────────────────────────────────────────────────── */
+.bg-gradient-aurora {
+  background-image: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 100%);
 }
 
-html {
-  scroll-behavior: smooth;
+/* ─── Globální reset a typografie ────────────────────────────────────────────
+   Pozn.: musí být uvnitř @layer base, jinak tyto pravidla (jako nevrstvená)
+   vždy přebijí Tailwind utility třídy bez ohledu na specificitu
+   (např. font-corinthia by jinak nikdy nepřepsalo h1/h2/h3/h4). */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--cream);
+    color: var(--ink);
+    font-family: var(--font-roboto), system-ui, sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  h1, h2, h3, h4 {
+    font-family: var(--font-serenity), system-ui, sans-serif;
+    font-weight: 400;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+  }
+
+  a {
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .uppercase,
+  button,
+  nav a {
+    font-family: var(--font-jost), system-ui, sans-serif;
+  }
 }

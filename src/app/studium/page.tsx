@@ -1,83 +1,25 @@
-"use client";
+import LogoutButton from "./LogoutButton";
 
-import { useState, type FormEvent } from "react";
+// Tato stránka je chráněná middlewarem (src/middleware.ts) - bez platné
+// session cookie sem uživatel nemá přístup a je přesměrován na
+// /studium/login.
 
-// Přístupový kód pro členskou sekci.
-// POZOR: Jedná se o jednoduchou ochranu na straně klienta (vhodnou např. pro
-// neveřejný odkaz pro členy kurzu). Kód je viditelný ve zdrojovém kódu
-// aplikace a NENAHRAZUJE skutečné přihlášení / autorizaci na serveru.
-const ACCESS_CODE =
-  process.env.NEXT_PUBLIC_STUDIO_ACCESS_CODE ?? "Namaste2026";
-
-const STORAGE_KEY = "studio-unlocked";
+export const metadata = {
+  title: "Studio | AURORA jóga",
+};
 
 export default function StudioPage() {
-  const [unlocked, setUnlocked] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.sessionStorage.getItem(STORAGE_KEY) === "true";
-  });
-  const [code, setCode] = useState("");
-  const [error, setError] = useState(false);
-
-  function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (code === ACCESS_CODE) {
-      setError(false);
-      setUnlocked(true);
-      window.sessionStorage.setItem(STORAGE_KEY, "true");
-    } else {
-      setError(true);
-    }
-  }
-
-  if (!unlocked) {
-    return (
-      <main className="flex flex-1 items-center justify-center bg-sand px-6 py-24">
-        <div className="w-full max-w-md rounded-2xl bg-background p-8 text-center shadow-sm ring-1 ring-line sm:p-10">
-          <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
-            Členská sekce
-          </p>
-          <h1 className="font-serif text-3xl sm:text-4xl">Studio</h1>
-          <p className="mt-4 text-sm text-foreground/70">
-            Tato stránka je dostupná pouze pro členy. Zadejte prosím přístupový
-            kód, který jste obdrželi e-mailem.
-          </p>
-
-          <form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-4">
-            <input
-              type="password"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder="Přístupový kód"
-              autoFocus
-              className="w-full rounded-lg border border-line bg-background px-4 py-2 text-center outline-none focus:border-accent-dark"
-            />
-
-            {error && (
-              <p className="text-sm text-red-600">
-                Nesprávný přístupový kód, zkuste to znovu.
-              </p>
-            )}
-
-            <button
-              type="submit"
-              className="rounded-full bg-accent-dark px-8 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-accent"
-            >
-              Vstoupit
-            </button>
-          </form>
-        </div>
-      </main>
-    );
-  }
-
   return (
     <main className="flex-1 bg-sand px-6 py-24">
       <div className="mx-auto max-w-3xl">
+        <div className="flex justify-end">
+          <LogoutButton />
+        </div>
+
         <p className="mb-3 text-center text-sm uppercase tracking-[0.3em] text-accent-dark">
           Členská sekce
         </p>
-        <h1 className="text-center font-serif text-4xl sm:text-5xl">
+        <h1 className="text-center font-sans font-light text-4xl sm:text-5xl">
           Lekce: Ranní jóga pro probuzení těla
         </h1>
 
@@ -98,7 +40,7 @@ export default function StudioPage() {
         </div>
 
         <div className="mt-8 rounded-2xl bg-background p-6 shadow-sm ring-1 ring-line sm:p-8">
-          <h2 className="font-serif text-2xl">O lekci</h2>
+          <h2 className="font-sans font-light text-2xl">O lekci</h2>
           <p className="mt-3 text-foreground/70 leading-relaxed">
             Tato 30minutová lekce vás provede sérií jemných protažení a
             dechových cvičení, které vás příjemně probudí a nastartují vaše
