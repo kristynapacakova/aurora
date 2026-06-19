@@ -2,14 +2,16 @@
 
 /* ─── Barevná paleta ──────────────────────────────────────────────────────── */
 :root {
-  --cream:    #f6f1e9;   /* hlavní pozadí */
-  --sand:     #ede6d8;   /* alternativní sekce */
-  --ink:      #1c1916;   /* tmavý text */
-  --muted:    #7a7168;   /* šedohnědý text */
-  --accent:   #8a9a82;   /* šalvěj / sage green */
-  --accent-d: #4f6348;   /* tmavší akcent */
-  --line:     #ddd4c0;   /* dělicí čáry, rámečky */
-  --white:    #ffffff;
+  --cream:     #f6f1e9;   /* hlavní pozadí */
+  --sand:      #ede6d8;   /* alternativní sekce */
+  --ink:       #000000;   /* text — černá */
+  --muted:     #4a4a4a;   /* sekundární text, stále černošedá */
+  --accent:    #efa598;   /* korálová — tlačítka, akcenty */
+  --accent-d:  #e08a7a;   /* tmavší korálová — hover */
+  --gradient-1: #efa598;  /* gradient start */
+  --gradient-2: #edc377;  /* gradient end */
+  --line:      #ddd4c0;   /* dělicí čáry, rámečky */
+  --white:     #ffffff;
 }
 
 /* ─── Tailwind v4 theme mapping ──────────────────────────────────────────── */
@@ -24,6 +26,11 @@
 
   --font-serif: var(--font-cormorant);
   --font-sans:  var(--font-jost);
+}
+
+/* ─── Gradient utilita ───────────────────────────────────────────────────── */
+.bg-gradient-aurora {
+  background-image: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 100%);
 }
 
 /* ─── Globální reset ──────────────────────────────────────────────────────── */

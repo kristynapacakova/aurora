@@ -52,50 +52,36 @@ export default function Pricing() {
           {PLANS.map((plan, i) => (
             <FadeUp key={plan.name} delay={i * 0.12}>
               <div
-                className={`relative flex h-full flex-col rounded-3xl p-8 sm:p-10 ${
+                className={`relative flex h-full flex-col rounded-3xl p-8 text-ink sm:p-10 ${
                   plan.featured
-                    ? "bg-ink text-cream"
-                    : "border border-line bg-cream text-ink"
+                    ? "bg-gradient-aurora"
+                    : "border border-line bg-cream"
                 }`}
               >
                 {plan.featured && (
-                  <span className="absolute right-8 top-8 rounded-full bg-accent px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-cream">
+                  <span className="absolute right-8 top-8 rounded-full bg-ink px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-cream">
                     Nejoblíbenější
                   </span>
                 )}
 
-                <p
-                  className={`text-xs uppercase tracking-[0.25em] ${plan.featured ? "text-accent" : "text-muted"}`}
-                >
+                <p className="text-xs uppercase tracking-[0.25em] text-ink/70">
                   {plan.name}
                 </p>
 
                 <div className="mt-5 flex items-baseline gap-1">
                   <span className="font-serif text-5xl">{plan.price} Kč</span>
-                  <span
-                    className={`text-sm ${plan.featured ? "text-cream/60" : "text-muted"}`}
-                  >
-                    {plan.period}
-                  </span>
+                  <span className="text-sm text-ink/60">{plan.period}</span>
                 </div>
 
-                <p
-                  className={`mt-3 text-sm ${plan.featured ? "text-cream/70" : "text-muted"}`}
-                >
-                  {plan.description}
-                </p>
+                <p className="mt-3 text-sm text-ink/70">{plan.description}</p>
 
                 <ul className="mt-8 flex flex-col gap-3">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-3 text-sm">
-                      <span
-                        className={`mt-0.5 text-base leading-none ${plan.featured ? "text-accent" : "text-accent"}`}
-                      >
+                      <span className="mt-0.5 text-base leading-none text-ink">
                         ✓
                       </span>
-                      <span className={plan.featured ? "text-cream/80" : "text-muted"}>
-                        {f}
-                      </span>
+                      <span className="text-ink/80">{f}</span>
                     </li>
                   ))}
                 </ul>
@@ -104,11 +90,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-10 block rounded-full py-3.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
-                    plan.featured
-                      ? "bg-cream text-ink hover:bg-accent hover:text-cream"
-                      : "border border-ink text-ink hover:bg-ink hover:text-cream"
-                  }`}
+                  className="mt-10 block rounded-full bg-accent py-3.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-accent-d"
                 >
                   Aktivovat členství
                 </a>

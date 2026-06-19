@@ -56,7 +56,7 @@ export default function Hero() {
               href={USCREEN.signup}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-ink px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-cream transition-all duration-200 hover:bg-accent-d"
+              className="rounded-full bg-accent px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-accent-d"
             >
               Vyzkoušet online studio
             </a>
