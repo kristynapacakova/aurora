@@ -28,7 +28,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-corinthia text-5xl leading-[1.1] text-ink sm:text-6xl lg:text-7xl"
+            className="font-allura text-5xl leading-[1.1] text-ink sm:text-6xl lg:text-7xl"
           >
             Pohyb, dech a klid mysli.
           </motion.h1>

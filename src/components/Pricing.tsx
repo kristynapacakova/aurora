@@ -39,7 +39,7 @@ export default function Pricing() {
             <p className="mb-4 text-xs uppercase tracking-[0.3em] text-accent">
               Ceník členství
             </p>
-            <h2 className="font-corinthia text-5xl text-ink sm:text-6xl">
+            <h2 className="font-allura text-5xl text-ink sm:text-6xl">
               Vyber si svůj plán
             </h2>
             <p className="mx-auto mt-5 max-w-sm text-muted">

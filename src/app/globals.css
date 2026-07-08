@@ -1,17 +1,121 @@
 @import "tailwindcss";
 
-/* ─── Barevná paleta ──────────────────────────────────────────────────────── */
+/* ─── Fonty — self-hosted (bypass Next.js subsetting bug) ───────────────── */
+
+/* Cormorant Garamond — hlavní nadpisy */
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant/CormorantG-300-latinext.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant/CormorantG-300-latin.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant/CormorantG-400-latinext.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant/CormorantG-400-latin.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant/CormorantG-600-latinext.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  src: url('/fonts/cormorant/CormorantG-600-latin.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Allura — zvýrazněné / script nadpisy */
+@font-face {
+  font-family: 'Allura';
+  src: url('/fonts/allura/Allura-400-latinext.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Allura';
+  src: url('/fonts/allura/Allura-400-latin.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* Poppins — tělo textu, tlačítka, menu */
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-300-latinext.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-300-latin.woff2') format('woff2');
+  font-weight: 300; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-400-latinext.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-400-latin.woff2') format('woff2');
+  font-weight: 400; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-500-latinext.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-500-latin.woff2') format('woff2');
+  font-weight: 500; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-600-latinext.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('/fonts/poppins/Poppins-600-latin.woff2') format('woff2');
+  font-weight: 600; font-style: normal; font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+/* ─── Barevná paleta dle brand manuálu ───────────────────────────────────── */
 :root {
-  --cream:     #f6f1e9;   /* hlavní pozadí */
-  --sand:      #ede6d8;   /* alternativní sekce */
-  --ink:       #000000;   /* text — černá */
-  --muted:     #4a4a4a;   /* sekundární text, stále černošedá */
-  --accent:    #efa598;   /* korálová — tlačítka, akcenty */
-  --accent-d:  #e08a7a;   /* tmavší korálová — hover */
-  --gradient-1: #efa598;  /* gradient start */
-  --gradient-2: #edc377;  /* gradient end */
-  --line:      #ddd4c0;   /* dělicí čáry, rámečky */
-  --white:     #ffffff;
+  --cream:        #FCF4F1;  /* krémová — pozadí webu */
+  --sand:         #FBE9DE;  /* slonová kost — alternativní sekce */
+  --ink:          #8C5F47;  /* teplá hnědá — texty (nikdy čistá černá!) */
+  --muted:        #A87860;  /* světlejší hnědá — sekundární text */
+  --accent:       #F28D76;  /* korálová — ikony, akcenty, popisky */
+  --accent-d:     #E07055;  /* tmavší korálová — hover stav */
+  --gradient-1:   #F5BAA8;  /* gradient start */
+  --gradient-mid: #F4A36C;  /* gradient střed */
+  --gradient-2:   #F6C45D;  /* gradient end — zlatá */
+  --line:         #EDD5C5;  /* dělicí čáry, rámečky */
 }
 
 /* ─── Tailwind v4 theme mapping ──────────────────────────────────────────── */
@@ -24,24 +128,19 @@
   --color-accent-d: var(--accent-d);
   --color-line:     var(--line);
 
-  --font-serif: var(--font-serenity);
-  --font-sans:  var(--font-roboto);
-  --font-corinthia: var(--font-corinthia-src);
+  --font-serif:   'Cormorant Garamond', Georgia, serif;
+  --font-sans:    'Poppins', system-ui, sans-serif;
+  --font-allura:  'Allura', cursive;
 }
 
-/* ─── Gradient utilita ───────────────────────────────────────────────────── */
+/* ─── Gradient utility (3 zastávky dle brand manuálu) ───────────────────── */
 .bg-gradient-aurora {
-  background-image: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-2) 100%);
+  background-image: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-mid) 50%, var(--gradient-2) 100%);
 }
 
-/* ─── Globální reset a typografie ────────────────────────────────────────────
-   Pozn.: musí být uvnitř @layer base, jinak tyto pravidla (jako nevrstvená)
-   vždy přebijí Tailwind utility třídy bez ohledu na specificitu
-   (např. font-corinthia by jinak nikdy nepřepsalo h1/h2/h3/h4). */
+/* ─── Globální styly ─────────────────────────────────────────────────────── */
 @layer base {
-  *,
-  *::before,
-  *::after {
+  *, *::before, *::after {
     box-sizing: border-box;
   }
 
@@ -52,13 +151,13 @@
   body {
     background-color: var(--cream);
     color: var(--ink);
-    font-family: var(--font-roboto), system-ui, sans-serif;
+    font-family: 'Poppins', system-ui, sans-serif;
     font-weight: 300;
     line-height: 1.7;
   }
 
   h1, h2, h3, h4 {
-    font-family: var(--font-serenity), system-ui, sans-serif;
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 400;
     line-height: 1.15;
     letter-spacing: -0.01em;
@@ -69,9 +168,7 @@
     transition: color 0.2s ease;
   }
 
-  .uppercase,
-  button,
-  nav a {
-    font-family: var(--font-jost), system-ui, sans-serif;
+  .uppercase, button, nav a {
+    font-family: 'Poppins', system-ui, sans-serif;
   }
 }
