@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { USCREEN } from "@/lib/config";
 
@@ -27,16 +28,14 @@ export default function Navbar() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <a href="#hero" className="flex flex-col items-center leading-none">
-          <span className="text-gradient-aurora font-allura text-3xl leading-none">
-            Aurora
-          </span>
-          <span
-            className="font-serif text-[9px] uppercase tracking-[0.55em] text-[#F4A36C]"
-            style={{ marginLeft: "0.55em" }}
-          >
-            yoga
-          </span>
+        <a href="#hero">
+          <Image
+            src="/logo.svg"
+            alt="Aurora Yoga"
+            width={90}
+            height={78}
+            priority
+          />
         </a>
 
         {/* Desktop nav */}
