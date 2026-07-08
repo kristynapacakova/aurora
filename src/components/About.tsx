@@ -1,6 +1,7 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
+import { IconSparkle, IconLeafBranch } from "./BrandIcons";
 
 export default function About() {
   return (
@@ -36,9 +37,10 @@ export default function About() {
           {/* Text */}
           <div>
             <FadeUp delay={0}>
-              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-accent">
-                Můj jógový příběh
-              </p>
+              <div className="mb-4 flex items-center gap-3">
+                <IconLeafBranch size={22} />
+                <p className="text-xs uppercase tracking-[0.3em] text-accent">Můj jógový příběh</p>
+              </div>
             </FadeUp>
 
             <FadeUp delay={0.1}>

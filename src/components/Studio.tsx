@@ -1,44 +1,7 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
-
-/* ─── Ikony (tenká linie, korálová) ─── */
-function IconLekce() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
-      <circle cx="16" cy="8" r="3"/>
-      <path d="M8 20c0-4 3.5-6 8-6s8 2 8 6"/>
-      <path d="M10 26c0-2 2.5-3.5 6-3.5s6 1.5 6 3.5"/>
-      <path d="M6 18c-2 0-4-1.5-4-3.5 0-1.5 1-2.5 2.5-2.5"/>
-      <path d="M26 18c2 0 4-1.5 4-3.5 0-1.5-1-2.5-2.5-2.5"/>
-    </svg>
-  );
-}
-function IconStudio() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
-      <rect x="3" y="6" width="26" height="17" rx="2"/>
-      <path d="M10 28h12M16 23v5"/>
-    </svg>
-  );
-}
-function IconRetreaty() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
-      <path d="M16 4c0 0-10 8-10 16a10 10 0 0 0 20 0C26 12 16 4 16 4z"/>
-      <path d="M16 14v10M12 18c1.5-1 2.5-1.5 4-1.5s2.5.5 4 1.5"/>
-    </svg>
-  );
-}
-function IconAkce() {
-  return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" className="text-accent">
-      <circle cx="11" cy="9" r="3"/>
-      <circle cx="21" cy="9" r="3"/>
-      <path d="M4 26c0-4 3-6.5 7-6.5s5 1.5 5 1.5 1-1.5 5-1.5 7 2.5 7 6.5"/>
-    </svg>
-  );
-}
+import { IconSparkle, IconLekce, IconStudio, IconRetreaty, IconAkce } from "./BrandIcons";
 
 const SERVICES = [
   {
@@ -96,6 +59,11 @@ export default function Studio() {
         {/* Nadpis sekce */}
         <FadeUp>
           <div className="mb-20 text-center">
+            <div className="mb-4 flex items-center justify-center gap-3">
+              <IconSparkle size={12} />
+              <p className="text-xs uppercase tracking-[0.3em] text-accent">Co tě čeká</p>
+              <IconSparkle size={12} />
+            </div>
             <h2 className="font-serif text-4xl text-ink sm:text-5xl">
               Vyber si cestu,
               <br />
@@ -137,7 +105,7 @@ export default function Studio() {
                     s.photoLeft ? "md:pl-16 md:pr-6" : "md:pl-6 md:pr-16"
                   }`}
                 >
-                  <div className="mb-4">{s.icon}</div>
+                  <div className="mb-5">{s.icon}</div>
                   <h3 className="mb-4 font-serif text-3xl text-ink sm:text-4xl">
                     {s.title}
                   </h3>
@@ -148,16 +116,20 @@ export default function Studio() {
                     href={s.href}
                     target={s.external ? "_blank" : undefined}
                     rel={s.external ? "noopener noreferrer" : undefined}
-                    className="inline-flex w-fit items-center gap-2 rounded-full border border-ink/40 px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-ink hover:bg-ink/5"
+                    className="inline-flex w-fit items-center gap-2 rounded-full border border-ink/30 px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
                   >
                     {s.cta} →
                   </a>
                 </div>
               </div>
 
-              {/* Oddělovač (kromě posledního) */}
+              {/* Oddělovač */}
               {i < SERVICES.length - 1 && (
-                <div className="my-12 h-px bg-line md:my-16" />
+                <div className="my-14 flex items-center gap-4 md:my-16">
+                  <div className="flex-1 h-px bg-line" />
+                  <IconSparkle size={10} className="text-line" />
+                  <div className="flex-1 h-px bg-line" />
+                </div>
               )}
             </FadeUp>
           ))}

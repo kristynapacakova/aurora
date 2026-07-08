@@ -1,5 +1,6 @@
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
+import { IconSparkle } from "./BrandIcons";
 
 const PLANS = [
   {
@@ -36,9 +37,11 @@ export default function Pricing() {
       <div className="mx-auto max-w-5xl px-6">
         <FadeUp>
           <div className="mb-16 text-center">
-            <p className="mb-4 text-xs uppercase tracking-[0.3em] text-accent">
-              Ceník členství
-            </p>
+            <div className="mb-4 flex items-center justify-center gap-3">
+              <IconSparkle size={12} />
+              <p className="text-xs uppercase tracking-[0.3em] text-accent">Ceník členství</p>
+              <IconSparkle size={12} />
+            </div>
             <h2 className="font-allura text-4xl text-ink sm:text-5xl">
               Vyber si svůj plán
             </h2>
