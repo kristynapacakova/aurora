@@ -6,7 +6,8 @@ import { IconSparkle, IconLekce, IconStudio, IconRetreaty, IconAkce } from "./Br
 const SERVICES = [
   {
     id: "lekce",
-    icon: <IconLekce />,
+    bg: "bg-[#FCF4F1]",          /* krémová */
+    icon: <IconLekce size={30} />,
     title: "Lekce",
     body: "Pravidelné hotelové lekce, skupinová i individuální jóga. Jemný prostor, kde se můžeš zastavit a vrátit se sama k sobě.",
     cta: "Zjistit více",
@@ -17,7 +18,8 @@ const SERVICES = [
   },
   {
     id: "studio",
-    icon: <IconStudio />,
+    bg: "bg-[#FBE9DE]",          /* slonová kost */
+    icon: <IconStudio size={30} />,
     title: "Online studio",
     body: "Cvič kdykoliv, když to tvoje tělo potřebuje. Online lekce a programy, které tě provedou domovem stejně jemně jako živá praxe.",
     cta: "Vstoupit do studia",
@@ -29,7 +31,8 @@ const SERVICES = [
   },
   {
     id: "retreaty",
-    icon: <IconRetreaty />,
+    bg: "bg-[#FDF6F0]",          /* světlá meruňková */
+    icon: <IconRetreaty size={30} />,
     title: "Retreaty",
     body: "Zastav se. Nadechni se. Buď. Víkendové pobyty v přírodě, kde si dovolíš zpomalit a načerpat novou energii.",
     cta: "Objevit retreaty",
@@ -40,7 +43,8 @@ const SERVICES = [
   },
   {
     id: "akce",
-    icon: <IconAkce />,
+    bg: "bg-[#FAF0E8]",          /* teplá béžová */
+    icon: <IconAkce size={30} />,
     title: "Akce pro ženy",
     body: "Setkání, která pohladí duši. Jednodenní akce, ženské kruhy a workshopy plné inspirace, sdílení a klidu.",
     cta: "Aktuální akce",
@@ -53,65 +57,65 @@ const SERVICES = [
 
 export default function Studio() {
   return (
-    <section id="studio" className="bg-cream py-24 sm:py-32">
-      <div className="mx-auto max-w-7xl px-6">
-
-        {/* Nadpis sekce */}
+    <>
+      {/* ── Nadpis ── */}
+      <div className="bg-[#FCF4F1] pb-14 pt-24 text-center sm:pt-28">
         <FadeUp>
-          <div className="mb-20 text-center">
-            <div className="mb-4 flex items-center justify-center gap-3">
-              <IconSparkle size={12} />
-              <p className="text-xs uppercase tracking-[0.3em] text-accent">Co tě čeká</p>
-              <IconSparkle size={12} />
-            </div>
-            <h2 className="font-serif text-4xl text-ink sm:text-5xl">
-              Vyber si cestu,
-              <br />
-              <em className="font-allura not-italic text-accent text-3xl sm:text-4xl">
-                která tě právě volá.
-              </em>
-            </h2>
+          <div className="mb-3 flex items-center justify-center gap-3">
+            <IconSparkle size={11} />
+            <span className="text-xs uppercase tracking-[0.3em] text-accent">Co tě čeká</span>
+            <IconSparkle size={11} />
           </div>
+          <h2 className="font-serif text-4xl text-ink sm:text-5xl">
+            Vyber si cestu,
+          </h2>
+          <p className="font-allura text-3xl text-accent sm:text-4xl">
+            která tě právě volá.
+          </p>
         </FadeUp>
+      </div>
 
-        {/* Střídající se bloky */}
-        <div className="flex flex-col gap-0">
-          {SERVICES.map((s, i) => (
-            <FadeUp key={s.id} delay={0.05}>
+      {/* ── Střídající se sekce ── */}
+      {SERVICES.map((s) => (
+        <section key={s.id} id={s.id} className={`${s.bg} py-16 sm:py-20`}>
+          <div className="mx-auto max-w-6xl px-6">
+            <FadeUp>
               <div
-                id={s.id}
-                className={`grid grid-cols-1 items-center gap-0 md:grid-cols-[3fr_2fr] ${
+                className={`grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16 ${
                   !s.photoLeft ? "md:[&>*:first-child]:order-last" : ""
                 }`}
               >
-                {/* Fotka */}
-                <div className="relative h-[300px] w-full overflow-hidden sm:h-[420px] md:h-[480px]">
+                {/* Foto */}
+                <div
+                  className={`relative h-[280px] w-full overflow-hidden sm:h-[380px] md:h-[440px] ${
+                    s.photoLeft
+                      ? "rounded-tl-[3.5rem] rounded-br-[1.5rem]"
+                      : "rounded-tr-[3.5rem] rounded-bl-[1.5rem]"
+                  }`}
+                >
                   <Image
                     src={s.photo}
                     alt={s.alt}
                     fill
-                    className={`object-cover ${
-                      s.photoLeft
-                        ? "rounded-tr-[3.5rem] rounded-bl-[3.5rem]"
-                        : "rounded-tl-[3.5rem] rounded-br-[3.5rem]"
-                    }`}
-                    sizes="(max-width: 768px) 100vw, 60vw"
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
                   />
                 </div>
 
                 {/* Text */}
-                <div
-                  className={`flex flex-col justify-center py-12 ${
-                    s.photoLeft ? "md:pl-16 md:pr-6" : "md:pl-6 md:pr-16"
-                  }`}
-                >
-                  <div className="mb-5">{s.icon}</div>
-                  <h3 className="mb-4 font-serif text-3xl text-ink sm:text-4xl">
-                    {s.title}
-                  </h3>
+                <div className="flex flex-col">
+                  {/* Ikona + nadpis na jednom řádku */}
+                  <div className="mb-4 flex items-center gap-3">
+                    {s.icon}
+                    <h3 className="font-serif text-3xl text-ink sm:text-4xl">
+                      {s.title}
+                    </h3>
+                  </div>
+
                   <p className="mb-8 max-w-xs text-sm leading-relaxed text-muted">
                     {s.body}
                   </p>
+
                   <a
                     href={s.href}
                     target={s.external ? "_blank" : undefined}
@@ -122,19 +126,10 @@ export default function Studio() {
                   </a>
                 </div>
               </div>
-
-              {/* Oddělovač */}
-              {i < SERVICES.length - 1 && (
-                <div className="my-14 flex items-center gap-4 md:my-16">
-                  <div className="flex-1 h-px bg-line" />
-                  <IconSparkle size={10} className="text-line" />
-                  <div className="flex-1 h-px bg-line" />
-                </div>
-              )}
             </FadeUp>
-          ))}
-        </div>
-      </div>
-    </section>
+          </div>
+        </section>
+      ))}
+    </>
   );
 }
