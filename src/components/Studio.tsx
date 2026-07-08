@@ -1,13 +1,13 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
-import { IconSparkle, IconLekce, IconStudio, IconRetreaty, IconAkce } from "./BrandIcons";
+import { IconSparkle, IconSun, IconLeafBranch, IconHeart, IconWave } from "./BrandIcons";
 
 const SERVICES = [
   {
     id: "lekce",
     bg: "bg-[#FCF4F1]",          /* krémová */
-    icon: <IconLekce size={30} />,
+    icon: <IconSun size={30} />,
     title: "Lekce",
     body: "Pravidelné hotelové lekce, skupinová i individuální jóga. Jemný prostor, kde se můžeš zastavit a vrátit se sama k sobě.",
     cta: "Zjistit více",
@@ -19,7 +19,7 @@ const SERVICES = [
   {
     id: "studio",
     bg: "bg-[#FBE9DE]",          /* slonová kost */
-    icon: <IconStudio size={30} />,
+    icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     body: "Cvič kdykoliv, když to tvoje tělo potřebuje. Online lekce a programy, které tě provedou domovem stejně jemně jako živá praxe.",
     cta: "Vstoupit do studia",
@@ -32,7 +32,7 @@ const SERVICES = [
   {
     id: "retreaty",
     bg: "bg-[#FDF6F0]",          /* světlá meruňková */
-    icon: <IconRetreaty size={30} />,
+    icon: <IconLeafBranch size={30} />,
     title: "Retreaty",
     body: "Zastav se. Nadechni se. Buď. Víkendové pobyty v přírodě, kde si dovolíš zpomalit a načerpat novou energii.",
     cta: "Objevit retreaty",
@@ -44,7 +44,7 @@ const SERVICES = [
   {
     id: "akce",
     bg: "bg-[#FAF0E8]",          /* teplá béžová */
-    icon: <IconAkce size={30} />,
+    icon: <IconHeart size={30} />,
     title: "Akce pro ženy",
     body: "Setkání, která pohladí duši. Jednodenní akce, ženské kruhy a workshopy plné inspirace, sdílení a klidu.",
     cta: "Aktuální akce",
@@ -72,6 +72,9 @@ export default function Studio() {
           <p className="font-allura text-3xl text-accent sm:text-4xl">
             která tě právě volá.
           </p>
+          <div className="mt-4 flex justify-center">
+            <IconWave width={160} height={22} className="text-accent/50" />
+          </div>
         </FadeUp>
       </div>
 
