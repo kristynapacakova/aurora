@@ -90,7 +90,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-10 block rounded-full bg-accent py-3.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-accent-d"
+                  className="mt-10 block rounded-full bg-peach py-3.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
                 >
                   Aktivovat členství
                 </a>

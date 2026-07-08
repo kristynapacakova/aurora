@@ -69,7 +69,7 @@ export default function About() {
                 href={USCREEN.signup}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-8 inline-block rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
+                className="mt-8 inline-block rounded-full bg-peach px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
               >
                 Vyzkoušet studio
               </a>

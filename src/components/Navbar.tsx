@@ -27,11 +27,16 @@ export default function Navbar() {
     >
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
         {/* Logo */}
-        <a
-          href="#hero"
-          className="font-serif text-2xl tracking-[0.12em] text-ink"
-        >
-          AURORA
+        <a href="#hero" className="flex flex-col items-center leading-none">
+          <span className="text-gradient-aurora font-allura text-3xl leading-none">
+            Aurora
+          </span>
+          <span
+            className="font-serif text-[9px] uppercase tracking-[0.55em] text-[#F4A36C]"
+            style={{ marginLeft: "0.55em" }}
+          >
+            yoga
+          </span>
         </a>
 
         {/* Desktop nav */}
@@ -52,7 +57,7 @@ export default function Navbar() {
           href={USCREEN.login}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden rounded-full bg-gradient-aurora px-5 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90 md:inline-flex"
+          className="hidden rounded-full bg-peach px-5 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d md:inline-flex"
         >
           Vstoupit do studia
         </a>
@@ -92,7 +97,7 @@ export default function Navbar() {
             href={USCREEN.login}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-gradient-aurora px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-ink"
+            className="rounded-full bg-peach px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
           >
             Vstoupit do studia
           </a>

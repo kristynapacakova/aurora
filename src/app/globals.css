@@ -110,11 +110,13 @@
   --sand:         #FBE9DE;  /* slonová kost — alternativní sekce */
   --ink:          #8C5F47;  /* teplá hnědá — texty (nikdy čistá černá!) */
   --muted:        #A87860;  /* světlejší hnědá — sekundární text */
+  --peach:        #F5BB96;  /* broskvová — tlačítka */
+  --peach-d:      #EDA87E;  /* tmavší broskvová — hover tlačítek */
   --accent:       #F28D76;  /* korálová — ikony, akcenty, popisky */
   --accent-d:     #E07055;  /* tmavší korálová — hover stav */
-  --gradient-1:   #F5BAA8;  /* gradient start */
-  --gradient-mid: #F4A36C;  /* gradient střed */
-  --gradient-2:   #F6C45D;  /* gradient end — zlatá */
+  --gradient-1:   #F5BAA8;  /* gradient start (logo) */
+  --gradient-mid: #F4A36C;  /* gradient střed (logo) */
+  --gradient-2:   #F6C45D;  /* gradient end — zlatá (logo) */
   --line:         #EDD5C5;  /* dělicí čáry, rámečky */
 }
 
@@ -124,6 +126,8 @@
   --color-sand:     var(--sand);
   --color-ink:      var(--ink);
   --color-muted:    var(--muted);
+  --color-peach:    var(--peach);
+  --color-peach-d:  var(--peach-d);
   --color-accent:   var(--accent);
   --color-accent-d: var(--accent-d);
   --color-line:     var(--line);
@@ -133,9 +137,17 @@
   --font-allura:  'Allura', cursive;
 }
 
-/* ─── Gradient utility (3 zastávky dle brand manuálu) ───────────────────── */
+/* ─── Gradient utility — pouze logo dle brand manuálu ───────────────────── */
 .bg-gradient-aurora {
   background-image: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-mid) 50%, var(--gradient-2) 100%);
+}
+
+/* ─── Gradient text pro logo ─────────────────────────────────────────────── */
+.text-gradient-aurora {
+  background-image: linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-mid) 50%, var(--gradient-2) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 /* ─── Globální styly ─────────────────────────────────────────────────────── */
