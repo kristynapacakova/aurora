@@ -39,7 +39,7 @@ export default function Pricing() {
             <p className="mb-4 text-xs uppercase tracking-[0.3em] text-accent">
               Ceník členství
             </p>
-            <h2 className="font-allura text-5xl text-ink sm:text-6xl">
+            <h2 className="font-allura text-4xl text-ink sm:text-5xl">
               Vyber si svůj plán
             </h2>
             <p className="mx-auto mt-5 max-w-sm text-muted">
@@ -90,7 +90,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-10 block rounded-full bg-peach py-3.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
+                  className="mt-10 block rounded-full bg-gradient-aurora py-3.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
                 >
                   Aktivovat členství
                 </a>

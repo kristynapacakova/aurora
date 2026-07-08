@@ -57,7 +57,7 @@ export default function Navbar() {
           href={USCREEN.login}
           target="_blank"
           rel="noopener noreferrer"
-          className="hidden rounded-full bg-peach px-5 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d md:inline-flex"
+          className="hidden rounded-full bg-gradient-aurora px-5 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90 md:inline-flex"
         >
           Vstoupit do studia
         </a>
@@ -97,7 +97,7 @@ export default function Navbar() {
             href={USCREEN.login}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-full bg-peach px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
+            className="rounded-full bg-gradient-aurora px-6 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
           >
             Vstoupit do studia
           </a>

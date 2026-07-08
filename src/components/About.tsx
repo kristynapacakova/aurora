@@ -42,7 +42,7 @@ export default function About() {
             </FadeUp>
 
             <FadeUp delay={0.1}>
-              <h2 className="font-allura text-5xl text-ink sm:text-6xl">
+              <h2 className="font-allura text-4xl text-ink sm:text-5xl">
                 Ahoj, jsem Anežka
               </h2>
             </FadeUp>
@@ -69,7 +69,7 @@ export default function About() {
                 href={USCREEN.signup}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-8 inline-block rounded-full bg-peach px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
+                className="mt-8 inline-block rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
               >
                 Vyzkoušet studio
               </a>

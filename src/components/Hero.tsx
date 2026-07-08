@@ -28,7 +28,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-allura text-5xl leading-[1.1] text-ink sm:text-6xl lg:text-7xl"
+            className="font-allura text-4xl leading-[1.1] text-ink sm:text-5xl lg:text-6xl"
           >
             Pohyb, dech a klid mysli.
           </motion.h1>
@@ -55,7 +55,7 @@ export default function Hero() {
               href={USCREEN.signup}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-peach px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-peach-d"
+              className="rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
             >
               Vyzkoušet online studio
             </a>
