@@ -1,7 +1,8 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
 import Studio from "@/components/Studio";
+import AboutTeaser from "@/components/AboutTeaser";
+import About from "@/components/About";
 import Pricing from "@/components/Pricing";
 import InstagramFeed from "@/components/InstagramFeed";
 import Footer from "@/components/Footer";
@@ -12,8 +13,9 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
-        <About />
         <Studio />
+        <AboutTeaser />
+        <About />
         <Pricing />
         <InstagramFeed />
       </main>
