@@ -33,15 +33,17 @@ export default function Hero() {
             Pohyb, dech a klid mysli.
           </motion.h1>
 
-          <motion.p
+          <motion.div
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.22, ease }}
-            className="mt-7 max-w-sm text-base leading-relaxed text-muted"
+            className="mt-7 max-w-sm space-y-1 text-base leading-relaxed text-muted"
           >
-            Přidej se do online studia, kde tě Anežka provede praxí jógy —
-            živě i kdykoliv na přehrávání. Pro každý den, pro každou úroveň.
-          </motion.p>
+            <p>Prostor, kde nemusíš podávat výkon.</p>
+            <p>Nemusíš být dokonalá.</p>
+            <p>Nemusíš nic dokazovat.</p>
+            <p>Stačí přijít taková, jaká právě jsi.</p>
+          </motion.div>
 
           <motion.div
             initial={{ opacity: 0, y: 24 }}
