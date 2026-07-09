@@ -14,13 +14,13 @@ export default function Hero() {
         muted
         loop
         playsInline
-        className="absolute inset-0 h-full w-full object-contain object-right"
+        className="absolute inset-0 h-full w-full object-cover object-center"
       >
         <source src="/hero.mp4" type="video/mp4" />
       </video>
 
       {/* Gradient overlay — zprava průhledné, vlevo krémové */}
-      <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/40 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-cream/90 from-30% via-cream/50 to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 flex min-h-screen items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
