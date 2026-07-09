@@ -81,13 +81,15 @@ export default function Studio() {
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
-                className={`grid grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16 ${
-                  !s.photoLeft ? "md:[&>*:first-child]:order-last" : ""
+                className={`grid grid-cols-1 items-center gap-10 md:gap-14 ${
+                  s.photoLeft
+                    ? "md:grid-cols-[3fr_2fr]"
+                    : "md:grid-cols-[2fr_3fr] md:[&>*:first-child]:order-last"
                 }`}
               >
                 {/* Foto */}
                 <div
-                  className={`relative h-[320px] w-full overflow-hidden sm:h-[460px] md:h-[580px] ${
+                  className={`relative h-[240px] w-full overflow-hidden sm:h-[320px] md:h-[420px] ${
                     s.photoLeft
                       ? "rounded-tl-[3.5rem] rounded-br-[1.5rem]"
                       : "rounded-tr-[3.5rem] rounded-bl-[1.5rem]"
@@ -98,7 +100,7 @@ export default function Studio() {
                     alt={s.alt}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    sizes="(max-width: 768px) 100vw, 60vw"
                   />
                 </div>
 
