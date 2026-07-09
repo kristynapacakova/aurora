@@ -15,7 +15,7 @@ export default function AboutTeaser() {
                 src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=900&q=85"
                 alt="Anežka — lektorka jógy"
                 fill
-                className="object-cover"
+                className="object-cover brightness-[0.96] saturate-[0.75]"
                 sizes="(max-width: 768px) 100vw, 60vw"
               />
             </div>
@@ -34,7 +34,7 @@ export default function AboutTeaser() {
               <br />
               a začít ho objevovat sama&nbsp;v&nbsp;sobě.
             </blockquote>
-            <p className="mt-6 max-w-xs text-sm leading-relaxed text-muted">
+            <p className="mt-6 max-w-xs text-xs leading-relaxed text-muted">
               Aurora vznikla z touhy vytvořit prostor, kde se ženy mohou na chvíli
               zastavit, nadechnout a znovu uslyšet samy sebe.
             </p>

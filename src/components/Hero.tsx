@@ -14,7 +14,7 @@ export default function Hero() {
         src="https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1600&q=85"
         alt="Aurora Yoga"
         fill
-        className="object-cover object-center"
+        className="object-cover object-center brightness-[0.96] saturate-[0.75]"
         priority
         sizes="100vw"
       />
@@ -38,16 +38,20 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-allura text-5xl leading-[1.15] text-accent sm:text-6xl lg:text-7xl"
+            className="font-serif text-[44px] leading-[1.1] text-ink sm:text-[56px] lg:text-[68px]"
           >
-            Rozsviť své vnitřní světlo.
+            Rozsviť své
+            <br />
+            <em className="font-allura not-italic text-accent text-[32px] sm:text-[43px] lg:text-[56px]">
+              vnitřní světlo.
+            </em>
           </motion.h1>
 
           <motion.p
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.22, ease }}
-            className="mt-7 max-w-xs text-base leading-relaxed text-muted"
+            className="mt-7 max-w-xs text-xs leading-relaxed text-muted"
           >
             Jemná jóga, dech a ženské kruhy,
             <br />

@@ -12,7 +12,7 @@ const SERVICES = [
     body: "Pravidelné hotelové lekce, skupinová i individuální jóga. Jemný prostor, kde se můžeš zastavit a vrátit se sama k sobě.",
     cta: "Zjistit více",
     href: "#kontakt",
-    photo: "https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=900&q=85",
+    photo: "https://images.unsplash.com/photo-1545389336-cf090694435e?w=900&q=80",
     alt: "Lekce jógy",
     photoLeft: true,
   },
@@ -25,7 +25,7 @@ const SERVICES = [
     cta: "Vstoupit do studia",
     href: USCREEN.signup,
     external: true,
-    photo: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=900&q=85",
+    photo: "https://images.unsplash.com/photo-1552693673-1bf958298935?w=900&q=80",
     alt: "Online studio",
     photoLeft: false,
   },
@@ -37,7 +37,7 @@ const SERVICES = [
     body: "Zastav se. Nadechni se. Buď. Víkendové pobyty v přírodě, kde si dovolíš zpomalit a načerpat novou energii.",
     cta: "Objevit retreaty",
     href: "#kontakt",
-    photo: "https://images.unsplash.com/photo-1470115636492-6d2b56f9146d?w=900&q=85",
+    photo: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80",
     alt: "Retreaty v přírodě",
     photoLeft: true,
   },
@@ -49,7 +49,7 @@ const SERVICES = [
     body: "Setkání, která pohladí duši. Jednodenní akce, ženské kruhy a workshopy plné inspirace, sdílení a klidu.",
     cta: "Aktuální akce",
     href: "#kontakt",
-    photo: "https://images.unsplash.com/photo-1573497620159-c5e6f5a3b9ad?w=900&q=85",
+    photo: "https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=900&q=80",
     alt: "Akce pro ženy",
     photoLeft: false,
   },
@@ -66,9 +66,12 @@ export default function Studio() {
             <span className="text-xs uppercase tracking-[0.3em] text-accent">Co tě čeká</span>
             <IconSparkle size={11} />
           </div>
-          <h2 className="font-allura text-4xl text-accent sm:text-5xl">
-            Vyber si cestu, která tě právě volá.
+          <h2 className="font-serif text-[32px] text-ink sm:text-[44px]">
+            Vyber si cestu,
           </h2>
+          <p className="font-allura text-[26px] text-accent sm:text-[32px]">
+            která tě právě volá.
+          </p>
           <div className="mt-4 flex justify-center">
             <IconWave width={160} height={22} className="text-accent/50" />
           </div>
@@ -89,7 +92,7 @@ export default function Studio() {
               >
                 {/* Foto */}
                 <div
-                  className={`relative h-[240px] w-full overflow-hidden sm:h-[320px] md:h-[420px] ${
+                  className={`relative h-[200px] w-full overflow-hidden sm:h-[260px] md:h-[340px] ${
                     s.photoLeft
                       ? "rounded-tl-[3.5rem] rounded-br-[1.5rem]"
                       : "rounded-tr-[3.5rem] rounded-bl-[1.5rem]"
@@ -99,7 +102,7 @@ export default function Studio() {
                     src={s.photo}
                     alt={s.alt}
                     fill
-                    className="object-cover"
+                    className="object-cover brightness-[0.96] saturate-[0.75]"
                     sizes="(max-width: 768px) 100vw, 60vw"
                   />
                 </div>
@@ -109,12 +112,12 @@ export default function Studio() {
                   {/* Ikona + nadpis na jednom řádku */}
                   <div className="mb-4 flex items-center gap-3">
                     {s.icon}
-                    <h3 className="font-serif text-2xl uppercase tracking-[0.12em] text-ink sm:text-3xl">
+                    <h3 className="font-serif text-[26px] uppercase tracking-[0.12em] text-ink sm:text-[32px]">
                       {s.title}
                     </h3>
                   </div>
 
-                  <p className="mb-8 max-w-xs text-sm leading-relaxed text-muted">
+                  <p className="mb-8 max-w-xs text-xs leading-relaxed text-muted">
                     {s.body}
                   </p>
 
