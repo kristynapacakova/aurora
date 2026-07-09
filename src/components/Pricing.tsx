@@ -33,7 +33,7 @@ const PLANS = [
 
 export default function Pricing() {
   return (
-    <section id="cenik" className="bg-sand py-14 sm:py-16">
+    <section id="cenik" className="bg-sand py-10 sm:py-12">
       <div className="mx-auto max-w-5xl px-6">
         <FadeUp>
           <div className="mb-8 text-center">
@@ -55,7 +55,7 @@ export default function Pricing() {
           {PLANS.map((plan, i) => (
             <FadeUp key={plan.name} delay={i * 0.12}>
               <div
-                className={`relative flex h-full flex-col rounded-3xl p-8 text-ink sm:p-10 ${
+                className={`relative flex h-full flex-col rounded-3xl p-6 text-ink sm:p-8 ${
                   plan.featured
                     ? "bg-gradient-aurora"
                     : "border border-line bg-cream"
@@ -72,13 +72,13 @@ export default function Pricing() {
                 </p>
 
                 <div className="mt-5 flex items-baseline gap-1">
-                  <span className="font-serif text-5xl">{plan.price} Kč</span>
+                  <span className="font-serif text-4xl">{plan.price} Kč</span>
                   <span className="text-sm text-ink/60">{plan.period}</span>
                 </div>
 
                 <p className="mt-3 text-sm text-ink/70">{plan.description}</p>
 
-                <ul className="mt-8 flex flex-col gap-3">
+                <ul className="mt-5 flex flex-col gap-2">
                   {plan.features.map((f) => (
                     <li key={f} className="flex items-start gap-3 text-sm">
                       <span className="mt-0.5 text-base leading-none text-ink">
@@ -93,7 +93,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-10 block rounded-full bg-gradient-aurora py-3.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
+                  className="mt-6 block rounded-full bg-gradient-aurora py-3 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
                 >
                   Aktivovat členství
                 </a>

@@ -8,7 +8,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-[82vh] w-full overflow-hidden">
+    <section id="hero" className="relative min-h-[65vh] w-full overflow-hidden">
       {/* Background photo — nahradit vlastní fotkou */}
       <Image
         src="https://images.unsplash.com/photo-1601925228267-5c9cfd80a8cc?w=1600&q=85"
@@ -23,7 +23,7 @@ export default function Hero() {
       <div className="absolute inset-0 bg-gradient-to-r from-cream/90 via-cream/60 to-cream/10" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[82vh] items-center px-8 pb-10 pt-20 md:px-16 lg:px-24">
+      <div className="relative z-10 flex min-h-[65vh] items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
         <div className="max-w-lg">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -38,7 +38,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-allura text-[44px] leading-[1.2] text-accent sm:text-[56px] lg:text-[68px]"
+            className="font-allura text-4xl leading-[1.2] text-ink sm:text-5xl"
           >
             Rozsviť své vnitřní světlo.
           </motion.h1>

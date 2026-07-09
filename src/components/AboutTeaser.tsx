@@ -4,9 +4,9 @@ import { IconLeafBranch, IconHeart } from "./BrandIcons";
 
 export default function AboutTeaser() {
   return (
-    <section className="bg-sand py-14 sm:py-16">
+    <section className="bg-sand py-9 sm:py-11">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[3fr_2fr] md:gap-20">
+        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[3fr_2fr] md:gap-12">
 
           {/* Fotka */}
           <FadeUp delay={0.05}>
@@ -27,7 +27,7 @@ export default function AboutTeaser() {
               <IconLeafBranch size={22} />
               <p className="text-xs uppercase tracking-[0.3em] text-accent">Moje cesta k józe</p>
             </div>
-            <blockquote className="font-serif text-2xl leading-[1.3] text-ink sm:text-3xl">
+            <blockquote className="font-serif text-xl leading-[1.3] text-ink sm:text-2xl">
               Jóga mě naučila zpomalit.
               <br />
               Přestat hledat štěstí venku
