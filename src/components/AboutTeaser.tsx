@@ -15,7 +15,7 @@ export default function AboutTeaser() {
                 src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=900&q=85"
                 alt="Anežka — lektorka jógy"
                 fill
-                className="object-cover brightness-[0.96] saturate-[0.75]"
+                className="object-cover brightness-[0.97] saturate-[0.55]"
                 sizes="(max-width: 768px) 100vw, 60vw"
               />
             </div>

@@ -99,7 +99,7 @@ export default function Studio() {
                     src={s.photo}
                     alt={s.alt}
                     fill
-                    className="object-cover brightness-[0.96] saturate-[0.75]"
+                    className="object-cover brightness-[0.97] saturate-[0.55]"
                     sizes="(max-width: 768px) 100vw, 60vw"
                   />
                 </div>
