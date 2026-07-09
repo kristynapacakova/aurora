@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { USCREEN } from "@/lib/config";
@@ -26,11 +25,7 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 md:px-10">
-        <a href="#hero" onClick={() => setOpen(false)}>
-          {/* celé logo na md+, jen značka A na mobilu */}
-          <Image src="/logo.svg" alt="Aurora Yoga" width={96} height={96} priority className="hidden md:block" />
-          <Image src="/logo-mark.svg" alt="Aurora Yoga" width={52} height={52} priority className="block md:hidden" />
-        </a>
+        <a href="#hero" onClick={() => setOpen(false)} className="w-12 md:w-24" />
 
         {/* Hamburger */}
         <button
