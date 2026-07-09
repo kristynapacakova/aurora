@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { USCREEN } from "@/lib/config";
 
@@ -9,15 +8,16 @@ const ease = [0.22, 1, 0.36, 1] as const;
 export default function Hero() {
   return (
     <section id="hero" className="relative min-h-[65vh] w-full overflow-hidden">
-      {/* Background photo — nahradit vlastní fotkou */}
-      <Image
-        src="https://images.unsplash.com/photo-1601925228267-5c9cfd80a8cc?w=1600&q=85"
-        alt="Aurora Yoga"
-        fill
-        className="object-cover object-center brightness-[0.97] saturate-[0.55]"
-        priority
-        sizes="100vw"
-      />
+      {/* Background video */}
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover"
+      >
+        <source src="/hero.mp4" type="video/mp4" />
+      </video>
 
       {/* Gradient overlay — zprava průhledné, vlevo krémové */}
       <div className="absolute inset-0 bg-gradient-to-r from-cream/90 via-cream/60 to-cream/10" />
