@@ -7,7 +7,7 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-[65vh] w-full overflow-hidden">
+    <section id="hero" className="relative min-h-[90vh] w-full overflow-hidden">
       {/* Background video */}
       <video
         autoPlay
@@ -20,10 +20,10 @@ export default function Hero() {
       </video>
 
       {/* Gradient overlay — zprava průhledné, vlevo krémové */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cream/90 via-cream/60 to-cream/10" />
+      <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/40 to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[65vh] items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
+      <div className="relative z-10 flex min-h-[90vh] items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
         <div className="max-w-lg">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
