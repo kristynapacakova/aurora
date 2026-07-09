@@ -6,7 +6,7 @@ export default function AboutTeaser() {
   return (
     <section className="bg-sand py-9 sm:py-11">
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[3fr_2fr] md:gap-12">
+        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[2fr_3fr] md:gap-12">
 
           {/* Fotka */}
           <FadeUp delay={0.05}>

@@ -83,8 +83,8 @@ export default function Studio() {
               <div
                 className={`grid grid-cols-1 items-center gap-6 md:gap-10 ${
                   s.photoLeft
-                    ? "md:grid-cols-[3fr_2fr]"
-                    : "md:grid-cols-[2fr_3fr] md:[&>*:first-child]:order-last"
+                    ? "md:grid-cols-[2fr_3fr]"
+                    : "md:grid-cols-[3fr_2fr] md:[&>*:first-child]:order-last"
                 }`}
               >
                 {/* Foto */}
