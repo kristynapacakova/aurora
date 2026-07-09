@@ -66,12 +66,9 @@ export default function Studio() {
             <span className="text-xs uppercase tracking-[0.3em] text-accent">Co tě čeká</span>
             <IconSparkle size={11} />
           </div>
-          <h2 className="font-serif text-[32px] text-ink sm:text-[44px]">
-            Vyber si cestu,
+          <h2 className="font-allura text-[32px] text-accent sm:text-[44px]">
+            Vyber si cestu, která tě právě volá.
           </h2>
-          <p className="font-allura text-[26px] text-accent sm:text-[32px]">
-            která tě právě volá.
-          </p>
           <div className="mt-4 flex justify-center">
             <IconWave width={160} height={22} className="text-accent/50" />
           </div>

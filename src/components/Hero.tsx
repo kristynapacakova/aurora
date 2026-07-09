@@ -11,7 +11,7 @@ export default function Hero() {
     <section id="hero" className="relative min-h-screen w-full overflow-hidden">
       {/* Background photo — nahradit vlastní fotkou */}
       <Image
-        src="https://images.unsplash.com/photo-1588286840104-8957b019727f?w=1600&q=85"
+        src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&q=85"
         alt="Aurora Yoga"
         fill
         className="object-cover object-center brightness-[0.96] saturate-[0.75]"
@@ -38,13 +38,9 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-serif text-[44px] leading-[1.1] text-ink sm:text-[56px] lg:text-[68px]"
+            className="font-allura text-[44px] leading-[1.2] text-accent sm:text-[56px] lg:text-[68px]"
           >
-            Rozsviť své
-            <br />
-            <em className="font-allura not-italic text-accent text-[32px] sm:text-[43px] lg:text-[56px]">
-              vnitřní světlo.
-            </em>
+            Rozsviť své vnitřní světlo.
           </motion.h1>
 
           <motion.p
