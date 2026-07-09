@@ -15,7 +15,7 @@ export default function AboutTeaser() {
                 src="/o-mne.png"
                 alt="Anežka — lektorka jógy"
                 fill
-                className="object-cover brightness-[0.97] saturate-[0.55]"
+                className="object-contain"
                 sizes="(max-width: 768px) 100vw, 60vw"
               />
             </div>
