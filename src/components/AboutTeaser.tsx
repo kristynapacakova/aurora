@@ -10,7 +10,7 @@ export default function AboutTeaser() {
 
           {/* Fotka */}
           <FadeUp delay={0.05}>
-            <div className="relative h-[360px] w-full overflow-hidden rounded-tr-[4rem] rounded-bl-[4rem] sm:h-[500px]">
+            <div className="relative h-[260px] w-full overflow-hidden rounded-tr-[4rem] rounded-bl-[4rem] sm:h-[320px] md:h-[420px]">
               <Image
                 src="/o-mne.png"
                 alt="Anežka — lektorka jógy"
