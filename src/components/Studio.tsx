@@ -99,7 +99,7 @@ export default function Studio() {
                     src={s.photo}
                     alt={s.alt}
                     fill
-                    className="object-contain"
+                    className="object-cover"
                     sizes="(max-width: 768px) 100vw, 60vw"
                   />
                 </div>
