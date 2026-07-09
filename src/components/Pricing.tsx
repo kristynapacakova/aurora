@@ -33,10 +33,10 @@ const PLANS = [
 
 export default function Pricing() {
   return (
-    <section id="cenik" className="bg-sand py-24 sm:py-32">
+    <section id="cenik" className="bg-sand py-14 sm:py-16">
       <div className="mx-auto max-w-5xl px-6">
         <FadeUp>
-          <div className="mb-16 text-center">
+          <div className="mb-8 text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
               <IconSparkle size={12} />
               <p className="text-xs uppercase tracking-[0.3em] text-accent">Ceník členství</p>

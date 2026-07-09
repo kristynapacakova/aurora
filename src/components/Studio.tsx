@@ -59,7 +59,7 @@ export default function Studio() {
   return (
     <>
       {/* ── Nadpis ── */}
-      <div className="bg-[#FCF4F1] pb-14 pt-24 text-center sm:pt-28">
+      <div className="bg-[#FCF4F1] pb-8 pt-14 text-center sm:pt-16">
         <FadeUp>
           <div className="mb-3 flex items-center justify-center gap-3">
             <IconSparkle size={11} />
@@ -77,7 +77,7 @@ export default function Studio() {
 
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} py-16 sm:py-20`}>
+        <section key={s.id} id={s.id} className={`${s.bg} py-10 sm:py-12`}>
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div

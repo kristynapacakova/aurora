@@ -4,7 +4,7 @@ import { IconLeafBranch, IconHeart } from "./BrandIcons";
 
 export default function AboutTeaser() {
   return (
-    <section className="bg-sand py-24 sm:py-32">
+    <section className="bg-sand py-14 sm:py-16">
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-[3fr_2fr] md:gap-20">
 

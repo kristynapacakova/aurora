@@ -13,7 +13,7 @@ const FALLBACK_PHOTOS = [
 
 export default function InstagramFeed() {
   return (
-    <section className="bg-cream py-16">
+    <section className="bg-cream py-10">
       <FadeUp>
         <p className="mb-8 text-center text-sm text-muted">
           Sleduj nás na Instagramu{" "}
