@@ -27,7 +27,9 @@ export default function Navbar() {
     <>
       <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 md:px-10">
         <a href="#hero" onClick={() => setOpen(false)}>
-          <Image src="/logo.svg" alt="Aurora Yoga" width={80} height={70} priority />
+          {/* celé logo na md+, jen značka A na mobilu */}
+          <Image src="/logo.svg" alt="Aurora Yoga" width={96} height={96} priority className="hidden md:block" />
+          <Image src="/logo-mark.svg" alt="Aurora Yoga" width={52} height={52} priority className="block md:hidden" />
         </a>
 
         {/* Hamburger */}
