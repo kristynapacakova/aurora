@@ -90,7 +90,7 @@ export default function Studio() {
               >
                 {/* Foto */}
                 <div
-                  className={`relative h-[280px] w-full overflow-hidden sm:h-[380px] md:h-[440px] ${
+                  className={`relative h-[320px] w-full overflow-hidden sm:h-[460px] md:h-[580px] ${
                     s.photoLeft
                       ? "rounded-tl-[3.5rem] rounded-br-[1.5rem]"
                       : "rounded-tr-[3.5rem] rounded-bl-[1.5rem]"
