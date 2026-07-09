@@ -11,7 +11,7 @@ export default function Hero() {
     <section id="hero" className="relative min-h-screen w-full overflow-hidden">
       {/* Background photo — nahradit vlastní fotkou */}
       <Image
-        src="https://images.unsplash.com/photo-1518611012118-696072aa579a?w=1600&q=85"
+        src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=1600&q=85"
         alt="Aurora Yoga"
         fill
         className="object-cover object-center brightness-[0.96] saturate-[0.75]"
