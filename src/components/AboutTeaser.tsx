@@ -12,7 +12,7 @@ export default function AboutTeaser() {
           <FadeUp delay={0.05}>
             <div className="relative h-[360px] w-full overflow-hidden rounded-tr-[4rem] rounded-bl-[4rem] sm:h-[460px]">
               <Image
-                src="https://images.unsplash.com/photo-1552196563-55cd4e45efb3?w=900&q=85"
+                src="/o-mne.png"
                 alt="Anežka — lektorka jógy"
                 fill
                 className="object-cover brightness-[0.97] saturate-[0.55]"
