@@ -120,8 +120,8 @@ export default function Pricing() {
 
       {/* Wave to InstagramFeed */}
       <div className="absolute inset-x-0 bottom-0 translate-y-[1px]">
-        <svg viewBox="0 0 1440 28" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-          <path d="M0,28 C360,14 1080,4 1440,28 L1440,28 L0,28 Z" fill="#FCF4F1" />
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <path d="M0,64 C360,35 1080,10 1440,64 L1440,64 L0,64 Z" fill="#FCF4F1" />
         </svg>
       </div>
     </section>

@@ -66,8 +66,8 @@ export default function InstagramFeed() {
 
       {/* Wave to Footer */}
       <div className="absolute inset-x-0 bottom-0 translate-y-[1px]">
-        <svg viewBox="0 0 1440 28" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-          <path d="M0,28 C360,4 1080,14 1440,28 L1440,28 L0,28 Z" fill="#FBE9DE" />
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <path d="M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z" fill="#FBE9DE" />
         </svg>
       </div>
     </section>
