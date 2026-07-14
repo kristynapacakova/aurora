@@ -7,76 +7,88 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen w-full overflow-hidden bg-cream">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 h-full w-full object-cover object-center"
-      >
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
-      <div className="absolute inset-0 bg-gradient-to-r from-cream/80 from-[15%] via-cream/35 via-[40%] to-transparent" />
+    <section
+      id="hero"
+      className="relative flex min-h-screen flex-col overflow-hidden bg-cream md:flex-row"
+    >
+      {/* ── Video — mobile: nahoře / desktop: vpravo ── */}
+      <div className="order-1 relative h-[60vw] min-h-[260px] overflow-hidden md:order-2 md:h-auto md:flex-1">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
 
-      {/* Content */}
-      <div className="relative z-10 flex min-h-screen items-center pl-8 pr-4 pb-8 pt-16 md:pl-28 md:pr-8 lg:pl-48 lg:pr-12">
-        <div className="max-w-lg">
-          <motion.p
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, ease }}
-            className="mb-5 text-xs uppercase tracking-[0.35em] text-accent"
-          >
-            Online jógové studio
-          </motion.p>
+        {/* Jemný teplý overlay přes video */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FBE9DE]/25 via-transparent to-transparent" />
 
-          <motion.h1
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-allura text-5xl leading-[1.15] text-ink sm:text-6xl lg:text-7xl"
-          >
-            Rozsviť své vnitřní světlo.
-          </motion.h1>
+        {/* Blend z videa do textu (levý okraj na desktopu) */}
+        <div className="absolute inset-y-0 left-0 hidden w-16 bg-gradient-to-r from-cream to-transparent md:block" />
 
-          <motion.p
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.22, ease }}
-            className="mt-7 max-w-sm text-sm leading-relaxed text-muted"
-          >
-            Drahá ženo, nemusíš čekat na chvíli, kdy bude všechno hotové.
-            <br />
-            Dopřej si prostor pro sebe už dnes.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.85, delay: 0.34, ease }}
-            className="mt-10 flex flex-wrap gap-4"
-          >
-            <a
-              href={USCREEN.signup}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
-            >
-              Vstoupit do online studia
-            </a>
-            <a
-              href="#lekce"
-              className="rounded-full border border-ink/50 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-ink hover:bg-ink/5"
-            >
-              Aktuální lekce
-            </a>
-          </motion.div>
-        </div>
+        {/* Blend z videa do textu (spodní okraj na mobilu) */}
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-cream to-transparent md:hidden" />
       </div>
 
-      {/* Bottom blend into next section */}
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-cream via-cream/60 to-transparent" />
+      {/* ── Text — mobile: dole / desktop: vlevo ── */}
+      <div className="order-2 flex flex-col justify-center bg-cream px-8 py-14 md:order-1 md:w-[48%] md:py-28 md:pl-16 md:pr-10 lg:pl-24 lg:pr-12">
+        <motion.p
+          initial={{ opacity: 0, y: 14 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease }}
+          className="mb-5 text-xs uppercase tracking-[0.35em] text-accent"
+        >
+          Online jógové studio
+        </motion.p>
+
+        <motion.h1
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, delay: 0.1, ease }}
+          className="font-allura text-5xl leading-[1.15] text-ink sm:text-6xl lg:text-7xl"
+        >
+          Rozsviť své vnitřní světlo.
+        </motion.h1>
+
+        <motion.p
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, delay: 0.22, ease }}
+          className="mt-6 max-w-sm text-sm leading-relaxed text-muted"
+        >
+          Drahá ženo, nemusíš čekat na chvíli, kdy bude všechno hotové.
+          <br />
+          Dopřej si prostor pro sebe už dnes.
+        </motion.p>
+
+        <motion.div
+          initial={{ opacity: 0, y: 22 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.85, delay: 0.34, ease }}
+          className="mt-10 flex flex-wrap gap-4"
+        >
+          <a
+            href={USCREEN.signup}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90"
+          >
+            Vstoupit do online studia
+          </a>
+          <a
+            href="#lekce"
+            className="rounded-full border border-ink px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:bg-ink/5"
+          >
+            Aktuální lekce
+          </a>
+        </motion.div>
+      </div>
+
+      {/* Bottom blend do další sekce */}
+      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream via-cream/50 to-transparent" />
 
       {/* Scroll hint */}
       <motion.div
