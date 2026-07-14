@@ -57,22 +57,15 @@ export default function Navbar() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.055 + 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                 >
-                  {item.disabled ? (
-                    <span className="font-serif text-[20px] tracking-[0.08em] text-cream/30 md:text-[26px]">
-                      {item.label}
-                      <span className="ml-2 text-sm font-sans tracking-normal">(do budoucna)</span>
-                    </span>
-                  ) : (
-                    <a
-                      href={item.href}
-                      target={item.external ? "_blank" : undefined}
-                      rel={item.external ? "noopener noreferrer" : undefined}
-                      onClick={() => setOpen(false)}
-                      className="font-serif text-[20px] tracking-[0.08em] text-cream transition-colors duration-200 hover:text-accent md:text-[26px]"
-                    >
-                      {item.label}
-                    </a>
-                  )}
+                  <a
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noopener noreferrer" : undefined}
+                    onClick={() => setOpen(false)}
+                    className="font-serif text-[20px] tracking-[0.08em] text-cream transition-colors duration-200 hover:text-accent md:text-[26px]"
+                  >
+                    {item.label}
+                  </a>
                 </motion.div>
               ))}
             </nav>
