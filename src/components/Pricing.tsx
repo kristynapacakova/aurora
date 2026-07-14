@@ -119,9 +119,9 @@ export default function Pricing() {
       </div>
 
       {/* Wave to InstagramFeed */}
-      <div className="absolute inset-x-0 z-10 h-24" style={{ bottom: '-48px' }}>
-        <svg viewBox="0 0 1440 96" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,0 L1440,0 L1440,56 C1100,92 900,92 720,48 C540,4 340,4 0,40 Z" fill="#FBE9DE" />
+      <div className="absolute inset-x-0 z-10 h-20" style={{ bottom: '-40px' }}>
+        <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+          <path d="M0,0 L1440,0 L1440,40 C1080,68 360,12 0,40 Z" fill="#FBE9DE" />
         </svg>
       </div>
     </section>
