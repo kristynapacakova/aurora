@@ -28,22 +28,18 @@ export default function AboutTeaser() {
               <p className="text-xs uppercase tracking-[0.3em] text-accent">Moje cesta k józe</p>
             </div>
             <blockquote className="font-serif text-xl leading-[1.3] text-ink sm:text-2xl">
-              Jóga mě naučila zpomalit.
-              <br />
-              Přestat hledat štěstí venku
-              <br />
-              a začít ho objevovat sama&nbsp;v&nbsp;sobě.
+              Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb.
             </blockquote>
-            <p className="mt-6 max-w-xs text-xs leading-relaxed text-muted">
-              Aurora vznikla z touhy vytvořit prostor, kde se ženy mohou na chvíli
-              zastavit, nadechnout a znovu uslyšet samy sebe.
+            <p className="mt-6 max-w-sm text-xs leading-relaxed text-muted">
+              Ve svých lekcích vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.
+              Můžeš jednoduše zpomalit, nadechnout se a být chvíli sama se sebou.
             </p>
             <div className="mt-8 flex items-center gap-4">
               <a
                 href="#o-mne"
                 className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-ink transition-colors duration-200 hover:text-accent"
               >
-                Více o mně →
+                Poznat můj příběh →
               </a>
               <IconHeart size={14} />
             </div>

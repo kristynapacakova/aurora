@@ -1,16 +1,20 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
-import { IconSparkle, IconSun, IconLeafBranch, IconHeart, IconWave } from "./BrandIcons";
+import { IconSparkle, IconSun, IconLeafBranch, IconWave } from "./BrandIcons";
 
 const SERVICES = [
   {
     id: "lekce",
-    bg: "bg-[#FCF4F1]",          /* krémová */
+    bg: "bg-[#FCF4F1]",
     icon: <IconSun size={30} />,
     title: "Lekce",
-    body: "Pravidelné hotelové lekce, skupinová i individuální jóga. Jemný prostor, kde se můžeš zastavit a vrátit se sama k sobě.",
-    cta: "Zjistit více",
+    subtitle: "Potkejme se na podložce",
+    body: [
+      "Společné lekce jsou místem, kde můžeš na chvíli odložit každodenní starosti, věnovat pozornost svému tělu a dopřát si čas jen pro sebe.",
+      "Čeká tě jemně plynoucí pohyb, vědomý dech, uvolnění i chvíle klidu. Nemusíš mít žádné předchozí zkušenosti — stačí přijít taková, jaká právě jsi.",
+    ],
+    cta: "Zobrazit rozvrh lekcí",
     href: "#kontakt",
     photo: "/lekce.jpeg",
     alt: "Lekce jógy",
@@ -18,11 +22,16 @@ const SERVICES = [
   },
   {
     id: "studio",
-    bg: "bg-[#FBE9DE]",          /* slonová kost */
+    bg: "bg-[#FBE9DE]",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
-    body: "Cvič kdykoliv, když to tvoje tělo potřebuje. Online lekce a programy, které tě provedou domovem stejně jemně jako živá praxe.",
-    cta: "Vstoupit do studia",
+    subtitle: "Jóga kdykoliv a kdekoliv",
+    body: [
+      "Dopřej si čas pro sebe doma, na cestách nebo kdekoliv, kde se právě nacházíš.",
+      "V online studiu najdeš lekce různých délek a zaměření — pro chvíle, kdy potřebuješ zpomalit, protáhnout tělo, načerpat energii nebo se jednoduše vrátit sama k sobě.",
+      "Cvič vlastním tempem, podle své nálady a přesně tehdy, kdy ti to vyhovuje.",
+    ],
+    cta: "Vstoupit do online studia",
     href: USCREEN.signup,
     external: true,
     photo: "/studio.png",
@@ -31,27 +40,19 @@ const SERVICES = [
   },
   {
     id: "retreaty",
-    bg: "bg-[#FDF6F0]",          /* světlá meruňková */
+    bg: "bg-[#FDF6F0]",
     icon: <IconLeafBranch size={30} />,
-    title: "Retreaty",
-    body: "Zastav se. Nadechni se. Buď. Víkendové pobyty v přírodě, kde si dovolíš zpomalit a načerpat novou energii.",
-    cta: "Objevit retreaty",
+    title: "Pobyty pro ženy",
+    subtitle: "Čas, který patří jen Tobě",
+    body: [
+      "Někdy potřebujeme na chvíli vystoupit z každodenního rytmu, změnit prostředí a dopřát si více prostoru pro sebe.",
+      "Ženské jógové pobyty propojují pohyb, dech, odpočinek, přírodu, společné chvíle i čas, kdy nemusíš vůbec nic. Jsou pozvánkou ke zpomalení, načerpání nové energie a návratu k tomu, co je pro tebe důležité.",
+    ],
+    cta: "Objevit pobyty",
     href: "#kontakt",
     photo: "/retreaty.png",
-    alt: "Retreaty v přírodě",
+    alt: "Pobyty pro ženy",
     photoLeft: true,
-  },
-  {
-    id: "akce",
-    bg: "bg-[#FAF0E8]",          /* teplá béžová */
-    icon: <IconHeart size={30} />,
-    title: "Akce pro ženy",
-    body: "Setkání, která pohladí duši. Jednodenní akce, ženské kruhy a workshopy plné inspirace, sdílení a klidu.",
-    cta: "Aktuální akce",
-    href: "#kontakt",
-    photo: "https://images.unsplash.com/photo-1603988363607-e1e4a66962c6?w=900&q=80",
-    alt: "Akce pro ženy",
-    photoLeft: false,
   },
 ];
 
@@ -106,17 +107,24 @@ export default function Studio() {
 
                 {/* Text */}
                 <div className="flex flex-col">
-                  {/* Ikona + nadpis na jednom řádku */}
-                  <div className="mb-4 flex items-center gap-3">
+                  <div className="mb-2 flex items-center gap-3">
                     {s.icon}
                     <h3 className="font-serif text-[20px] uppercase tracking-[0.12em] text-ink sm:text-[24px]">
                       {s.title}
                     </h3>
                   </div>
 
-                  <p className="mb-5 max-w-xs text-xs leading-relaxed text-muted">
-                    {s.body}
+                  <p className="mb-4 font-serif text-lg leading-snug text-ink sm:text-xl">
+                    {s.subtitle}
                   </p>
+
+                  <div className="mb-5 flex max-w-sm flex-col gap-3">
+                    {s.body.map((p, i) => (
+                      <p key={i} className="text-xs leading-relaxed text-muted">
+                        {p}
+                      </p>
+                    ))}
+                  </div>
 
                   <a
                     href={s.href}
