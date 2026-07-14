@@ -81,7 +81,7 @@ export default function Hero() {
       {/* Bottom wave border */}
       <div className="absolute bottom-0 inset-x-0">
         <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-          <path d="M0,40 C240,64 480,16 720,40 C960,64 1200,16 1440,40 L1440,64 L0,64 Z" fill="#FCF4F1" />
+          <path d="M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z" fill="#FCF4F1" />
         </svg>
       </div>
 

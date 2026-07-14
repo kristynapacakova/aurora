@@ -33,7 +33,7 @@ const PLANS = [
 
 export default function Pricing() {
   return (
-    <section id="cenik" className="bg-sand py-10 sm:py-12">
+    <section id="cenik" className="bg-sand relative overflow-hidden pt-10 pb-20 sm:pt-12 sm:pb-24">
       <div className="mx-auto max-w-5xl px-6">
         <FadeUp>
           <div className="mb-8 text-center">
@@ -116,6 +116,13 @@ export default function Pricing() {
             .
           </p>
         </FadeUp>
+      </div>
+
+      {/* Wave to InstagramFeed */}
+      <div className="absolute bottom-0 inset-x-0">
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <path d="M0,64 C360,35 1080,10 1440,64 L1440,64 L0,64 Z" fill="#FCF4F1" />
+        </svg>
       </div>
     </section>
   );

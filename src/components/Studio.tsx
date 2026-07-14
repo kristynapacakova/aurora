@@ -7,6 +7,7 @@ const SERVICES = [
   {
     id: "lekce",
     bg: "bg-[#FCF4F1]",
+    nextBg: "#FBE9DE",
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -19,10 +20,12 @@ const SERVICES = [
     photo: "/lekce.jpeg",
     alt: "Lekce jógy",
     photoLeft: true,
+    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
   },
   {
     id: "studio",
     bg: "bg-[#FBE9DE]",
+    nextBg: "#FDF6F0",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -37,10 +40,12 @@ const SERVICES = [
     photo: "/studio.png",
     alt: "Online studio",
     photoLeft: false,
+    wave: "M0,64 C360,35 1080,10 1440,64 L1440,64 L0,64 Z",
   },
   {
     id: "retreaty",
     bg: "bg-[#FDF6F0]",
+    nextBg: "#FBE9DE",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -53,6 +58,7 @@ const SERVICES = [
     photo: "/retreaty.png",
     alt: "Pobyty pro ženy",
     photoLeft: true,
+    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
   },
 ];
 
@@ -78,7 +84,7 @@ export default function Studio() {
 
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} py-7 sm:py-9`}>
+        <section key={s.id} id={s.id} className={`${s.bg} relative overflow-hidden pt-7 pb-20 sm:pt-9 sm:pb-24`}>
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
@@ -107,16 +113,16 @@ export default function Studio() {
 
                 {/* Text */}
                 <div className="flex flex-col">
-                  <div className="mb-2 flex items-center gap-3">
+                  <div className="mb-3 flex items-center gap-3">
                     {s.icon}
-                    <h3 className="font-serif text-[20px] uppercase tracking-[0.12em] text-ink sm:text-[24px]">
+                    <span className="text-xs uppercase tracking-[0.3em] text-accent">
                       {s.title}
-                    </h3>
+                    </span>
                   </div>
 
-                  <p className="mb-4 font-serif text-lg leading-snug text-ink sm:text-xl">
+                  <h3 className="mb-4 font-serif text-[20px] uppercase tracking-[0.12em] text-ink sm:text-[24px]">
                     {s.subtitle}
-                  </p>
+                  </h3>
 
                   <div className="mb-5 flex max-w-sm flex-col gap-3">
                     {s.body.map((p, i) => (
@@ -137,6 +143,13 @@ export default function Studio() {
                 </div>
               </div>
             </FadeUp>
+          </div>
+
+          {/* Wave to next section */}
+          <div className="absolute bottom-0 inset-x-0">
+            <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+              <path d={s.wave} fill={s.nextBg} />
+            </svg>
           </div>
         </section>
       ))}
