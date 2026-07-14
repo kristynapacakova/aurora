@@ -13,7 +13,7 @@ const FALLBACK_PHOTOS = [
 
 export default function InstagramFeed() {
   return (
-    <section className="bg-cream relative pt-14 pb-14">
+    <section className="bg-cream relative pt-28 pb-24 sm:pt-36 sm:pb-32">
       {/* Wave overlapping previous section */}
       <div className="absolute inset-x-0 z-10 h-32" style={{ top: '-64px' }}>
         <svg viewBox="0 0 1440 128" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
