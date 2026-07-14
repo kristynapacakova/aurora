@@ -79,9 +79,9 @@ export default function Hero() {
       </div>
 
       {/* Wave bottom edge */}
-      <div className="absolute inset-x-0 z-10 h-16" style={{ bottom: '-32px' }}>
-        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,0 L1440,0 L1440,32 C1080,56 360,8 0,32 Z" fill="#FCF4F1" />
+      <div className="absolute inset-x-0 z-10 h-24" style={{ bottom: '-48px' }}>
+        <svg viewBox="0 0 1440 96" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+          <path d="M0,0 L1440,0 L1440,48 C1080,88 360,8 0,48 Z" fill="#FBE9DE" />
         </svg>
       </div>
 
