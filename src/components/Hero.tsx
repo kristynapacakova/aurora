@@ -7,20 +7,20 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen w-full overflow-hidden bg-cream">
-      {/* Background video */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 h-full w-full object-cover object-center"
-      >
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
-
-      {/* Gradient overlay — zprava průhledné, vlevo krémové */}
-      <div className="absolute inset-0 bg-gradient-to-r from-cream/90 from-30% via-cream/50 to-transparent" />
+    <section id="hero" className="relative min-h-screen w-full bg-cream">
+      {/* Video + overlay clipped separately so wave can escape */}
+      <div className="absolute inset-0 overflow-hidden">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover object-center"
+        >
+          <source src="/hero.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-r from-cream/90 from-30% via-cream/50 to-transparent" />
+      </div>
 
       {/* Content */}
       <div className="relative z-10 flex min-h-screen items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
@@ -78,10 +78,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Bottom wave line */}
-      <div className="absolute inset-x-0 bottom-4">
-        <svg viewBox="0 0 1440 30" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-          <path d="M0,18 C480,6 960,26 1440,12" fill="none" stroke="#F0C4B0" strokeWidth="1.5" strokeLinecap="round"/>
+      {/* Wave bottom edge */}
+      <div className="absolute inset-x-0 z-10 h-16" style={{ bottom: '-32px' }}>
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+          <path d="M0,0 L1440,0 L1440,32 C1080,56 360,8 0,32 Z" fill="#FCF4F1" />
         </svg>
       </div>
 

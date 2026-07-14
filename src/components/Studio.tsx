@@ -7,7 +7,8 @@ const SERVICES = [
   {
     id: "lekce",
     bg: "bg-[#FCF4F1]",
-    nextBg: "#FBE9DE",
+    fill: "#FCF4F1",
+    wavePath: "M0,0 L1440,0 L1440,32 C1080,56 360,8 0,32 Z",
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -20,12 +21,12 @@ const SERVICES = [
     photo: "/lekce.jpeg",
     alt: "Lekce jógy",
     photoLeft: true,
-    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
   },
   {
     id: "studio",
     bg: "bg-[#FBE9DE]",
-    nextBg: "#FDF6F0",
+    fill: "#FBE9DE",
+    wavePath: "M0,0 L1440,0 L1440,32 C360,56 1080,8 1440,32 Z",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -40,12 +41,12 @@ const SERVICES = [
     photo: "/studio.png",
     alt: "Online studio",
     photoLeft: false,
-    wave: "M0,64 C360,35 1080,10 1440,64 L1440,64 L0,64 Z",
   },
   {
     id: "retreaty",
     bg: "bg-[#FDF6F0]",
-    nextBg: "#FBE9DE",
+    fill: "#FDF6F0",
+    wavePath: "M0,0 L1440,0 L1440,32 C1080,56 360,8 0,32 Z",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -58,7 +59,6 @@ const SERVICES = [
     photo: "/retreaty.png",
     alt: "Pobyty pro ženy",
     photoLeft: true,
-    wave: "M0,28 C360,4 1080,14 1440,28 L1440,28 L0,28 Z",
   },
 ];
 
@@ -146,9 +146,9 @@ export default function Studio() {
           </div>
 
           {/* Wave divider */}
-          <div className="absolute inset-x-0 bottom-2">
-            <svg viewBox="0 0 1440 30" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-              <path d="M0,18 C480,6 960,26 1440,12" fill="none" stroke="#F0C4B0" strokeWidth="1.5" strokeLinecap="round"/>
+          <div className="absolute inset-x-0 z-10 h-16" style={{ bottom: '-32px' }}>
+            <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+              <path d={s.wavePath} fill={s.fill} />
             </svg>
           </div>
         </section>
