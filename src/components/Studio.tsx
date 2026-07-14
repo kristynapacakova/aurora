@@ -120,7 +120,7 @@ export default function Studio() {
                     </span>
                   </div>
 
-                  <h3 className="mb-4 font-serif text-[20px] uppercase tracking-[0.12em] text-ink sm:text-[24px]">
+                  <h3 className="mb-4 font-allura text-3xl text-ink sm:text-4xl">
                     {s.subtitle}
                   </h3>
 
