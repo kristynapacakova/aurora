@@ -5,13 +5,12 @@ import { motion, AnimatePresence } from "framer-motion";
 import { USCREEN } from "@/lib/config";
 
 const MENU_ITEMS = [
-  { label: "O mně",        href: "#o-mne" },
-  { label: "Lekce",        href: "#lekce" },
-  { label: "Online studio",href: USCREEN.signup, external: true },
-  { label: "Retreaty",     href: "#retreaty" },
-  { label: "Akce pro ženy",href: "#akce" },
-  { label: "E-shop",       href: "#",    disabled: true },
-  { label: "Kontakt",      href: "#kontakt" },
+  { label: "Domů",           href: "#hero" },
+  { label: "O mně",          href: "#o-mne" },
+  { label: "Lekce",          href: "#lekce" },
+  { label: "Online studio",  href: USCREEN.signup, external: true },
+  { label: "Pobyty pro ženy",href: "#retreaty" },
+  { label: "Kontakt",        href: "#kontakt" },
 ];
 
 export default function Navbar() {
