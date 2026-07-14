@@ -7,20 +7,17 @@ const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative min-h-screen w-full bg-cream">
-      {/* Video + overlay clipped separately so wave can escape */}
-      <div className="absolute inset-0 overflow-hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover object-center"
-        >
-          <source src="/hero.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-cream/90 from-30% via-cream/50 to-transparent" />
-      </div>
+    <section id="hero" className="relative min-h-screen w-full overflow-hidden bg-cream">
+      <video
+        autoPlay
+        muted
+        loop
+        playsInline
+        className="absolute inset-0 h-full w-full object-cover object-center"
+      >
+        <source src="/hero.mp4" type="video/mp4" />
+      </video>
+      <div className="absolute inset-0 bg-gradient-to-r from-cream/90 from-30% via-cream/50 to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 flex min-h-screen items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
@@ -78,10 +75,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Wave bottom edge */}
-      <div className="absolute inset-x-0 z-10 h-20" style={{ bottom: '-40px' }}>
-        <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,0 L1440,0 L1440,40 C1080,68 360,12 0,40 Z" fill="#FBE9DE" />
+      {/* Bottom wave border */}
+      <div className="absolute inset-x-0 bottom-0">
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <path d="M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z" fill="#FCF4F1" />
         </svg>
       </div>
 

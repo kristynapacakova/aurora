@@ -7,8 +7,8 @@ const SERVICES = [
   {
     id: "lekce",
     bg: "bg-[#FCF4F1]",
-    fill: "#FCF4F1",
-    wavePath: "M0,0 L1440,0 L1440,40 C1080,68 360,12 0,40 Z",
+    nextBg: "#FBE9DE",
+    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -25,8 +25,8 @@ const SERVICES = [
   {
     id: "studio",
     bg: "bg-[#FBE9DE]",
-    fill: "#FBE9DE",
-    wavePath: "M0,0 L1440,0 L1440,40 C1080,68 360,12 0,40 Z",
+    nextBg: "#FDF6F0",
+    wave: "M0,64 C360,35 1080,10 1440,64 L1440,64 L0,64 Z",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -45,8 +45,8 @@ const SERVICES = [
   {
     id: "retreaty",
     bg: "bg-[#FDF6F0]",
-    fill: "#FDF6F0",
-    wavePath: "M0,0 L1440,0 L1440,40 C1080,68 360,12 0,40 Z",
+    nextBg: "#FBE9DE",
+    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -66,7 +66,7 @@ export default function Studio() {
   return (
     <>
       {/* ── Nadpis ── */}
-      <div className="relative bg-[#FBE9DE] pb-16 pt-20 text-center sm:pt-24">
+      <div className="bg-[#FCF4F1] pb-6 pt-10 text-center sm:pt-12">
         <FadeUp>
           <div className="mb-3 flex items-center justify-center gap-3">
             <IconSparkle size={11} />
@@ -80,17 +80,11 @@ export default function Studio() {
             <IconWave width={160} height={22} className="text-accent/50" />
           </div>
         </FadeUp>
-        {/* Wave into Lekce */}
-        <div className="absolute inset-x-0 z-10 h-20" style={{ bottom: '-40px' }}>
-          <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-            <path d="M0,0 L1440,0 L1440,40 C1080,68 360,12 0,40 Z" fill="#FBE9DE" />
-          </svg>
-        </div>
       </div>
 
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} relative pt-14 pb-14 sm:pt-20 sm:pb-20`}>
+        <section key={s.id} id={s.id} className={`${s.bg} relative overflow-hidden pt-14 pb-14 sm:pt-20 sm:pb-20`}>
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
@@ -152,9 +146,9 @@ export default function Studio() {
           </div>
 
           {/* Wave divider */}
-          <div className="absolute inset-x-0 z-10 h-20" style={{ bottom: '-40px' }}>
-            <svg viewBox="0 0 1440 80" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-              <path d={s.wavePath} fill={s.fill} />
+          <div className="absolute inset-x-0 bottom-0 translate-y-[1px]">
+            <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+              <path d={s.wave} fill={s.nextBg} />
             </svg>
           </div>
         </section>
