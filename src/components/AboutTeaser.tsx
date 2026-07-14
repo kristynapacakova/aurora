@@ -13,22 +13,25 @@ export default function AboutTeaser() {
         </svg>
       </div>
       <div className="mx-auto max-w-7xl px-6">
-        <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[2fr_3fr] md:gap-12">
+        <div className="flex flex-col items-center gap-8 md:flex-row-reverse md:gap-12">
 
-          {/* Fotka */}
-          <FadeUp delay={0.05}>
-            <div className="relative h-[180px] w-full overflow-hidden rounded-tr-[2rem] rounded-bl-[2rem] sm:h-[220px] md:h-[280px]">
-              <Image
-                src="/o-mne.png"
-                alt="Anežka — lektorka jógy"
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 60vw"
-              />
-            </div>
-          </FadeUp>
+          {/* Fotka — vpravo */}
+          <div className="w-full md:w-2/5 md:shrink-0">
+            <FadeUp delay={0.05}>
+              <div className="relative h-[180px] w-full overflow-hidden rounded-tr-[2rem] rounded-bl-[0.75rem] sm:h-[220px] md:h-[280px]">
+                <Image
+                  src="/o-mne.png"
+                  alt="Anežka — lektorka jógy"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 40vw"
+                />
+              </div>
+            </FadeUp>
+          </div>
 
-          {/* Text */}
+          {/* Text — vlevo */}
+          <div className="flex-1">
           <FadeUp delay={0.15}>
             <div className="mb-6 flex items-center gap-3">
               <IconLeafBranch size={22} />
@@ -51,6 +54,7 @@ export default function AboutTeaser() {
               <IconHeart size={14} />
             </div>
           </FadeUp>
+          </div>
         </div>
       </div>
     </section>
