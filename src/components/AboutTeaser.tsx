@@ -6,9 +6,9 @@ export default function AboutTeaser() {
   return (
     <section className="bg-sand relative py-16 sm:py-24">
       {/* Wave overlapping previous section */}
-      <div className="absolute inset-x-0 z-10 h-16" style={{ top: '-32px' }}>
-        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,40 C400,8 1000,58 1440,22 L1440,64 L0,64 Z" fill="#FBE9DE" />
+      <div className="absolute inset-x-0 z-10 h-24" style={{ top: '-48px' }}>
+        <svg viewBox="0 0 1440 96" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+          <path d="M0,56 C400,2 1000,94 1440,40 L1440,96 L0,96 Z" fill="#FBE9DE" />
         </svg>
       </div>
       <div className="mx-auto max-w-7xl px-6">
