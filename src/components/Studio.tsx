@@ -84,7 +84,7 @@ export default function Studio() {
 
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} relative overflow-hidden pt-7 pb-10 sm:pt-9 sm:pb-12`}>
+        <section key={s.id} id={s.id} className={`${s.bg} relative pt-7 pb-7 sm:pt-9 sm:pb-9`}>
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
@@ -145,10 +145,10 @@ export default function Studio() {
             </FadeUp>
           </div>
 
-          {/* Wave to next section */}
-          <div className="absolute inset-x-0 bottom-0 translate-y-[1px]">
-            <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-              <path d={s.wave} fill={s.nextBg} />
+          {/* Wave divider */}
+          <div className="absolute inset-x-0 bottom-2">
+            <svg viewBox="0 0 1440 30" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+              <path d="M0,18 C480,6 960,26 1440,12" fill="none" stroke="#F0C4B0" strokeWidth="1.5" strokeLinecap="round"/>
             </svg>
           </div>
         </section>

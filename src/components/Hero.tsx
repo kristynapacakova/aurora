@@ -78,10 +78,10 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Bottom wave border */}
-      <div className="absolute bottom-0 inset-x-0">
-        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-          <path d="M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z" fill="#FCF4F1" />
+      {/* Bottom wave line */}
+      <div className="absolute inset-x-0 bottom-4">
+        <svg viewBox="0 0 1440 30" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <path d="M0,18 C480,6 960,26 1440,12" fill="none" stroke="#F0C4B0" strokeWidth="1.5" strokeLinecap="round"/>
         </svg>
       </div>
 
