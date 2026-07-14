@@ -8,7 +8,7 @@ export default function AboutTeaser() {
       {/* Wave overlapping previous section */}
       <div className="absolute inset-x-0 z-10 h-16" style={{ top: '-32px' }}>
         <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,32 C80,42 160,42 240,32 C320,22 400,22 480,32 C560,42 640,42 720,32 C800,22 880,22 960,32 C1040,42 1120,42 1200,32 C1280,22 1360,22 1440,32 L1440,64 L0,64 Z" fill="#FBE9DE" />
+          <path d="M0,40 C400,8 1000,58 1440,22 L1440,64 L0,64 Z" fill="#FBE9DE" />
         </svg>
       </div>
       <div className="mx-auto max-w-7xl px-6">
