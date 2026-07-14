@@ -12,7 +12,7 @@ export default function Hero() {
       className="relative flex min-h-screen flex-col overflow-hidden bg-cream md:flex-row"
     >
       {/* ── Video — mobile: nahoře / desktop: vpravo ── */}
-      <div className="order-1 relative h-[60vw] min-h-[260px] overflow-hidden md:order-2 md:h-auto md:flex-1">
+      <div className="order-1 relative h-[65vw] min-h-[280px] overflow-hidden md:order-2 md:h-auto md:flex-1">
         <video
           autoPlay
           muted
@@ -23,18 +23,15 @@ export default function Hero() {
           <source src="/hero.mp4" type="video/mp4" />
         </video>
 
-        {/* Jemný teplý overlay přes video */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#FBE9DE]/25 via-transparent to-transparent" />
-
-        {/* Blend z videa do textu (levý okraj na desktopu) */}
-        <div className="absolute inset-y-0 left-0 hidden w-16 bg-gradient-to-r from-cream to-transparent md:block" />
+        {/* Jemný celoplošný teplý overlay – sjednocuje video s paletou, bez ostrého přechodu */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#FBE9DE]/18 via-transparent to-[#FDF6F0]/12" />
 
         {/* Blend z videa do textu (spodní okraj na mobilu) */}
-        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-cream to-transparent md:hidden" />
+        <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-cream to-transparent md:hidden" />
       </div>
 
       {/* ── Text — mobile: dole / desktop: vlevo ── */}
-      <div className="order-2 flex flex-col justify-center bg-cream px-8 py-14 md:order-1 md:w-[48%] md:py-28 md:pl-16 md:pr-10 lg:pl-24 lg:pr-12">
+      <div className="order-2 flex flex-col justify-center bg-cream px-8 py-16 md:order-1 md:w-[46%] md:py-32 md:pl-16 md:pr-12 lg:pl-24 lg:pr-16 xl:pl-32">
         <motion.p
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
@@ -48,7 +45,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, delay: 0.1, ease }}
-          className="font-allura text-5xl leading-[1.15] text-ink sm:text-6xl lg:text-7xl"
+          className="font-allura text-6xl leading-[1.1] text-ink sm:text-7xl lg:text-8xl"
         >
           Rozsviť své vnitřní světlo.
         </motion.h1>
@@ -57,7 +54,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, delay: 0.22, ease }}
-          className="mt-6 max-w-sm text-sm leading-relaxed text-muted"
+          className="mt-6 max-w-sm text-base leading-relaxed text-muted"
         >
           Drahá ženo, nemusíš čekat na chvíli, kdy bude všechno hotové.
           <br />
