@@ -76,7 +76,7 @@ export default function Hero() {
       </div>
 
       {/* Bottom blend into next section */}
-      <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-cream via-cream/70 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-cream via-cream/60 to-transparent" />
 
       {/* Scroll hint */}
       <motion.div
