@@ -20,7 +20,7 @@ const SERVICES = [
     photo: "/lekce.jpeg",
     alt: "Lekce jógy",
     photoLeft: true,
-    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
+    wave: "M0,28 C360,4 1080,14 1440,28 L1440,28 L0,28 Z",
   },
   {
     id: "studio",
@@ -40,7 +40,7 @@ const SERVICES = [
     photo: "/studio.png",
     alt: "Online studio",
     photoLeft: false,
-    wave: "M0,64 C360,35 1080,10 1440,64 L1440,64 L0,64 Z",
+    wave: "M0,28 C360,14 1080,4 1440,28 L1440,28 L0,28 Z",
   },
   {
     id: "retreaty",
@@ -58,7 +58,7 @@ const SERVICES = [
     photo: "/retreaty.png",
     alt: "Pobyty pro ženy",
     photoLeft: true,
-    wave: "M0,64 C360,10 1080,35 1440,64 L1440,64 L0,64 Z",
+    wave: "M0,28 C360,4 1080,14 1440,28 L1440,28 L0,28 Z",
   },
 ];
 
@@ -84,7 +84,7 @@ export default function Studio() {
 
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} relative overflow-hidden pt-7 pb-20 sm:pt-9 sm:pb-24`}>
+        <section key={s.id} id={s.id} className={`${s.bg} relative overflow-hidden pt-7 pb-10 sm:pt-9 sm:pb-12`}>
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
@@ -146,8 +146,8 @@ export default function Studio() {
           </div>
 
           {/* Wave to next section */}
-          <div className="absolute bottom-0 inset-x-0">
-            <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <div className="absolute inset-x-0 bottom-0 translate-y-[1px]">
+            <svg viewBox="0 0 1440 28" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
               <path d={s.wave} fill={s.nextBg} />
             </svg>
           </div>
