@@ -8,7 +8,7 @@ const SERVICES = [
     id: "lekce",
     bg: "bg-[#FCF4F1]",
     fill: "#FCF4F1",
-    wavePath: "M0,0 L1440,0 L1440,48 C360,88 1080,8 1440,48 Z",
+    wavePath: "M0,0 L1440,0 L1440,48 Q720,96 0,48 Z",
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -26,7 +26,7 @@ const SERVICES = [
     id: "studio",
     bg: "bg-[#FBE9DE]",
     fill: "#FBE9DE",
-    wavePath: "M0,0 L1440,0 L1440,48 C1080,88 360,8 0,48 Z",
+    wavePath: "M0,0 L1440,0 L1440,48 Q720,96 0,48 Z",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -46,7 +46,7 @@ const SERVICES = [
     id: "retreaty",
     bg: "bg-[#FDF6F0]",
     fill: "#FDF6F0",
-    wavePath: "M0,0 L1440,0 L1440,48 C360,88 1080,8 1440,48 Z",
+    wavePath: "M0,0 L1440,0 L1440,48 Q720,96 0,48 Z",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -83,7 +83,7 @@ export default function Studio() {
         {/* Wave into Lekce */}
         <div className="absolute inset-x-0 z-10 h-24" style={{ bottom: '-48px' }}>
           <svg viewBox="0 0 1440 96" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-            <path d="M0,0 L1440,0 L1440,48 C1080,88 360,8 0,48 Z" fill="#FBE9DE" />
+            <path d="M0,0 L1440,0 L1440,48 Q720,96 0,48 Z" fill="#FBE9DE" />
           </svg>
         </div>
       </div>
