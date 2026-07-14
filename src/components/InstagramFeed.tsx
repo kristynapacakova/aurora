@@ -17,6 +17,7 @@ export default function InstagramFeed() {
       {/* Wave overlapping previous section */}
       <div className="absolute inset-x-0 z-10 h-32" style={{ top: '-64px' }}>
         <svg viewBox="0 0 1440 128" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+          <path d="M0,64 C480,124 960,4 1440,64 L1440,0 L0,0 Z" fill="#FBE9DE" />
           <path d="M0,64 C480,124 960,4 1440,64 L1440,128 L0,128 Z" fill="#FCF4F1" />
         </svg>
       </div>
