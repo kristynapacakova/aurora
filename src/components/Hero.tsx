@@ -78,8 +78,12 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Bottom fade into next section */}
-      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-[#FCF4F1]" />
+      {/* Bottom wave border */}
+      <div className="absolute bottom-0 inset-x-0">
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+          <path d="M0,40 C240,64 480,16 720,40 C960,64 1200,16 1440,40 L1440,64 L0,64 Z" fill="#FCF4F1" />
+        </svg>
+      </div>
 
       {/* Scroll hint */}
       <motion.div
