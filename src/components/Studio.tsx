@@ -91,15 +91,13 @@ export default function Studio() {
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
-                className={`grid grid-cols-1 items-center gap-6 md:gap-10 ${
-                  s.photoLeft
-                    ? "md:grid-cols-[2fr_3fr]"
-                    : "md:grid-cols-[3fr_2fr] md:[&>*:first-child]:order-last"
+                className={`flex flex-col items-center gap-6 md:gap-10 ${
+                  s.photoLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
                 {/* Foto */}
                 <div
-                  className={`relative h-[180px] w-full overflow-hidden sm:h-[220px] md:h-[280px] ${
+                  className={`relative h-[180px] w-full shrink-0 overflow-hidden sm:h-[220px] md:h-[280px] md:w-2/5 ${
                     s.photoLeft
                       ? "rounded-tl-[2rem] rounded-br-[0.75rem]"
                       : "rounded-tr-[2rem] rounded-bl-[0.75rem]"
@@ -110,12 +108,12 @@ export default function Studio() {
                     alt={s.alt}
                     fill
                     className="object-cover"
-                    sizes="(max-width: 768px) 100vw, 60vw"
+                    sizes="(max-width: 768px) 100vw, 40vw"
                   />
                 </div>
 
                 {/* Text */}
-                <div className="flex flex-col">
+                <div className="flex flex-1 flex-col">
                   <div className="mb-3 flex items-center gap-3">
                     {s.icon}
                     <span className="text-xs uppercase tracking-[0.3em] text-accent">
