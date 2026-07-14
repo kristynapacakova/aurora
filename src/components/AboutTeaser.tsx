@@ -4,7 +4,13 @@ import { IconLeafBranch, IconHeart } from "./BrandIcons";
 
 export default function AboutTeaser() {
   return (
-    <section className="bg-sand py-16 sm:py-24">
+    <section className="bg-sand relative py-16 sm:py-24">
+      {/* Wave overlapping previous section */}
+      <div className="absolute inset-x-0 z-10 h-16" style={{ top: '-32px' }}>
+        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
+          <path d="M0,32 C360,56 1080,8 1440,32 L1440,64 L0,64 Z" fill="#FBE9DE" />
+        </svg>
+      </div>
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[2fr_3fr] md:gap-12">
 

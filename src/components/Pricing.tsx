@@ -118,12 +118,6 @@ export default function Pricing() {
         </FadeUp>
       </div>
 
-      {/* Wave to InstagramFeed */}
-      <div className="absolute inset-x-0 z-10 h-16" style={{ bottom: '-32px' }}>
-        <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,0 L1440,0 L1440,32 C1080,8 360,56 0,32 Z" fill="#FBE9DE" />
-        </svg>
-      </div>
     </section>
   );
 }

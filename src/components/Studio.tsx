@@ -8,7 +8,7 @@ const SERVICES = [
     id: "lekce",
     bg: "bg-[#FCF4F1]",
     fill: "#FCF4F1",
-    wave: "M0,0 L1440,0 L1440,32 C1080,56 360,8 0,32 Z",
+    wave: "M0,32 C360,8 1080,56 1440,32 L1440,64 L0,64 Z",
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -26,7 +26,7 @@ const SERVICES = [
     id: "studio",
     bg: "bg-[#FBE9DE]",
     fill: "#FBE9DE",
-    wave: "M0,0 L1440,0 L1440,32 C1080,8 360,56 0,32 Z",
+    wave: "M0,32 C360,56 1080,8 1440,32 L1440,64 L0,64 Z",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -46,7 +46,7 @@ const SERVICES = [
     id: "retreaty",
     bg: "bg-[#FDF6F0]",
     fill: "#FDF6F0",
-    wave: "M0,0 L1440,0 L1440,32 C1080,56 360,8 0,32 Z",
+    wave: "M0,32 C360,8 1080,56 1440,32 L1440,64 L0,64 Z",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -146,7 +146,7 @@ export default function Studio() {
           </div>
 
           {/* Wave divider */}
-          <div className="absolute inset-x-0 z-10 h-16" style={{ bottom: '-32px' }}>
+          <div className="absolute inset-x-0 z-10 h-16" style={{ top: '-32px' }}>
             <svg viewBox="0 0 1440 64" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
               <path d={s.wave} fill={s.fill} />
             </svg>
