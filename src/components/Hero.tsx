@@ -78,6 +78,9 @@ export default function Hero() {
         </div>
       </div>
 
+      {/* Bottom fade into next section */}
+      <div className="absolute bottom-0 inset-x-0 h-32 bg-gradient-to-b from-transparent to-[#FCF4F1]" />
+
       {/* Scroll hint */}
       <motion.div
         initial={{ opacity: 0 }}
