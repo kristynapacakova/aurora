@@ -17,10 +17,10 @@ export default function Hero() {
       >
         <source src="/hero.mp4" type="video/mp4" />
       </video>
-      <div className="absolute inset-0 bg-gradient-to-r from-cream/90 from-30% via-cream/50 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-r from-cream/80 from-[15%] via-cream/35 via-[40%] to-transparent" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-screen items-center px-8 pb-8 pt-16 md:px-16 lg:px-24">
+      <div className="relative z-10 flex min-h-screen items-center pl-8 pr-4 pb-8 pt-16 md:pl-28 md:pr-8 lg:pl-48 lg:pr-12">
         <div className="max-w-lg">
           <motion.p
             initial={{ opacity: 0, y: 14 }}
@@ -35,7 +35,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.1, ease }}
-            className="font-allura text-4xl leading-[1.2] text-ink sm:text-5xl"
+            className="font-allura text-5xl leading-[1.15] text-ink sm:text-6xl lg:text-7xl"
           >
             Rozsviť své vnitřní světlo.
           </motion.h1>
@@ -44,7 +44,7 @@ export default function Hero() {
             initial={{ opacity: 0, y: 22 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.85, delay: 0.22, ease }}
-            className="mt-7 max-w-xs text-xs leading-relaxed text-muted"
+            className="mt-7 max-w-sm text-sm leading-relaxed text-muted"
           >
             Drahá ženo, nemusíš čekat na chvíli, kdy bude všechno hotové.
             <br />
