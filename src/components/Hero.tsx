@@ -49,9 +49,9 @@ export default function Hero() {
             transition={{ duration: 0.85, delay: 0.22, ease }}
             className="mt-7 max-w-xs text-xs leading-relaxed text-muted"
           >
-            Jemná jóga, dech a ženské kruhy,
+            Drahá ženo, nemusíš čekat na chvíli, kdy bude všechno hotové.
             <br />
-            které tě povedou zpět k sobě.
+            Dopřej si prostor pro sebe už dnes.
           </motion.p>
 
           <motion.div
