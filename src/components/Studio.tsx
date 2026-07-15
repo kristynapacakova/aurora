@@ -7,9 +7,7 @@ const SERVICES = [
   {
     id: "lekce",
     bg: "bg-[#FCF4F1]",
-    fill: "#FCF4F1",
     prevFill: null,
-    wave: "M0,64 C480,124 960,4 1440,64 L1440,128 L0,128 Z",
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -26,9 +24,7 @@ const SERVICES = [
   {
     id: "studio",
     bg: "bg-[#FBE9DE]",
-    fill: "#FBE9DE",
     prevFill: "#FCF4F1",
-    wave: "M0,64 C480,124 960,4 1440,64 L1440,128 L0,128 Z",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -47,9 +43,7 @@ const SERVICES = [
   {
     id: "retreaty",
     bg: "bg-[#FDF6F0]",
-    fill: "#FDF6F0",
     prevFill: "#FBE9DE",
-    wave: "M0,64 C480,124 960,4 1440,64 L1440,128 L0,128 Z",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -127,13 +121,13 @@ export default function Studio() {
             </FadeUp>
           </div>
 
-          {/* Wave divider */}
-          <div className="absolute inset-x-0 z-10 h-32" style={{ top: '-64px' }}>
-            <svg viewBox="0 0 1440 128" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-              {s.prevFill && <path d="M0,64 C480,124 960,4 1440,64 L1440,0 L0,0 Z" fill={s.prevFill} />}
-              <path d={s.wave} fill={s.fill} />
-            </svg>
-          </div>
+          {/* Plynulé prolnutí z barvy předchozí sekce */}
+          {s.prevFill && (
+            <div
+              className="absolute inset-x-0 top-0 h-36"
+              style={{ background: `linear-gradient(to bottom, ${s.prevFill}, transparent)` }}
+            />
+          )}
         </section>
       ))}
     </>

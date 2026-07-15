@@ -91,6 +91,9 @@ export default function Hero() {
         </motion.div>
       </div>
 
+      {/* Prolnutí do další sekce */}
+      <div className="absolute inset-x-0 bottom-0 hidden h-28 bg-gradient-to-t from-cream to-transparent md:block" />
+
       {/* Scroll hint */}
       <motion.div
         initial={{ opacity: 0 }}
