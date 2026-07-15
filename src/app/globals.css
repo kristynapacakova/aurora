@@ -150,6 +150,16 @@
   background-clip: text;
 }
 
+/* ─── Organické zaoblení fotek (cik-cak sekce) ───────────────────────────── */
+.photo-arch-left,
+.photo-arch-right {
+  border-radius: 24px; /* mobil — symetrické */
+}
+@media (min-width: 768px) {
+  .photo-arch-left  { border-radius: 160px 20px 20px 20px; }
+  .photo-arch-right { border-radius: 20px 160px 20px 20px; }
+}
+
 /* ─── Globální styly ─────────────────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {

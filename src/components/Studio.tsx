@@ -40,7 +40,7 @@ const SERVICES = [
     cta: "Vstoupit do online studia",
     href: USCREEN.signup,
     external: true,
-    photo: "/studio.png",
+    photo: "/studio.jpg",
     alt: "Online studio",
     photoLeft: false,
   },
@@ -91,16 +91,14 @@ export default function Studio() {
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
-                className={`flex flex-col items-center gap-6 md:gap-10 ${
+                className={`flex flex-col items-center gap-8 md:gap-16 ${
                   s.photoLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
-                {/* Foto */}
+                {/* Foto — organický arch */}
                 <div
-                  className={`relative h-[180px] w-full shrink-0 overflow-hidden sm:h-[220px] md:h-[280px] md:w-2/5 ${
-                    s.photoLeft
-                      ? "rounded-tl-[2rem] rounded-br-[0.75rem]"
-                      : "rounded-tr-[2rem] rounded-bl-[0.75rem]"
+                  className={`relative h-[260px] w-full shrink-0 overflow-hidden sm:h-[320px] md:h-[380px] md:w-[46%] ${
+                    s.photoLeft ? "photo-arch-left" : "photo-arch-right"
                   }`}
                 >
                   <Image
