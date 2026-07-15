@@ -62,7 +62,7 @@ export default function Hero() {
           transition={{ duration: 0.85, delay: 0.22, ease }}
           className="mt-6 max-w-sm text-base leading-relaxed text-muted"
         >
-          Drahá ženo, nemusíš čekat na chvíli, kdy bude všechno hotové.
+          Moje drahá ženo, nemusíš čekat na chvíli, až bude všechno hotové.
           <br />
           Dopřej si prostor pro sebe už dnes.
         </motion.p>
