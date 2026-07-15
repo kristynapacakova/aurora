@@ -13,12 +13,12 @@ export default function AboutTeaser() {
         </svg>
       </div>
       <div className="mx-auto max-w-7xl px-6">
-        <div className="flex flex-col items-center gap-8 md:flex-row-reverse md:gap-12">
+        <div className="flex flex-col items-center gap-8 md:flex-row-reverse md:gap-16">
 
-          {/* Fotka — vpravo */}
-          <div className="w-full md:w-2/5 md:shrink-0">
+          {/* Fotka — vpravo, organický arch */}
+          <div className="w-full md:w-[46%] md:shrink-0">
             <FadeUp delay={0.05}>
-              <div className="relative h-[180px] w-full overflow-hidden rounded-tr-[2rem] rounded-bl-[0.75rem] sm:h-[220px] md:h-[280px]">
+              <div className="relative h-[260px] w-full overflow-hidden photo-arch-right sm:h-[320px] md:h-[380px]">
                 <Image
                   src="/o-mne.png"
                   alt="Anežka — lektorka jógy"
