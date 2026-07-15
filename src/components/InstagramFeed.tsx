@@ -14,13 +14,11 @@ const FALLBACK_PHOTOS = [
 export default function InstagramFeed() {
   return (
     <section className="bg-cream relative pt-28 pb-24 sm:pt-36 sm:pb-32">
-      {/* Wave overlapping previous section */}
-      <div className="absolute inset-x-0 z-10 h-32" style={{ top: '-64px' }}>
-        <svg viewBox="0 0 1440 128" xmlns="http://www.w3.org/2000/svg" className="w-full h-full" preserveAspectRatio="none">
-          <path d="M0,64 C480,124 960,4 1440,64 L1440,0 L0,0 Z" fill="#FBE9DE" />
-          <path d="M0,64 C480,124 960,4 1440,64 L1440,128 L0,128 Z" fill="#FCF4F1" />
-        </svg>
-      </div>
+      {/* Plynulé prolnutí z barvy předchozí sekce */}
+      <div
+        className="absolute inset-x-0 top-0 h-36"
+        style={{ background: "linear-gradient(to bottom, #FBE9DE, transparent)" }}
+      />
       <FadeUp>
         <p className="mb-8 text-center text-sm text-muted">
           Sleduj nás na Instagramu{" "}
