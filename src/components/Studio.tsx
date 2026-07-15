@@ -1,7 +1,7 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
-import { IconSparkle, IconSun, IconLeafBranch, IconWave } from "./BrandIcons";
+import { IconSparkle, IconSun, IconLeafBranch } from "./BrandIcons";
 
 const SERVICES = [
   {
@@ -68,23 +68,6 @@ const SERVICES = [
 export default function Studio() {
   return (
     <>
-      {/* ── Nadpis ── */}
-      <div className="bg-[#FCF4F1] pb-12 pt-20 text-center sm:pt-24">
-        <FadeUp>
-          <div className="mb-3 flex items-center justify-center gap-3">
-            <IconSparkle size={11} />
-            <span className="text-xs uppercase tracking-[0.3em] text-accent">Co tě čeká</span>
-            <IconSparkle size={11} />
-          </div>
-          <h2 className="font-allura text-3xl text-ink sm:text-4xl">
-            Vyber si cestu, která tě právě volá.
-          </h2>
-          <div className="mt-4 flex justify-center">
-            <IconWave width={160} height={22} className="text-accent/50" />
-          </div>
-        </FadeUp>
-      </div>
-
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
         <section key={s.id} id={s.id} className={`${s.bg} relative pt-28 pb-32 sm:pt-36 sm:pb-40`}>
