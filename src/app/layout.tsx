@@ -1,23 +1,16 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 
-const cormorant = Cormorant_Garamond({
-  variable: "--font-cormorant",
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500", "600"],
-});
-
-const jost = Jost({
-  variable: "--font-jost",
-  subsets: ["latin", "latin-ext"],
-  weight: ["300", "400", "500"],
-});
-
 export const metadata: Metadata = {
-  title: "Jóga s Klárou | Hatha a Vinyasa jóga",
+  title: "AURORA jóga | Online jógové studio",
   description:
-    "Lekce jógy pro tělo i mysl. Hatha, Vinyasa a jóga pro začátečníky. Přihlaste se na lekci ještě dnes.",
+    "Prémiové online jógové studio. Živé streamy, knihovna nahrávek, cvičení na doma — kdykoli a kdekoli chceš.",
+  openGraph: {
+    title: "AURORA jóga | Online jógové studio",
+    description:
+      "Prémiové online jógové studio s živými lekce a knihovnou nahrávek.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -26,13 +19,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="cs"
-      className={`${cormorant.variable} ${jost.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-background text-foreground font-sans">
-        {children}
-      </body>
+    <html lang="cs" className="scroll-smooth antialiased">
+      <body className="bg-cream text-ink font-sans">{children}</body>
     </html>
   );
 }

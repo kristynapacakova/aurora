@@ -1,19 +1,21 @@
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import About from "@/components/About";
-import Services from "@/components/Services";
-import PricingForm from "@/components/PricingForm";
+import Studio from "@/components/Studio";
+import AboutTeaser from "@/components/AboutTeaser";
+import Pricing from "@/components/Pricing";
+import InstagramFeed from "@/components/InstagramFeed";
 import Footer from "@/components/Footer";
 
 export default function Home() {
   return (
     <>
       <Navbar />
-      <main className="flex-1">
+      <main>
         <Hero />
-        <About />
-        <Services />
-        <PricingForm />
+        <Studio />
+        <AboutTeaser />
+        <Pricing />
+        <InstagramFeed />
       </main>
       <Footer />
     </>

@@ -1,14 +1,15 @@
+import { IconHeart } from "./BrandIcons";
+
 export default function Footer() {
   return (
-    <footer id="kontakt" className="border-t border-line bg-background py-12">
-      <div className="mx-auto flex max-w-5xl flex-col items-center gap-3 px-6 text-center">
-        <p className="font-serif text-2xl">Klára Jóga</p>
-        <p className="text-sm text-foreground/70">
-          info@klarajoga.cz · +420 123 456 789
+    <footer id="kontakt" className="bg-sand">
+      <div className="mx-auto max-w-6xl px-6 py-6 text-center">
+        <p className="mb-3 flex items-center justify-center gap-2 text-[11px] uppercase tracking-[0.3em] text-muted">
+          Jenmost · Klid · Ženskost · Autenticita · Světlo
+          <IconHeart size={12} />
         </p>
-        <p className="text-sm text-foreground/70">Studio Praha, Vinohrady</p>
-        <p className="mt-6 text-xs text-foreground/40">
-          © {new Date().getFullYear()} Klára Jóga. Všechna práva vyhrazena.
+        <p className="text-xs text-muted/70">
+          © {new Date().getFullYear()} AURORA jóga, všechna práva vyhrazena.
         </p>
       </div>
     </footer>

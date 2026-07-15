@@ -1,59 +1,77 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { USCREEN } from "@/lib/config";
 
-const links = [
-  { href: "#o-mne", label: "O mně" },
-  { href: "#lekce", label: "Lekce" },
-  { href: "#cenik", label: "Ceník" },
-  { href: "#kontakt", label: "Kontakt" },
+const MENU_ITEMS = [
+  { label: "Domů",           href: "#hero" },
+  { label: "O mně",          href: "#o-mne" },
+  { label: "Lekce",          href: "#lekce" },
+  { label: "Online studio",  href: USCREEN.signup, external: true },
+  { label: "Pobyty pro ženy",href: "#retreaty" },
+  { label: "Kontakt",        href: "#kontakt" },
 ];
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
 
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-sm border-b border-line">
-      <nav className="mx-auto max-w-6xl px-6 py-4 flex items-center justify-between">
-        <a href="#hero" className="font-serif text-2xl tracking-wide">
-          Klára&nbsp;Jóga
-        </a>
+    <>
+      <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 md:px-10">
+        <a href="#hero" onClick={() => setOpen(false)} className="w-12 md:w-24" />
 
-        <div className="hidden md:flex items-center gap-8 text-sm uppercase tracking-widest">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="hover:text-accent-dark transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-
+        {/* Hamburger */}
         <button
-          className="md:hidden text-sm uppercase tracking-widest"
-          onClick={() => setOpen((v) => !v)}
-          aria-label="Otevřít menu"
+          onClick={() => setOpen(v => !v)}
+          className="relative z-[60] flex flex-col gap-[7px] p-2"
+          aria-label="Menu"
         >
-          {open ? "Zavřít" : "Menu"}
+          <span className={`block h-px w-7 transition-all duration-300 ${open ? "translate-y-[10px] rotate-45 bg-cream" : "bg-ink"}`} />
+          <span className={`block h-px w-7 transition-all duration-300 ${open ? "opacity-0 bg-cream" : "bg-ink"}`} />
+          <span className={`block h-px w-7 transition-all duration-300 ${open ? "-translate-y-[10px] -rotate-45 bg-cream" : "bg-ink"}`} />
         </button>
-      </nav>
+      </header>
 
-      {open && (
-        <div className="md:hidden flex flex-col items-center gap-4 pb-6 text-sm uppercase tracking-widest">
-          {links.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="hover:text-accent-dark transition-colors"
-            >
-              {link.label}
-            </a>
-          ))}
-        </div>
-      )}
-    </header>
+      {/* Fullscreen overlay */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            key="overlay"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.35 }}
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-ink"
+          >
+            <nav className="flex flex-col items-center gap-8">
+              {MENU_ITEMS.map((item, i) => (
+                <motion.div
+                  key={item.label}
+                  initial={{ opacity: 0, y: 18 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.055 + 0.1, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                >
+                  <a
+                    href={item.href}
+                    target={item.external ? "_blank" : undefined}
+                    rel={item.external ? "noopener noreferrer" : undefined}
+                    onClick={() => setOpen(false)}
+                    className="font-serif text-[20px] tracking-[0.08em] text-cream transition-colors duration-200 hover:text-accent md:text-[26px]"
+                  >
+                    {item.label}
+                  </a>
+                </motion.div>
+              ))}
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
