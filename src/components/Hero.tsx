@@ -9,7 +9,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="relative overflow-hidden bg-cream md:flex md:h-[80vh] md:min-h-[560px] md:items-center"
+      className="relative overflow-hidden bg-cream md:flex md:min-h-screen md:items-center"
     >
       {/* ── Desktop: video jen v pravé části — postava mimo textovou zónu ── */}
       <video
