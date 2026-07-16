@@ -46,14 +46,15 @@ export default function Hero() {
       </div>
 
       {/* ── Textový blok ── */}
-      <div className="relative z-10 flex flex-col px-8 py-14 md:w-[48%] md:py-0 md:pl-[7vw] md:pr-6 lg:pl-[8vw]">
+      <div className="relative z-10 px-8 py-14 md:w-[48%] md:py-0 md:pl-[7vw] md:pr-6 lg:pl-[8vw]">
+        <div className="flex flex-col md:w-fit">
         <motion.h1
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, delay: 0.1, ease }}
           className="whitespace-nowrap font-allura text-4xl leading-[1.1] text-ink sm:text-5xl lg:text-6xl"
         >
-          Rozsviť své vnitřní světlo.
+          Rozsviť své vnitřní světlo
         </motion.h1>
 
         <motion.p
@@ -71,7 +72,7 @@ export default function Hero() {
           initial={{ opacity: 0, y: 22 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.85, delay: 0.34, ease }}
-          className="mt-10 flex flex-wrap items-center gap-4"
+          className="mt-10 flex flex-wrap items-center gap-4 md:justify-between"
         >
           <a
             href={USCREEN.signup}
@@ -89,6 +90,7 @@ export default function Hero() {
             <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
           </a>
         </motion.div>
+        </div>
       </div>
 
       {/* Prolnutí do další sekce */}
