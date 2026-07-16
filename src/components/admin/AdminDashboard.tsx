@@ -34,6 +34,26 @@ export default function AdminDashboard({
     router.refresh();
   }
 
+  async function togglePobyt(p: Pobyt) {
+    setBusy(true);
+    await fetch("/api/admin/pobyty", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: p.id,
+        nadpis: p.nadpis,
+        misto: p.misto,
+        termin: p.termin,
+        popis: p.popis,
+        cena: p.cena,
+        fotky: p.fotky,
+        zverejneno: !p.zverejneno,
+      }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
   async function logout() {
     await fetch("/api/admin-logout", { method: "POST" });
     router.push("/admin/login");
@@ -130,6 +150,13 @@ export default function AdminDashboard({
                       </p>
                     </div>
                     <div className="flex shrink-0 gap-2">
+                      <button
+                        disabled={busy}
+                        onClick={() => togglePobyt(p)}
+                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink hover:border-ink"
+                      >
+                        {p.zverejneno ? "Skrýt" : "Zobrazit"}
+                      </button>
                       <Link
                         href={`/admin/pobyt/${p.id}`}
                         className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink hover:border-ink"

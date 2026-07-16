@@ -52,6 +52,10 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (fotky.length === 0) {
+      setError("Přidej aspoň jednu fotku.");
+      return;
+    }
     setSaving(true);
     setError(null);
 
@@ -95,25 +99,26 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
               <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                Místo
-                <input value={misto} onChange={(e) => setMisto(e.target.value)} className={inputCls} placeholder="Např. Šumava, penzion U Lesa" />
+                Místo *
+                <input value={misto} onChange={(e) => setMisto(e.target.value)} required className={inputCls} placeholder="Např. Šumava, penzion U Lesa" />
               </label>
               <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                Termín
-                <input value={termin} onChange={(e) => setTermin(e.target.value)} className={inputCls} placeholder="Např. 12.–14. června 2026" />
+                Termín *
+                <input value={termin} onChange={(e) => setTermin(e.target.value)} required className={inputCls} placeholder="Např. 12.–14. června 2026" />
               </label>
             </div>
 
             <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-              Cena
-              <input value={cena} onChange={(e) => setCena(e.target.value)} className={inputCls} placeholder="Např. 4 900 Kč" />
+              Cena *
+              <input value={cena} onChange={(e) => setCena(e.target.value)} required className={inputCls} placeholder="Např. 4 900 Kč" />
             </label>
 
             <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-              Popis
+              Popis *
               <textarea
                 value={popis}
                 onChange={(e) => setPopis(e.target.value)}
+                required
                 rows={8}
                 className={inputCls}
                 placeholder="Co ženy na pobytu čeká… (odstavce odděl prázdným řádkem)"
@@ -122,7 +127,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
             {/* Fotky */}
             <div className="flex flex-col gap-2">
-              <span className="text-xs uppercase tracking-[0.2em] text-muted">Fotky</span>
+              <span className="text-xs uppercase tracking-[0.2em] text-muted">Fotky *</span>
               {fotky.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                   {fotky.map((url, i) => (
