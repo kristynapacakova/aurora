@@ -53,7 +53,7 @@ const SERVICES = [
       "Ženské jógové pobyty propojují pohyb, dech, odpočinek, přírodu, společné chvíle i čas, kdy nemusíš vůbec nic. Jsou pozvánkou ke zpomalení, načerpání nové energie a návratu k tomu, co je pro tebe důležité.",
     ],
     cta: "Objevit pobyty",
-    href: "#kontakt",
+    href: "/pobyty",
     photo: "/retreaty.png",
     alt: "Pobyty pro ženy",
     photoLeft: true,
