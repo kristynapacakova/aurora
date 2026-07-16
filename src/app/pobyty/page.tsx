@@ -7,6 +7,7 @@ import FadeUp from "@/components/FadeUp";
 import PoptavkaForm from "@/components/PoptavkaForm";
 import { getPobyty } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
+import { generatePlatebniQr } from "@/lib/platba";
 
 export const dynamic = "force-dynamic";
 
@@ -18,6 +19,11 @@ export const metadata: Metadata = {
 
 export default async function PobytyPage() {
   const pobyty = await getPobyty(true);
+  const qrKody = await Promise.all(
+    pobyty.map((p) =>
+      generatePlatebniQr({ cisloUctu: p.cislo_uctu, cena: p.cena, variabilniSymbol: p.variabilni_symbol })
+    )
+  );
 
   return (
     <>
@@ -121,7 +127,9 @@ export default async function PobytyPage() {
                             pobytId={p.id}
                             pobytNadpis={p.nadpis}
                             cena={p.cena}
-                            qrKod={p.qr_kod}
+                            qrDataUrl={qrKody[i] ?? undefined}
+                            cisloUctu={p.cislo_uctu}
+                            variabilniSymbol={p.variabilni_symbol}
                             platebniPokyny={p.platebni_pokyny}
                           />
                         </div>

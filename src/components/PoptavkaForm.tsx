@@ -9,13 +9,17 @@ export default function PoptavkaForm({
   pobytId,
   pobytNadpis,
   cena,
-  qrKod,
+  qrDataUrl,
+  cisloUctu,
+  variabilniSymbol,
   platebniPokyny,
 }: {
   pobytId: number;
   pobytNadpis: string;
   cena?: string;
-  qrKod?: string;
+  qrDataUrl?: string;
+  cisloUctu?: string;
+  variabilniSymbol?: string;
   platebniPokyny?: string;
 }) {
   const [mode, setMode] = useState<Mode>("closed");
@@ -28,7 +32,7 @@ export default function PoptavkaForm({
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const hasPaymentInfo = Boolean(qrKod || platebniPokyny);
+  const hasPaymentInfo = Boolean(cisloUctu);
 
   function reset() {
     setMode("closed");
@@ -117,15 +121,24 @@ export default function PoptavkaForm({
 
           {hasPaymentInfo && (
             <div className="flex flex-col gap-3 rounded-xl bg-sand/60 p-4 sm:flex-row sm:items-start">
-              {qrKod && (
+              {qrDataUrl && (
                 <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-white">
-                  <Image src={qrKod} alt="QR kód pro platbu" fill className="object-contain p-2" sizes="128px" />
+                  <Image src={qrDataUrl} alt="QR kód pro platbu" fill className="object-contain p-2" sizes="128px" unoptimized />
                 </div>
               )}
               <div className="text-sm">
                 <p className="font-medium text-ink">Platební údaje</p>
+                <p className="mt-1 text-muted">
+                  Číslo účtu: <span className="text-ink">{cisloUctu}</span>
+                  {variabilniSymbol && (
+                    <>
+                      <br />
+                      Variabilní symbol: <span className="text-ink">{variabilniSymbol}</span>
+                    </>
+                  )}
+                </p>
                 {platebniPokyny && (
-                  <p className="mt-1 whitespace-pre-line text-muted">{platebniPokyny}</p>
+                  <p className="mt-2 whitespace-pre-line text-muted">{platebniPokyny}</p>
                 )}
               </div>
             </div>

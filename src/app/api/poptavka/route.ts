@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 
   const pobytId = typeof body.pobyt_id === "number" ? body.pobyt_id : null;
   const pobyt = pobytId ? await getPobyt(pobytId) : null;
-  const vyzadujePlatbu = Boolean(pobyt?.qr_kod || pobyt?.platebni_pokyny);
+  const vyzadujePlatbu = Boolean(pobyt?.cislo_uctu);
 
   if (typ === "objednavka" && vyzadujePlatbu && !zaplaceno) {
     return NextResponse.json(
