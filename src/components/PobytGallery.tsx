@@ -8,7 +8,7 @@ export default function PobytGallery({ fotky, alt }: { fotky: string[]; alt: str
 
   if (fotky.length === 0) {
     return (
-      <div className="flex h-[320px] w-full items-center justify-center rounded-[32px] bg-sand sm:h-[420px]">
+      <div className="photo-arch-left flex h-[320px] w-full items-center justify-center bg-sand sm:h-[420px]">
         <span className="font-allura text-4xl text-accent/60">Aurora</span>
       </div>
     );
@@ -18,7 +18,7 @@ export default function PobytGallery({ fotky, alt }: { fotky: string[]; alt: str
     <div>
       <button
         onClick={() => setOpenIndex(0)}
-        className="group relative block h-[320px] w-full overflow-hidden rounded-[32px] sm:h-[460px]"
+        className="photo-arch-left group relative block h-[320px] w-full overflow-hidden sm:h-[460px]"
       >
         <Image
           src={fotky[0]}

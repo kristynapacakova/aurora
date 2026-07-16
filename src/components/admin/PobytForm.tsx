@@ -340,12 +340,12 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                   </h2>
 
                   {(termin || misto || cena) && (
-                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs uppercase tracking-[0.2em] text-accent">
+                    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                       {termin && <span>📅 {termin}</span>}
                       {misto && <span>📍 {misto}</span>}
                       {cena && (
-                        <span className="text-sm normal-case tracking-normal text-ink">
-                          <strong className="font-medium">{cena}</strong>
+                        <span className="rounded-full bg-accent/15 px-3 py-1 text-sm normal-case tracking-normal text-ink">
+                          {cena}
                         </span>
                       )}
                     </div>
