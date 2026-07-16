@@ -8,6 +8,7 @@ import PoptavkaForm from "@/components/PoptavkaForm";
 import PobytGallery from "@/components/PobytGallery";
 import { getPobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
+import { generatePlatebniQr } from "@/lib/platba";
 
 export const dynamic = "force-dynamic";
 
@@ -33,6 +34,11 @@ export default async function PobytDetailPage({
   const { id } = await params;
   const pobyt = await getPobyt(Number(id));
   if (!pobyt || !pobyt.zverejneno) notFound();
+  const qrDataUrl = await generatePlatebniQr({
+    cisloUctu: pobyt.cislo_uctu,
+    cena: pobyt.cena,
+    variabilniSymbol: pobyt.variabilni_symbol,
+  });
 
   return (
     <>
@@ -80,7 +86,9 @@ export default async function PobytDetailPage({
                   pobytId={pobyt.id}
                   pobytNadpis={pobyt.nadpis}
                   cena={pobyt.cena}
-                  qrKod={pobyt.qr_kod}
+                  qrDataUrl={qrDataUrl ?? undefined}
+                  cisloUctu={pobyt.cislo_uctu}
+                  variabilniSymbol={pobyt.variabilni_symbol}
                   platebniPokyny={pobyt.platebni_pokyny}
                 />
               </div>

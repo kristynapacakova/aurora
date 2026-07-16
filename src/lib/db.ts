@@ -14,7 +14,8 @@ export type Pobyt = {
   popis: string;
   cena: string;
   fotky: string[];
-  qr_kod: string;
+  cislo_uctu: string;
+  variabilni_symbol: string;
   platebni_pokyny: string;
   zverejneno: boolean;
   created_at: string;
@@ -82,8 +83,9 @@ async function ensureSchema() {
       zverejneno BOOLEAN NOT NULL DEFAULT TRUE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
-    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS qr_kod TEXT NOT NULL DEFAULT '';
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS platebni_pokyny TEXT NOT NULL DEFAULT '';
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS cislo_uctu TEXT NOT NULL DEFAULT '';
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS variabilni_symbol TEXT NOT NULL DEFAULT '';
 
     CREATE TABLE IF NOT EXISTS clanky (
       id SERIAL PRIMARY KEY,
@@ -132,17 +134,40 @@ export async function getPobyt(id: number): Promise<Pobyt | null> {
 
 export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<Pobyt> {
   const rows = await query<Pobyt>(
-    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, qr_kod, platebni_pokyny, zverejneno)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
-    [p.nadpis, p.misto, p.termin, p.popis, p.cena, JSON.stringify(p.fotky), p.qr_kod, p.platebni_pokyny, p.zverejneno]
+    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zverejneno)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+    [
+      p.nadpis,
+      p.misto,
+      p.termin,
+      p.popis,
+      p.cena,
+      JSON.stringify(p.fotky),
+      p.cislo_uctu,
+      p.variabilni_symbol,
+      p.platebni_pokyny,
+      p.zverejneno,
+    ]
   );
   return rows[0];
 }
 
 export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at">): Promise<void> {
   await query(
-    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, qr_kod=$7, platebni_pokyny=$8, zverejneno=$9 WHERE id=$10`,
-    [p.nadpis, p.misto, p.termin, p.popis, p.cena, JSON.stringify(p.fotky), p.qr_kod, p.platebni_pokyny, p.zverejneno, id]
+    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zverejneno=$10 WHERE id=$11`,
+    [
+      p.nadpis,
+      p.misto,
+      p.termin,
+      p.popis,
+      p.cena,
+      JSON.stringify(p.fotky),
+      p.cislo_uctu,
+      p.variabilni_symbol,
+      p.platebni_pokyny,
+      p.zverejneno,
+      id,
+    ]
   );
 }
 
