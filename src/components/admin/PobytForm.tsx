@@ -225,10 +225,15 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                     {nbsp(nadpis || "Nadpis pobytu")}
                   </h2>
 
-                  {(termin || misto) && (
-                    <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs uppercase tracking-[0.2em] text-accent">
+                  {(termin || misto || cena) && (
+                    <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs uppercase tracking-[0.2em] text-accent">
                       {termin && <span>📅 {termin}</span>}
                       {misto && <span>📍 {misto}</span>}
+                      {cena && (
+                        <span className="text-sm normal-case tracking-normal text-ink">
+                          <strong className="font-medium">{cena}</strong>
+                        </span>
+                      )}
                     </div>
                   )}
 
@@ -240,13 +245,6 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                         </p>
                       ))}
                     </div>
-                  )}
-
-                  {cena && (
-                    <p className="mt-5 text-lg text-ink">
-                      <span className="text-xs uppercase tracking-[0.2em] text-muted">Cena: </span>
-                      <strong className="font-medium">{cena}</strong>
-                    </p>
                   )}
 
                   <div className="mt-6">
