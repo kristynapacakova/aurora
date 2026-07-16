@@ -1,13 +1,11 @@
-import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
-import PoptavkaForm from "@/components/PoptavkaForm";
+import PobytGallery from "@/components/PobytGallery";
 import { getPobyty } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
-import { generatePlatebniQr } from "@/lib/platba";
 
 export const dynamic = "force-dynamic";
 
@@ -19,11 +17,6 @@ export const metadata: Metadata = {
 
 export default async function PobytyPage() {
   const pobyty = await getPobyty(true);
-  const qrKody = await Promise.all(
-    pobyty.map((p) =>
-      generatePlatebniQr({ cisloUctu: p.cislo_uctu, cena: p.cena, variabilniSymbol: p.variabilni_symbol })
-    )
-  );
 
   return (
     <>
@@ -58,81 +51,45 @@ export default async function PobytyPage() {
                         i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                       }`}
                     >
-                      {/* Fotky */}
-                      <Link href={`/pobyty/${p.id}`} className="w-full shrink-0 md:w-[46%]">
-                        {p.fotky.length > 0 ? (
-                          <>
-                            <div
-                              className={`group relative h-[260px] w-full overflow-hidden sm:h-[320px] md:h-[380px] ${
-                                i % 2 === 0 ? "photo-arch-left" : "photo-arch-right"
-                              }`}
-                            >
-                              <Image
-                                src={p.fotky[0]}
-                                alt={p.nadpis}
-                                fill
-                                className="object-cover transition-transform duration-300 group-hover:scale-105"
-                                sizes="(max-width: 768px) 100vw, 46vw"
-                              />
-                              {p.fotky.length > 1 && (
-                                <span className="absolute bottom-3 right-3 rounded-full bg-ink/70 px-3 py-1 text-[10px] uppercase tracking-wider text-cream">
-                                  +{p.fotky.length - 1} fotek
-                                </span>
-                              )}
-                            </div>
-                          </>
-                        ) : (
-                          <div
-                            className={`flex h-[260px] w-full items-center justify-center bg-sand sm:h-[320px] md:h-[380px] ${
-                              i % 2 === 0 ? "photo-arch-left" : "photo-arch-right"
-                            }`}
-                          >
-                            <span className="font-allura text-3xl text-accent/60">Aurora</span>
-                          </div>
-                        )}
-                      </Link>
+                      {/* Fotky — stejný rám jako Studio sekce, s miniaturami k prokliku */}
+                      <div className="w-full shrink-0 md:w-[46%]">
+                        <PobytGallery
+                          fotky={p.fotky}
+                          alt={p.nadpis}
+                          arch={i % 2 === 0 ? "left" : "right"}
+                          heightClass="h-[220px] sm:h-[280px] md:h-[320px]"
+                        />
+                      </div>
 
                       {/* Text */}
                       <div className="flex flex-1 flex-col">
-                        <Link href={`/pobyty/${p.id}`}>
-                          <h2 className="font-allura text-3xl text-ink transition-colors hover:text-accent-d sm:text-4xl">
-                            {nbsp(p.nadpis)}
-                          </h2>
-                        </Link>
+                        <h2 className="font-serif text-2xl text-ink sm:text-3xl">
+                          {nbsp(p.nadpis)}
+                        </h2>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                           {p.termin && <span>📅 {p.termin}</span>}
                           {p.misto && <span>📍 {p.misto}</span>}
-                          {p.cena && (
-                            <span className="rounded-full bg-accent/15 px-3 py-1 text-sm normal-case tracking-normal text-ink">
-                              {p.cena}
-                            </span>
-                          )}
                         </div>
 
-                        {prvniOdstavec && (
-                          <div className="mt-5 flex max-w-md flex-col gap-3">
-                            <p className="text-sm leading-relaxed text-muted">{nbsp(prvniOdstavec)}</p>
-                            <Link
-                              href={`/pobyty/${p.id}`}
-                              className="w-fit text-xs uppercase tracking-[0.2em] text-accent-d underline underline-offset-4 hover:text-ink"
-                            >
-                              Zjistit více a prohlédnout fotky →
-                            </Link>
-                          </div>
+                        {p.cena && (
+                          <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
+                            Cena {p.cena}
+                          </p>
                         )}
 
-                        <div className="mt-7">
-                          <PoptavkaForm
-                            pobytId={p.id}
-                            pobytNadpis={p.nadpis}
-                            cena={p.cena}
-                            qrDataUrl={qrKody[i] ?? undefined}
-                            cisloUctu={p.cislo_uctu}
-                            variabilniSymbol={p.variabilni_symbol}
-                            platebniPokyny={p.platebni_pokyny}
-                          />
-                        </div>
+                        {prvniOdstavec && (
+                          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
+                            {nbsp(prvniOdstavec)}
+                          </p>
+                        )}
+
+                        <Link
+                          href={`/pobyty/${p.id}`}
+                          className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-ink"
+                        >
+                          Zjistit více →
+                        </Link>
                       </div>
                     </article>
                   </FadeUp>

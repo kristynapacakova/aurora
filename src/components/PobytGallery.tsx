@@ -3,12 +3,23 @@
 import Image from "next/image";
 import { useState } from "react";
 
-export default function PobytGallery({ fotky, alt }: { fotky: string[]; alt: string }) {
+export default function PobytGallery({
+  fotky,
+  alt,
+  arch = "left",
+  heightClass = "h-[320px] sm:h-[460px]",
+}: {
+  fotky: string[];
+  alt: string;
+  arch?: "left" | "right";
+  heightClass?: string;
+}) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const archClass = arch === "left" ? "photo-arch-left" : "photo-arch-right";
 
   if (fotky.length === 0) {
     return (
-      <div className="photo-arch-left flex h-[320px] w-full items-center justify-center bg-sand sm:h-[420px]">
+      <div className={`${archClass} flex w-full items-center justify-center bg-sand ${heightClass}`}>
         <span className="font-allura text-4xl text-accent/60">Aurora</span>
       </div>
     );
@@ -18,7 +29,7 @@ export default function PobytGallery({ fotky, alt }: { fotky: string[]; alt: str
     <div>
       <button
         onClick={() => setOpenIndex(0)}
-        className="photo-arch-left group relative block h-[320px] w-full overflow-hidden sm:h-[460px]"
+        className={`${archClass} group relative block w-full overflow-hidden ${heightClass}`}
       >
         <Image
           src={fotky[0]}

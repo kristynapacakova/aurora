@@ -70,12 +70,13 @@ export default async function PobytDetailPage({
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                 {pobyt.termin && <span>📅 {pobyt.termin}</span>}
                 {pobyt.misto && <span>📍 {pobyt.misto}</span>}
-                {pobyt.cena && (
-                  <span className="rounded-full bg-accent/15 px-3 py-1 text-sm normal-case tracking-normal text-ink">
-                    {pobyt.cena}
-                  </span>
-                )}
               </div>
+
+              {pobyt.cena && (
+                <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
+                  Cena {pobyt.cena}
+                </p>
+              )}
 
               {pobyt.popis && (
                 <div className="mt-6 flex flex-col gap-3">

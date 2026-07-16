@@ -33,20 +33,32 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
   // Živý náhled QR kódu — přegeneruje se při každé změně účtu/ceny/VS.
   useEffect(() => {
-    if (!iban) {
-      setQrPreview(null);
-      return;
+    let cancelled = false;
+
+    async function updatePreview() {
+      if (!iban) {
+        if (!cancelled) setQrPreview(null);
+        return;
+      }
+      const amountMatch = cena.replace(/\s/g, "").match(/(\d+)(?:[.,](\d{1,2}))?/);
+      const amount = amountMatch ? Number(`${amountMatch[1]}.${(amountMatch[2] ?? "00").padEnd(2, "0")}`) : null;
+      const vsDigits = variabilniSymbol.replace(/\D/g, "").slice(0, 10);
+      const parts = ["SPD*1.0", `ACC:${iban}`];
+      if (amount) parts.push(`AM:${amount.toFixed(2)}`);
+      parts.push("CC:CZK");
+      if (vsDigits) parts.push(`X-VS:${vsDigits}`);
+      try {
+        const url = await QRCode.toDataURL(parts.join("*"), { margin: 1, width: 240 });
+        if (!cancelled) setQrPreview(url);
+      } catch {
+        if (!cancelled) setQrPreview(null);
+      }
     }
-    const amountMatch = cena.replace(/\s/g, "").match(/(\d+)(?:[.,](\d{1,2}))?/);
-    const amount = amountMatch ? Number(`${amountMatch[1]}.${(amountMatch[2] ?? "00").padEnd(2, "0")}`) : null;
-    const vsDigits = variabilniSymbol.replace(/\D/g, "").slice(0, 10);
-    const parts = ["SPD*1.0", `ACC:${iban}`];
-    if (amount) parts.push(`AM:${amount.toFixed(2)}`);
-    parts.push("CC:CZK");
-    if (vsDigits) parts.push(`X-VS:${vsDigits}`);
-    QRCode.toDataURL(parts.join("*"), { margin: 1, width: 240 })
-      .then(setQrPreview)
-      .catch(() => setQrPreview(null));
+
+    updatePreview();
+    return () => {
+      cancelled = true;
+    };
   }, [iban, cena, variabilniSymbol]);
 
   async function uploadPhotos(e: ChangeEvent<HTMLInputElement>) {
@@ -335,20 +347,21 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
                 {/* Text */}
                 <div className="flex flex-col">
-                  <h2 className="font-allura text-3xl text-ink">
+                  <h2 className="font-serif text-2xl text-ink sm:text-3xl">
                     {nbsp(nadpis || "Nadpis pobytu")}
                   </h2>
 
-                  {(termin || misto || cena) && (
+                  {(termin || misto) && (
                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                       {termin && <span>📅 {termin}</span>}
                       {misto && <span>📍 {misto}</span>}
-                      {cena && (
-                        <span className="rounded-full bg-accent/15 px-3 py-1 text-sm normal-case tracking-normal text-ink">
-                          {cena}
-                        </span>
-                      )}
                     </div>
+                  )}
+
+                  {cena && (
+                    <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
+                      Cena {cena}
+                    </p>
                   )}
 
                   {popis && (
@@ -361,14 +374,14 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                     </div>
                   )}
 
-                  <div className="mt-6 flex flex-wrap items-center gap-3">
-                    <span className="inline-block cursor-default rounded-full bg-accent px-7 py-3 text-xs uppercase tracking-[0.2em] text-white opacity-90">
-                      Závazně objednat →
-                    </span>
-                    <span className="inline-block cursor-default rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90">
-                      Mám dotaz
-                    </span>
-                  </div>
+                  <span className="mt-6 inline-block w-fit cursor-default rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90">
+                    Zjistit více →
+                  </span>
+
+                  <p className="mt-4 text-xs text-muted">
+                    Takhle vypadá karta ve výpisu. Po kliknutí na „Zjistit více“ se zákaznici otevře detail
+                    pobytu s celou galerií a tlačítky „Závazně objednat“ a „Mám dotaz“.
+                  </p>
 
                   {(qrPreview || cisloUctu) && (
                     <div className="mt-4 flex items-start gap-3 rounded-xl bg-white/60 p-3 text-xs text-muted">
@@ -378,7 +391,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                         </div>
                       )}
                       <div>
-                        <p>Po kliknutí na „Závazně objednat“ uvidí zákaznice QR kód a tyto údaje:</p>
+                        <p>Na detailu pobytu po kliknutí na „Závazně objednat“ uvidí zákaznice QR kód a tyto údaje:</p>
                         <p className="mt-1 text-ink">
                           Účet: {cisloUctu || "—"}
                           {variabilniSymbol && <> · VS: {variabilniSymbol}</>}

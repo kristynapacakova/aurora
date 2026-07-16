@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { USCREEN } from "@/lib/config";
 
@@ -48,13 +49,13 @@ export default function Navbar() {
           </nav>
 
           {/* Logo uprostřed — textové, dokud nebude hotové obrázkové logo */}
-          <a
-            href="#hero"
+          <Link
+            href="/"
             onClick={() => setOpen(false)}
             className="col-start-2 justify-self-center font-serif text-xl uppercase tracking-[0.25em] text-ink md:text-2xl"
           >
             AURORA
-          </a>
+          </Link>
 
           {/* Pravá polovina menu (jen desktop) */}
           <nav className="col-start-3 hidden items-center justify-end gap-8 md:flex">
