@@ -18,6 +18,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [fotky, setFotky] = useState<string[]>(initial?.fotky ?? []);
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [uploading, setUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ index: number; total: number; percent: number } | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -27,12 +28,16 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
     setUploading(true);
     setError(null);
 
-    for (const file of files) {
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      setUploadProgress({ index: i + 1, total: files.length, percent: 0 });
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       try {
         const blob = await upload(`pobyty/${Date.now()}-${safeName}`, file, {
           access: "public",
           handleUploadUrl: "/api/admin/upload",
+          onUploadProgress: ({ percentage }) =>
+            setUploadProgress({ index: i + 1, total: files.length, percent: Math.round(percentage) }),
         });
         setFotky((prev) => [...prev, blob.url]);
       } catch (err) {
@@ -41,6 +46,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
       }
     }
     setUploading(false);
+    setUploadProgress(null);
     e.target.value = "";
   }
 
@@ -138,6 +144,19 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                 {uploading ? "Nahrávám…" : "+ Nahrát fotky"}
                 <input type="file" accept="image/*" multiple onChange={uploadPhotos} disabled={uploading} className="hidden" />
               </label>
+              {uploadProgress && (
+                <div className="flex flex-col gap-1.5">
+                  <p className="text-xs text-muted">
+                    Nahrávám fotku {uploadProgress.index} z {uploadProgress.total} — {uploadProgress.percent}%
+                  </p>
+                  <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-line">
+                    <div
+                      className="h-full rounded-full bg-gradient-aurora transition-all duration-200"
+                      style={{ width: `${uploadProgress.percent}%` }}
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             <label className="flex items-center gap-3 text-sm text-ink">
