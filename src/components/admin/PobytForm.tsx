@@ -347,21 +347,20 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
                 {/* Text */}
                 <div className="flex flex-col">
-                  <h2 className="font-sans text-2xl font-medium text-ink sm:text-3xl">
+                  <h2 className="font-serif text-3xl text-ink sm:text-4xl">
                     {nbsp(nadpis || "Nadpis pobytu")}
                   </h2>
 
-                  {(termin || misto) && (
+                  {(termin || misto || cena) && (
                     <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                       {termin && <span>📅 {termin}</span>}
                       {misto && <span>📍 {misto}</span>}
+                      {cena && (
+                        <span className="rounded-full bg-accent px-3 py-1 text-xs normal-case tracking-normal text-white">
+                          {cena}
+                        </span>
+                      )}
                     </div>
-                  )}
-
-                  {cena && (
-                    <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
-                      Cena {cena}
-                    </p>
                   )}
 
                   {popis && (
