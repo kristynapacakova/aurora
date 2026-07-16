@@ -1,6 +1,7 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { IconLeafBranch, IconHeart } from "./BrandIcons";
+import { nbsp } from "@/lib/typo";
 
 export default function AboutTeaser() {
   return (
@@ -36,11 +37,10 @@ export default function AboutTeaser() {
               <p className="text-xs uppercase tracking-[0.3em] text-accent">Moje cesta k józe</p>
             </div>
             <blockquote className="font-serif text-xl leading-[1.3] text-ink sm:text-2xl">
-              Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb.
+              {nbsp("Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb.")}
             </blockquote>
             <p className="mt-6 max-w-sm text-xs leading-relaxed text-muted">
-              Ve svých lekcích vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.
-              Můžeš jednoduše zpomalit, nadechnout se a být chvíli sama se sebou.
+              {nbsp("Ve svých lekcích vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale. Můžeš jednoduše zpomalit, nadechnout se a být chvíli sama se sebou.")}
             </p>
             <div className="mt-8 flex items-center gap-4">
               <a

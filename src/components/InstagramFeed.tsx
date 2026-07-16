@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Script from "next/script";
 import FadeUp from "./FadeUp";
+import { nbsp } from "@/lib/typo";
 import { CONTACT, INSTAGRAM_WIDGET_URL } from "@/lib/config";
 
 const FALLBACK_PHOTOS = [
@@ -21,7 +22,7 @@ export default function InstagramFeed() {
       />
       <FadeUp>
         <p className="mb-8 text-center text-sm text-muted">
-          Sleduj nás na Instagramu{" "}
+          {nbsp("Sleduj nás na Instagramu")}{" "}
           <a
             href={CONTACT.instagram}
             target="_blank"

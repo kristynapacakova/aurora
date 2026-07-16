@@ -1,6 +1,7 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
+import { nbsp } from "@/lib/typo";
 import { IconSparkle, IconSun, IconLeafBranch } from "./BrandIcons";
 
 const SERVICES = [
@@ -97,13 +98,13 @@ export default function Studio() {
                   </div>
 
                   <h3 className="mb-4 font-allura text-3xl text-ink sm:text-4xl">
-                    {s.subtitle}
+                    {nbsp(s.subtitle)}
                   </h3>
 
                   <div className="mb-5 flex max-w-sm flex-col gap-3">
                     {s.body.map((p, i) => (
                       <p key={i} className="text-xs leading-relaxed text-muted">
-                        {p}
+                        {nbsp(p)}
                       </p>
                     ))}
                   </div>
