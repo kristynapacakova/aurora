@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import PoptavkaForm from "@/components/PoptavkaForm";
 import PobytGallery from "@/components/PobytGallery";
+import { IconLeafBranch } from "@/components/BrandIcons";
 import { getPobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { generatePlatebniQr } from "@/lib/platba";
@@ -43,7 +44,7 @@ export default async function PobytDetailPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-cream px-6 pb-24 pt-28 sm:pt-32">
+      <main className="min-h-screen bg-cream px-6 pb-24 pt-32 sm:pt-36">
         <div className="mx-auto max-w-4xl">
           <FadeUp>
             <Link href="/pobyty" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">
@@ -58,21 +59,26 @@ export default async function PobytDetailPage({
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            <div className="mt-8">
+            <div className="mt-10 max-w-2xl">
+              <div className="mb-4 flex items-center gap-3">
+                <IconLeafBranch size={22} />
+                <span className="text-xs uppercase tracking-[0.3em] text-accent">Pobyt pro ženy</span>
+              </div>
+
               <h1 className="font-allura text-4xl text-ink sm:text-5xl">{nbsp(pobyt.nadpis)}</h1>
 
-              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs uppercase tracking-[0.2em] text-accent">
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                 {pobyt.termin && <span>📅 {pobyt.termin}</span>}
                 {pobyt.misto && <span>📍 {pobyt.misto}</span>}
                 {pobyt.cena && (
-                  <span className="text-sm normal-case tracking-normal text-ink">
-                    <strong className="font-medium">{pobyt.cena}</strong>
+                  <span className="rounded-full bg-accent/15 px-3 py-1 text-sm normal-case tracking-normal text-ink">
+                    {pobyt.cena}
                   </span>
                 )}
               </div>
 
               {pobyt.popis && (
-                <div className="mt-6 flex max-w-2xl flex-col gap-3">
+                <div className="mt-6 flex flex-col gap-3">
                   {pobyt.popis.split(/\n\s*\n/).map((odst, i) => (
                     <p key={i} className="text-sm leading-relaxed text-muted">
                       {nbsp(odst)}
