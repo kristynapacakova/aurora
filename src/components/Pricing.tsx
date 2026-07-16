@@ -1,5 +1,6 @@
 import FadeUp from "./FadeUp";
 import { USCREEN } from "@/lib/config";
+import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "./BrandIcons";
 
 const PLANS = [
@@ -46,7 +47,7 @@ export default function Pricing() {
               Vyber si svůj plán
             </h2>
             <p className="mx-auto mt-5 max-w-sm text-muted">
-              Bez závazků. Kdykoli zruš. První 7 dní zdarma.
+              {nbsp("Bez závazků. Kdykoli zruš. První 7 dní zdarma.")}
             </p>
           </div>
         </FadeUp>
@@ -76,7 +77,7 @@ export default function Pricing() {
                   <span className="text-sm text-ink/60">{plan.period}</span>
                 </div>
 
-                <p className="mt-3 text-sm text-ink/70">{plan.description}</p>
+                <p className="mt-3 text-sm text-ink/70">{nbsp(plan.description)}</p>
 
                 <ul className="mt-5 flex flex-col gap-2">
                   {plan.features.map((f) => (
@@ -84,7 +85,7 @@ export default function Pricing() {
                       <span className="mt-0.5 text-base leading-none text-ink">
                         ✓
                       </span>
-                      <span className="text-ink/80">{f}</span>
+                      <span className="text-ink/80">{nbsp(f)}</span>
                     </li>
                   ))}
                 </ul>
