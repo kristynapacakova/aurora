@@ -347,7 +347,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
                 {/* Text */}
                 <div className="flex flex-col">
-                  <h2 className="font-serif text-2xl text-ink sm:text-3xl">
+                  <h2 className="font-sans text-2xl font-medium text-ink sm:text-3xl">
                     {nbsp(nadpis || "Nadpis pobytu")}
                   </h2>
 
@@ -374,7 +374,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                     </div>
                   )}
 
-                  <span className="mt-6 inline-block w-fit cursor-default rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90">
+                  <span className="mt-6 inline-block w-fit cursor-default rounded-full bg-gradient-aurora px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90 shadow-sm">
                     Zjistit více →
                   </span>
 
