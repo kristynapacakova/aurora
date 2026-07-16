@@ -91,9 +91,14 @@ export default async function PobytyPage() {
                     <div className="flex flex-1 flex-col">
                       <h2 className="font-allura text-3xl text-ink sm:text-4xl">{nbsp(p.nadpis)}</h2>
 
-                      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs uppercase tracking-[0.2em] text-accent">
+                      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs uppercase tracking-[0.2em] text-accent">
                         {p.termin && <span>📅 {p.termin}</span>}
                         {p.misto && <span>📍 {p.misto}</span>}
+                        {p.cena && (
+                          <span className="text-sm normal-case tracking-normal text-ink">
+                            <strong className="font-medium">{p.cena}</strong>
+                          </span>
+                        )}
                       </div>
 
                       {p.popis && (
@@ -104,13 +109,6 @@ export default async function PobytyPage() {
                             </p>
                           ))}
                         </div>
-                      )}
-
-                      {p.cena && (
-                        <p className="mt-5 text-lg text-ink">
-                          <span className="text-xs uppercase tracking-[0.2em] text-muted">Cena: </span>
-                          <strong className="font-medium">{p.cena}</strong>
-                        </p>
                       )}
 
                       <div className="mt-7">
