@@ -1,0 +1,94 @@
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import type { Metadata } from "next";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import FadeUp from "@/components/FadeUp";
+import PoptavkaForm from "@/components/PoptavkaForm";
+import PobytGallery from "@/components/PobytGallery";
+import { getPobyt } from "@/lib/db";
+import { nbsp } from "@/lib/typo";
+
+export const dynamic = "force-dynamic";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const pobyt = await getPobyt(Number(id));
+  if (!pobyt) return {};
+  return {
+    title: `${pobyt.nadpis} | AURORA jóga`,
+    description: pobyt.popis.slice(0, 160),
+  };
+}
+
+export default async function PobytDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const pobyt = await getPobyt(Number(id));
+  if (!pobyt || !pobyt.zverejneno) notFound();
+
+  return (
+    <>
+      <Navbar />
+      <main className="min-h-screen bg-cream px-6 pb-24 pt-28 sm:pt-32">
+        <div className="mx-auto max-w-4xl">
+          <FadeUp>
+            <Link href="/pobyty" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">
+              ← Zpět na pobyty
+            </Link>
+          </FadeUp>
+
+          <FadeUp delay={0.05}>
+            <div className="mt-6">
+              <PobytGallery fotky={pobyt.fotky} alt={pobyt.nadpis} />
+            </div>
+          </FadeUp>
+
+          <FadeUp delay={0.1}>
+            <div className="mt-8">
+              <h1 className="font-allura text-4xl text-ink sm:text-5xl">{nbsp(pobyt.nadpis)}</h1>
+
+              <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs uppercase tracking-[0.2em] text-accent">
+                {pobyt.termin && <span>📅 {pobyt.termin}</span>}
+                {pobyt.misto && <span>📍 {pobyt.misto}</span>}
+                {pobyt.cena && (
+                  <span className="text-sm normal-case tracking-normal text-ink">
+                    <strong className="font-medium">{pobyt.cena}</strong>
+                  </span>
+                )}
+              </div>
+
+              {pobyt.popis && (
+                <div className="mt-6 flex max-w-2xl flex-col gap-3">
+                  {pobyt.popis.split(/\n\s*\n/).map((odst, i) => (
+                    <p key={i} className="text-sm leading-relaxed text-muted">
+                      {nbsp(odst)}
+                    </p>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-8">
+                <PoptavkaForm
+                  pobytId={pobyt.id}
+                  pobytNadpis={pobyt.nadpis}
+                  cena={pobyt.cena}
+                  qrKod={pobyt.qr_kod}
+                  platebniPokyny={pobyt.platebni_pokyny}
+                />
+              </div>
+            </div>
+          </FadeUp>
+        </div>
+      </main>
+      <Footer />
+    </>
+  );
+}

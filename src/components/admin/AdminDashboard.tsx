@@ -47,6 +47,8 @@ export default function AdminDashboard({
         popis: p.popis,
         cena: p.cena,
         fotky: p.fotky,
+        qr_kod: p.qr_kod,
+        platebni_pokyny: p.platebni_pokyny,
         zverejneno: !p.zverejneno,
       }),
     });
@@ -236,8 +238,8 @@ export default function AdminDashboard({
           <section>
             {poptavky.length === 0 ? (
               <p className="text-sm text-muted">
-                Zatím žádné poptávky. Jakmile někdo vyplní formulář „Mám zájem“ u pobytu,
-                objeví se tady (a přijde ti e-mail).
+                Zatím žádné poptávky ani objednávky. Jakmile někdo klikne na „Závazně objednat“
+                nebo „Mám dotaz“ u pobytu, objeví se tady (a přijde ti e-mail).
               </p>
             ) : (
               <ul className="flex flex-col gap-3">
@@ -249,6 +251,21 @@ export default function AdminDashboard({
                           {q.jmeno}
                           {q.pobyt_nadpis && (
                             <span className="ml-2 text-xs text-accent">→ {q.pobyt_nadpis}</span>
+                          )}
+                          {q.typ === "objednavka" ? (
+                            <span
+                              className={`ml-2 rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                                q.zaplaceno
+                                  ? "bg-accent/20 text-accent-d"
+                                  : "bg-line text-muted"
+                              }`}
+                            >
+                              {q.zaplaceno ? "Zaplaceno" : "Objednávka"}
+                            </span>
+                          ) : (
+                            <span className="ml-2 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                              Dotaz
+                            </span>
                           )}
                         </p>
                         <p className="mt-1 text-xs text-muted">
