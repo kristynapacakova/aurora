@@ -66,17 +66,17 @@ export default function Studio() {
     <>
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} relative pt-28 pb-32 sm:pt-36 sm:pb-40`}>
+        <section key={s.id} id={s.id} className={`${s.bg} relative pt-14 pb-16 sm:pt-16 sm:pb-20`}>
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
-                className={`flex flex-col items-center gap-8 md:gap-16 ${
+                className={`flex flex-col items-center gap-6 md:gap-12 ${
                   s.photoLeft ? "md:flex-row" : "md:flex-row-reverse"
                 }`}
               >
                 {/* Foto — organický arch */}
                 <div
-                  className={`relative h-[260px] w-full shrink-0 overflow-hidden sm:h-[320px] md:h-[380px] md:w-[46%] ${
+                  className={`relative h-[220px] w-full shrink-0 overflow-hidden sm:h-[280px] md:h-[320px] md:w-[46%] ${
                     s.photoLeft ? "photo-arch-left" : "photo-arch-right"
                   }`}
                 >
@@ -126,7 +126,7 @@ export default function Studio() {
           {/* Plynulé prolnutí z barvy předchozí sekce */}
           {s.prevFill && (
             <div
-              className="absolute inset-x-0 top-0 h-36"
+              className="absolute inset-x-0 top-0 h-24"
               style={{ background: `linear-gradient(to bottom, ${s.prevFill}, transparent)` }}
             />
           )}

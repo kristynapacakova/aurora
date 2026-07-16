@@ -5,10 +5,10 @@ import { nbsp } from "@/lib/typo";
 
 export default function AboutTeaser() {
   return (
-    <section className="bg-sand relative pt-28 pb-24 sm:pt-36 sm:pb-32">
+    <section className="bg-sand relative pt-14 pb-14 sm:pt-16 sm:pb-16">
       {/* Plynulé prolnutí z barvy předchozí sekce */}
       <div
-        className="absolute inset-x-0 top-0 h-36"
+        className="absolute inset-x-0 top-0 h-24"
         style={{ background: "linear-gradient(to bottom, #FDF6F0, transparent)" }}
       />
       <div className="mx-auto max-w-7xl px-6">

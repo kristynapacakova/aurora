@@ -34,7 +34,7 @@ const PLANS = [
 
 export default function Pricing() {
   return (
-    <section id="cenik" className="bg-sand relative pt-28 pb-32 sm:pt-36 sm:pb-40">
+    <section id="cenik" className="bg-sand relative pt-14 pb-16 sm:pt-16 sm:pb-20">
       <div className="mx-auto max-w-5xl px-6">
         <FadeUp>
           <div className="mb-8 text-center">
