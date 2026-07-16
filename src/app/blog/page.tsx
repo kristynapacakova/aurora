@@ -55,7 +55,7 @@ export default async function BlogPage() {
                         year: "numeric",
                       })}
                     </p>
-                    <h2 className="mt-2 font-sans text-2xl font-medium text-ink">{nbsp(c.nadpis)}</h2>
+                    <h2 className="mt-2 font-serif text-3xl text-ink">{nbsp(c.nadpis)}</h2>
                     <p className="mt-3 text-sm leading-relaxed text-muted">{nbsp(perex(c.text))}</p>
                     <span className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-ink transition-colors group-hover:text-accent">
                       Číst dál

@@ -63,20 +63,19 @@ export default async function PobytyPage() {
 
                       {/* Text */}
                       <div className="flex flex-1 flex-col">
-                        <h2 className="font-sans text-2xl font-medium text-ink sm:text-3xl">
+                        <h2 className="font-serif text-3xl text-ink sm:text-4xl">
                           {nbsp(p.nadpis)}
                         </h2>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                           {p.termin && <span>📅 {p.termin}</span>}
                           {p.misto && <span>📍 {p.misto}</span>}
+                          {p.cena && (
+                            <span className="rounded-full bg-accent px-3 py-1 text-xs normal-case tracking-normal text-white">
+                              {p.cena}
+                            </span>
+                          )}
                         </div>
-
-                        {p.cena && (
-                          <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
-                            Cena {p.cena}
-                          </p>
-                        )}
 
                         {prvniOdstavec && (
                           <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
