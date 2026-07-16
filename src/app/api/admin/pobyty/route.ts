@@ -21,6 +21,8 @@ type Body = {
   popis?: string;
   cena?: string;
   fotky?: string[];
+  qr_kod?: string;
+  platebni_pokyny?: string;
   zverejneno?: boolean;
 };
 
@@ -32,6 +34,8 @@ function parseFields(body: Body) {
     popis: (body.popis ?? "").trim(),
     cena: (body.cena ?? "").trim(),
     fotky: Array.isArray(body.fotky) ? body.fotky : [],
+    qr_kod: (body.qr_kod ?? "").trim(),
+    platebni_pokyny: (body.platebni_pokyny ?? "").trim(),
     zverejneno: body.zverejneno !== false,
   };
 }

@@ -16,9 +16,12 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [cena, setCena] = useState(initial?.cena ?? "");
   const [popis, setPopis] = useState(initial?.popis ?? "");
   const [fotky, setFotky] = useState<string[]>(initial?.fotky ?? []);
+  const [qrKod, setQrKod] = useState(initial?.qr_kod ?? "");
+  const [platebniPokyny, setPlatebniPokyny] = useState(initial?.platebni_pokyny ?? "");
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ index: number; total: number; percent: number } | null>(null);
+  const [uploadingQr, setUploadingQr] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,6 +53,25 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
     e.target.value = "";
   }
 
+  async function uploadQrCode(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingQr(true);
+    setError(null);
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    try {
+      const blob = await upload(`qr-kody/${Date.now()}-${safeName}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/admin/upload",
+      });
+      setQrKod(blob.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nahrání QR kódu se nepovedlo.");
+    }
+    setUploadingQr(false);
+    e.target.value = "";
+  }
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (fotky.length === 0) {
@@ -59,7 +81,18 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
     setSaving(true);
     setError(null);
 
-    const payload = { id: initial?.id, nadpis, misto, termin, cena, popis, fotky, zverejneno };
+    const payload = {
+      id: initial?.id,
+      nadpis,
+      misto,
+      termin,
+      cena,
+      popis,
+      fotky,
+      qr_kod: qrKod,
+      platebni_pokyny: platebniPokyny,
+      zverejneno,
+    };
     const res = await fetch("/api/admin/pobyty", {
       method: initial ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
@@ -133,6 +166,11 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                   {fotky.map((url, i) => (
                     <div key={url} className="group relative aspect-square overflow-hidden rounded-xl">
                       <Image src={url} alt={`Fotka ${i + 1}`} fill className="object-cover" sizes="150px" />
+                      {i === 0 && (
+                        <span className="absolute left-1.5 top-1.5 rounded-full bg-ink/70 px-2 py-0.5 text-[10px] uppercase tracking-wider text-cream">
+                          úvodní
+                        </span>
+                      )}
                       <button
                         type="button"
                         onClick={() => setFotky((prev) => prev.filter((u) => u !== url))}
@@ -149,6 +187,12 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                 {uploading ? "Nahrávám…" : "+ Nahrát fotky"}
                 <input type="file" accept="image/*" multiple onChange={uploadPhotos} disabled={uploading} className="hidden" />
               </label>
+              {fotky.length > 1 && (
+                <p className="text-xs text-muted">
+                  První fotka je úvodní (zobrazí se v seznamu pobytů). Ostatní uvidí návštěvnice v galerii po
+                  rozkliknutí pobytu.
+                </p>
+              )}
               {uploadProgress && (
                 <div className="flex flex-col gap-1.5">
                   <p className="text-xs text-muted">
@@ -162,6 +206,48 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Platba */}
+            <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white/50 p-5">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-muted">Platba (nepovinné)</p>
+                <p className="mt-1 text-xs text-muted">
+                  Když sem nahraješ QR kód a napíšeš pokyny, zákaznice je uvidí po kliknutí na „Závazně objednat“.
+                </p>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <span className="text-xs uppercase tracking-[0.2em] text-muted">QR kód pro platbu</span>
+                {qrKod && (
+                  <div className="group relative h-32 w-32 overflow-hidden rounded-xl border border-line bg-white">
+                    <Image src={qrKod} alt="QR kód pro platbu" fill className="object-contain p-2" sizes="128px" />
+                    <button
+                      type="button"
+                      onClick={() => setQrKod("")}
+                      className="absolute right-1.5 top-1.5 rounded-full bg-ink/70 px-2 py-0.5 text-xs text-cream opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label="Odebrat QR kód"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                )}
+                <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:border-ink">
+                  {uploadingQr ? "Nahrávám…" : qrKod ? "Nahradit QR kód" : "+ Nahrát QR kód"}
+                  <input type="file" accept="image/*" onChange={uploadQrCode} disabled={uploadingQr} className="hidden" />
+                </label>
+              </div>
+
+              <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                Platební pokyny
+                <textarea
+                  value={platebniPokyny}
+                  onChange={(e) => setPlatebniPokyny(e.target.value)}
+                  rows={3}
+                  className={inputCls}
+                  placeholder="Např. Jako variabilní symbol uveď své telefonní číslo. Číslo účtu: 123456789/0800."
+                />
+              </label>
             </div>
 
             <label className="flex items-center gap-3 text-sm text-ink">
@@ -252,11 +338,28 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                     </div>
                   )}
 
-                  <div className="mt-6">
+                  <div className="mt-6 flex flex-wrap items-center gap-3">
                     <span className="inline-block cursor-default rounded-full bg-accent px-7 py-3 text-xs uppercase tracking-[0.2em] text-white opacity-90">
-                      Mám zájem →
+                      Závazně objednat →
+                    </span>
+                    <span className="inline-block cursor-default rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90">
+                      Mám dotaz
                     </span>
                   </div>
+
+                  {(qrKod || platebniPokyny) && (
+                    <div className="mt-4 flex items-start gap-3 rounded-xl bg-white/60 p-3 text-xs text-muted">
+                      {qrKod && (
+                        <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white">
+                          <Image src={qrKod} alt="QR kód" fill className="object-contain p-1" sizes="56px" />
+                        </div>
+                      )}
+                      <p>
+                        Po kliknutí na „Závazně objednat“ se toto zobrazí zákaznici k platbě.
+                        {platebniPokyny && <> Pokyny: „{platebniPokyny}“</>}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </article>
             </div>
