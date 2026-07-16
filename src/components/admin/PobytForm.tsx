@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent, type ChangeEvent } from "react";
+import { upload } from "@vercel/blob/client";
 import type { Pobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 
@@ -27,14 +28,15 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
     setError(null);
 
     for (const file of files) {
-      const fd = new FormData();
-      fd.append("file", file);
-      const res = await fetch("/api/admin/upload", { method: "POST", body: fd });
-      const data = await res.json();
-      if (res.ok) {
-        setFotky((prev) => [...prev, data.url]);
-      } else {
-        setError(data.error ?? "Nahrání fotky se nepovedlo.");
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      try {
+        const blob = await upload(`pobyty/${Date.now()}-${safeName}`, file, {
+          access: "public",
+          handleUploadUrl: "/api/admin/upload",
+        });
+        setFotky((prev) => [...prev, blob.url]);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Nahrání fotky se nepovedlo.");
         break;
       }
     }
