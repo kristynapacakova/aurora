@@ -2,15 +2,26 @@ import { NextResponse } from "next/server";
 import { put } from "@vercel/blob";
 import { isAdminRequest } from "@/lib/adminAuth";
 
-// Nahrání fotky do Vercel Blob úložiště. Vyžaduje připojený Blob store
-// (Vercel doplní BLOB_READ_WRITE_TOKEN automaticky).
+// Nahrání fotky do Vercel Blob úložiště. Token hledáme toleratně —
+// standardně BLOB_READ_WRITE_TOKEN, ale při připojení store s vlastním
+// prefixem může mít jiný začátek (…_READ_WRITE_TOKEN).
+function blobToken(): string | undefined {
+  if (process.env.BLOB_READ_WRITE_TOKEN) return process.env.BLOB_READ_WRITE_TOKEN;
+  const key = Object.keys(process.env).find((k) => k.endsWith("_READ_WRITE_TOKEN"));
+  return key ? process.env[key] : undefined;
+}
+
 export async function POST(request: Request) {
   if (!(await isAdminRequest(request))) {
     return NextResponse.json({ error: "Nepřihlášeno." }, { status: 401 });
   }
-  if (!process.env.BLOB_READ_WRITE_TOKEN) {
+  const token = blobToken();
+  if (!token) {
     return NextResponse.json(
-      { error: "Úložiště fotek není připojeno. Ve Vercelu: Storage → Create → Blob." },
+      {
+        error:
+          "Úložiště fotek není propojené s projektem. Ve Vercelu: Storage → blob store → Connect to Project → aurora.",
+      },
       { status: 503 }
     );
   }
@@ -30,6 +41,7 @@ export async function POST(request: Request) {
   const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
   const blob = await put(`pobyty/${Date.now()}-${safeName}`, file, {
     access: "public",
+    token,
   });
 
   return NextResponse.json({ ok: true, url: blob.url });
