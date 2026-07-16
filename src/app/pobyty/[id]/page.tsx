@@ -45,59 +45,67 @@ export default async function PobytDetailPage({
     <>
       <Navbar />
       <main className="min-h-screen bg-cream px-6 pb-24 pt-32 sm:pt-36">
-        <div className="mx-auto max-w-4xl">
+        <div className="mx-auto max-w-6xl">
           <FadeUp>
             <Link href="/pobyty" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">
               ← Zpět na pobyty
             </Link>
           </FadeUp>
 
+          {/* Stejné rozložení jako Studio sekce: text na jedné straně, foto vedle */}
           <FadeUp delay={0.05}>
-            <div className="mt-6">
-              <PobytGallery fotky={pobyt.fotky} alt={pobyt.nadpis} />
-            </div>
-          </FadeUp>
-
-          <FadeUp delay={0.1}>
-            <div className="mt-10 max-w-2xl">
-              <div className="mb-4 flex items-center gap-3">
-                <IconLeafBranch size={22} />
-                <span className="text-xs uppercase tracking-[0.3em] text-accent">Pobyt pro ženy</span>
-              </div>
-
-              <h1 className="font-allura text-4xl text-ink sm:text-5xl">{nbsp(pobyt.nadpis)}</h1>
-
-              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
-                {pobyt.termin && <span>📅 {pobyt.termin}</span>}
-                {pobyt.misto && <span>📍 {pobyt.misto}</span>}
-              </div>
-
-              {pobyt.cena && (
-                <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
-                  Cena {pobyt.cena}
-                </p>
-              )}
-
-              {pobyt.popis && (
-                <div className="mt-6 flex flex-col gap-3">
-                  {pobyt.popis.split(/\n\s*\n/).map((odst, i) => (
-                    <p key={i} className="text-sm leading-relaxed text-muted">
-                      {nbsp(odst)}
-                    </p>
-                  ))}
-                </div>
-              )}
-
-              <div className="mt-8">
-                <PoptavkaForm
-                  pobytId={pobyt.id}
-                  pobytNadpis={pobyt.nadpis}
-                  cena={pobyt.cena}
-                  qrDataUrl={qrDataUrl ?? undefined}
-                  cisloUctu={pobyt.cislo_uctu}
-                  variabilniSymbol={pobyt.variabilni_symbol}
-                  platebniPokyny={pobyt.platebni_pokyny}
+            <div className="mt-8 flex flex-col gap-8 md:flex-row-reverse md:items-start md:gap-14">
+              {/* Fotky */}
+              <div className="w-full shrink-0 md:w-[46%]">
+                <PobytGallery
+                  fotky={pobyt.fotky}
+                  alt={pobyt.nadpis}
+                  arch="right"
+                  heightClass="h-[220px] sm:h-[280px] md:h-[320px]"
                 />
+              </div>
+
+              {/* Text */}
+              <div className="flex-1">
+                <div className="mb-4 flex items-center gap-3">
+                  <IconLeafBranch size={22} />
+                  <span className="text-xs uppercase tracking-[0.3em] text-accent">Pobyt pro ženy</span>
+                </div>
+
+                <h1 className="font-sans text-3xl font-medium text-ink sm:text-4xl">{nbsp(pobyt.nadpis)}</h1>
+
+                <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
+                  {pobyt.termin && <span>📅 {pobyt.termin}</span>}
+                  {pobyt.misto && <span>📍 {pobyt.misto}</span>}
+                </div>
+
+                {pobyt.cena && (
+                  <p className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-accent px-4 py-1.5 text-sm font-medium normal-case tracking-normal text-white">
+                    Cena {pobyt.cena}
+                  </p>
+                )}
+
+                {pobyt.popis && (
+                  <div className="mt-6 flex max-w-md flex-col gap-3">
+                    {pobyt.popis.split(/\n\s*\n/).map((odst, i) => (
+                      <p key={i} className="text-sm leading-relaxed text-muted">
+                        {nbsp(odst)}
+                      </p>
+                    ))}
+                  </div>
+                )}
+
+                <div className="mt-8">
+                  <PoptavkaForm
+                    pobytId={pobyt.id}
+                    pobytNadpis={pobyt.nadpis}
+                    cena={pobyt.cena}
+                    qrDataUrl={qrDataUrl ?? undefined}
+                    cisloUctu={pobyt.cislo_uctu}
+                    variabilniSymbol={pobyt.variabilni_symbol}
+                    platebniPokyny={pobyt.platebni_pokyny}
+                  />
+                </div>
               </div>
             </div>
           </FadeUp>

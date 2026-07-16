@@ -63,7 +63,7 @@ export default async function PobytyPage() {
 
                       {/* Text */}
                       <div className="flex flex-1 flex-col">
-                        <h2 className="font-serif text-2xl text-ink sm:text-3xl">
+                        <h2 className="font-sans text-2xl font-medium text-ink sm:text-3xl">
                           {nbsp(p.nadpis)}
                         </h2>
 
@@ -86,7 +86,7 @@ export default async function PobytyPage() {
 
                         <Link
                           href={`/pobyty/${p.id}`}
-                          className="mt-6 inline-flex w-fit items-center gap-2 rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-ink"
+                          className="mt-6 inline-flex w-fit items-center gap-2 rounded-full bg-gradient-aurora px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
                         >
                           Zjistit více →
                         </Link>

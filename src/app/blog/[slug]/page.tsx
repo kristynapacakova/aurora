@@ -45,7 +45,7 @@ export default async function ClanekPage({
               year: "numeric",
             })}
           </p>
-          <h1 className="mt-3 font-allura text-4xl leading-[1.15] text-ink sm:text-5xl">
+          <h1 className="mt-3 font-sans text-3xl font-medium leading-[1.25] text-ink sm:text-4xl">
             {nbsp(clanek.nadpis)}
           </h1>
 
