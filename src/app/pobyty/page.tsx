@@ -15,6 +15,12 @@ export const metadata: Metadata = {
     "Ženské jógové pobyty — čas, který patří jen tobě. Pohyb, dech, odpočinek a příroda.",
 };
 
+function excerpt(text: string, max = 140): string {
+  const plain = text.replace(/\s+/g, " ").trim();
+  if (plain.length <= max) return plain;
+  return plain.slice(0, max).replace(/\s+\S*$/, "") + "…";
+}
+
 export default async function PobytyPage() {
   const pobyty = await getPobyty(true);
 
@@ -23,7 +29,7 @@ export default async function PobytyPage() {
       <Navbar />
       <main className="min-h-screen bg-cream">
         {/* Hlavička stránky */}
-        <section className="px-6 pb-10 pt-32 text-center sm:pt-36">
+        <section className="px-6 pb-14 pt-32 text-center sm:pt-36">
           <FadeUp>
             <p className="mb-3 text-xs uppercase tracking-[0.3em] text-accent">
               Pobyty pro ženy
@@ -41,9 +47,8 @@ export default async function PobytyPage() {
               {nbsp("Právě teď není vypsaný žádný pobyt. Sleduj nás na Instagramu, ať ti nový termín neuteče. 🌿")}
             </p>
           ) : (
-            <div className="flex flex-col gap-20">
+            <div className="flex flex-col gap-24">
               {pobyty.map((p, i) => {
-                const [prvniOdstavec] = p.popis.split(/\n\s*\n/);
                 return (
                   <FadeUp key={p.id}>
                     <article
@@ -70,16 +75,12 @@ export default async function PobytyPage() {
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                           {p.termin && <span>📅 {p.termin}</span>}
                           {p.misto && <span>📍 {p.misto}</span>}
-                          {p.cena && (
-                            <span className="rounded-full bg-accent px-3 py-1 text-xs normal-case tracking-normal text-white">
-                              {p.cena}
-                            </span>
-                          )}
+                          {p.cena && <span>🏷️ {p.cena}</span>}
                         </div>
 
-                        {prvniOdstavec && (
+                        {p.popis && (
                           <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
-                            {nbsp(prvniOdstavec)}
+                            {nbsp(excerpt(p.popis))}
                           </p>
                         )}
 
