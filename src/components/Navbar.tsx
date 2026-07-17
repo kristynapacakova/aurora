@@ -35,14 +35,14 @@ export default function Navbar() {
           </Link>
 
           {/* Menu vpravo (jen desktop) */}
-          <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
+          <nav className="hidden items-center gap-5 lg:flex xl:gap-6">
             {MENU_ITEMS.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
-                className="text-xs uppercase tracking-[0.2em] text-muted whitespace-nowrap transition-colors duration-200 hover:text-ink"
+                className="text-xs uppercase tracking-[0.14em] text-muted whitespace-nowrap transition-colors duration-200 hover:text-ink"
               >
                 {item.label}
               </a>
