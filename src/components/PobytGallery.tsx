@@ -14,7 +14,7 @@ export default function PobytGallery({
   arch?: "left" | "right";
   heightClass?: string;
 }) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
   const archClass = arch === "left" ? "photo-arch-left" : "photo-arch-right";
 
   if (fotky.length === 0) {
@@ -27,90 +27,40 @@ export default function PobytGallery({
 
   return (
     <div>
-      <button
-        onClick={() => setOpenIndex(0)}
-        className={`${archClass} group relative block w-full overflow-hidden ${heightClass}`}
-      >
+      {/* Hlavní fotka — po kliknutí na miniaturu se zde vymění */}
+      <div className={`${archClass} relative w-full overflow-hidden bg-sand ${heightClass}`}>
         <Image
-          src={fotky[0]}
-          alt={alt}
+          key={fotky[activeIndex]}
+          src={fotky[activeIndex]}
+          alt={`${alt}${activeIndex > 0 ? ` — fotka ${activeIndex + 1}` : ""}`}
           fill
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
+          className="object-cover"
           sizes="(max-width: 768px) 100vw, 700px"
           priority
         />
-      </button>
+      </div>
 
       {fotky.length > 1 && (
         <div className="mt-3 grid grid-cols-4 gap-3 sm:grid-cols-6">
-          {fotky.slice(1).map((url, i) => (
+          {fotky.map((url, i) => (
             <button
               key={url}
-              onClick={() => setOpenIndex(i + 1)}
-              className="relative aspect-square overflow-hidden rounded-xl"
+              onClick={() => setActiveIndex(i)}
+              className={`relative aspect-square overflow-hidden rounded-xl ring-2 transition-all duration-200 ${
+                i === activeIndex ? "ring-accent" : "ring-transparent hover:ring-accent/40"
+              }`}
+              aria-label={`Zobrazit fotku ${i + 1}`}
+              aria-current={i === activeIndex}
             >
               <Image
                 src={url}
-                alt={`${alt} — fotka ${i + 2}`}
+                alt={`${alt} — náhled ${i + 1}`}
                 fill
-                className="object-cover transition-transform duration-200 hover:scale-105"
+                className="object-cover"
                 sizes="150px"
               />
             </button>
           ))}
-        </div>
-      )}
-
-      {openIndex !== null && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/90 p-4"
-          onClick={() => setOpenIndex(null)}
-        >
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpenIndex(null);
-            }}
-            className="absolute right-5 top-5 text-3xl text-cream/90 hover:text-cream"
-            aria-label="Zavřít"
-          >
-            ✕
-          </button>
-
-          {fotky.length > 1 && (
-            <>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenIndex((i) => (i === null ? 0 : (i - 1 + fotky.length) % fotky.length));
-                }}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-4xl text-cream/70 hover:text-cream sm:left-6"
-                aria-label="Předchozí fotka"
-              >
-                ‹
-              </button>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setOpenIndex((i) => (i === null ? 0 : (i + 1) % fotky.length));
-                }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-4xl text-cream/70 hover:text-cream sm:right-6"
-                aria-label="Další fotka"
-              >
-                ›
-              </button>
-            </>
-          )}
-
-          <div className="relative h-[80vh] w-full max-w-4xl" onClick={(e) => e.stopPropagation()}>
-            <Image
-              src={fotky[openIndex]}
-              alt={`${alt} — fotka ${openIndex + 1}`}
-              fill
-              className="object-contain"
-              sizes="90vw"
-            />
-          </div>
         </div>
       )}
     </div>
