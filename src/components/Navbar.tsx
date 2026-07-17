@@ -17,17 +17,33 @@ const MENU_ITEMS: MenuItem[] = [
   { label: "Kontakt", href: "/#kontakt" },
 ];
 
+const SCROLL_HIDE_THRESHOLD = 80;
+
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > SCROLL_HIDE_THRESHOLD);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 bg-cream/90 backdrop-blur-sm">
+      <header
+        className={`fixed inset-x-0 top-0 z-50 bg-cream/90 backdrop-blur-sm transition-transform duration-300 ${
+          scrolled && !open ? "-translate-y-full" : "translate-y-0"
+        }`}
+      >
         <div className="mx-auto flex max-w-6xl items-center px-6 py-5 md:px-10">
           {/* Logo vlevo */}
           <Link href="/" onClick={() => setOpen(false)} className="shrink-0">
@@ -96,6 +112,19 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Šipka zpět nahoru — zobrazí se při scrollování */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Zpět nahoru"
+        className={`fixed right-5 bottom-8 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-cream/90 text-ink shadow-sm ring-1 ring-line backdrop-blur-sm transition-all duration-300 hover:bg-cream md:right-8 ${
+          scrolled ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+        }`}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+      </button>
     </>
   );
 }
