@@ -5,13 +5,14 @@ import { nbsp } from "@/lib/typo";
 
 export default function AboutTeaser() {
   return (
-    <section className="bg-sand relative pt-14 pb-14 sm:pt-16 sm:pb-16">
+    <section id="o-mne" className="bg-sand relative pt-14 pb-14 sm:pt-16 sm:pb-16">
       {/* Plynulé prolnutí z barvy předchozí sekce */}
       <div
         className="absolute inset-x-0 top-0 h-24"
         style={{ background: "linear-gradient(to bottom, #FDF6F0, transparent)" }}
       />
       <div className="mx-auto max-w-7xl px-6">
+        <div className="rounded-3xl border border-line bg-cream p-6 sm:p-10 md:p-12">
         <div className="flex flex-col items-center gap-8 md:flex-row-reverse md:gap-16">
 
           {/* Fotka — vpravo, organický arch */}
@@ -53,6 +54,7 @@ export default function AboutTeaser() {
             </div>
           </FadeUp>
           </div>
+        </div>
         </div>
       </div>
     </section>
