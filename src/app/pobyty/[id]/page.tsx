@@ -10,7 +10,7 @@ import { getPobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { generatePlatebniQr } from "@/lib/platba";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,
