@@ -51,7 +51,7 @@ export default function Navbar() {
 
           {/* Logo uprostřed */}
           <Link href="/" onClick={() => setOpen(false)} className="col-start-2 justify-self-center">
-            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-11 w-auto md:h-14" priority />
+            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-16 w-auto md:h-20" priority />
           </Link>
 
           {/* Pravá polovina menu (jen desktop) */}
