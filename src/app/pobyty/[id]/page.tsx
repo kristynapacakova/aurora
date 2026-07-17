@@ -77,11 +77,7 @@ export default async function PobytDetailPage({
                 <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                   {pobyt.termin && <span>📅 {pobyt.termin}</span>}
                   {pobyt.misto && <span>📍 {pobyt.misto}</span>}
-                  {pobyt.cena && (
-                    <span className="rounded-full bg-accent px-3 py-1 text-xs normal-case tracking-normal text-white">
-                      {pobyt.cena}
-                    </span>
-                  )}
+                  {pobyt.cena && <span>🏷️ {pobyt.cena}</span>}
                 </div>
 
                 {pobyt.popis && (

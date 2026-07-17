@@ -94,8 +94,14 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Prolnutí do další sekce */}
-      <div className="absolute inset-x-0 bottom-0 hidden h-14 bg-gradient-to-t from-cream to-transparent md:block" />
+      {/* Prolnutí do další sekce — pozvolná (ne lineární) křivka, ať to spíš zmizí než se ořízne */}
+      <div
+        className="absolute inset-x-0 bottom-0 hidden h-32 md:block"
+        style={{
+          background:
+            "linear-gradient(to top, #FCF4F1 0%, rgba(252,244,241,0.85) 20%, rgba(252,244,241,0.55) 42%, rgba(252,244,241,0.28) 65%, rgba(252,244,241,0.08) 85%, transparent 100%)",
+        }}
+      />
 
       {/* Scroll hint */}
       <motion.div
