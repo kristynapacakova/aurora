@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
 import { USCREEN } from "@/lib/config";
@@ -48,13 +49,9 @@ export default function Navbar() {
             ))}
           </nav>
 
-          {/* Logo uprostřed — textové, dokud nebude hotové obrázkové logo */}
-          <Link
-            href="/"
-            onClick={() => setOpen(false)}
-            className="col-start-2 justify-self-center font-serif text-xl uppercase tracking-[0.25em] text-ink md:text-2xl"
-          >
-            AURORA
+          {/* Logo uprostřed */}
+          <Link href="/" onClick={() => setOpen(false)} className="col-start-2 justify-self-center">
+            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-11 w-auto md:h-14" priority />
           </Link>
 
           {/* Pravá polovina menu (jen desktop) */}
