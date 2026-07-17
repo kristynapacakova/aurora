@@ -28,14 +28,14 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 bg-cream/90 backdrop-blur-sm">
-        <div className="mx-auto flex max-w-6xl items-center gap-10 px-6 py-5 md:px-10">
+        <div className="mx-auto flex max-w-6xl items-center px-6 py-5 md:px-10">
           {/* Logo vlevo */}
           <Link href="/" onClick={() => setOpen(false)} className="shrink-0">
             <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-16 w-auto md:h-20" priority />
           </Link>
 
-          {/* Menu hned vedle loga (jen desktop) */}
-          <nav className="hidden items-center gap-5 lg:flex xl:gap-6">
+          {/* Menu vycentrované v prostoru napravo od loga (jen desktop) */}
+          <nav className="mx-auto hidden items-center gap-5 lg:flex xl:gap-6">
             {MENU_ITEMS.map((item) => (
               <a
                 key={item.label}
