@@ -44,10 +44,10 @@ export default function Navbar() {
           scrolled && !open ? "-translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="mx-auto flex max-w-6xl items-center px-6 py-5 md:px-10">
+        <div className="mx-auto flex max-w-6xl items-center px-6 py-3 md:px-10 md:py-4">
           {/* Logo vlevo */}
           <Link href="/" onClick={() => setOpen(false)} className="shrink-0">
-            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-16 w-auto md:h-20" priority />
+            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-14 w-auto md:h-16" priority />
           </Link>
 
           {/* Menu vycentrované v prostoru napravo od loga (jen desktop) */}
