@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useState, type FormEvent } from "react";
 
@@ -32,11 +33,11 @@ export default function AdminLoginPage() {
   return (
     <main className="flex min-h-screen items-center justify-center bg-sand px-6 py-24">
       <div className="w-full max-w-md rounded-2xl bg-cream p-8 text-center shadow-sm ring-1 ring-line sm:p-10">
-        <p className="mb-3 text-xs uppercase tracking-[0.3em] text-accent">
+        <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="mx-auto h-20 w-auto" priority />
+        <p className="mt-5 text-xs uppercase tracking-[0.3em] text-accent">
           Administrace
         </p>
-        <h1 className="font-allura text-4xl text-ink">AURORA jóga</h1>
-        <p className="mt-4 text-sm text-muted">
+        <p className="mt-3 text-sm text-muted">
           Přihlas se heslem pro správu pobytů a článků.
         </p>
 
