@@ -6,7 +6,6 @@ import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import PoptavkaForm from "@/components/PoptavkaForm";
 import PobytGallery from "@/components/PobytGallery";
-import { IconLeafBranch } from "@/components/BrandIcons";
 import { getPobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { generatePlatebniQr } from "@/lib/platba";
@@ -67,11 +66,6 @@ export default async function PobytDetailPage({
 
               {/* Text */}
               <div className="flex-1">
-                <div className="mb-4 flex items-center gap-3">
-                  <IconLeafBranch size={22} />
-                  <span className="text-xs uppercase tracking-[0.3em] text-accent">Pobyt pro ženy</span>
-                </div>
-
                 <h1 className="font-serif text-4xl text-ink sm:text-5xl">{nbsp(pobyt.nadpis)}</h1>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
