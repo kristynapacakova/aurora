@@ -7,7 +7,7 @@ import PobytGallery from "@/components/PobytGallery";
 import { getPobyty } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Pobyty pro ženy | AURORA jóga",
