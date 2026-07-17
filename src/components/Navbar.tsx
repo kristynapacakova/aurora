@@ -8,61 +8,57 @@ import { USCREEN } from "@/lib/config";
 
 type MenuItem = { label: string; href: string; external?: boolean };
 
-const LEFT_ITEMS: MenuItem[] = [
+const MENU_ITEMS: MenuItem[] = [
   { label: "O mně", href: "/#o-mne" },
   { label: "Lekce", href: "/#lekce" },
   { label: "Online studio", href: USCREEN.signup, external: true },
-];
-
-const RIGHT_ITEMS: MenuItem[] = [
   { label: "Pobyty pro ženy", href: "/pobyty" },
   { label: "Blog", href: "/blog" },
   { label: "Kontakt", href: "/#kontakt" },
 ];
 
-const MENU_ITEMS = [...LEFT_ITEMS, ...RIGHT_ITEMS];
+const SCROLL_HIDE_THRESHOLD = 80;
 
 export default function Navbar() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [open]);
 
+  useEffect(() => {
+    function onScroll() {
+      setScrolled(window.scrollY > SCROLL_HIDE_THRESHOLD);
+    }
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 bg-cream/90 backdrop-blur-sm">
-        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center px-6 py-5 md:px-10">
-          {/* Levá polovina menu (jen desktop) */}
-          <nav className="hidden items-center gap-6 lg:flex xl:gap-8">
-            {LEFT_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                target={item.external ? "_blank" : undefined}
-                rel={item.external ? "noopener noreferrer" : undefined}
-                className="text-xs uppercase tracking-[0.2em] text-muted whitespace-nowrap transition-colors duration-200 hover:text-ink"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Logo uprostřed */}
-          <Link href="/" onClick={() => setOpen(false)} className="col-start-2 justify-self-center">
-            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-11 w-auto md:h-14" priority />
+      <header
+        className={`fixed inset-x-0 top-0 z-50 bg-cream/90 backdrop-blur-sm transition-transform duration-300 ${
+          scrolled && !open ? "-translate-y-full" : "translate-y-0"
+        }`}
+      >
+        <div className="mx-auto flex max-w-6xl items-center px-6 py-5 md:px-10">
+          {/* Logo vlevo */}
+          <Link href="/" onClick={() => setOpen(false)} className="shrink-0">
+            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-16 w-auto md:h-20" priority />
           </Link>
 
-          {/* Pravá polovina menu (jen desktop) */}
-          <nav className="col-start-3 hidden items-center justify-end gap-6 lg:flex xl:gap-8">
-            {RIGHT_ITEMS.map((item) => (
+          {/* Menu vycentrované v prostoru napravo od loga (jen desktop) */}
+          <nav className="mx-auto hidden items-center gap-5 lg:flex xl:gap-6">
+            {MENU_ITEMS.map((item) => (
               <a
                 key={item.label}
                 href={item.href}
                 target={item.external ? "_blank" : undefined}
                 rel={item.external ? "noopener noreferrer" : undefined}
-                className="text-xs uppercase tracking-[0.2em] text-muted whitespace-nowrap transition-colors duration-200 hover:text-ink"
+                className="text-xs uppercase tracking-[0.14em] text-muted whitespace-nowrap transition-colors duration-200 hover:text-ink"
               >
                 {item.label}
               </a>
@@ -72,7 +68,7 @@ export default function Navbar() {
           {/* Hamburger — jen mobil */}
           <button
             onClick={() => setOpen((v) => !v)}
-            className="relative z-[60] col-start-3 flex flex-col gap-[7px] justify-self-end p-2 lg:hidden"
+            className="relative z-[60] ml-auto flex flex-col gap-[7px] p-2 lg:hidden"
             aria-label="Menu"
           >
             <span className={`block h-px w-7 transition-all duration-300 ${open ? "translate-y-[10px] rotate-45 bg-cream" : "bg-ink"}`} />
@@ -116,6 +112,19 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Šipka zpět nahoru — zobrazí se při scrollování */}
+      <button
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        aria-label="Zpět nahoru"
+        className={`fixed right-5 bottom-8 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-cream/90 text-ink shadow-sm ring-1 ring-line backdrop-blur-sm transition-all duration-300 hover:bg-cream md:right-8 ${
+          scrolled ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0"
+        }`}
+      >
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 19V5M5 12l7-7 7 7" />
+        </svg>
+      </button>
     </>
   );
 }
