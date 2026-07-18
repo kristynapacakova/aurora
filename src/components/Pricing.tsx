@@ -94,8 +94,8 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-6 block rounded-full py-3 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-90 ${
-                    plan.featured ? "bg-cream" : "bg-gradient-aurora"
+                  className={`mt-6 block rounded-full py-3 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-80 ${
+                    plan.featured ? "bg-cream" : "border-gradient-aurora"
                   }`}
                 >
                   Aktivovat členství
