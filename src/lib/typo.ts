@@ -8,8 +8,10 @@ const SHORT_WORDS = [
   "a", "i", "k", "o", "s", "u", "v", "z",
   // dvoupísmenné předložky
   "na", "do", "od", "po", "za", "ze", "ke", "ku", "se", "ve",
+  // trojpísmenné předložky
+  "pro", "před", "pod", "nad", "bez", "při",
   // krátké spojky
-  "až", "že", "ať", "či",
+  "až", "že", "ať", "či", "než",
 ];
 
 const RE = new RegExp(
