@@ -49,7 +49,7 @@ const SERVICES = [
     ],
     cta: "Objevit pobyty",
     href: "/pobyty",
-    photo: "/retreaty.png",
+    photo: "/retreaty.jpg",
     alt: "Pobyty pro ženy",
     photoLeft: true,
   },
