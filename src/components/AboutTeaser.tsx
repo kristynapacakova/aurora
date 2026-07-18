@@ -119,7 +119,7 @@ export default function AboutTeaser() {
         </div>
 
         {/* Tečky — jen dokud je sekce přilepená na obrazovce */}
-        <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center gap-2.5">
+        <div className="absolute inset-x-0 bottom-16 z-10 flex justify-center gap-2.5">
           {PANELS.map((panel, i) => (
             <span
               key={panel.eyebrow}
