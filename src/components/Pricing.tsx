@@ -27,7 +27,7 @@ const PLANS = [
       "Vše z Měsíčního plánu",
       "Prioritní přístup k novinkám",
       "Exkluzivní výzvy a programy",
-      "Osobní lekce se slevou 20 %",
+      "Osobní lekce se slevou 20 %",
     ],
   },
 ];
@@ -35,7 +35,7 @@ const PLANS = [
 export default function Pricing() {
   return (
     <section id="cenik" className="bg-cream relative pt-14 pb-16 sm:pt-16 sm:pb-20">
-      <div className="mx-auto max-w-5xl px-6">
+      <div className="mx-auto max-w-6xl px-6">
         <FadeUp>
           <div className="mb-8 text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
@@ -56,7 +56,7 @@ export default function Pricing() {
           {PLANS.map((plan, i) => (
             <FadeUp key={plan.name} delay={i * 0.12}>
               <div
-                className={`relative flex h-full flex-col border border-line bg-cream pb-6 pt-12 text-ink sm:pb-8 sm:pt-16 ${
+                className={`relative flex h-full flex-col border border-line bg-cream pb-5 pt-10 text-ink sm:pb-6 sm:pt-12 ${
                   i % 2 === 0
                     ? "photo-arch-left pl-10 pr-6 sm:pl-16 sm:pr-8"
                     : "photo-arch-right pl-6 pr-10 sm:pl-8 sm:pr-16"
@@ -65,7 +65,7 @@ export default function Pricing() {
                 {plan.featured && (
                   <span
                     className={`bg-gradient-aurora absolute right-6 top-6 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink ${
-                      i % 2 === 0 ? "sm:right-8 sm:top-8" : "sm:right-8 sm:top-16"
+                      i % 2 === 0 ? "sm:right-8 sm:top-8" : "sm:right-8 sm:top-12"
                     }`}
                   >
                     Nejoblíbenější
@@ -76,16 +76,16 @@ export default function Pricing() {
                   {plan.name}
                 </p>
 
-                <div className="mt-5 flex items-baseline gap-1">
+                <div className="mt-3 flex items-baseline gap-1">
                   <span className="font-sans text-4xl font-semibold">{plan.price} Kč</span>
                   <span className="text-sm text-ink/60">{plan.period}</span>
                 </div>
 
-                <p className="mt-3 text-sm text-ink/70">{nbsp(plan.description)}</p>
+                <p className="mt-2 text-sm text-ink/70">{nbsp(plan.description)}</p>
 
-                <ul className="mt-5 flex flex-col gap-2">
+                <ul className="mt-4 grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-3 text-sm">
+                    <li key={f} className="flex items-start gap-2 text-sm">
                       <span className="mt-0.5 text-base leading-none text-ink">
                         ✓
                       </span>
@@ -98,7 +98,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 block rounded-full border border-ink/30 py-3 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
+                  className="mt-4 block w-fit rounded-full border border-ink/30 px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
                 >
                   Aktivovat členství
                 </a>
