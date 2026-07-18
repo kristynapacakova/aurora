@@ -79,24 +79,23 @@ export default function AboutTeaser() {
           {PANELS.map((panel, i) => {
             const isActive = i === active;
             return (
-              <div
-                key={panel.eyebrow}
-                className="flex flex-col items-center text-center transition-all duration-700 ease-out"
-                style={{
-                  opacity: isActive ? 1 : 0.55,
-                  transform: isActive ? "translateY(-10px) scale(1.06)" : "translateY(0) scale(0.92)",
-                  filter: isActive ? "drop-shadow(0 18px 28px rgba(140,95,71,0.22))" : "none",
-                }}
-              >
-                <div className="relative h-[190px] w-[190px] shrink-0 overflow-hidden rounded-t-[95px] sm:h-[220px] sm:w-[220px] sm:rounded-t-[110px]">
-                  <Image
-                    src={panel.photo}
-                    alt={panel.eyebrow}
-                    fill
-                    className="object-cover"
-                    sizes="220px"
-                    priority={i === 0}
+              <div key={panel.eyebrow} className="flex flex-col items-center text-center">
+                <div className="relative h-[190px] w-[190px] shrink-0 sm:h-[220px] sm:w-[220px]">
+                  {/* Jemný stín pod fotkou — jediný náznak, která je právě aktivní */}
+                  <div
+                    className="absolute inset-x-6 -bottom-3 h-8 rounded-full bg-ink/30 blur-xl transition-opacity duration-700 ease-in-out"
+                    style={{ opacity: isActive ? 1 : 0 }}
                   />
+                  <div className="relative h-full w-full overflow-hidden rounded-t-[95px] sm:rounded-t-[110px]">
+                    <Image
+                      src={panel.photo}
+                      alt={panel.eyebrow}
+                      fill
+                      className="object-cover"
+                      sizes="220px"
+                      priority={i === 0}
+                    />
+                  </div>
                 </div>
 
                 <div className="mt-5 flex items-center gap-2">
