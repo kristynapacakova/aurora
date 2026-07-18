@@ -56,12 +56,18 @@ export default function Pricing() {
           {PLANS.map((plan, i) => (
             <FadeUp key={plan.name} delay={i * 0.12}>
               <div
-                className={`relative flex h-full flex-col border border-line bg-cream p-6 pt-10 text-ink sm:p-8 sm:pt-14 ${
-                  i % 2 === 0 ? "card-arch-left" : "card-arch-right"
+                className={`relative flex h-full flex-col border border-line bg-cream pb-6 pt-12 text-ink sm:pb-8 sm:pt-16 ${
+                  i % 2 === 0
+                    ? "photo-arch-left pl-10 pr-6 sm:pl-16 sm:pr-8"
+                    : "photo-arch-right pl-6 pr-10 sm:pl-8 sm:pr-16"
                 }`}
               >
                 {plan.featured && (
-                  <span className="bg-gradient-aurora absolute right-8 top-8 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink">
+                  <span
+                    className={`bg-gradient-aurora absolute right-6 top-6 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink ${
+                      i % 2 === 0 ? "sm:right-8 sm:top-8" : "sm:right-8 sm:top-16"
+                    }`}
+                  >
                     Nejoblíbenější
                   </span>
                 )}
