@@ -4,13 +4,7 @@ import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { CONTACT, INSTAGRAM_WIDGET_URL } from "@/lib/config";
 
-const GRID_PHOTOS = [
-  { src: "/ig-1.jpg", position: "50% 15%" },
-  { src: "/ig-2.jpg", position: "50% 50%" },
-  { src: "/ig-3.jpg", position: "50% 20%" },
-  { src: "/ig-4.jpg", position: "50% 50%" },
-  { src: "/ig-5.jpg", position: "50% 12%" },
-];
+const GRID_PHOTOS = ["/ig-1.jpg", "/ig-2.jpg", "/ig-3.jpg", "/ig-4.jpg", "/ig-5.jpg"];
 
 export default function InstagramFeed() {
   return (
@@ -43,20 +37,19 @@ export default function InstagramFeed() {
           </>
         ) : (
           <div className="grid grid-cols-5">
-            {GRID_PHOTOS.map((photo, i) => (
+            {GRID_PHOTOS.map((src, i) => (
               <a
-                key={photo.src}
+                key={src}
                 href={CONTACT.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative aspect-square overflow-hidden"
+                className="relative aspect-square overflow-hidden bg-cream"
               >
                 <Image
-                  src={photo.src}
+                  src={src}
                   alt="Instagram"
                   fill
-                  className="object-cover transition-transform duration-300 hover:scale-105"
-                  style={{ objectPosition: photo.position }}
+                  className="object-contain transition-transform duration-300 hover:scale-105"
                   sizes="20vw"
                   priority={i === 0}
                 />
