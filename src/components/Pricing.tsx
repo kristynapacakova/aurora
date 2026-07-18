@@ -11,10 +11,10 @@ const PLANS = [
     description: "Ideální pro vyzkoušení studia.",
     featured: false,
     features: [
-      "Neomezený přístup ke všem nahrávkám",
-      "Živé lekce každý týden",
-      "Nová videa každý měsíc",
-      "Komunitní podpora",
+      "Okamžitý přístup ke všem lekcím",
+      "Každý týden nová lekce",
+      "Možnost cvičit kdykoliv a odkudkoliv",
+      "Lekce různých délek a zaměření",
     ],
   },
   {
@@ -47,7 +47,7 @@ export default function Pricing() {
               Vyber si svůj plán
             </h2>
             <p className="mx-auto mt-5 max-w-sm text-muted">
-              {nbsp("Bez závazků. Kdykoli zruš. První 7 dní zdarma.")}
+              {nbsp("Bez závazků. Kdykoli zruš.")}
             </p>
           </div>
         </FadeUp>

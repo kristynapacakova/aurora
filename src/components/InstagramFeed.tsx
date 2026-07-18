@@ -42,7 +42,7 @@ export default function InstagramFeed() {
             <Script src="https://snapwidget.com/js/snapwidget.js" strategy="lazyOnload" />
           </>
         ) : (
-          <div className="mx-auto grid max-w-4xl grid-cols-5 px-6">
+          <div className="grid w-full grid-cols-5">
             {GRID_PHOTOS.map((photo, i) => (
               <a
                 key={photo.src}
@@ -56,7 +56,7 @@ export default function InstagramFeed() {
                   alt="Instagram"
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-105"
-                  sizes="(min-width: 1024px) 180px, 20vw"
+                  sizes="20vw"
                   priority={i === 0}
                 />
               </a>
