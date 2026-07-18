@@ -170,6 +170,16 @@
   .photo-arch-right { border-radius: 20px 160px 20px 20px; }
 }
 
+/* ─── Stejný organický tvar, jemnější poloměr pro karty s textem ─────────── */
+.card-arch-left,
+.card-arch-right {
+  border-radius: 24px; /* mobil — symetrické */
+}
+@media (min-width: 768px) {
+  .card-arch-left  { border-radius: 72px 20px 20px 20px; }
+  .card-arch-right { border-radius: 20px 72px 20px 20px; }
+}
+
 /* ─── Globální styly ─────────────────────────────────────────────────────── */
 @layer base {
   *, *::before, *::after {
