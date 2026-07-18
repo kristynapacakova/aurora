@@ -40,7 +40,7 @@ export default function Navbar() {
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 bg-cream/90 backdrop-blur-sm transition-transform duration-300 ${
+        className={`fixed inset-x-0 top-0 z-50 bg-transparent transition-transform duration-300 ${
           scrolled && !open ? "-translate-y-full" : "translate-y-0"
         }`}
       >
