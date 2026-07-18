@@ -1,62 +1,133 @@
+"use client";
+
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import FadeUp from "./FadeUp";
-import { IconLeafBranch, IconHeart } from "./BrandIcons";
+import Link from "next/link";
+import { IconLeafBranch } from "./BrandIcons";
+import { USCREEN } from "@/lib/config";
 import { nbsp } from "@/lib/typo";
 
+type Panel = {
+  photo: string;
+  eyebrow: string;
+  body: string;
+  cta: { label: string; href: string; external?: boolean };
+};
+
+const PANELS: Panel[] = [
+  {
+    photo: "/anezka-portret.jpg",
+    eyebrow: "Moje cesta k józe",
+    body: "Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb. Vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.",
+    cta: { label: "Přidej se k mé cestě →", href: USCREEN.signup, external: true },
+  },
+  {
+    photo: "/studio.jpg",
+    eyebrow: "Proč jsem začala učit online",
+    body: "Aby lekce byly blízko i těm, které se ke mně nedostanou na podložku osobně — ať jsi kdekoliv.",
+    cta: { label: "Vstoupit do online studia →", href: USCREEN.signup, external: true },
+  },
+  {
+    photo: "/pobyty-skupina.jpg",
+    eyebrow: "Proč pořádám pobyty",
+    body: "Čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme jen samy sebou.",
+    cta: { label: "Prohlédnout pobyty →", href: "/pobyty" },
+  },
+];
+
 export default function AboutTeaser() {
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    let ticking = false;
+
+    function onScroll() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const wrap = wrapRef.current;
+        if (wrap) {
+          const rect = wrap.getBoundingClientRect();
+          const total = wrap.offsetHeight - window.innerHeight;
+          const scrolled = -rect.top;
+          const progress = Math.min(1, Math.max(0, scrolled / total));
+          const idx = Math.min(PANELS.length - 1, Math.floor(progress * PANELS.length));
+          setActive(idx);
+        }
+        ticking = false;
+      });
+    }
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
-    <section id="o-mne" className="bg-sand relative pt-14 pb-14 sm:pt-16 sm:pb-16">
-      {/* Plynulé prolnutí z barvy předchozí sekce */}
-      <div
-        className="absolute inset-x-0 top-0 h-24"
-        style={{ background: "linear-gradient(to bottom, #FDF6F0, transparent)" }}
-      />
-      <div className="mx-auto max-w-7xl px-6">
-        <div className="rounded-3xl border border-line bg-cream p-6 sm:p-10 md:p-12">
-        <div className="flex flex-col items-center gap-8 md:flex-row-reverse md:gap-16">
+    <div ref={wrapRef} className="relative" style={{ height: "250vh" }}>
+      <section id="o-mne" className="sticky top-0 flex h-screen items-center overflow-hidden bg-sand">
+        {/* Plynulé prolnutí z barvy předchozí sekce */}
+        <div
+          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
+          style={{ background: "linear-gradient(to bottom, #FDF6F0, transparent)" }}
+        />
 
-          {/* Fotka — vpravo, organický arch */}
-          <div className="w-full md:w-[46%] md:shrink-0">
-            <FadeUp delay={0.05}>
-              <div className="relative h-[260px] w-full overflow-hidden photo-arch-right sm:h-[320px] md:h-[380px]">
-                <Image
-                  src="/o-mne.png"
-                  alt="Anežka — lektorka jógy"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 40vw"
-                />
-              </div>
-            </FadeUp>
-          </div>
-
-          {/* Text — vlevo */}
-          <div className="flex-1">
-          <FadeUp delay={0.15}>
-            <div className="mb-6 flex items-center gap-3">
-              <IconLeafBranch size={22} />
-              <p className="text-xs uppercase tracking-[0.3em] text-accent">Moje cesta k józe</p>
-            </div>
-            <blockquote className="font-serif text-xl leading-[1.3] text-ink sm:text-2xl">
-              {nbsp("Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb.")}
-            </blockquote>
-            <p className="mt-6 max-w-sm text-xs leading-relaxed text-muted">
-              {nbsp("Ve svých lekcích vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale. Můžeš jednoduše zpomalit, nadechnout se a být chvíli sama se sebou.")}
-            </p>
-            <div className="mt-8 flex items-center gap-4">
-              <a
-                href="#o-mne"
-                className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-ink transition-colors duration-200 hover:text-accent"
+        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-14 px-6 py-20 sm:grid-cols-3 sm:gap-8">
+          {PANELS.map((panel, i) => {
+            const isActive = i === active;
+            return (
+              <div
+                key={panel.eyebrow}
+                className="flex flex-col items-center text-center transition-all duration-700 ease-out"
+                style={{
+                  opacity: isActive ? 1 : 0.45,
+                  transform: isActive ? "scale(1)" : "scale(0.94)",
+                }}
               >
-                Poznat můj příběh →
-              </a>
-              <IconHeart size={14} />
-            </div>
-          </FadeUp>
-          </div>
+                <div className="relative h-[190px] w-[150px] shrink-0 overflow-hidden rounded-t-[75px] sm:h-[220px] sm:w-[175px] sm:rounded-t-[88px]">
+                  <Image
+                    src={panel.photo}
+                    alt={panel.eyebrow}
+                    fill
+                    className="object-cover"
+                    sizes="175px"
+                    priority={i === 0}
+                  />
+                </div>
+
+                <div className="mt-5 flex items-center gap-2">
+                  <IconLeafBranch size={14} className="text-accent-d" />
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-accent-d">{panel.eyebrow}</p>
+                </div>
+                <p className="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink">
+                  {nbsp(panel.body)}
+                </p>
+                <Link
+                  href={panel.cta.href}
+                  target={panel.cta.external ? "_blank" : undefined}
+                  rel={panel.cta.external ? "noopener noreferrer" : undefined}
+                  className="mt-5 inline-block rounded-full bg-gradient-aurora px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-opacity duration-200 hover:opacity-90"
+                >
+                  {panel.cta.label}
+                </Link>
+              </div>
+            );
+          })}
         </div>
+
+        {/* Tečky — jen dokud je sekce přilepená na obrazovce */}
+        <div className="absolute inset-x-0 bottom-8 z-10 flex justify-center gap-2.5">
+          {PANELS.map((panel, i) => (
+            <span
+              key={panel.eyebrow}
+              className={`h-2 w-2 rounded-full transition-colors duration-300 ${
+                i === active ? "bg-accent" : "bg-ink/20"
+              }`}
+            />
+          ))}
         </div>
-      </div>
-    </section>
+      </section>
+    </div>
   );
 }
