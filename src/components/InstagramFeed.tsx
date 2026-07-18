@@ -42,21 +42,21 @@ export default function InstagramFeed() {
             <Script src="https://snapwidget.com/js/snapwidget.js" strategy="lazyOnload" />
           </>
         ) : (
-          <div className="grid grid-cols-5 justify-items-center px-6">
+          <div className="mx-auto grid max-w-4xl grid-cols-5 px-6">
             {GRID_PHOTOS.map((photo, i) => (
               <a
                 key={photo.src}
                 href={CONTACT.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="relative aspect-square w-full max-w-[160px] overflow-hidden"
+                className="relative aspect-square overflow-hidden"
               >
                 <Image
                   src={photo.src}
                   alt="Instagram"
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-105"
-                  sizes="160px"
+                  sizes="(min-width: 1024px) 180px, 20vw"
                   priority={i === 0}
                 />
               </a>
