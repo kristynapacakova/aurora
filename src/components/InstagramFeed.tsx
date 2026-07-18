@@ -4,12 +4,12 @@ import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { CONTACT, INSTAGRAM_WIDGET_URL } from "@/lib/config";
 
-const FALLBACK_PHOTOS = [
-  "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=500&q=80",
-  "https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=500&q=80",
-  "https://images.unsplash.com/photo-1599447421416-3414500d18a5?w=500&q=80",
-  "https://images.unsplash.com/photo-1545205597-3d9d02c29597?w=500&q=80",
-  "https://images.unsplash.com/photo-1518611012118-696072aa579a?w=500&q=80",
+const GRID_PHOTOS = [
+  "/ig-1.jpg",
+  "/ig-2.jpg",
+  "/ig-3.jpg",
+  "/ig-4.jpg",
+  "/ig-5.jpg",
 ];
 
 export default function InstagramFeed() {
@@ -43,7 +43,7 @@ export default function InstagramFeed() {
           </>
         ) : (
           <div className="grid grid-cols-5">
-            {FALLBACK_PHOTOS.map((src, i) => (
+            {GRID_PHOTOS.map((src, i) => (
               <a
                 key={src}
                 href={CONTACT.instagram}
