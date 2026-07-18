@@ -31,7 +31,7 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-sand px-6 py-24">
+    <main className="flex min-h-screen items-center justify-center bg-cream px-6 py-24">
       <div className="w-full max-w-md rounded-2xl bg-cream p-8 text-center shadow-sm ring-1 ring-line sm:p-10">
         <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="mx-auto h-20 w-auto" priority />
         <p className="mt-5 text-xs uppercase tracking-[0.3em] text-accent">

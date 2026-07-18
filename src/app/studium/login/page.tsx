@@ -30,13 +30,13 @@ export default function StudioLoginPage() {
   }
 
   return (
-    <main className="flex flex-1 items-center justify-center bg-sand px-6 py-24">
-      <div className="w-full max-w-md rounded-2xl bg-background p-8 text-center shadow-sm ring-1 ring-line sm:p-10">
-        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-dark">
+    <main className="flex flex-1 items-center justify-center bg-cream px-6 py-24">
+      <div className="w-full max-w-md rounded-2xl bg-cream p-8 text-center shadow-sm ring-1 ring-line sm:p-10">
+        <p className="mb-3 text-sm uppercase tracking-[0.3em] text-accent-d">
           Členská sekce
         </p>
-        <h1 className="font-sans font-light text-3xl sm:text-4xl">Studio</h1>
-        <p className="mt-4 text-sm text-foreground/70">
+        <h1 className="font-serif text-3xl text-ink sm:text-4xl">Studio</h1>
+        <p className="mt-4 text-sm text-muted">
           Tato stránka je dostupná pouze pro členy. Zadejte prosím přístupový
           kód, který jste obdrželi e-mailem.
         </p>
@@ -48,7 +48,7 @@ export default function StudioLoginPage() {
             onChange={(e) => setCode(e.target.value)}
             placeholder="Přístupový kód"
             autoFocus
-            className="w-full rounded-lg border border-line bg-background px-4 py-2 text-center outline-none focus:border-accent-dark"
+            className="w-full rounded-lg border border-line bg-cream px-4 py-2 text-center outline-none focus:border-accent-d"
           />
 
           {error && (
@@ -60,7 +60,7 @@ export default function StudioLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="rounded-full bg-accent-dark px-8 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-accent disabled:opacity-60"
+            className="rounded-full bg-accent-d px-8 py-3 text-sm uppercase tracking-widest text-white transition-colors hover:bg-accent disabled:opacity-60"
           >
             {loading ? "Ověřuji…" : "Vstoupit"}
           </button>

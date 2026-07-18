@@ -50,25 +50,10 @@ export default function Navbar() {
             <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-14 w-auto md:h-16" priority />
           </Link>
 
-          {/* Menu vycentrované v prostoru napravo od loga (jen desktop) */}
-          <nav className="mx-auto hidden items-center gap-5 lg:flex xl:gap-6">
-            {MENU_ITEMS.map((item) => (
-              <a
-                key={item.label}
-                href={item.href}
-                target={item.external ? "_blank" : undefined}
-                rel={item.external ? "noopener noreferrer" : undefined}
-                className="text-xs uppercase tracking-[0.14em] text-muted whitespace-nowrap transition-colors duration-200 hover:text-ink"
-              >
-                {item.label}
-              </a>
-            ))}
-          </nav>
-
-          {/* Hamburger — jen mobil */}
+          {/* Hamburger — na všech velikostech */}
           <button
             onClick={() => setOpen((v) => !v)}
-            className="relative z-[60] ml-auto flex flex-col gap-[7px] p-2 lg:hidden"
+            className="relative z-[60] ml-auto flex flex-col gap-[7px] p-2"
             aria-label="Menu"
           >
             <span className={`block h-px w-7 transition-all duration-300 ${open ? "translate-y-[10px] rotate-45 bg-cream" : "bg-ink"}`} />
@@ -87,7 +72,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
-            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-ink lg:hidden"
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-ink"
           >
             <nav className="flex flex-col items-center gap-8">
               {MENU_ITEMS.map((item, i) => (

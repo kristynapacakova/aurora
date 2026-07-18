@@ -15,11 +15,6 @@ const FALLBACK_PHOTOS = [
 export default function InstagramFeed() {
   return (
     <section className="bg-cream relative pt-14 pb-14 sm:pt-16 sm:pb-16">
-      {/* Plynulé prolnutí z barvy předchozí sekce */}
-      <div
-        className="absolute inset-x-0 top-0 h-24"
-        style={{ background: "linear-gradient(to bottom, #FBE9DE, transparent)" }}
-      />
       <FadeUp>
         <p className="mb-8 text-center text-sm text-muted">
           {nbsp("Sleduj nás na Instagramu")}{" "}

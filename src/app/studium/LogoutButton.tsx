@@ -14,7 +14,7 @@ export default function LogoutButton() {
   return (
     <button
       onClick={handleLogout}
-      className="rounded-full border border-line px-4 py-1.5 text-xs uppercase tracking-widest text-foreground/60 transition-colors hover:border-accent-dark hover:text-accent-dark"
+      className="rounded-full border border-line px-4 py-1.5 text-xs uppercase tracking-widest text-muted transition-colors hover:border-accent-d hover:text-accent-d"
     >
       Odhlásit se
     </button>
