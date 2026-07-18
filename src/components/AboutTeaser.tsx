@@ -13,19 +13,19 @@ type Panel = {
 
 const PANELS: Panel[] = [
   {
-    photo: "/anezka-cesta.jpg",
+    photo: "/anezka-cesta.png",
     eyebrow: "Moje cesta k józe",
     body: "Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb. Vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.",
     cta: { label: "Přidej se k mé cestě →", href: USCREEN.signup, external: true },
   },
   {
-    photo: "/anezka-online.jpg",
+    photo: "/anezka-online.png",
     eyebrow: "Proč jsem začala učit online",
     body: "Online lekce vznikly z potřeby být blízko i těm, které se ke mně nedostanou na podložku osobně. Stačí pár minut jen pro sebe.",
     cta: { label: "Vstoupit do online studia →", href: USCREEN.signup, external: true },
   },
   {
-    photo: "/anezka-pobyty.jpg",
+    photo: "/anezka-pobyty.png",
     eyebrow: "Proč pořádám pobyty",
     body: "Pobyty jsou moje srdcovka — čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme konečně jen samy sebou.",
     cta: { label: "Prohlédnout pobyty →", href: "/pobyty" },
@@ -45,13 +45,16 @@ export default function AboutTeaser() {
         <div className="grid w-full grid-cols-1 gap-14 sm:grid-cols-3 sm:gap-8">
           {PANELS.map((panel, i) => (
             <div key={panel.eyebrow} className="flex flex-col items-center text-center">
-              <div className="relative h-[190px] w-[190px] shrink-0 overflow-hidden rounded-t-[95px] sm:h-[220px] sm:w-[220px] sm:rounded-t-[110px]">
+              <div
+                className="relative w-[170px] shrink-0 sm:w-[198px]"
+                style={{ aspectRatio: "684 / 842" }}
+              >
                 <Image
                   src={panel.photo}
                   alt={panel.eyebrow}
                   fill
-                  className="object-cover"
-                  sizes="220px"
+                  className="object-contain"
+                  sizes="198px"
                   priority={i === 0}
                 />
               </div>
