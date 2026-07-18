@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { IconLeafBranch } from "./BrandIcons";
+import { IconLeafBranch, IconHeart, IconWave } from "./BrandIcons";
 import { USCREEN } from "@/lib/config";
 import { nbsp } from "@/lib/typo";
 
@@ -74,16 +74,21 @@ export default function AboutTeaser() {
         />
 
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16">
-        <p className="mb-16 text-center font-allura text-4xl text-ink sm:text-5xl">Poznej můj příběh</p>
+        <div className="mb-4 flex items-center gap-3">
+          <IconHeart size={14} className="text-accent" />
+          <span className="text-xs uppercase tracking-[0.3em] text-accent">O mně</span>
+        </div>
+        <p className="font-allura text-4xl text-ink sm:text-5xl">{nbsp("Poznej můj příběh")}</p>
+        <IconWave width={110} height={14} className="mb-12 mt-4 text-muted" />
         <div className="grid w-full grid-cols-1 gap-14 sm:grid-cols-3 sm:gap-8">
           {PANELS.map((panel, i) => {
             const isActive = i === active;
             return (
               <div key={panel.eyebrow} className="flex flex-col items-center text-center">
                 <div className="relative h-[190px] w-[190px] shrink-0 sm:h-[220px] sm:w-[220px]">
-                  {/* Jemný stín pod fotkou — jediný náznak, která je právě aktivní */}
+                  {/* Stín pod fotkou — jediný náznak, která je právě aktivní */}
                   <div
-                    className="absolute inset-x-6 -bottom-3 h-8 rounded-full bg-ink/30 blur-xl transition-opacity duration-700 ease-in-out"
+                    className="absolute inset-x-4 -bottom-4 h-10 rounded-full bg-ink/55 blur-lg transition-opacity duration-700 ease-in-out"
                     style={{ opacity: isActive ? 1 : 0 }}
                   />
                   <div className="relative h-full w-full overflow-hidden rounded-t-[95px] sm:rounded-t-[110px]">
@@ -100,7 +105,7 @@ export default function AboutTeaser() {
 
                 <div className="mt-5 flex items-center gap-2">
                   <IconLeafBranch size={14} className="text-accent-d" />
-                  <p className="text-[11px] uppercase tracking-[0.25em] text-accent-d">{panel.eyebrow}</p>
+                  <p className="text-[11px] uppercase tracking-[0.25em] text-accent-d">{nbsp(panel.eyebrow)}</p>
                 </div>
                 <p className="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink">
                   {nbsp(panel.body)}
@@ -111,7 +116,7 @@ export default function AboutTeaser() {
                   rel={panel.cta.external ? "noopener noreferrer" : undefined}
                   className="mt-5 inline-block rounded-full bg-gradient-aurora px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-opacity duration-200 hover:opacity-90"
                 >
-                  {panel.cta.label}
+                  {nbsp(panel.cta.label)}
                 </Link>
               </div>
             );
