@@ -5,11 +5,11 @@ import { nbsp } from "@/lib/typo";
 import { CONTACT, INSTAGRAM_WIDGET_URL } from "@/lib/config";
 
 const GRID_PHOTOS = [
-  { src: "/ig-1.jpg", position: "50% 0%" },
-  { src: "/ig-2.jpg", position: "50% 30%" },
-  { src: "/ig-3.jpg", position: "50% 0%" },
-  { src: "/ig-4.jpg", position: "50% 85%" },
-  { src: "/ig-5.jpg", position: "50% 0%" },
+  { src: "/ig-1.jpg" },
+  { src: "/ig-2.jpg" },
+  { src: "/ig-3.jpg" },
+  { src: "/ig-4.jpg" },
+  { src: "/ig-5.jpg" },
 ];
 
 export default function InstagramFeed() {
@@ -56,7 +56,6 @@ export default function InstagramFeed() {
                   alt="Instagram"
                   fill
                   className="object-cover transition-transform duration-300 hover:scale-105"
-                  style={{ objectPosition: photo.position }}
                   sizes="20vw"
                   priority={i === 0}
                 />
