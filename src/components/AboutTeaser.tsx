@@ -13,19 +13,19 @@ type Panel = {
 
 const PANELS: Panel[] = [
   {
-    photo: "/anezka-portret.jpg",
+    photo: "/anezka-cesta.jpg",
     eyebrow: "Moje cesta k józe",
     body: "Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb. Vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.",
     cta: { label: "Přidej se k mé cestě →", href: USCREEN.signup, external: true },
   },
   {
-    photo: "/studio.jpg",
+    photo: "/anezka-online.jpg",
     eyebrow: "Proč jsem začala učit online",
     body: "Online lekce vznikly z potřeby být blízko i těm, které se ke mně nedostanou na podložku osobně. Stačí pár minut jen pro sebe.",
     cta: { label: "Vstoupit do online studia →", href: USCREEN.signup, external: true },
   },
   {
-    photo: "/pobyty-skupina.jpg",
+    photo: "/anezka-pobyty.jpg",
     eyebrow: "Proč pořádám pobyty",
     body: "Pobyty jsou moje srdcovka — čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme konečně jen samy sebou.",
     cta: { label: "Prohlédnout pobyty →", href: "/pobyty" },
