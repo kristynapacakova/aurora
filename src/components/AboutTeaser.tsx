@@ -70,7 +70,7 @@ export default function AboutTeaser() {
                 href={panel.cta.href}
                 target={panel.cta.external ? "_blank" : undefined}
                 rel={panel.cta.external ? "noopener noreferrer" : undefined}
-                className="mt-5 inline-block rounded-full bg-gradient-aurora px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-opacity duration-200 hover:opacity-90"
+                className="border-gradient-aurora mt-5 inline-block rounded-full px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-opacity duration-200 hover:opacity-80"
               >
                 {nbsp(panel.cta.label)}
               </Link>
