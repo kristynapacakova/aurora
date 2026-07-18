@@ -55,15 +55,9 @@ export default function Pricing() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {PLANS.map((plan, i) => (
             <FadeUp key={plan.name} delay={i * 0.12}>
-              <div
-                className={`relative flex h-full flex-col rounded-3xl p-6 text-ink sm:p-8 ${
-                  plan.featured
-                    ? "bg-gradient-aurora"
-                    : "border border-line bg-cream"
-                }`}
-              >
+              <div className="relative flex h-full flex-col rounded-3xl border border-line bg-cream p-6 text-ink sm:p-8">
                 {plan.featured && (
-                  <span className="absolute right-8 top-8 rounded-full bg-ink px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-cream">
+                  <span className="bg-gradient-aurora absolute right-8 top-8 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink">
                     Nejoblíbenější
                   </span>
                 )}
@@ -94,9 +88,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`mt-6 block rounded-full py-3 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:opacity-80 ${
-                    plan.featured ? "bg-cream" : "border-gradient-aurora"
-                  }`}
+                  className="mt-6 block rounded-full border border-ink/30 py-3 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
                 >
                   Aktivovat členství
                 </a>
