@@ -7,8 +7,6 @@ import { IconSparkle, IconSun, IconLeafBranch } from "./BrandIcons";
 const SERVICES = [
   {
     id: "lekce",
-    bg: "bg-[#FCF4F1]",
-    prevFill: null,
     icon: <IconSun size={30} />,
     title: "Lekce",
     subtitle: "Potkejme se na podložce",
@@ -25,8 +23,6 @@ const SERVICES = [
   },
   {
     id: "studio",
-    bg: "bg-[#FBE9DE]",
-    prevFill: "#FCF4F1",
     icon: <IconSparkle size={30} className="text-accent" />,
     title: "Online studio",
     subtitle: "Jóga kdykoliv a kdekoliv",
@@ -44,8 +40,6 @@ const SERVICES = [
   },
   {
     id: "retreaty",
-    bg: "bg-[#FDF6F0]",
-    prevFill: "#FBE9DE",
     icon: <IconLeafBranch size={30} />,
     title: "Pobyty pro ženy",
     subtitle: "Čas, který patří jen Tobě",
@@ -66,7 +60,7 @@ export default function Studio() {
     <>
       {/* ── Střídající se sekce ── */}
       {SERVICES.map((s) => (
-        <section key={s.id} id={s.id} className={`${s.bg} relative pt-14 pb-16 sm:pt-16 sm:pb-20`}>
+        <section key={s.id} id={s.id} className="bg-cream relative pt-14 pb-16 sm:pt-16 sm:pb-20">
           <div className="mx-auto max-w-6xl px-6">
             <FadeUp>
               <div
@@ -122,14 +116,6 @@ export default function Studio() {
               </div>
             </FadeUp>
           </div>
-
-          {/* Plynulé prolnutí z barvy předchozí sekce */}
-          {s.prevFill && (
-            <div
-              className="absolute inset-x-0 top-0 h-24"
-              style={{ background: `linear-gradient(to bottom, ${s.prevFill}, transparent)` }}
-            />
-          )}
         </section>
       ))}
     </>

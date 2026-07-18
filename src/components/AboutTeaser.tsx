@@ -66,13 +66,7 @@ export default function AboutTeaser() {
 
   return (
     <div ref={wrapRef} className="relative" style={{ height: "250vh" }}>
-      <section id="o-mne" className="sticky top-0 flex h-screen items-center overflow-hidden bg-sand">
-        {/* Plynulé prolnutí z barvy předchozí sekce */}
-        <div
-          className="pointer-events-none absolute inset-x-0 top-0 z-10 h-24"
-          style={{ background: "linear-gradient(to bottom, #FDF6F0, transparent)" }}
-        />
-
+      <section id="o-mne" className="sticky top-0 flex h-screen items-center overflow-hidden bg-cream">
         <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16">
         <div className="mb-4 flex items-center gap-3">
           <IconHeart size={14} className="text-accent" />
