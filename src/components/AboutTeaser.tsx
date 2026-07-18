@@ -24,13 +24,13 @@ const PANELS: Panel[] = [
   {
     photo: "/studio.jpg",
     eyebrow: "Proč jsem začala učit online",
-    body: "Aby lekce byly blízko i těm, které se ke mně nedostanou na podložku osobně — ať jsi kdekoliv.",
+    body: "Online lekce vznikly z potřeby být blízko i těm, které se ke mně nedostanou na podložku osobně. Stačí pár minut jen pro sebe.",
     cta: { label: "Vstoupit do online studia →", href: USCREEN.signup, external: true },
   },
   {
     photo: "/pobyty-skupina.jpg",
     eyebrow: "Proč pořádám pobyty",
-    body: "Čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme jen samy sebou.",
+    body: "Pobyty jsou moje srdcovka — čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme konečně jen samy sebou.",
     cta: { label: "Prohlédnout pobyty →", href: "/pobyty" },
   },
 ];
@@ -73,7 +73,9 @@ export default function AboutTeaser() {
           style={{ background: "linear-gradient(to bottom, #FDF6F0, transparent)" }}
         />
 
-        <div className="mx-auto grid w-full max-w-6xl grid-cols-1 gap-14 px-6 py-20 sm:grid-cols-3 sm:gap-8">
+        <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6 py-16">
+        <p className="mb-16 text-center font-allura text-4xl text-ink sm:text-5xl">Poznej můj příběh</p>
+        <div className="grid w-full grid-cols-1 gap-14 sm:grid-cols-3 sm:gap-8">
           {PANELS.map((panel, i) => {
             const isActive = i === active;
             return (
@@ -81,17 +83,18 @@ export default function AboutTeaser() {
                 key={panel.eyebrow}
                 className="flex flex-col items-center text-center transition-all duration-700 ease-out"
                 style={{
-                  opacity: isActive ? 1 : 0.45,
-                  transform: isActive ? "scale(1)" : "scale(0.94)",
+                  opacity: isActive ? 1 : 0.55,
+                  transform: isActive ? "translateY(-10px) scale(1.06)" : "translateY(0) scale(0.92)",
+                  filter: isActive ? "drop-shadow(0 18px 28px rgba(140,95,71,0.22))" : "none",
                 }}
               >
-                <div className="relative h-[190px] w-[150px] shrink-0 overflow-hidden rounded-t-[75px] sm:h-[220px] sm:w-[175px] sm:rounded-t-[88px]">
+                <div className="relative h-[190px] w-[190px] shrink-0 overflow-hidden rounded-t-[95px] sm:h-[220px] sm:w-[220px] sm:rounded-t-[110px]">
                   <Image
                     src={panel.photo}
                     alt={panel.eyebrow}
                     fill
                     className="object-cover"
-                    sizes="175px"
+                    sizes="220px"
                     priority={i === 0}
                   />
                 </div>
@@ -114,6 +117,7 @@ export default function AboutTeaser() {
               </div>
             );
           })}
+        </div>
         </div>
 
         {/* Tečky — jen dokud je sekce přilepená na obrazovce */}
