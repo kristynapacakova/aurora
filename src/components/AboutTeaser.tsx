@@ -53,7 +53,7 @@ export default function AboutTeaser() {
                   src={panel.photo}
                   alt={panel.eyebrow}
                   fill
-                  className="object-contain"
+                  className="object-contain transition-transform duration-300 hover:scale-105"
                   sizes="198px"
                   priority={i === 0}
                 />
