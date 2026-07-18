@@ -20,8 +20,8 @@ export const USCREEN = {
 // ─────────────────────────────────────────────────────────────────────────────
 export const CONTACT = {
   email: "ahoj@aurorajoga.cz",
-  instagram: "https://www.instagram.com/aurora.joga",
-  instagramHandle: "@aurora.joga",
+  instagram: "https://www.instagram.com/aurora_yogaa",
+  instagramHandle: "@aurora_yogaa",
   facebook: "https://www.facebook.com/aurora.joga",
   youtube: "https://www.youtube.com/@aurora.joga",
 } as const;
