@@ -1,14 +1,11 @@
 import Image from "next/image";
-import Link from "next/link";
 import { IconLeafBranch, IconWave } from "./BrandIcons";
-import { USCREEN } from "@/lib/config";
 import { nbsp } from "@/lib/typo";
 
 type Panel = {
   photo: string;
   eyebrow: string;
   body: string;
-  cta: { label: string; href: string; external?: boolean };
 };
 
 const PANELS: Panel[] = [
@@ -16,19 +13,16 @@ const PANELS: Panel[] = [
     photo: "/anezka-cesta.png",
     eyebrow: "Moje cesta k józe",
     body: "Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb. Vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.",
-    cta: { label: "Přidej se k mé cestě →", href: USCREEN.signup, external: true },
   },
   {
     photo: "/anezka-online.png",
     eyebrow: "Proč jsem začala učit online",
     body: "Online lekce vznikly z potřeby být blízko i těm, které se ke mně nedostanou na podložku osobně. Stačí pár minut jen pro sebe.",
-    cta: { label: "Vstoupit do online studia →", href: USCREEN.signup, external: true },
   },
   {
     photo: "/anezka-pobyty.png",
     eyebrow: "Proč pořádám pobyty",
     body: "Pobyty jsou moje srdcovka — čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme konečně jen samy sebou.",
-    cta: { label: "Prohlédnout pobyty →", href: "/pobyty" },
   },
 ];
 
@@ -65,14 +59,6 @@ export default function AboutTeaser() {
               <p className="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink">
                 {nbsp(panel.body)}
               </p>
-              <Link
-                href={panel.cta.href}
-                target={panel.cta.external ? "_blank" : undefined}
-                rel={panel.cta.external ? "noopener noreferrer" : undefined}
-                className="mt-5 inline-block rounded-full border border-ink/30 px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
-              >
-                {nbsp(panel.cta.label)}
-              </Link>
             </div>
           ))}
         </div>

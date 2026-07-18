@@ -55,7 +55,11 @@ export default function Pricing() {
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           {PLANS.map((plan, i) => (
             <FadeUp key={plan.name} delay={i * 0.12}>
-              <div className="relative flex h-full flex-col rounded-3xl border border-line bg-cream p-6 text-ink sm:p-8">
+              <div
+                className={`relative flex h-full flex-col border border-line bg-cream p-6 text-ink sm:p-8 ${
+                  i % 2 === 0 ? "photo-arch-left" : "photo-arch-right"
+                }`}
+              >
                 {plan.featured && (
                   <span className="bg-gradient-aurora absolute right-8 top-8 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink">
                     Nejoblíbenější
