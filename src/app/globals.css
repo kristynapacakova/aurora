@@ -150,6 +150,16 @@
   background-clip: text;
 }
 
+/* ─── Gradient obrys (tlačítka s krémovou výplní) ────────────────────────── */
+.border-gradient-aurora {
+  border: 1.5px solid transparent;
+  background-image:
+    linear-gradient(var(--cream), var(--cream)),
+    linear-gradient(135deg, var(--gradient-1) 0%, var(--gradient-mid) 50%, var(--gradient-2) 100%);
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+}
+
 /* ─── Organické zaoblení fotek (cik-cak sekce) ───────────────────────────── */
 .photo-arch-left,
 .photo-arch-right {
