@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { IconLeafBranch, IconHeart, IconWave } from "./BrandIcons";
+import { IconLeafBranch, IconWave } from "./BrandIcons";
 import { USCREEN } from "@/lib/config";
 import { nbsp } from "@/lib/typo";
 
@@ -37,7 +37,6 @@ export default function AboutTeaser() {
     <section id="o-mne" className="bg-cream py-20 sm:py-24">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6">
         <div className="mb-4 flex items-center gap-3">
-          <IconHeart size={14} className="text-accent" />
           <span className="text-xs uppercase tracking-[0.3em] text-accent">O mně</span>
         </div>
         <p className="font-allura text-4xl text-ink sm:text-5xl">{nbsp("Poznej můj příběh")}</p>
@@ -70,7 +69,7 @@ export default function AboutTeaser() {
                 href={panel.cta.href}
                 target={panel.cta.external ? "_blank" : undefined}
                 rel={panel.cta.external ? "noopener noreferrer" : undefined}
-                className="border-gradient-aurora mt-5 inline-block rounded-full px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-opacity duration-200 hover:opacity-80"
+                className="mt-5 inline-block rounded-full border border-ink/30 px-6 py-2.5 text-[10px] uppercase tracking-[0.18em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
               >
                 {nbsp(panel.cta.label)}
               </Link>
