@@ -70,6 +70,36 @@ export default function AdminDashboard({
     { key: "poptavky", label: "Poptávky", count: poptavky.length },
   ];
 
+  const pobytyZverejnene = pobyty.filter((p) => p.zverejneno).length;
+  const clankyZverejnene = clanky.filter((c) => c.zverejneno).length;
+  const objednavky = poptavky.filter((q) => q.typ === "objednavka");
+  const cekaNaPlatbu = objednavky.filter((q) => !q.zaplaceno).length;
+  const dotazy = poptavky.filter((q) => q.typ === "dotaz").length;
+
+  const stats: { key: Tab; label: string; value: number; detail: string }[] = [
+    {
+      key: "pobyty",
+      label: "Pobyty",
+      value: pobyty.length,
+      detail: `${pobytyZverejnene} zveřejněných`,
+    },
+    {
+      key: "clanky",
+      label: "Články",
+      value: clanky.length,
+      detail: `${clankyZverejnene} zveřejněných`,
+    },
+    {
+      key: "poptavky",
+      label: "Poptávky",
+      value: poptavky.length,
+      detail:
+        cekaNaPlatbu > 0
+          ? `${cekaNaPlatbu} čeká na platbu`
+          : `${objednavky.length} objednávek · ${dotazy} dotazů`,
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-cream">
       {/* Hlavička */}
@@ -97,6 +127,23 @@ export default function AdminDashboard({
       </header>
 
       <div className="mx-auto max-w-5xl px-6 py-10">
+        {/* Přehled */}
+        <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+          {stats.map((s) => (
+            <button
+              key={s.key}
+              onClick={() => setTab(s.key)}
+              className={`rounded-2xl border bg-white p-5 text-left shadow-sm transition-all hover:shadow-md ${
+                tab === s.key ? "border-accent" : "border-line"
+              }`}
+            >
+              <p className="text-xs uppercase tracking-[0.2em] text-muted">{s.label}</p>
+              <p className="mt-2 font-serif text-3xl text-ink">{s.value}</p>
+              <p className="mt-1 text-xs text-accent-d">{s.detail}</p>
+            </button>
+          ))}
+        </div>
+
         {!configured && (
           <div className="mb-8 rounded-2xl border border-accent/40 bg-white p-6 text-sm text-ink shadow-sm">
             <p className="font-medium">Úložiště zatím není připojené.</p>
