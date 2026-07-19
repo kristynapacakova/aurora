@@ -33,11 +33,10 @@ export default function AboutTeaser() {
         <div className="mb-4 flex items-center gap-3">
           <span className="text-xs uppercase tracking-[0.3em] text-accent">O mně</span>
         </div>
-        <p className="font-allura text-4xl text-ink sm:text-5xl">{nbsp("Poznej můj příběh")}</p>
-        <IconWave width={110} height={14} className="mb-12 mt-4 text-muted" />
+        <p className="font-allura mb-12 text-4xl text-ink sm:text-5xl">{nbsp("Poznej můj příběh")}</p>
         <div className="grid w-full grid-cols-1 gap-14 sm:grid-cols-3 sm:gap-8">
           {PANELS.map((panel, i) => (
-            <div key={panel.eyebrow} className="flex flex-col items-center text-center">
+            <div key={panel.eyebrow} className="relative flex flex-col items-center text-center">
               <div
                 className="relative w-[170px] shrink-0 sm:w-[198px]"
                 style={{ aspectRatio: "684 / 842" }}
@@ -51,6 +50,13 @@ export default function AboutTeaser() {
                   priority={i === 0}
                 />
               </div>
+              {i < PANELS.length - 1 && (
+                <IconWave
+                  width={44}
+                  height={10}
+                  className="pointer-events-none absolute right-0 top-[122px] z-10 hidden -translate-y-1/2 translate-x-1/2 text-muted/70 sm:block"
+                />
+              )}
 
               <div className="mt-5 flex items-center gap-2">
                 <IconLeafBranch size={14} className="text-accent-d" />
