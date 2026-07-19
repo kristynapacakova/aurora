@@ -132,12 +132,16 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   }
 
   const inputCls =
-    "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent";
+    "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30";
+  const cardCls = "flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm";
 
   return (
     <main className="min-h-screen bg-cream">
       <div className="mx-auto max-w-6xl px-6 py-10">
-        <Link href="/admin" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">
+        <Link
+          href="/admin"
+          className="text-xs uppercase tracking-[0.2em] text-muted transition-colors hover:text-accent"
+        >
           ← Zpět na přehled
         </Link>
         <h1 className="mt-4 mb-8 font-allura text-4xl text-ink">
@@ -146,43 +150,46 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           {/* ── Formulář ── */}
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-              Nadpis *
-              <input value={nadpis} onChange={(e) => setNadpis(e.target.value)} required className={inputCls} placeholder="Např. Jarní pobyt pro ženy" />
-            </label>
-
-            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+            <div className={cardCls}>
+              <p className="text-xs uppercase tracking-[0.25em] text-accent">Základní údaje</p>
               <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                Místo *
-                <input value={misto} onChange={(e) => setMisto(e.target.value)} required className={inputCls} placeholder="Např. Šumava, penzion U Lesa" />
+                Nadpis *
+                <input value={nadpis} onChange={(e) => setNadpis(e.target.value)} required className={inputCls} placeholder="Např. Jarní pobyt pro ženy" />
               </label>
+
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                  Místo *
+                  <input value={misto} onChange={(e) => setMisto(e.target.value)} required className={inputCls} placeholder="Např. Šumava, penzion U Lesa" />
+                </label>
+                <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                  Termín *
+                  <input value={termin} onChange={(e) => setTermin(e.target.value)} required className={inputCls} placeholder="Např. 12.–14. června 2026" />
+                </label>
+              </div>
+
               <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                Termín *
-                <input value={termin} onChange={(e) => setTermin(e.target.value)} required className={inputCls} placeholder="Např. 12.–14. června 2026" />
+                Cena *
+                <input value={cena} onChange={(e) => setCena(e.target.value)} required className={inputCls} placeholder="Např. 4 900 Kč" />
+              </label>
+
+              <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                Popis *
+                <textarea
+                  value={popis}
+                  onChange={(e) => setPopis(e.target.value)}
+                  required
+                  rows={8}
+                  className={inputCls}
+                  placeholder="Co ženy na pobytu čeká… (odstavce odděl prázdným řádkem)"
+                />
               </label>
             </div>
 
-            <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-              Cena *
-              <input value={cena} onChange={(e) => setCena(e.target.value)} required className={inputCls} placeholder="Např. 4 900 Kč" />
-            </label>
-
-            <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-              Popis *
-              <textarea
-                value={popis}
-                onChange={(e) => setPopis(e.target.value)}
-                required
-                rows={8}
-                className={inputCls}
-                placeholder="Co ženy na pobytu čeká… (odstavce odděl prázdným řádkem)"
-              />
-            </label>
-
             {/* Fotky */}
-            <div className="flex flex-col gap-2">
-              <span className="text-xs uppercase tracking-[0.2em] text-muted">Fotky *</span>
+            <div className={cardCls}>
+              <p className="text-xs uppercase tracking-[0.25em] text-accent">Fotky *</p>
               {fotky.length > 0 && (
                 <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
                   {fotky.map((url, i) => (
@@ -205,7 +212,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                   ))}
                 </div>
               )}
-              <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:border-ink">
+              <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent">
                 {uploading ? "Nahrávám…" : "+ Nahrát fotky"}
                 <input type="file" accept="image/*" multiple onChange={uploadPhotos} disabled={uploading} className="hidden" />
               </label>
@@ -231,10 +238,10 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
             </div>
 
             {/* Platba */}
-            <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white/50 p-5">
+            <div className={cardCls}>
               <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-muted">Platba (nepovinné)</p>
-                <p className="mt-1 text-xs text-muted">
+                <p className="text-xs uppercase tracking-[0.25em] text-accent">Platba (nepovinné)</p>
+                <p className="mt-2 text-xs text-muted">
                   Vyplň číslo účtu a QR kód se vygeneruje sám. Zákaznice po kliknutí na „Závazně objednat“ uvidí
                   QR kód i vypsané platební údaje.
                 </p>
@@ -307,7 +314,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
               </button>
               <Link
                 href="/admin"
-                className="rounded-full border border-line px-8 py-3 text-xs uppercase tracking-[0.2em] text-muted hover:border-ink hover:text-ink"
+                className="rounded-full border border-line px-8 py-3 text-xs uppercase tracking-[0.2em] text-muted transition-colors hover:border-accent hover:text-accent"
               >
                 Zrušit
               </Link>
