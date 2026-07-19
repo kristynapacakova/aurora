@@ -28,6 +28,7 @@ export default function PoptavkaForm({
   const [telefon, setTelefon] = useState("");
   const [zprava, setZprava] = useState("");
   const [potvrzenoPlatba, setPotvrzenoPlatba] = useState(false);
+  const [souhlasGdpr, setSouhlasGdpr] = useState(false);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -172,6 +173,21 @@ export default function PoptavkaForm({
           Potvrzuji, že jsem platbu provedla podle uvedených údajů.
         </label>
       )}
+
+      <label className="flex items-start gap-2.5 text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={souhlasGdpr}
+          onChange={(e) => setSouhlasGdpr(e.target.checked)}
+          required
+          className="mt-0.5 h-4 w-4 accent-[#F28D76]"
+        />
+        Souhlasím se zpracováním osobních údajů dle{" "}
+        <a href="/ochrana-osobnich-udaju" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-accent-d">
+          zásad ochrany osobních údajů
+        </a>
+        .
+      </label>
 
       {error && <p className="text-sm text-accent-d">{error}</p>}
 
