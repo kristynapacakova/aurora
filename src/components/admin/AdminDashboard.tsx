@@ -1,12 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
 import type { Pobyt, Clanek, Poptavka } from "@/lib/db";
 
-type EditorTab = "pobyty" | "clanky" | "poptavky";
-type Section = "overview" | "editor" | "statistiky" | "nastaveni";
+type EditorTab = "pobyty" | "clanky";
+type Section = "overview" | "editor" | "objednavky" | "statistiky" | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
 type PendingDelete = { kind: "pobyty" | "clanky" | "poptavky"; id: number; label: string };
 
@@ -26,6 +27,15 @@ function IconEdit({ className }: { className?: string }) {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M12 20h9" />
       <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+    </svg>
+  );
+}
+
+function IconInbox({ className }: { className?: string }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M22 12h-6l-2 3h-4l-2-3H2" />
+      <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z" />
     </svg>
   );
 }
@@ -69,6 +79,7 @@ function IconLogout({ className }: { className?: string }) {
 const NAV: { key: Section; label: string; icon: (p: { className?: string }) => ReactElement }[] = [
   { key: "overview", label: "Overview", icon: IconGrid },
   { key: "editor", label: "Editor", icon: IconEdit },
+  { key: "objednavky", label: "Objednávky", icon: IconInbox },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
 ];
@@ -148,7 +159,6 @@ export default function AdminDashboard({
   const editorTabs: { key: EditorTab; label: string; count: number }[] = [
     { key: "pobyty", label: "Pobyty", count: pobyty.length },
     { key: "clanky", label: "Články", count: clanky.length },
-    { key: "poptavky", label: "Poptávky", count: poptavky.length },
   ];
 
   const pobytyZverejnene = pobyty.filter((p) => p.zverejneno).length;
@@ -159,22 +169,24 @@ export default function AdminDashboard({
   const dotazy = poptavky.filter((q) => q.typ === "dotaz").length;
   const nepreceteno = poptavky.filter((q) => !q.precteno).length;
 
-  const stats: { key: EditorTab; label: string; value: number; detail: string }[] = [
+  const stats: { section: Section; editorTab?: EditorTab; label: string; value: number; detail: string }[] = [
     {
-      key: "pobyty",
+      section: "editor",
+      editorTab: "pobyty",
       label: "Pobyty",
       value: pobyty.length,
       detail: `${pobytyZverejnene} zveřejněných`,
     },
     {
-      key: "clanky",
+      section: "editor",
+      editorTab: "clanky",
       label: "Články",
       value: clanky.length,
       detail: `${clankyZverejnene} zveřejněných`,
     },
     {
-      key: "poptavky",
-      label: "Poptávky",
+      section: "objednavky",
+      label: "Objednávky",
       value: poptavky.length,
       detail:
         nepreceteno > 0
@@ -205,11 +217,11 @@ export default function AdminDashboard({
   return (
     <div className="flex min-h-screen bg-cream">
       {/* ── Postranní navigace ── */}
-      <aside className="flex w-20 shrink-0 flex-col items-center justify-between border-r border-line bg-ink py-6">
+      <aside className="flex w-20 shrink-0 flex-col items-center justify-between border-r border-line bg-white py-6">
         <div className="flex flex-col items-center gap-8">
-          <Link href="/" className="text-2xl font-allura text-cream">
-            A
-          </Link>
+          <button onClick={() => setSection("overview")} className="relative h-9 w-9" aria-label="Overview">
+            <Image src="/logo-mark.png" alt="AURORA jóga" fill className="object-contain" priority />
+          </button>
           <nav className="flex flex-col gap-2">
             {NAV.map((n) => {
               const Icon = n.icon;
@@ -220,7 +232,7 @@ export default function AdminDashboard({
                   onClick={() => setSection(n.key)}
                   title={n.label}
                   className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
-                    active ? "bg-gradient-aurora text-ink" : "text-cream/60 hover:bg-cream/10 hover:text-cream"
+                    active ? "bg-gradient-aurora text-ink" : "text-muted hover:bg-sand hover:text-ink"
                   }`}
                 >
                   <Icon />
@@ -232,7 +244,7 @@ export default function AdminDashboard({
         <button
           onClick={logout}
           title="Odhlásit"
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-cream/60 transition-colors hover:bg-cream/10 hover:text-cream"
+          className="flex h-11 w-11 items-center justify-center rounded-xl text-muted transition-colors hover:bg-sand hover:text-accent-d"
         >
           <IconLogout />
         </button>
@@ -255,11 +267,8 @@ export default function AdminDashboard({
                 Zobrazit web
               </Link>
               <button
-                onClick={() => {
-                  setSection("editor");
-                  setEditorTab("poptavky");
-                }}
-                title="Poptávky"
+                onClick={() => setSection("objednavky")}
+                title="Objednávky"
                 className="relative flex h-10 w-10 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-accent hover:text-accent"
               >
                 <IconBell />
@@ -270,8 +279,8 @@ export default function AdminDashboard({
                 )}
               </button>
               <div className="flex items-center gap-2.5">
-                <div className="bg-gradient-aurora flex h-10 w-10 items-center justify-center rounded-full font-allura text-lg text-ink">
-                  A
+                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-line">
+                  <Image src="/logo-mark.png" alt="AURORA jóga" fill className="object-contain p-1.5" />
                 </div>
                 <p className="text-xs uppercase tracking-[0.15em] text-ink">Administrátorka</p>
               </div>
@@ -282,11 +291,12 @@ export default function AdminDashboard({
         <div className="flex-1 px-8 py-8">
           {!configured && (
             <div className="mb-8 rounded-2xl border border-accent/40 bg-white p-6 text-sm text-ink shadow-sm">
-              <p className="font-medium">Úložiště zatím není připojené.</p>
+              <p className="font-medium">Úložiště zatím není připojené — čísla níže proto ukazují 0.</p>
               <p className="mt-2 text-muted">
                 Ve Vercelu otevři projekt → záložka <strong>Storage</strong> →{" "}
                 <strong>Create Database → Postgres</strong> (texty) a{" "}
-                <strong>Create → Blob</strong> (fotky). Potom se sem vrať — vše začne fungovat samo.
+                <strong>Create → Blob</strong> (fotky). Potom se sem vrať — vše začne fungovat samo
+                a uvidíš skutečné počty.
               </p>
             </div>
           )}
@@ -297,12 +307,12 @@ export default function AdminDashboard({
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {stats.map((s) => (
                   <button
-                    key={s.key}
+                    key={s.label}
                     onClick={() => {
-                      setSection("editor");
-                      setEditorTab(s.key);
+                      setSection(s.section);
+                      if (s.editorTab) setEditorTab(s.editorTab);
                     }}
-                    className="rounded-2xl border border-line bg-white p-5 text-left shadow-sm transition-all hover:shadow-md hover:border-accent"
+                    className="rounded-2xl border border-line bg-white p-5 text-left shadow-sm transition-all hover:border-accent hover:shadow-md"
                   >
                     <p className="text-xs uppercase tracking-[0.2em] text-muted">{s.label}</p>
                     <p className="mt-2 font-serif text-3xl text-ink">{s.value}</p>
@@ -314,7 +324,7 @@ export default function AdminDashboard({
               <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
                 <p className="mb-4 text-xs uppercase tracking-[0.25em] text-accent">Poslední aktivita</p>
                 {nedavnaAktivita.length === 0 ? (
-                  <p className="text-sm text-muted">Zatím žádné poptávky ani objednávky.</p>
+                  <p className="text-sm text-muted">Zatím žádné objednávky ani dotazy.</p>
                 ) : (
                   <ul className="flex flex-col divide-y divide-line">
                     {nedavnaAktivita.map((q) => (
@@ -360,7 +370,7 @@ export default function AdminDashboard({
                 </div>
               </div>
               <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:col-span-2">
-                <p className="text-xs uppercase tracking-[0.25em] text-accent">Poptávky a objednávky</p>
+                <p className="text-xs uppercase tracking-[0.25em] text-accent">Objednávky a dotazy</p>
                 <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-ink sm:grid-cols-3">
                   <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{poptavky.length}</span></div>
                   <div className="flex justify-between"><span className="text-muted">Nepřečtených</span><span>{nepreceteno}</span></div>
@@ -521,114 +531,114 @@ export default function AdminDashboard({
                   )}
                 </section>
               )}
-
-              {/* ── Poptávky ── */}
-              {editorTab === "poptavky" && (
-                <section>
-                  {poptavky.length === 0 ? (
-                    <p className="text-sm text-muted">
-                      Zatím žádné poptávky ani objednávky. Jakmile někdo klikne na „Závazně objednat“
-                      nebo „Mám dotaz“ u pobytu, objeví se tady (a přijde ti e-mail).
-                    </p>
-                  ) : (
-                    <>
-                      <div className="mb-6 flex flex-wrap gap-2">
-                        {poptavkaFiltry.map((f) => (
-                          <button
-                            key={f.key}
-                            onClick={() => setPoptavkaFilter(f.key)}
-                            className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
-                              poptavkaFilter === f.key
-                                ? "bg-gradient-aurora text-ink"
-                                : "border border-line text-muted hover:border-accent hover:text-accent"
-                            }`}
-                          >
-                            {f.label} ({f.count})
-                          </button>
-                        ))}
-                      </div>
-
-                      {poptavkyFiltrovane.length === 0 ? (
-                        <p className="text-sm text-muted">Žádné poptávky v tomto filtru.</p>
-                      ) : (
-                        <ul className="flex flex-col gap-3">
-                          {poptavkyFiltrovane.map((q) => (
-                            <li
-                              key={q.id}
-                              className={`rounded-2xl border bg-white p-5 shadow-sm transition-shadow hover:shadow-md ${
-                                q.precteno ? "border-line" : "border-accent/50"
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-4">
-                                <div className="min-w-0">
-                                  <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
-                                    {!q.precteno && (
-                                      <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-accent" aria-label="Nepřečteno" />
-                                    )}
-                                    {q.jmeno}
-                                    {q.pobyt_nadpis && (
-                                      <span className="text-xs text-accent">→ {q.pobyt_nadpis}</span>
-                                    )}
-                                    {q.typ === "objednavka" ? (
-                                      <span
-                                        className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
-                                          q.zaplaceno
-                                            ? "bg-accent/20 text-accent-d"
-                                            : "bg-line text-muted"
-                                        }`}
-                                      >
-                                        {q.zaplaceno ? "Zaplaceno" : "Objednávka"}
-                                      </span>
-                                    ) : (
-                                      <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
-                                        Dotaz
-                                      </span>
-                                    )}
-                                  </p>
-                                  <p className="mt-1 text-xs text-muted">
-                                    {new Date(q.created_at).toLocaleString("cs-CZ")}
-                                  </p>
-                                  <p className="mt-2 text-sm text-ink">
-                                    <a href={`mailto:${q.email}`} className="underline underline-offset-2 hover:text-accent-d">
-                                      {q.email}
-                                    </a>
-                                    {q.telefon && (
-                                      <>
-                                        {" · "}
-                                        <a href={`tel:${q.telefon}`} className="underline underline-offset-2 hover:text-accent-d">
-                                          {q.telefon}
-                                        </a>
-                                      </>
-                                    )}
-                                  </p>
-                                  {q.zprava && <p className="mt-2 text-sm text-muted">{q.zprava}</p>}
-                                </div>
-                                <div className="flex shrink-0 flex-col items-end gap-2">
-                                  <button
-                                    disabled={busy}
-                                    onClick={() => setPendingDelete({ kind: "poptavky", id: q.id, label: `poptávka od ${q.jmeno}` })}
-                                    className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
-                                  >
-                                    Smazat
-                                  </button>
-                                  <button
-                                    disabled={busy}
-                                    onClick={() => togglePoptavka(q)}
-                                    className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
-                                  >
-                                    {q.precteno ? "Označit jako nové" : "Označit jako přečtené"}
-                                  </button>
-                                </div>
-                              </div>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </>
-                  )}
-                </section>
-              )}
             </div>
+          )}
+
+          {/* ── Objednávky ── */}
+          {section === "objednavky" && (
+            <section>
+              {poptavky.length === 0 ? (
+                <p className="text-sm text-muted">
+                  Zatím žádné objednávky ani dotazy. Jakmile někdo klikne na „Závazně objednat“
+                  nebo „Mám dotaz“ u pobytu, objeví se tady (a přijde ti e-mail).
+                </p>
+              ) : (
+                <>
+                  <div className="mb-6 flex flex-wrap gap-2">
+                    {poptavkaFiltry.map((f) => (
+                      <button
+                        key={f.key}
+                        onClick={() => setPoptavkaFilter(f.key)}
+                        className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+                          poptavkaFilter === f.key
+                            ? "bg-gradient-aurora text-ink"
+                            : "border border-line text-muted hover:border-accent hover:text-accent"
+                        }`}
+                      >
+                        {f.label} ({f.count})
+                      </button>
+                    ))}
+                  </div>
+
+                  {poptavkyFiltrovane.length === 0 ? (
+                    <p className="text-sm text-muted">Žádné objednávky v tomto filtru.</p>
+                  ) : (
+                    <ul className="flex flex-col gap-3">
+                      {poptavkyFiltrovane.map((q) => (
+                        <li
+                          key={q.id}
+                          className={`rounded-2xl border bg-white p-5 shadow-sm transition-shadow hover:shadow-md ${
+                            q.precteno ? "border-line" : "border-accent/50"
+                          }`}
+                        >
+                          <div className="flex items-start justify-between gap-4">
+                            <div className="min-w-0">
+                              <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+                                {!q.precteno && (
+                                  <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-accent" aria-label="Nepřečteno" />
+                                )}
+                                {q.jmeno}
+                                {q.pobyt_nadpis && (
+                                  <span className="text-xs text-accent">→ {q.pobyt_nadpis}</span>
+                                )}
+                                {q.typ === "objednavka" ? (
+                                  <span
+                                    className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                                      q.zaplaceno
+                                        ? "bg-accent/20 text-accent-d"
+                                        : "bg-line text-muted"
+                                    }`}
+                                  >
+                                    {q.zaplaceno ? "Zaplaceno" : "Objednávka"}
+                                  </span>
+                                ) : (
+                                  <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                                    Dotaz
+                                  </span>
+                                )}
+                              </p>
+                              <p className="mt-1 text-xs text-muted">
+                                {new Date(q.created_at).toLocaleString("cs-CZ")}
+                              </p>
+                              <p className="mt-2 text-sm text-ink">
+                                <a href={`mailto:${q.email}`} className="underline underline-offset-2 hover:text-accent-d">
+                                  {q.email}
+                                </a>
+                                {q.telefon && (
+                                  <>
+                                    {" · "}
+                                    <a href={`tel:${q.telefon}`} className="underline underline-offset-2 hover:text-accent-d">
+                                      {q.telefon}
+                                    </a>
+                                  </>
+                                )}
+                              </p>
+                              {q.zprava && <p className="mt-2 text-sm text-muted">{q.zprava}</p>}
+                            </div>
+                            <div className="flex shrink-0 flex-col items-end gap-2">
+                              <button
+                                disabled={busy}
+                                onClick={() => setPendingDelete({ kind: "poptavky", id: q.id, label: `objednávka od ${q.jmeno}` })}
+                                className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                              >
+                                Smazat
+                              </button>
+                              <button
+                                disabled={busy}
+                                onClick={() => togglePoptavka(q)}
+                                className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              >
+                                {q.precteno ? "Označit jako nové" : "Označit jako přečtené"}
+                              </button>
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </>
+              )}
+            </section>
           )}
         </div>
       </div>
