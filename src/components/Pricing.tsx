@@ -8,7 +8,7 @@ const PLANS = [
     name: "Za lekci",
     price: "120",
     period: "/ lekce",
-    description: "",
+    description: "Ideální na jednorázové vyzkoušení.",
     featured: false,
     shape: "arch-left",
     features: [
@@ -115,7 +115,7 @@ export default function Pricing() {
                     <p className="mt-2 text-sm text-ink/70">{nbsp(plan.description)}</p>
                   )}
 
-                  <ul className="mt-4 flex flex-1 flex-col justify-center gap-2.5">
+                  <ul className="mt-4 flex flex-col gap-1.5">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm">
                         <span className="mt-0.5 text-base leading-none text-ink">
@@ -130,11 +130,7 @@ export default function Pricing() {
                     href={plan.ctaHref}
                     target={plan.ctaExternal ? "_blank" : undefined}
                     rel={plan.ctaExternal ? "noopener noreferrer" : undefined}
-                    className={`mt-4 block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
-                      plan.featured
-                        ? "bg-gradient-aurora text-ink hover:opacity-90"
-                        : "border border-ink/30 text-ink hover:border-accent hover:text-accent"
-                    }`}
+                    className="bg-gradient-aurora mt-auto block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-opacity duration-200 hover:opacity-90"
                   >
                     {nbsp(plan.ctaLabel)}
                   </a>

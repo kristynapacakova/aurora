@@ -16,13 +16,13 @@ export default function InstagramFeed() {
   return (
     <section className="bg-cream relative pt-14 pb-14 sm:pt-16 sm:pb-16">
       <FadeUp>
-        <p className="mb-8 text-center text-sm text-muted">
+        <p className="font-allura mb-8 text-center text-2xl text-ink sm:text-3xl">
           {nbsp("Sleduj nás na Instagramu")}{" "}
           <a
             href={CONTACT.instagram}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-ink underline underline-offset-4 hover:text-accent-d"
+            className="underline underline-offset-4 hover:text-accent-d"
           >
             {CONTACT.instagramHandle}
           </a>
