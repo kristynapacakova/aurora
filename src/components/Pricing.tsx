@@ -52,22 +52,12 @@ export default function Pricing() {
           </div>
         </FadeUp>
 
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2">
           {PLANS.map((plan, i) => (
-            <FadeUp key={plan.name} delay={i * 0.12}>
-              <div
-                className={`relative flex h-full flex-col border border-line bg-cream pb-5 pt-10 text-ink sm:pb-6 sm:pt-12 ${
-                  i % 2 === 0
-                    ? "photo-arch-left pl-10 pr-6 sm:pl-16 sm:pr-8"
-                    : "photo-arch-right pl-6 pr-10 sm:pl-8 sm:pr-16"
-                }`}
-              >
+            <FadeUp key={plan.name} delay={i * 0.12} className="h-full">
+              <div className="photo-arch-left relative flex h-full flex-col border border-line bg-cream pb-5 pl-10 pr-6 pt-10 text-ink sm:pb-6 sm:pl-16 sm:pr-8 sm:pt-12">
                 {plan.featured && (
-                  <span
-                    className={`bg-gradient-aurora absolute right-6 top-6 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink ${
-                      i % 2 === 0 ? "sm:right-8 sm:top-8" : "sm:right-8 sm:top-12"
-                    }`}
-                  >
+                  <span className="bg-gradient-aurora absolute right-6 top-6 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink sm:right-8 sm:top-8">
                     Nejoblíbenější
                   </span>
                 )}
@@ -98,7 +88,7 @@ export default function Pricing() {
                   href={USCREEN.signup}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-4 block w-fit rounded-full border border-ink/30 px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
+                  className="mt-auto block w-fit rounded-full border border-ink/30 px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
                 >
                   Aktivovat členství
                 </a>
