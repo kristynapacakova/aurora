@@ -90,7 +90,7 @@ export default function Pricing() {
             return (
               <FadeUp key={plan.name} delay={i * 0.1} className="h-full">
                 <div
-                  className={`relative flex h-full flex-col bg-cream text-ink ${shapeClass} ${
+                  className={`relative flex h-full flex-col items-start justify-center bg-cream text-ink ${shapeClass} ${
                     plan.featured
                       ? "border-2 border-accent shadow-lg"
                       : "border border-line"
@@ -130,7 +130,11 @@ export default function Pricing() {
                     href={plan.ctaHref}
                     target={plan.ctaExternal ? "_blank" : undefined}
                     rel={plan.ctaExternal ? "noopener noreferrer" : undefined}
-                    className="bg-gradient-aurora mt-auto block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-opacity duration-200 hover:opacity-90"
+                    className={`mt-6 block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
+                      plan.featured
+                        ? "bg-gradient-aurora text-ink hover:opacity-90"
+                        : "border border-ink/30 text-ink hover:border-accent hover:text-accent"
+                    }`}
                   >
                     {nbsp(plan.ctaLabel)}
                   </a>
