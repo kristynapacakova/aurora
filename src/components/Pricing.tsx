@@ -69,15 +69,14 @@ export default function Pricing() {
 
         <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-3">
           {PLANS.map((plan, i) => {
-            const topPad = plan.featured ? "pt-16 sm:pt-[4.5rem]" : "pt-9 sm:pt-11";
             const shapeClass =
               plan.shape === "arch-left"
-                ? `photo-arch-left pb-5 pl-8 pr-6 sm:pb-6 sm:pl-10 sm:pr-7 ${topPad}`
+                ? "photo-arch-left pb-5 pl-8 pr-6 pt-9 sm:pb-6 sm:pl-10 sm:pr-7 sm:pt-11"
                 : plan.shape === "arch-right"
-                  ? `photo-arch-right pb-5 pl-6 pr-8 sm:pb-6 sm:pl-7 sm:pr-10 ${topPad}`
-                  : `rounded-3xl p-6 sm:p-7 ${topPad}`;
+                  ? "photo-arch-right pb-5 pl-6 pr-8 pt-9 sm:pb-6 sm:pl-7 sm:pr-10 sm:pt-11"
+                  : "rounded-3xl p-6 pt-9 sm:p-7 sm:pt-11";
             const badgeSideClass =
-              plan.shape === "arch-right" ? "left-5 top-5 sm:left-7 sm:top-7" : "right-5 top-5 sm:right-7 sm:top-7";
+              plan.shape === "arch-right" ? "left-5 sm:left-7" : "right-5 sm:right-7";
 
             return (
               <FadeUp key={plan.name} delay={i * 0.1} className="h-full">
@@ -89,7 +88,7 @@ export default function Pricing() {
                   }`}
                 >
                   {plan.featured && (
-                    <span className={`bg-gradient-aurora absolute rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink ${badgeSideClass}`}>
+                    <span className={`bg-gradient-aurora absolute -top-3 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink sm:-top-3.5 ${badgeSideClass}`}>
                       Nejoblíbenější
                     </span>
                   )}
