@@ -36,6 +36,7 @@ export type Poptavka = {
   pobyt_nadpis: string | null;
   typ: "dotaz" | "objednavka";
   zaplaceno: boolean;
+  precteno: boolean;
   jmeno: string;
   email: string;
   telefon: string;
@@ -107,6 +108,7 @@ async function ensureSchema() {
     );
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS typ TEXT NOT NULL DEFAULT 'dotaz';
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS zaplaceno BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS precteno BOOLEAN NOT NULL DEFAULT FALSE;
   `);
   schemaReady = true;
 }
@@ -266,4 +268,8 @@ export async function getPoptavky(): Promise<Poptavka[]> {
 
 export async function deletePoptavka(id: number): Promise<void> {
   await query(`DELETE FROM poptavky WHERE id = $1`, [id]);
+}
+
+export async function updatePoptavkaPrecteno(id: number, precteno: boolean): Promise<void> {
+  await query(`UPDATE poptavky SET precteno = $1 WHERE id = $2`, [precteno, id]);
 }
