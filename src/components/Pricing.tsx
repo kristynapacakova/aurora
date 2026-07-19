@@ -90,7 +90,7 @@ export default function Pricing() {
             return (
               <FadeUp key={plan.name} delay={i * 0.1} className="h-full">
                 <div
-                  className={`relative flex h-full flex-col items-start justify-center bg-cream text-ink ${shapeClass} ${
+                  className={`relative flex h-full flex-col items-center justify-center bg-cream text-ink ${shapeClass} ${
                     plan.featured
                       ? "border-2 border-accent shadow-lg"
                       : "border border-line"
