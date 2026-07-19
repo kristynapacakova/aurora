@@ -5,11 +5,25 @@ import { IconSparkle } from "./BrandIcons";
 
 const PLANS = [
   {
+    name: "Za lekci",
+    price: "120",
+    period: "/ lekce",
+    description: "",
+    featured: false,
+    shape: "plain",
+    features: [
+      "Přístup k vybrané lekci na 3 dny",
+      "Možnost pustit si ji opakovaně",
+      "Bez měsíčního členství",
+    ],
+  },
+  {
     name: "Měsíční",
     price: "399",
     period: "/ měsíc",
     description: "Ideální pro vyzkoušení studia.",
     featured: false,
+    shape: "arch-left",
     features: [
       "Okamžitý přístup ke všem lekcím",
       "Každý týden nová lekce",
@@ -23,6 +37,7 @@ const PLANS = [
     period: "/ měsíc",
     description: "Ušetříš 2 měsíce. Nejoblíbenější volba.",
     featured: true,
+    shape: "arch-right",
     features: [
       "Vše z Měsíčního plánu",
       "Prioritní přístup k novinkám",
@@ -52,59 +67,73 @@ export default function Pricing() {
           </div>
         </FadeUp>
 
-        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2">
-          {PLANS.map((plan, i) => (
-            <FadeUp key={plan.name} delay={i * 0.12} className="h-full">
-              <div
-                className={`relative flex h-full flex-col border border-line bg-cream pb-5 pt-10 text-ink sm:pb-6 sm:pt-12 ${
-                  i % 2 === 0
-                    ? "photo-arch-left pl-10 pr-6 sm:pl-16 sm:pr-8"
-                    : "photo-arch-right pl-6 pr-10 sm:pl-8 sm:pr-16"
-                }`}
-              >
-                {plan.featured && (
-                  <span
-                    className={`bg-gradient-aurora absolute right-6 top-6 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink ${
-                      i % 2 === 0 ? "sm:right-8 sm:top-8" : "sm:right-8 sm:top-12"
+        <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-3">
+          {PLANS.map((plan, i) => {
+            const topPad = plan.featured ? "pt-16 sm:pt-[4.5rem]" : "pt-9 sm:pt-11";
+            const shapeClass =
+              plan.shape === "arch-left"
+                ? `photo-arch-left pb-5 pl-8 pr-6 sm:pb-6 sm:pl-10 sm:pr-7 ${topPad}`
+                : plan.shape === "arch-right"
+                  ? `photo-arch-right pb-5 pl-6 pr-8 sm:pb-6 sm:pl-7 sm:pr-10 ${topPad}`
+                  : `rounded-3xl p-6 sm:p-7 ${topPad}`;
+            const badgeSideClass =
+              plan.shape === "arch-right" ? "left-5 top-5 sm:left-7 sm:top-7" : "right-5 top-5 sm:right-7 sm:top-7";
+
+            return (
+              <FadeUp key={plan.name} delay={i * 0.1} className="h-full">
+                <div
+                  className={`relative flex h-full flex-col bg-cream text-ink ${shapeClass} ${
+                    plan.featured
+                      ? "border-2 border-accent shadow-lg md:-mt-4 md:mb-4"
+                      : "border border-line"
+                  }`}
+                >
+                  {plan.featured && (
+                    <span className={`bg-gradient-aurora absolute rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink ${badgeSideClass}`}>
+                      Nejoblíbenější
+                    </span>
+                  )}
+
+                  <p className="text-xs uppercase tracking-[0.25em] text-accent">
+                    {plan.name}
+                  </p>
+
+                  <div className="mt-3 flex items-baseline gap-1">
+                    <span className="font-sans text-4xl font-semibold">{plan.price} Kč</span>
+                    <span className="text-sm text-ink/60">{plan.period}</span>
+                  </div>
+
+                  {plan.description && (
+                    <p className="mt-2 text-sm text-ink/70">{nbsp(plan.description)}</p>
+                  )}
+
+                  <ul className="mt-4 flex flex-col gap-1.5">
+                    {plan.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-sm">
+                        <span className="mt-0.5 text-base leading-none text-ink">
+                          ✓
+                        </span>
+                        <span className="text-ink/80">{nbsp(f)}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <a
+                    href={USCREEN.signup}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={`mt-auto block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
+                      plan.featured
+                        ? "bg-gradient-aurora text-ink hover:opacity-90"
+                        : "border border-ink/30 text-ink hover:border-accent hover:text-accent"
                     }`}
                   >
-                    Nejoblíbenější
-                  </span>
-                )}
-
-                <p className="text-xs uppercase tracking-[0.25em] text-accent">
-                  {plan.name}
-                </p>
-
-                <div className="mt-3 flex items-baseline gap-1">
-                  <span className="font-sans text-4xl font-semibold">{plan.price} Kč</span>
-                  <span className="text-sm text-ink/60">{plan.period}</span>
+                    Aktivovat členství
+                  </a>
                 </div>
-
-                <p className="mt-2 text-sm text-ink/70">{nbsp(plan.description)}</p>
-
-                <ul className="mt-4 grid grid-cols-1 gap-x-6 gap-y-1.5 sm:grid-cols-2">
-                  {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm">
-                      <span className="mt-0.5 text-base leading-none text-ink">
-                        ✓
-                      </span>
-                      <span className="text-ink/80">{nbsp(f)}</span>
-                    </li>
-                  ))}
-                </ul>
-
-                <a
-                  href={USCREEN.signup}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mt-auto block w-fit rounded-full border border-ink/30 px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
-                >
-                  Aktivovat členství
-                </a>
-              </div>
-            </FadeUp>
-          ))}
+              </FadeUp>
+            );
+          })}
         </div>
 
         <FadeUp delay={0.2}>
