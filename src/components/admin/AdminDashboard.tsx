@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -72,19 +73,22 @@ export default function AdminDashboard({
   return (
     <main className="min-h-screen bg-cream">
       {/* Hlavička */}
-      <header className="border-b border-line bg-sand">
-        <div className="mx-auto flex max-w-4xl items-center justify-between px-6 py-4">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.3em] text-accent">Administrace</p>
-            <h1 className="font-allura text-2xl text-ink">AURORA jóga</h1>
+      <header className="border-b border-line bg-cream">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
+          <div className="flex flex-col items-start">
+            <Image src="/logo.png" alt="AURORA jóga" width={140} height={110} className="h-10 w-auto" priority />
+            <p className="mt-1.5 text-[10px] uppercase tracking-[0.3em] text-accent">Administrace</p>
           </div>
-          <div className="flex items-center gap-4">
-            <Link href="/" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">
+          <div className="flex items-center gap-3">
+            <Link
+              href="/"
+              className="text-xs uppercase tracking-[0.2em] text-muted transition-colors hover:text-ink"
+            >
               Zobrazit web
             </Link>
             <button
               onClick={logout}
-              className="rounded-full border border-ink/30 px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink hover:border-ink"
+              className="rounded-full border border-ink/30 px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
             >
               Odhlásit
             </button>
@@ -92,9 +96,9 @@ export default function AdminDashboard({
         </div>
       </header>
 
-      <div className="mx-auto max-w-4xl px-6 py-8">
+      <div className="mx-auto max-w-5xl px-6 py-10">
         {!configured && (
-          <div className="mb-8 rounded-2xl border border-accent/40 bg-sand p-6 text-sm text-ink">
+          <div className="mb-8 rounded-2xl border border-accent/40 bg-white p-6 text-sm text-ink shadow-sm">
             <p className="font-medium">Úložiště zatím není připojené.</p>
             <p className="mt-2 text-muted">
               Ve Vercelu otevři projekt → záložka <strong>Storage</strong> →{" "}
@@ -105,18 +109,22 @@ export default function AdminDashboard({
         )}
 
         {/* Záložky */}
-        <div className="mb-8 flex gap-2">
+        <div className="mb-8 flex gap-2 border-b border-line pb-px">
           {tabs.map((t) => (
             <button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`rounded-full px-5 py-2.5 text-xs uppercase tracking-[0.2em] transition-all ${
-                tab === t.key
-                  ? "bg-gradient-aurora text-ink"
-                  : "border border-line text-muted hover:border-ink hover:text-ink"
+              className={`relative px-4 py-3 text-xs uppercase tracking-[0.2em] transition-colors ${
+                tab === t.key ? "text-ink" : "text-muted hover:text-ink"
               }`}
             >
-              {t.label} ({t.count})
+              {t.label}
+              <span className={`ml-1.5 ${tab === t.key ? "text-accent" : "text-muted/70"}`}>
+                {t.count}
+              </span>
+              {tab === t.key && (
+                <span className="bg-gradient-aurora absolute inset-x-0 -bottom-px h-[2px] rounded-full" />
+              )}
             </button>
           ))}
         </div>
@@ -126,7 +134,7 @@ export default function AdminDashboard({
           <section>
             <Link
               href="/admin/pobyt/novy"
-              className="mb-6 inline-block rounded-full bg-accent px-6 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:bg-accent-d"
+              className="bg-gradient-aurora mb-6 inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
             >
               + Přidat pobyt
             </Link>
@@ -137,18 +145,18 @@ export default function AdminDashboard({
                 {pobyty.map((p) => (
                   <li
                     key={p.id}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white/60 p-4"
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-ink">
+                      <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
                         {p.nadpis}
                         {!p.zverejneno && (
-                          <span className="ml-2 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
-                            skrytý
+                          <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                            Skrytý
                           </span>
                         )}
                       </p>
-                      <p className="truncate text-xs text-muted">
+                      <p className="mt-1 truncate text-xs text-muted">
                         {[p.misto, p.termin, p.cena].filter(Boolean).join(" · ")}
                       </p>
                     </div>
@@ -156,20 +164,20 @@ export default function AdminDashboard({
                       <button
                         disabled={busy}
                         onClick={() => togglePobyt(p)}
-                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink hover:border-ink"
+                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
                       >
                         {p.zverejneno ? "Skrýt" : "Zobrazit"}
                       </button>
                       <Link
                         href={`/admin/pobyt/${p.id}`}
-                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink hover:border-ink"
+                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
                       >
                         Upravit
                       </Link>
                       <button
                         disabled={busy}
                         onClick={() => remove("pobyty", p.id, p.nadpis)}
-                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d hover:border-accent-d"
+                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
                       >
                         Smazat
                       </button>
@@ -186,7 +194,7 @@ export default function AdminDashboard({
           <section>
             <Link
               href="/admin/clanek/novy"
-              className="mb-6 inline-block rounded-full bg-accent px-6 py-3 text-xs uppercase tracking-[0.2em] text-white transition-all hover:bg-accent-d"
+              className="bg-gradient-aurora mb-6 inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
             >
               + Napsat článek
             </Link>
@@ -197,32 +205,32 @@ export default function AdminDashboard({
                 {clanky.map((c) => (
                   <li
                     key={c.id}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white/60 p-4"
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                   >
                     <div className="min-w-0">
-                      <p className="truncate font-medium text-ink">
+                      <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
                         {c.nadpis}
                         {!c.zverejneno && (
-                          <span className="ml-2 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
-                            skrytý
+                          <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                            Skrytý
                           </span>
                         )}
                       </p>
-                      <p className="text-xs text-muted">
+                      <p className="mt-1 text-xs text-muted">
                         {new Date(c.created_at).toLocaleDateString("cs-CZ")}
                       </p>
                     </div>
                     <div className="flex shrink-0 gap-2">
                       <Link
                         href={`/admin/clanek/${c.id}`}
-                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink hover:border-ink"
+                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
                       >
                         Upravit
                       </Link>
                       <button
                         disabled={busy}
                         onClick={() => remove("clanky", c.id, c.nadpis)}
-                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d hover:border-accent-d"
+                        className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
                       >
                         Smazat
                       </button>
@@ -245,17 +253,17 @@ export default function AdminDashboard({
             ) : (
               <ul className="flex flex-col gap-3">
                 {poptavky.map((q) => (
-                  <li key={q.id} className="rounded-2xl border border-line bg-white/60 p-4">
+                  <li key={q.id} className="rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md">
                     <div className="flex items-start justify-between gap-4">
-                      <div>
-                        <p className="font-medium text-ink">
+                      <div className="min-w-0">
+                        <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
                           {q.jmeno}
                           {q.pobyt_nadpis && (
-                            <span className="ml-2 text-xs text-accent">→ {q.pobyt_nadpis}</span>
+                            <span className="text-xs text-accent">→ {q.pobyt_nadpis}</span>
                           )}
                           {q.typ === "objednavka" ? (
                             <span
-                              className={`ml-2 rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                              className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
                                 q.zaplaceno
                                   ? "bg-accent/20 text-accent-d"
                                   : "bg-line text-muted"
@@ -264,7 +272,7 @@ export default function AdminDashboard({
                               {q.zaplaceno ? "Zaplaceno" : "Objednávka"}
                             </span>
                           ) : (
-                            <span className="ml-2 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                            <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
                               Dotaz
                             </span>
                           )}
@@ -273,13 +281,13 @@ export default function AdminDashboard({
                           {new Date(q.created_at).toLocaleString("cs-CZ")}
                         </p>
                         <p className="mt-2 text-sm text-ink">
-                          <a href={`mailto:${q.email}`} className="underline underline-offset-2">
+                          <a href={`mailto:${q.email}`} className="underline underline-offset-2 hover:text-accent-d">
                             {q.email}
                           </a>
                           {q.telefon && (
                             <>
                               {" · "}
-                              <a href={`tel:${q.telefon}`} className="underline underline-offset-2">
+                              <a href={`tel:${q.telefon}`} className="underline underline-offset-2 hover:text-accent-d">
                                 {q.telefon}
                               </a>
                             </>
@@ -290,7 +298,7 @@ export default function AdminDashboard({
                       <button
                         disabled={busy}
                         onClick={() => remove("poptavky", q.id, `poptávka od ${q.jmeno}`)}
-                        className="shrink-0 rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d hover:border-accent-d"
+                        className="shrink-0 rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
                       >
                         Smazat
                       </button>
