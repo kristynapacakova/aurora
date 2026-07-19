@@ -16,6 +16,9 @@ const PLANS = [
       "Možnost pustit si ji opakovaně",
       "Bez měsíčního členství",
     ],
+    ctaLabel: "Aktuální lekce",
+    ctaHref: "#lekce",
+    ctaExternal: false,
   },
   {
     name: "Měsíční",
@@ -30,6 +33,9 @@ const PLANS = [
       "Možnost cvičit kdykoliv a odkudkoliv",
       "Lekce různých délek a zaměření",
     ],
+    ctaLabel: "Aktivovat členství",
+    ctaHref: USCREEN.signup,
+    ctaExternal: true,
   },
   {
     name: "Roční",
@@ -44,13 +50,16 @@ const PLANS = [
       "Exkluzivní výzvy a programy",
       "Osobní lekce se slevou 20 %",
     ],
+    ctaLabel: "Aktivovat členství",
+    ctaHref: USCREEN.signup,
+    ctaExternal: true,
   },
 ];
 
 export default function Pricing() {
   return (
     <section id="cenik" className="bg-cream relative pt-14 pb-16 sm:pt-16 sm:pb-20">
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="mx-auto max-w-7xl px-6">
         <FadeUp>
           <div className="mb-8 text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
@@ -106,7 +115,7 @@ export default function Pricing() {
                     <p className="mt-2 text-sm text-ink/70">{nbsp(plan.description)}</p>
                   )}
 
-                  <ul className="mt-4 flex flex-col gap-1.5">
+                  <ul className="mt-4 flex flex-1 flex-col justify-center gap-2.5">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm">
                         <span className="mt-0.5 text-base leading-none text-ink">
@@ -118,16 +127,16 @@ export default function Pricing() {
                   </ul>
 
                   <a
-                    href={USCREEN.signup}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`mt-auto block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
+                    href={plan.ctaHref}
+                    target={plan.ctaExternal ? "_blank" : undefined}
+                    rel={plan.ctaExternal ? "noopener noreferrer" : undefined}
+                    className={`mt-4 block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
                       plan.featured
                         ? "bg-gradient-aurora text-ink hover:opacity-90"
                         : "border border-ink/30 text-ink hover:border-accent hover:text-accent"
                     }`}
                   >
-                    Aktivovat členství
+                    {nbsp(plan.ctaLabel)}
                   </a>
                 </div>
               </FadeUp>
