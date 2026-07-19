@@ -10,7 +10,7 @@ const PLANS = [
     period: "/ lekce",
     description: "",
     featured: false,
-    shape: "plain",
+    shape: "arch-left",
     features: [
       "Přístup k vybrané lekci na 3 dny",
       "Možnost pustit si ji opakovaně",
@@ -23,7 +23,7 @@ const PLANS = [
     period: "/ měsíc",
     description: "Ideální pro vyzkoušení studia.",
     featured: false,
-    shape: "arch-left",
+    shape: "plain",
     features: [
       "Okamžitý přístup ke všem lekcím",
       "Každý týden nová lekce",
@@ -84,7 +84,7 @@ export default function Pricing() {
                 <div
                   className={`relative flex h-full flex-col bg-cream text-ink ${shapeClass} ${
                     plan.featured
-                      ? "border-2 border-accent shadow-lg md:-mt-4 md:mb-4"
+                      ? "border-2 border-accent shadow-lg"
                       : "border border-line"
                   }`}
                 >
