@@ -217,6 +217,14 @@ export default function AdminDashboard({
   const nedavnaAktivita = poptavky.slice(0, 5);
   const sectionTitle = NAV.find((n) => n.key === section)?.label ?? "";
 
+  const domenaDny = nastaveni.domena_expiruje
+    ? Math.ceil(
+        (new Date(nastaveni.domena_expiruje).getTime() - new Date().setHours(0, 0, 0, 0)) /
+          (1000 * 60 * 60 * 24)
+      )
+    : null;
+  const domenaVyprsi = domenaDny !== null && domenaDny <= 30;
+
   return (
     <div className="flex min-h-screen bg-cream">
       {/* ── Postranní navigace ── */}
@@ -234,11 +242,14 @@ export default function AdminDashboard({
                   key={n.key}
                   onClick={() => setSection(n.key)}
                   title={n.label}
-                  className={`flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
+                  className={`relative flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
                     active ? "bg-gradient-aurora text-ink" : "text-muted hover:bg-sand hover:text-ink"
                   }`}
                 >
                   <Icon />
+                  {n.key === "nastaveni" && domenaVyprsi && (
+                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent-d ring-2 ring-white" />
+                  )}
                 </button>
               );
             })}
@@ -297,6 +308,25 @@ export default function AdminDashboard({
                 <strong>Create Database → Postgres</strong> (texty) a{" "}
                 <strong>Create → Blob</strong> (fotky). Potom se sem vrať — vše začne fungovat samo
                 a uvidíš skutečné počty.
+              </p>
+            </div>
+          )}
+
+          {domenaVyprsi && domenaDny !== null && (
+            <div className="mb-8 rounded-2xl border border-accent-d/40 bg-white p-6 text-sm text-ink shadow-sm">
+              <p className="font-medium text-accent-d">
+                {domenaDny < 0
+                  ? `Doména vypršela před ${Math.abs(domenaDny)} dny.`
+                  : domenaDny === 0
+                    ? "Doména vyprší dnes."
+                    : `Doména vyprší za ${domenaDny} ${domenaDny === 1 ? "den" : domenaDny < 5 ? "dny" : "dní"}.`}
+              </p>
+              <p className="mt-2 text-muted">
+                Nezapomeň ji obnovit na WEDOSu, ať web nevypadne. Datum si můžeš upravit v{" "}
+                <button onClick={() => setSection("nastaveni")} className="underline underline-offset-2 hover:text-ink">
+                  Nastavení
+                </button>
+                .
               </p>
             </div>
           )}
