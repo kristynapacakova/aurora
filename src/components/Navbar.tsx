@@ -4,24 +4,25 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { USCREEN } from "@/lib/config";
+import { useSiteSettings } from "./SiteSettingsProvider";
 
 type MenuItem = { label: string; href: string; external?: boolean };
-
-const MENU_ITEMS: MenuItem[] = [
-  { label: "O mně", href: "/#o-mne" },
-  { label: "Lekce", href: "/#lekce" },
-  { label: "Online studio", href: USCREEN.signup, external: true },
-  { label: "Pobyty pro ženy", href: "/pobyty" },
-  { label: "Blog", href: "/blog" },
-  { label: "Kontakt", href: "/#kontakt" },
-];
 
 const SCROLL_HIDE_THRESHOLD = 80;
 
 export default function Navbar() {
+  const { uscreen_signup } = useSiteSettings();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  const MENU_ITEMS: MenuItem[] = [
+    { label: "O mně", href: "/#o-mne" },
+    { label: "Lekce", href: "/#lekce" },
+    { label: "Online studio", href: uscreen_signup, external: true },
+    { label: "Pobyty pro ženy", href: "/pobyty" },
+    { label: "Blog", href: "/blog" },
+    { label: "Kontakt", href: "/#kontakt" },
+  ];
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";

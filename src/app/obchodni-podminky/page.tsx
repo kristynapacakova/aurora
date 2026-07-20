@@ -1,12 +1,14 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { CONTACT } from "@/lib/config";
+import { getNastaveni } from "@/lib/db";
 
 export const metadata = {
   title: "Obchodní podmínky | AURORA jóga",
 };
 
-export default function ObchodniPodminkyPage() {
+export default async function ObchodniPodminkyPage() {
+  const { kontakt_email } = await getNastaveni();
+
   return (
     <>
       <Navbar />
@@ -43,8 +45,8 @@ export default function ObchodniPodminkyPage() {
                 Zapsaná: <strong className="text-ink">[DOPLNIT — např. v živnostenském rejstříku / obchodním rejstříku, spisová značka]</strong>
                 <br />
                 Kontaktní e-mail:{" "}
-                <a href={`mailto:${CONTACT.email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  {CONTACT.email}
+                <a href={`mailto:${kontakt_email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
+                  {kontakt_email}
                 </a>
               </p>
             </section>
@@ -103,8 +105,8 @@ export default function ObchodniPodminkyPage() {
               <h2 className="mb-3 font-serif text-xl text-ink">6. Reklamace</h2>
               <p>
                 Případné reklamace zasílejte na e-mail{" "}
-                <a href={`mailto:${CONTACT.email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  {CONTACT.email}
+                <a href={`mailto:${kontakt_email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
+                  {kontakt_email}
                 </a>
                 . Reklamace bude vyřízena bez zbytečného odkladu, nejpozději do 30
                 dnů ode dne jejího uplatnění, pokud se strany nedohodnou na delší

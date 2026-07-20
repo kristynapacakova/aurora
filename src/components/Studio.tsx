@@ -1,61 +1,63 @@
 import Image from "next/image";
 import FadeUp from "./FadeUp";
-import { USCREEN } from "@/lib/config";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle, IconSun, IconLeafBranch } from "./BrandIcons";
+import { getNastaveni } from "@/lib/db";
 
-const SERVICES = [
-  {
-    id: "lekce",
-    icon: <IconSun size={30} />,
-    title: "Lekce",
-    subtitle: "Potkejme se na podložce",
-    body: [
-      "Společné lekce jsou místem, kde můžeš na chvíli odložit každodenní starosti, věnovat pozornost svému tělu a dopřát si čas jen pro sebe.",
-      "Čeká tě jemně plynoucí pohyb, vědomý dech, uvolnění i chvíle klidu. Nemusíš mít žádné předchozí zkušenosti — stačí přijít taková, jaká právě jsi.",
-    ],
-    cta: "Zobrazit rozvrh lekcí",
-    href: USCREEN.home,
-    external: true,
-    photo: "/lekce.jpeg",
-    alt: "Lekce jógy",
-    photoLeft: true,
-  },
-  {
-    id: "studio",
-    icon: <IconSparkle size={30} className="text-accent" />,
-    title: "Online studio",
-    subtitle: "Jóga kdykoliv a kdekoliv",
-    body: [
-      "Dopřej si čas pro sebe doma, na cestách nebo kdekoliv, kde se právě nacházíš.",
-      "V online studiu najdeš lekce různých délek a zaměření — pro chvíle, kdy potřebuješ zpomalit, protáhnout tělo, načerpat energii nebo se jednoduše vrátit sama k sobě.",
-      "Cvič vlastním tempem, podle své nálady a přesně tehdy, kdy ti to vyhovuje.",
-    ],
-    cta: "Vstoupit do online studia",
-    href: USCREEN.signup,
-    external: true,
-    photo: "/studio.jpg",
-    alt: "Online studio",
-    photoLeft: false,
-  },
-  {
-    id: "retreaty",
-    icon: <IconLeafBranch size={30} />,
-    title: "Pobyty pro ženy",
-    subtitle: "Čas, který patří jen Tobě",
-    body: [
-      "Někdy potřebujeme na chvíli vystoupit z každodenního rytmu, změnit prostředí a dopřát si více prostoru pro sebe.",
-      "Ženské jógové pobyty propojují pohyb, dech, odpočinek, přírodu, společné chvíle i čas, kdy nemusíš vůbec nic. Jsou pozvánkou ke zpomalení, načerpání nové energie a návratu k tomu, co je pro tebe důležité.",
-    ],
-    cta: "Objevit pobyty",
-    href: "/pobyty",
-    photo: "/retreaty.jpg",
-    alt: "Pobyty pro ženy",
-    photoLeft: true,
-  },
-];
+export default async function Studio() {
+  const { uscreen_home, uscreen_signup } = await getNastaveni();
 
-export default function Studio() {
+  const SERVICES = [
+    {
+      id: "lekce",
+      icon: <IconSun size={30} />,
+      title: "Lekce",
+      subtitle: "Potkejme se na podložce",
+      body: [
+        "Společné lekce jsou místem, kde můžeš na chvíli odložit každodenní starosti, věnovat pozornost svému tělu a dopřát si čas jen pro sebe.",
+        "Čeká tě jemně plynoucí pohyb, vědomý dech, uvolnění i chvíle klidu. Nemusíš mít žádné předchozí zkušenosti — stačí přijít taková, jaká právě jsi.",
+      ],
+      cta: "Zobrazit rozvrh lekcí",
+      href: uscreen_home,
+      external: true,
+      photo: "/lekce.jpeg",
+      alt: "Lekce jógy",
+      photoLeft: true,
+    },
+    {
+      id: "studio",
+      icon: <IconSparkle size={30} className="text-accent" />,
+      title: "Online studio",
+      subtitle: "Jóga kdykoliv a kdekoliv",
+      body: [
+        "Dopřej si čas pro sebe doma, na cestách nebo kdekoliv, kde se právě nacházíš.",
+        "V online studiu najdeš lekce různých délek a zaměření — pro chvíle, kdy potřebuješ zpomalit, protáhnout tělo, načerpat energii nebo se jednoduše vrátit sama k sobě.",
+        "Cvič vlastním tempem, podle své nálady a přesně tehdy, kdy ti to vyhovuje.",
+      ],
+      cta: "Vstoupit do online studia",
+      href: uscreen_signup,
+      external: true,
+      photo: "/studio.jpg",
+      alt: "Online studio",
+      photoLeft: false,
+    },
+    {
+      id: "retreaty",
+      icon: <IconLeafBranch size={30} />,
+      title: "Pobyty pro ženy",
+      subtitle: "Čas, který patří jen Tobě",
+      body: [
+        "Někdy potřebujeme na chvíli vystoupit z každodenního rytmu, změnit prostředí a dopřát si více prostoru pro sebe.",
+        "Ženské jógové pobyty propojují pohyb, dech, odpočinek, přírodu, společné chvíle i čas, kdy nemusíš vůbec nic. Jsou pozvánkou ke zpomalení, načerpání nové energie a návratu k tomu, co je pro tebe důležité.",
+      ],
+      cta: "Objevit pobyty",
+      href: "/pobyty",
+      photo: "/retreaty.jpg",
+      alt: "Pobyty pro ženy",
+      photoLeft: true,
+    },
+  ];
+
   return (
     <>
       {/* ── Střídající se sekce ── */}

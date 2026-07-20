@@ -2,7 +2,8 @@ import Image from "next/image";
 import Script from "next/script";
 import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
-import { CONTACT, INSTAGRAM_WIDGET_URL } from "@/lib/config";
+import { INSTAGRAM_WIDGET_URL } from "@/lib/config";
+import { getNastaveni } from "@/lib/db";
 
 const GRID_PHOTOS = [
   { src: "/ig-1.jpg" },
@@ -12,19 +13,21 @@ const GRID_PHOTOS = [
   { src: "/ig-5.jpg" },
 ];
 
-export default function InstagramFeed() {
+export default async function InstagramFeed() {
+  const { instagram_url, instagram_handle } = await getNastaveni();
+
   return (
     <section className="bg-cream relative pt-14 pb-14 sm:pt-16 sm:pb-16">
       <FadeUp>
         <p className="font-allura mb-8 text-center text-2xl text-ink sm:text-3xl">
           {nbsp("Sleduj nás na Instagramu")}{" "}
           <a
-            href={CONTACT.instagram}
+            href={instagram_url}
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-4 hover:text-accent-d"
           >
-            {CONTACT.instagramHandle}
+            {instagram_handle}
           </a>
         </p>
       </FadeUp>
@@ -46,7 +49,7 @@ export default function InstagramFeed() {
             {GRID_PHOTOS.map((photo, i) => (
               <a
                 key={photo.src}
-                href={CONTACT.instagram}
+                href={instagram_url}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="relative aspect-square overflow-hidden"

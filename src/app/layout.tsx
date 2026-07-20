@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { getNastaveni } from "@/lib/db";
+import { SiteSettingsProvider } from "@/components/SiteSettingsProvider";
 
 export const metadata: Metadata = {
   title: "AURORA jóga | Online jógové studio",
@@ -13,14 +15,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const settings = await getNastaveni();
+
   return (
     <html lang="cs" className="scroll-smooth antialiased">
-      <body className="bg-cream text-ink font-sans">{children}</body>
+      <body className="bg-cream text-ink font-sans">
+        <SiteSettingsProvider settings={settings}>{children}</SiteSettingsProvider>
+      </body>
     </html>
   );
 }

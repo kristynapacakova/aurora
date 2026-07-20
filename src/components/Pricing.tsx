@@ -1,62 +1,64 @@
 import FadeUp from "./FadeUp";
-import { USCREEN } from "@/lib/config";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "./BrandIcons";
+import { getNastaveni } from "@/lib/db";
 
-const PLANS = [
-  {
-    name: "Za lekci",
-    price: "120",
-    period: "/ lekce",
-    description: "Ideální na jednorázové vyzkoušení.",
-    featured: false,
-    shape: "arch-left",
-    features: [
-      "Přístup k vybrané lekci na 3 dny",
-      "Možnost pustit si ji opakovaně",
-      "Bez měsíčního členství",
-    ],
-    ctaLabel: "Aktuální lekce",
-    ctaHref: "#lekce",
-    ctaExternal: false,
-  },
-  {
-    name: "Měsíční",
-    price: "399",
-    period: "/ měsíc",
-    description: "Ideální pro vyzkoušení studia.",
-    featured: false,
-    shape: "plain",
-    features: [
-      "Okamžitý přístup ke všem lekcím",
-      "Každý týden nová lekce",
-      "Možnost cvičit kdykoliv a odkudkoliv",
-      "Lekce různých délek a zaměření",
-    ],
-    ctaLabel: "Aktivovat členství",
-    ctaHref: USCREEN.signup,
-    ctaExternal: true,
-  },
-  {
-    name: "Roční",
-    price: "299",
-    period: "/ měsíc",
-    description: "Ušetříš 2 měsíce. Nejoblíbenější volba.",
-    featured: true,
-    shape: "arch-right",
-    features: [
-      "Vše z Měsíčního plánu",
-      "Prioritní přístup k novinkám",
-      "Exkluzivní výzvy a programy",
-      "Osobní lekce se slevou 20 %",
-    ],
-    ctaLabel: "Aktivovat členství",
-    ctaHref: USCREEN.signup,
-    ctaExternal: true,
-  },
-];
+export default async function Pricing() {
+  const { uscreen_signup, cena_lekce, cena_mesicni, cena_rocni, kontakt_email } = await getNastaveni();
 
-export default function Pricing() {
+  const PLANS = [
+    {
+      name: "Za lekci",
+      price: cena_lekce,
+      period: "/ lekce",
+      description: "Ideální na jednorázové vyzkoušení.",
+      featured: false,
+      shape: "arch-left",
+      features: [
+        "Přístup k vybrané lekci na 3 dny",
+        "Možnost pustit si ji opakovaně",
+        "Bez měsíčního členství",
+      ],
+      ctaLabel: "Aktuální lekce",
+      ctaHref: "#lekce",
+      ctaExternal: false,
+    },
+    {
+      name: "Měsíční",
+      price: cena_mesicni,
+      period: "/ měsíc",
+      description: "Ideální pro vyzkoušení studia.",
+      featured: false,
+      shape: "plain",
+      features: [
+        "Okamžitý přístup ke všem lekcím",
+        "Každý týden nová lekce",
+        "Možnost cvičit kdykoliv a odkudkoliv",
+        "Lekce různých délek a zaměření",
+      ],
+      ctaLabel: "Aktivovat členství",
+      ctaHref: uscreen_signup,
+      ctaExternal: true,
+    },
+    {
+      name: "Roční",
+      price: cena_rocni,
+      period: "/ měsíc",
+      description: "Ušetříš 2 měsíce. Nejoblíbenější volba.",
+      featured: true,
+      shape: "arch-right",
+      features: [
+        "Vše z Měsíčního plánu",
+        "Prioritní přístup k novinkám",
+        "Exkluzivní výzvy a programy",
+        "Osobní lekce se slevou 20 %",
+      ],
+      ctaLabel: "Aktivovat členství",
+      ctaHref: uscreen_signup,
+      ctaExternal: true,
+    },
+  ];
+
   return (
     <section id="cenik" className="bg-cream relative pt-14 pb-16 sm:pt-16 sm:pb-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -148,7 +150,7 @@ export default function Pricing() {
           <p className="mt-10 text-center text-xs text-muted">
             Máš otázky k členství?{" "}
             <a
-              href="mailto:ahoj@aurorajoga.cz"
+              href={`mailto:${kontakt_email}`}
               className="underline underline-offset-4 hover:text-ink"
             >
               Napiš mi

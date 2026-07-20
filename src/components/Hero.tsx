@@ -1,12 +1,14 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { USCREEN } from "@/lib/config";
+import { useSiteSettings } from "./SiteSettingsProvider";
 import { nbsp } from "@/lib/typo";
 
 const ease = [0.22, 1, 0.36, 1] as const;
 
 export default function Hero() {
+  const { uscreen_signup } = useSiteSettings();
+
   return (
     <section
       id="hero"
@@ -76,7 +78,7 @@ export default function Hero() {
           className="mt-10 flex flex-wrap items-center gap-4 md:justify-between"
         >
           <a
-            href={USCREEN.signup}
+            href={uscreen_signup}
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full bg-gradient-aurora px-7 py-3.5 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
