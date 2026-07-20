@@ -219,8 +219,8 @@ export default function AdminDashboard({
       {/* ── Postranní navigace ── */}
       <aside className="flex w-20 shrink-0 flex-col items-center justify-between border-r border-line bg-white py-6">
         <div className="flex flex-col items-center gap-8">
-          <button onClick={() => setSection("overview")} className="relative h-9 w-9" aria-label="Overview">
-            <Image src="/logo-mark.png" alt="AURORA jóga" fill className="object-contain" priority />
+          <button onClick={() => setSection("overview")} className="relative h-11 w-16" aria-label="Overview">
+            <Image src="/logo.png" alt="AURORA jóga" fill className="object-contain" priority />
           </button>
           <nav className="flex flex-col gap-2">
             {NAV.map((n) => {
@@ -280,7 +280,7 @@ export default function AdminDashboard({
               </button>
               <div className="flex items-center gap-2.5">
                 <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-line">
-                  <Image src="/logo-mark.png" alt="AURORA jóga" fill className="object-contain p-1.5" />
+                  <Image src="/logo.png" alt="AURORA jóga" fill className="object-contain p-1" />
                 </div>
                 <p className="text-xs uppercase tracking-[0.15em] text-ink">Administrátorka</p>
               </div>
