@@ -281,11 +281,8 @@ export default function AdminDashboard({
                   </span>
                 )}
               </button>
-              <div className="flex items-center gap-2.5">
-                <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-line">
-                  <Image src="/logo.png" alt="AURORA jóga" fill className="object-contain p-1" />
-                </div>
-                <p className="text-xs uppercase tracking-[0.15em] text-ink">Administrátorka</p>
+              <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-full bg-white ring-1 ring-line">
+                <Image src="/logo.png" alt="AURORA jóga" fill className="object-contain p-1" />
               </div>
             </div>
           </div>
