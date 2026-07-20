@@ -30,7 +30,7 @@ export default async function OchranaOsobnichUdajuPage() {
               <p>
                 Správcem osobních údajů je{" "}
                 <strong className="text-ink">[DOPLNIT jméno a příjmení / název firmy]</strong>,
-                IČO: <strong className="text-ink">[DOPLNIT]</strong>, se sídlem{" "}
+                IČO: <strong className="text-ink">17650593</strong>, se sídlem{" "}
                 <strong className="text-ink">[DOPLNIT adresa]</strong> (dále jen
                 „správce“). Ve věcech ochrany osobních údajů nás můžete
                 kontaktovat na e-mailu{" "}

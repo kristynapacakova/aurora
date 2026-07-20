@@ -37,7 +37,7 @@ export default async function ObchodniPodminkyPage() {
               <p className="mt-3">
                 Poskytovatel: <strong className="text-ink">[DOPLNIT jméno a příjmení / název firmy]</strong>
                 <br />
-                IČO: <strong className="text-ink">[DOPLNIT]</strong>
+                IČO: <strong className="text-ink">17650593</strong>
                 {" "}(DIČ: <strong className="text-ink">[DOPLNIT, je-li plátce DPH]</strong>)
                 <br />
                 Se sídlem: <strong className="text-ink">[DOPLNIT adresa]</strong>
