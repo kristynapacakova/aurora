@@ -104,6 +104,22 @@ export default function NastaveniForm({ initial }: { initial: Nastaveni }) {
           </div>
         </div>
 
+        <div className={cardCls}>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Doména</p>
+          <label className={labelCls}>
+            Doména platí do
+            <input
+              type="date"
+              value={form.domena_expiruje}
+              onChange={(e) => set("domena_expiruje", e.target.value)}
+              className={`${inputCls} max-w-xs`}
+            />
+          </label>
+          <p className="text-xs text-muted">
+            Až bude zbývat 30 dní nebo míň, zobrazí se upozornění na Overview a u ikony Nastavení.
+          </p>
+        </div>
+
         {error && <p className="text-sm text-accent-d">{error}</p>}
 
         <div className="flex items-center gap-3">

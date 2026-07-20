@@ -56,6 +56,7 @@ export type Nastaveni = {
   uscreen_signup: string;
   uscreen_login: string;
   uscreen_plans: string;
+  domena_expiruje: string;
 };
 
 function connectionString() {
@@ -139,6 +140,7 @@ async function ensureSchema() {
       admin_password_hash TEXT,
       CHECK (id = 1)
     );
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS domena_expiruje TEXT NOT NULL DEFAULT '';
   `);
   schemaReady = true;
 }
@@ -320,6 +322,7 @@ const NASTAVENI_DEFAULTS: Nastaveni = {
   uscreen_signup: "https://aurora.uscreen.io/sign_up",
   uscreen_login: "https://aurora.uscreen.io/sign_in",
   uscreen_plans: "https://aurora.uscreen.io/plans",
+  domena_expiruje: "",
 };
 
 type NastaveniRow = Nastaveni & { admin_password_hash: string | null };
@@ -328,8 +331,8 @@ async function ensureNastaveniRow(): Promise<NastaveniRow> {
   const rows = await query<NastaveniRow>(`SELECT * FROM nastaveni WHERE id = 1`);
   if (rows[0]) return rows[0];
   const inserted = await query<NastaveniRow>(
-    `INSERT INTO nastaveni (id, kontakt_email, instagram_handle, instagram_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans)
-     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+    `INSERT INTO nastaveni (id, kontakt_email, instagram_handle, instagram_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans, domena_expiruje)
+     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
     [
       NASTAVENI_DEFAULTS.kontakt_email,
       NASTAVENI_DEFAULTS.instagram_handle,
@@ -341,6 +344,7 @@ async function ensureNastaveniRow(): Promise<NastaveniRow> {
       NASTAVENI_DEFAULTS.uscreen_signup,
       NASTAVENI_DEFAULTS.uscreen_login,
       NASTAVENI_DEFAULTS.uscreen_plans,
+      NASTAVENI_DEFAULTS.domena_expiruje,
     ]
   );
   return inserted[0];
@@ -360,13 +364,14 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
     uscreen_signup: row.uscreen_signup || NASTAVENI_DEFAULTS.uscreen_signup,
     uscreen_login: row.uscreen_login || NASTAVENI_DEFAULTS.uscreen_login,
     uscreen_plans: row.uscreen_plans || NASTAVENI_DEFAULTS.uscreen_plans,
+    domena_expiruje: row.domena_expiruje || NASTAVENI_DEFAULTS.domena_expiruje,
   };
 });
 
 export async function updateNastaveni(fields: Nastaveni): Promise<void> {
   await ensureNastaveniRow();
   await query(
-    `UPDATE nastaveni SET kontakt_email=$1, instagram_handle=$2, instagram_url=$3, cena_lekce=$4, cena_mesicni=$5, cena_rocni=$6, uscreen_home=$7, uscreen_signup=$8, uscreen_login=$9, uscreen_plans=$10 WHERE id = 1`,
+    `UPDATE nastaveni SET kontakt_email=$1, instagram_handle=$2, instagram_url=$3, cena_lekce=$4, cena_mesicni=$5, cena_rocni=$6, uscreen_home=$7, uscreen_signup=$8, uscreen_login=$9, uscreen_plans=$10, domena_expiruje=$11 WHERE id = 1`,
     [
       fields.kontakt_email,
       fields.instagram_handle,
@@ -378,6 +383,7 @@ export async function updateNastaveni(fields: Nastaveni): Promise<void> {
       fields.uscreen_signup,
       fields.uscreen_login,
       fields.uscreen_plans,
+      fields.domena_expiruje,
     ]
   );
 }

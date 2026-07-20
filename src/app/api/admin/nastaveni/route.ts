@@ -25,6 +25,7 @@ export async function PUT(request: Request) {
     uscreen_signup: (body.uscreen_signup ?? "").trim(),
     uscreen_login: (body.uscreen_login ?? "").trim(),
     uscreen_plans: (body.uscreen_plans ?? "").trim(),
+    domena_expiruje: (body.domena_expiruje ?? "").trim(),
   };
 
   await updateNastaveni(fields);
