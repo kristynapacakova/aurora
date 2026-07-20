@@ -1,13 +1,20 @@
 import { NextResponse } from "next/server";
 import { ADMIN_COOKIE_NAME, createAdminToken } from "@/lib/adminAuth";
+import { verifyPassword } from "@/lib/passwordHash";
+import { getAdminPasswordHash } from "@/lib/db";
 
-// Heslo do administrace. Nastavte ve Vercelu: ADMIN_PASSWORD=VaseHeslo
+// Výchozí heslo do administrace, dokud si klientka v Nastavení nenastaví
+// vlastní (to se pak uloží jako hash v databázi a má přednost).
+// Nastavte ve Vercelu: ADMIN_PASSWORD=VaseHeslo
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD ?? "Aurora2026";
 
 export async function POST(request: Request) {
   const { password } = await request.json();
 
-  if (password !== ADMIN_PASSWORD) {
+  const storedHash = await getAdminPasswordHash();
+  const valid = storedHash ? verifyPassword(password, storedHash) : password === ADMIN_PASSWORD;
+
+  if (!valid) {
     return NextResponse.json({ error: "Nesprávné heslo." }, { status: 401 });
   }
 

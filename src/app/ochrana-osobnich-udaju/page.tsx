@@ -1,12 +1,14 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { CONTACT } from "@/lib/config";
+import { getNastaveni } from "@/lib/db";
 
 export const metadata = {
   title: "Ochrana osobních údajů | AURORA jóga",
 };
 
-export default function OchranaOsobnichUdajuPage() {
+export default async function OchranaOsobnichUdajuPage() {
+  const { kontakt_email } = await getNastaveni();
+
   return (
     <>
       <Navbar />
@@ -32,8 +34,8 @@ export default function OchranaOsobnichUdajuPage() {
                 <strong className="text-ink">[DOPLNIT adresa]</strong> (dále jen
                 „správce“). Ve věcech ochrany osobních údajů nás můžete
                 kontaktovat na e-mailu{" "}
-                <a href={`mailto:${CONTACT.email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  {CONTACT.email}
+                <a href={`mailto:${kontakt_email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
+                  {kontakt_email}
                 </a>
                 .
               </p>
@@ -122,8 +124,8 @@ export default function OchranaOsobnichUdajuPage() {
               <h2 className="mb-3 font-serif text-xl text-ink">8. Kontakt</h2>
               <p>
                 V případě dotazů ke zpracování osobních údajů nás kontaktujte na{" "}
-                <a href={`mailto:${CONTACT.email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  {CONTACT.email}
+                <a href={`mailto:${kontakt_email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
+                  {kontakt_email}
                 </a>
                 .
               </p>

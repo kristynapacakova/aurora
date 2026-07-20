@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { cache } from "react";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Databáze (Vercel Postgres / Neon). Připojení se čte z env proměnných,
@@ -42,6 +43,19 @@ export type Poptavka = {
   telefon: string;
   zprava: string;
   created_at: string;
+};
+
+export type Nastaveni = {
+  kontakt_email: string;
+  instagram_handle: string;
+  instagram_url: string;
+  cena_lekce: string;
+  cena_mesicni: string;
+  cena_rocni: string;
+  uscreen_home: string;
+  uscreen_signup: string;
+  uscreen_login: string;
+  uscreen_plans: string;
 };
 
 function connectionString() {
@@ -109,6 +123,22 @@ async function ensureSchema() {
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS typ TEXT NOT NULL DEFAULT 'dotaz';
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS zaplaceno BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS precteno BOOLEAN NOT NULL DEFAULT FALSE;
+
+    CREATE TABLE IF NOT EXISTS nastaveni (
+      id INTEGER PRIMARY KEY DEFAULT 1,
+      kontakt_email TEXT NOT NULL DEFAULT '',
+      instagram_handle TEXT NOT NULL DEFAULT '',
+      instagram_url TEXT NOT NULL DEFAULT '',
+      cena_lekce TEXT NOT NULL DEFAULT '',
+      cena_mesicni TEXT NOT NULL DEFAULT '',
+      cena_rocni TEXT NOT NULL DEFAULT '',
+      uscreen_home TEXT NOT NULL DEFAULT '',
+      uscreen_signup TEXT NOT NULL DEFAULT '',
+      uscreen_login TEXT NOT NULL DEFAULT '',
+      uscreen_plans TEXT NOT NULL DEFAULT '',
+      admin_password_hash TEXT,
+      CHECK (id = 1)
+    );
   `);
   schemaReady = true;
 }
@@ -272,4 +302,93 @@ export async function deletePoptavka(id: number): Promise<void> {
 
 export async function updatePoptavkaPrecteno(id: number, precteno: boolean): Promise<void> {
   await query(`UPDATE poptavky SET precteno = $1 WHERE id = $2`, [precteno, id]);
+}
+
+// ── Nastavení ───────────────────────────────────────────────────────────────
+// Statické výchozí hodnoty (z config.ts) — použijí se, dokud si klientka
+// v administraci nevyplní vlastní. Import je tady dole, aby se předešlo
+// cyklické závislosti (config.ts nic z db.ts nepotřebuje).
+
+const NASTAVENI_DEFAULTS: Nastaveni = {
+  kontakt_email: "ahoj@aurorajoga.cz",
+  instagram_handle: "@aurora_yogaa",
+  instagram_url: "https://www.instagram.com/aurora_yogaa",
+  cena_lekce: "120",
+  cena_mesicni: "399",
+  cena_rocni: "299",
+  uscreen_home: "https://aurora.uscreen.io",
+  uscreen_signup: "https://aurora.uscreen.io/sign_up",
+  uscreen_login: "https://aurora.uscreen.io/sign_in",
+  uscreen_plans: "https://aurora.uscreen.io/plans",
+};
+
+type NastaveniRow = Nastaveni & { admin_password_hash: string | null };
+
+async function ensureNastaveniRow(): Promise<NastaveniRow> {
+  const rows = await query<NastaveniRow>(`SELECT * FROM nastaveni WHERE id = 1`);
+  if (rows[0]) return rows[0];
+  const inserted = await query<NastaveniRow>(
+    `INSERT INTO nastaveni (id, kontakt_email, instagram_handle, instagram_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans)
+     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+    [
+      NASTAVENI_DEFAULTS.kontakt_email,
+      NASTAVENI_DEFAULTS.instagram_handle,
+      NASTAVENI_DEFAULTS.instagram_url,
+      NASTAVENI_DEFAULTS.cena_lekce,
+      NASTAVENI_DEFAULTS.cena_mesicni,
+      NASTAVENI_DEFAULTS.cena_rocni,
+      NASTAVENI_DEFAULTS.uscreen_home,
+      NASTAVENI_DEFAULTS.uscreen_signup,
+      NASTAVENI_DEFAULTS.uscreen_login,
+      NASTAVENI_DEFAULTS.uscreen_plans,
+    ]
+  );
+  return inserted[0];
+}
+
+export const getNastaveni = cache(async (): Promise<Nastaveni> => {
+  if (!dbConfigured()) return NASTAVENI_DEFAULTS;
+  const row = await ensureNastaveniRow();
+  return {
+    kontakt_email: row.kontakt_email || NASTAVENI_DEFAULTS.kontakt_email,
+    instagram_handle: row.instagram_handle || NASTAVENI_DEFAULTS.instagram_handle,
+    instagram_url: row.instagram_url || NASTAVENI_DEFAULTS.instagram_url,
+    cena_lekce: row.cena_lekce || NASTAVENI_DEFAULTS.cena_lekce,
+    cena_mesicni: row.cena_mesicni || NASTAVENI_DEFAULTS.cena_mesicni,
+    cena_rocni: row.cena_rocni || NASTAVENI_DEFAULTS.cena_rocni,
+    uscreen_home: row.uscreen_home || NASTAVENI_DEFAULTS.uscreen_home,
+    uscreen_signup: row.uscreen_signup || NASTAVENI_DEFAULTS.uscreen_signup,
+    uscreen_login: row.uscreen_login || NASTAVENI_DEFAULTS.uscreen_login,
+    uscreen_plans: row.uscreen_plans || NASTAVENI_DEFAULTS.uscreen_plans,
+  };
+});
+
+export async function updateNastaveni(fields: Nastaveni): Promise<void> {
+  await ensureNastaveniRow();
+  await query(
+    `UPDATE nastaveni SET kontakt_email=$1, instagram_handle=$2, instagram_url=$3, cena_lekce=$4, cena_mesicni=$5, cena_rocni=$6, uscreen_home=$7, uscreen_signup=$8, uscreen_login=$9, uscreen_plans=$10 WHERE id = 1`,
+    [
+      fields.kontakt_email,
+      fields.instagram_handle,
+      fields.instagram_url,
+      fields.cena_lekce,
+      fields.cena_mesicni,
+      fields.cena_rocni,
+      fields.uscreen_home,
+      fields.uscreen_signup,
+      fields.uscreen_login,
+      fields.uscreen_plans,
+    ]
+  );
+}
+
+export async function getAdminPasswordHash(): Promise<string | null> {
+  if (!dbConfigured()) return null;
+  const row = await ensureNastaveniRow();
+  return row.admin_password_hash;
+}
+
+export async function setAdminPasswordHash(hash: string): Promise<void> {
+  await ensureNastaveniRow();
+  await query(`UPDATE nastaveni SET admin_password_hash = $1 WHERE id = 1`, [hash]);
 }

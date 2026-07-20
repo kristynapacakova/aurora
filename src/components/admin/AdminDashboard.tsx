@@ -4,7 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Poptavka } from "@/lib/db";
+import type { Pobyt, Clanek, Poptavka, Nastaveni } from "@/lib/db";
+import NastaveniForm from "./NastaveniForm";
 
 type EditorTab = "pobyty" | "clanky";
 type Section = "overview" | "editor" | "objednavky" | "statistiky" | "nastaveni";
@@ -89,11 +90,13 @@ export default function AdminDashboard({
   pobyty,
   clanky,
   poptavky,
+  nastaveni,
 }: {
   configured: boolean;
   pobyty: Pobyt[];
   clanky: Clanek[];
   poptavky: Poptavka[];
+  nastaveni: Nastaveni;
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("overview");
@@ -385,14 +388,8 @@ export default function AdminDashboard({
 
           {/* ── Nastavení ── */}
           {section === "nastaveni" && (
-            <div className="max-w-xl rounded-2xl border border-line bg-white p-6 shadow-sm">
-              <p className="text-xs uppercase tracking-[0.25em] text-accent">Nastavení účtu</p>
-              <p className="mt-3 text-sm leading-relaxed text-muted">
-                Tahle sekce je připravená pro budoucí nastavení — heslo do administrace se
-                mění přes proměnnou <code className="rounded bg-sand px-1.5 py-0.5 text-ink">ADMIN_PASSWORD</code>{" "}
-                ve Vercelu (Settings → Environment Variables). Až budeš mít propojený Uscreen
-                nebo budeš chtít přidat notifikace e-mailem, přidáme sem další volby.
-              </p>
+            <div className="max-w-3xl">
+              <NastaveniForm initial={nastaveni} />
             </div>
           )}
 
