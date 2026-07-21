@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Poptavka, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Poptavka, NewsletterSignup, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 
 type EditorTab = "pobyty" | "clanky";
-type Section = "overview" | "editor" | "objednavky" | "statistiky" | "nastaveni";
+type Section = "overview" | "editor" | "objednavky" | "newsletter" | "statistiky" | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
-type PendingDelete = { kind: "pobyty" | "clanky" | "poptavky"; id: number; label: string };
+type PendingDelete = { kind: "pobyty" | "clanky" | "poptavky" | "newsletter"; id: number; label: string };
 
 function IconGrid({ className }: { className?: string }) {
   return (
@@ -37,6 +37,15 @@ function IconInbox({ className }: { className?: string }) {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <path d="M22 12h-6l-2 3h-4l-2-3H2" />
       <path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z" />
+    </svg>
+  );
+}
+
+function IconMail({ className }: { className?: string }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <rect x="2" y="4" width="20" height="16" rx="2" />
+      <path d="m22 6-10 7L2 6" />
     </svg>
   );
 }
@@ -81,6 +90,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "overview", label: "Overview", icon: IconGrid },
   { key: "editor", label: "Editor", icon: IconEdit },
   { key: "objednavky", label: "Objednávky", icon: IconInbox },
+  { key: "newsletter", label: "Newsletter", icon: IconMail },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
 ];
@@ -90,12 +100,14 @@ export default function AdminDashboard({
   pobyty,
   clanky,
   poptavky,
+  newsletter,
   nastaveni,
 }: {
   configured: boolean;
   pobyty: Pobyt[];
   clanky: Clanek[];
   poptavky: Poptavka[];
+  newsletter: NewsletterSignup[];
   nastaveni: Nastaveni;
 }) {
   const router = useRouter();
@@ -273,6 +285,21 @@ export default function AdminDashboard({
     URL.revokeObjectURL(url);
   }
 
+  function exportNewsletterCsv() {
+    const hlavicky = ["Datum přihlášení", "E-mail"];
+    const radky = newsletter.map((n) => [new Date(n.created_at).toLocaleString("cs-CZ"), n.email]);
+    const csv = [hlavicky, ...radky]
+      .map((radek) => radek.map((bunka) => `"${String(bunka).replace(/"/g, '""')}"`).join(";"))
+      .join("\r\n");
+    const blob = new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `newsletter-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function togglePoptavka(q: Poptavka) {
     setBusy(true);
     await fetch("/api/admin/poptavky", {
@@ -328,6 +355,12 @@ export default function AdminDashboard({
           : cekaNaPlatbu > 0
             ? `${cekaNaPlatbu} čeká na platbu`
             : `${objednavky.length} objednávek · ${dotazy} dotazů`,
+    },
+    {
+      section: "newsletter",
+      label: "Newsletter",
+      value: newsletter.length,
+      detail: newsletter.length === 0 ? "zatím nikdo" : "přihlášených e-mailů",
     },
   ];
 
@@ -465,7 +498,7 @@ export default function AdminDashboard({
           {/* ── Overview ── */}
           {section === "overview" && (
             <div className="flex flex-col gap-8">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {stats.map((s) => (
                   <button
                     key={s.label}
@@ -892,6 +925,53 @@ export default function AdminDashboard({
                       ))}
                     </ul>
                   )}
+                </>
+              )}
+            </section>
+          )}
+
+          {/* ── Newsletter ── */}
+          {section === "newsletter" && (
+            <section>
+              {newsletter.length === 0 ? (
+                <p className="text-sm text-muted">
+                  Zatím žádné přihlášené e-maily. Jakmile se někdo přihlásí k odběru na webu,
+                  objeví se tady.
+                </p>
+              ) : (
+                <>
+                  <div className="mb-6 flex justify-end">
+                    <button
+                      onClick={exportNewsletterCsv}
+                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                    >
+                      Export do CSV
+                    </button>
+                  </div>
+                  <ul className="flex flex-col gap-3">
+                    {newsletter.map((n) => (
+                      <li
+                        key={n.id}
+                        className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                      >
+                        <div className="min-w-0">
+                          <a href={`mailto:${n.email}`} className="text-sm text-ink underline underline-offset-2 hover:text-accent-d">
+                            {n.email}
+                          </a>
+                          <p className="mt-1 text-xs text-muted">
+                            {new Date(n.created_at).toLocaleString("cs-CZ")}
+                          </p>
+                        </div>
+                        <button
+                          disabled={busy}
+                          onClick={() => setPendingDelete({ kind: "newsletter", id: n.id, label: n.email })}
+                          className="shrink-0 rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                        >
+                          Smazat
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
                 </>
               )}
             </section>

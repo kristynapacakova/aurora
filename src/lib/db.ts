@@ -45,6 +45,12 @@ export type Poptavka = {
   created_at: string;
 };
 
+export type NewsletterSignup = {
+  id: number;
+  email: string;
+  created_at: string;
+};
+
 export type Nastaveni = {
   kontakt_email: string;
   instagram_handle: string;
@@ -124,6 +130,12 @@ async function ensureSchema() {
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS typ TEXT NOT NULL DEFAULT 'dotaz';
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS zaplaceno BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS precteno BOOLEAN NOT NULL DEFAULT FALSE;
+
+    CREATE TABLE IF NOT EXISTS newsletter (
+      id SERIAL PRIMARY KEY,
+      email TEXT NOT NULL UNIQUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
 
     CREATE TABLE IF NOT EXISTS nastaveni (
       id INTEGER PRIMARY KEY DEFAULT 1,
@@ -304,6 +316,25 @@ export async function deletePoptavka(id: number): Promise<void> {
 
 export async function updatePoptavkaPrecteno(id: number, precteno: boolean): Promise<void> {
   await query(`UPDATE poptavky SET precteno = $1 WHERE id = $2`, [precteno, id]);
+}
+
+// ── Newsletter ──────────────────────────────────────────────────────────────
+
+export async function createNewsletterSignup(email: string): Promise<boolean> {
+  const rows = await query<{ id: number }>(
+    `INSERT INTO newsletter (email) VALUES ($1) ON CONFLICT (email) DO NOTHING RETURNING id`,
+    [email]
+  );
+  return rows.length > 0;
+}
+
+export async function getNewsletterSignups(): Promise<NewsletterSignup[]> {
+  if (!dbConfigured()) return [];
+  return query<NewsletterSignup>(`SELECT * FROM newsletter ORDER BY created_at DESC`);
+}
+
+export async function deleteNewsletterSignup(id: number): Promise<void> {
+  await query(`DELETE FROM newsletter WHERE id = $1`, [id]);
 }
 
 // ── Nastavení ───────────────────────────────────────────────────────────────
