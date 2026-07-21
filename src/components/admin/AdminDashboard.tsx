@@ -104,6 +104,8 @@ export default function AdminDashboard({
   const [busy, setBusy] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [poptavkaFilter, setPoptavkaFilter] = useState<PoptavkaFilter>("vse");
+  const [vybranePobyty, setVybranePobyty] = useState<Set<number>>(new Set());
+  const [vybraneClanky, setVybraneClanky] = useState<Set<number>>(new Set());
 
   async function confirmRemove() {
     if (!pendingDelete) return;
@@ -140,6 +142,135 @@ export default function AdminDashboard({
     });
     setBusy(false);
     router.refresh();
+  }
+
+  async function duplikovatPobyt(p: Pobyt) {
+    setBusy(true);
+    await fetch("/api/admin/pobyty", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nadpis: `${p.nadpis} (kopie)`,
+        misto: p.misto,
+        termin: p.termin,
+        popis: p.popis,
+        cena: p.cena,
+        fotky: p.fotky,
+        cislo_uctu: p.cislo_uctu,
+        variabilni_symbol: p.variabilni_symbol,
+        platebni_pokyny: p.platebni_pokyny,
+        zverejneno: false,
+      }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  function toggleVyber(set: Set<number>, setSet: (s: Set<number>) => void, id: number) {
+    const next = new Set(set);
+    if (next.has(id)) next.delete(id);
+    else next.add(id);
+    setSet(next);
+  }
+
+  async function hromadnaAkcePobyty(akce: "zverejnit" | "skryt" | "smazat") {
+    setBusy(true);
+    const cilove = pobyty.filter((p) => vybranePobyty.has(p.id));
+    if (akce === "smazat") {
+      await Promise.all(
+        cilove.map((p) =>
+          fetch("/api/admin/pobyty", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: p.id }),
+          })
+        )
+      );
+    } else {
+      await Promise.all(
+        cilove.map((p) =>
+          fetch("/api/admin/pobyty", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: p.id,
+              nadpis: p.nadpis,
+              misto: p.misto,
+              termin: p.termin,
+              popis: p.popis,
+              cena: p.cena,
+              fotky: p.fotky,
+              cislo_uctu: p.cislo_uctu,
+              variabilni_symbol: p.variabilni_symbol,
+              platebni_pokyny: p.platebni_pokyny,
+              zverejneno: akce === "zverejnit",
+            }),
+          })
+        )
+      );
+    }
+    setBusy(false);
+    setVybranePobyty(new Set());
+    router.refresh();
+  }
+
+  async function hromadnaAkceClanky(akce: "zverejnit" | "skryt" | "smazat") {
+    setBusy(true);
+    const cilove = clanky.filter((c) => vybraneClanky.has(c.id));
+    if (akce === "smazat") {
+      await Promise.all(
+        cilove.map((c) =>
+          fetch("/api/admin/clanky", {
+            method: "DELETE",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: c.id }),
+          })
+        )
+      );
+    } else {
+      await Promise.all(
+        cilove.map((c) =>
+          fetch("/api/admin/clanky", {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              id: c.id,
+              nadpis: c.nadpis,
+              text: c.text,
+              zverejneno: akce === "zverejnit",
+            }),
+          })
+        )
+      );
+    }
+    setBusy(false);
+    setVybraneClanky(new Set());
+    router.refresh();
+  }
+
+  function exportObjednavkyCsv() {
+    const hlavicky = ["Datum", "Typ", "Jméno", "E-mail", "Telefon", "Pobyt", "Zaplaceno", "Přečteno", "Zpráva"];
+    const radky = poptavkyFiltrovane.map((q) => [
+      new Date(q.created_at).toLocaleString("cs-CZ"),
+      q.typ === "objednavka" ? "Objednávka" : "Dotaz",
+      q.jmeno,
+      q.email,
+      q.telefon,
+      q.pobyt_nadpis ?? "",
+      q.zaplaceno ? "Ano" : "Ne",
+      q.precteno ? "Ano" : "Ne",
+      q.zprava.replace(/\s+/g, " "),
+    ]);
+    const csv = [hlavicky, ...radky]
+      .map((radek) => radek.map((bunka) => `"${String(bunka).replace(/"/g, '""')}"`).join(";"))
+      .join("\r\n");
+    const blob = new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `objednavky-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 
   async function togglePoptavka(q: Poptavka) {
@@ -446,12 +577,46 @@ export default function AdminDashboard({
               {/* ── Pobyty ── */}
               {editorTab === "pobyty" && (
                 <section>
-                  <Link
-                    href="/admin/pobyt/novy"
-                    className="bg-gradient-aurora mb-6 inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
-                  >
-                    + Přidat pobyt
-                  </Link>
+                  <div className="mb-6 flex flex-wrap items-center gap-3">
+                    <Link
+                      href="/admin/pobyt/novy"
+                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+                    >
+                      + Přidat pobyt
+                    </Link>
+                    {vybranePobyty.size > 0 && (
+                      <div className="flex flex-wrap items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-4 pr-1.5">
+                        <span className="text-xs text-muted">Vybráno: {vybranePobyty.size}</span>
+                        <button
+                          disabled={busy}
+                          onClick={() => hromadnaAkcePobyty("zverejnit")}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-ink transition-colors hover:bg-sand"
+                        >
+                          Zveřejnit
+                        </button>
+                        <button
+                          disabled={busy}
+                          onClick={() => hromadnaAkcePobyty("skryt")}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-ink transition-colors hover:bg-sand"
+                        >
+                          Skrýt
+                        </button>
+                        <button
+                          disabled={busy}
+                          onClick={() => hromadnaAkcePobyty("smazat")}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-accent-d transition-colors hover:bg-accent-d/5"
+                        >
+                          Smazat
+                        </button>
+                        <button
+                          onClick={() => setVybranePobyty(new Set())}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-muted transition-colors hover:bg-sand"
+                        >
+                          Zrušit výběr
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   {pobyty.length === 0 ? (
                     <p className="text-sm text-muted">Zatím žádné pobyty. Přidej první!</p>
                   ) : (
@@ -461,18 +626,27 @@ export default function AdminDashboard({
                           key={p.id}
                           className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                         >
-                          <div className="min-w-0">
-                            <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
-                              {p.nadpis}
-                              {!p.zverejneno && (
-                                <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
-                                  Skrytý
-                                </span>
-                              )}
-                            </p>
-                            <p className="mt-1 truncate text-xs text-muted">
-                              {[p.misto, p.termin, p.cena].filter(Boolean).join(" · ")}
-                            </p>
+                          <div className="flex min-w-0 items-center gap-4">
+                            <input
+                              type="checkbox"
+                              checked={vybranePobyty.has(p.id)}
+                              onChange={() => toggleVyber(vybranePobyty, setVybranePobyty, p.id)}
+                              className="h-4 w-4 shrink-0 accent-accent-d"
+                              aria-label={`Vybrat ${p.nadpis}`}
+                            />
+                            <div className="min-w-0">
+                              <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
+                                {p.nadpis}
+                                {!p.zverejneno && (
+                                  <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                                    Skrytý
+                                  </span>
+                                )}
+                              </p>
+                              <p className="mt-1 truncate text-xs text-muted">
+                                {[p.misto, p.termin, p.cena].filter(Boolean).join(" · ")}
+                              </p>
+                            </div>
                           </div>
                           <div className="flex shrink-0 gap-2">
                             <button
@@ -481,6 +655,13 @@ export default function AdminDashboard({
                               className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
                             >
                               {p.zverejneno ? "Skrýt" : "Zobrazit"}
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => duplikovatPobyt(p)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              Duplikovat
                             </button>
                             <Link
                               href={`/admin/pobyt/${p.id}`}
@@ -506,12 +687,46 @@ export default function AdminDashboard({
               {/* ── Články ── */}
               {editorTab === "clanky" && (
                 <section>
-                  <Link
-                    href="/admin/clanek/novy"
-                    className="bg-gradient-aurora mb-6 inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
-                  >
-                    + Napsat článek
-                  </Link>
+                  <div className="mb-6 flex flex-wrap items-center gap-3">
+                    <Link
+                      href="/admin/clanek/novy"
+                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+                    >
+                      + Napsat článek
+                    </Link>
+                    {vybraneClanky.size > 0 && (
+                      <div className="flex flex-wrap items-center gap-2 rounded-full border border-line bg-white py-1.5 pl-4 pr-1.5">
+                        <span className="text-xs text-muted">Vybráno: {vybraneClanky.size}</span>
+                        <button
+                          disabled={busy}
+                          onClick={() => hromadnaAkceClanky("zverejnit")}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-ink transition-colors hover:bg-sand"
+                        >
+                          Zveřejnit
+                        </button>
+                        <button
+                          disabled={busy}
+                          onClick={() => hromadnaAkceClanky("skryt")}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-ink transition-colors hover:bg-sand"
+                        >
+                          Skrýt
+                        </button>
+                        <button
+                          disabled={busy}
+                          onClick={() => hromadnaAkceClanky("smazat")}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-accent-d transition-colors hover:bg-accent-d/5"
+                        >
+                          Smazat
+                        </button>
+                        <button
+                          onClick={() => setVybraneClanky(new Set())}
+                          className="rounded-full px-3 py-1.5 text-xs uppercase tracking-wider text-muted transition-colors hover:bg-sand"
+                        >
+                          Zrušit výběr
+                        </button>
+                      </div>
+                    )}
+                  </div>
                   {clanky.length === 0 ? (
                     <p className="text-sm text-muted">Zatím žádné články. Napiš první!</p>
                   ) : (
@@ -521,18 +736,27 @@ export default function AdminDashboard({
                           key={c.id}
                           className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
                         >
-                          <div className="min-w-0">
-                            <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
-                              {c.nadpis}
-                              {!c.zverejneno && (
-                                <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
-                                  Skrytý
-                                </span>
-                              )}
-                            </p>
-                            <p className="mt-1 text-xs text-muted">
-                              {new Date(c.created_at).toLocaleDateString("cs-CZ")}
-                            </p>
+                          <div className="flex min-w-0 items-center gap-4">
+                            <input
+                              type="checkbox"
+                              checked={vybraneClanky.has(c.id)}
+                              onChange={() => toggleVyber(vybraneClanky, setVybraneClanky, c.id)}
+                              className="h-4 w-4 shrink-0 accent-accent-d"
+                              aria-label={`Vybrat ${c.nadpis}`}
+                            />
+                            <div className="min-w-0">
+                              <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
+                                {c.nadpis}
+                                {!c.zverejneno && (
+                                  <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                                    Skrytý
+                                  </span>
+                                )}
+                              </p>
+                              <p className="mt-1 text-xs text-muted">
+                                {new Date(c.created_at).toLocaleDateString("cs-CZ")}
+                              </p>
+                            </div>
                           </div>
                           <div className="flex shrink-0 gap-2">
                             <Link
@@ -568,20 +792,28 @@ export default function AdminDashboard({
                 </p>
               ) : (
                 <>
-                  <div className="mb-6 flex flex-wrap gap-2">
-                    {poptavkaFiltry.map((f) => (
-                      <button
-                        key={f.key}
-                        onClick={() => setPoptavkaFilter(f.key)}
-                        className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
-                          poptavkaFilter === f.key
-                            ? "bg-gradient-aurora text-ink"
-                            : "border border-line text-muted hover:border-accent hover:text-accent"
-                        }`}
-                      >
-                        {f.label} ({f.count})
-                      </button>
-                    ))}
+                  <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+                    <div className="flex flex-wrap gap-2">
+                      {poptavkaFiltry.map((f) => (
+                        <button
+                          key={f.key}
+                          onClick={() => setPoptavkaFilter(f.key)}
+                          className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
+                            poptavkaFilter === f.key
+                              ? "bg-gradient-aurora text-ink"
+                              : "border border-line text-muted hover:border-accent hover:text-accent"
+                          }`}
+                        >
+                          {f.label} ({f.count})
+                        </button>
+                      ))}
+                    </div>
+                    <button
+                      onClick={exportObjednavkyCsv}
+                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                    >
+                      Export do CSV
+                    </button>
                   </div>
 
                   {poptavkyFiltrovane.length === 0 ? (
