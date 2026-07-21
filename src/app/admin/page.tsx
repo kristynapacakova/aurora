@@ -1,13 +1,29 @@
-import { getPobyty, getClanky, getPoptavky, getNewsletterSignups, getCekaciListina, getNastaveni, dbConfigured } from "@/lib/db";
+import {
+  getPobyty,
+  getClanky,
+  getPoptavky,
+  getNewsletterSignups,
+  getCekaciListina,
+  getDarkovePoukazy,
+  getNastaveni,
+  dbConfigured,
+} from "@/lib/db";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const configured = dbConfigured();
-  const [pobyty, clanky, poptavky, newsletter, cekaciListina] = configured
-    ? await Promise.all([getPobyty(false), getClanky(false), getPoptavky(), getNewsletterSignups(), getCekaciListina()])
-    : [[], [], [], [], []];
+  const [pobyty, clanky, poptavky, newsletter, cekaciListina, darkovePoukazy] = configured
+    ? await Promise.all([
+        getPobyty(false),
+        getClanky(false),
+        getPoptavky(),
+        getNewsletterSignups(),
+        getCekaciListina(),
+        getDarkovePoukazy(),
+      ])
+    : [[], [], [], [], [], []];
   const nastaveni = await getNastaveni();
 
   return (
@@ -18,6 +34,7 @@ export default async function AdminPage() {
       poptavky={poptavky}
       newsletter={newsletter}
       cekaciListina={cekaciListina}
+      darkovePoukazy={darkovePoukazy}
       nastaveni={nastaveni}
     />
   );

@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Nastaveni } from "@/lib/db";
+import { czechAccountToIban } from "@/lib/platba";
 
 const inputCls =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30";
@@ -20,6 +21,8 @@ export default function NastaveniForm({ initial }: { initial: Nastaveni }) {
     setForm((f) => ({ ...f, [key]: value }));
     setSaved(false);
   }
+
+  const uctuDarkyNeplatne = form.cislo_uctu_darky.length > 0 && !czechAccountToIban(form.cislo_uctu_darky);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -120,12 +123,34 @@ export default function NastaveniForm({ initial }: { initial: Nastaveni }) {
           </p>
         </div>
 
+        <div className={cardCls}>
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">Dárkové poukazy</p>
+            <p className="mt-2 text-xs text-muted">
+              Číslo účtu, na které budou chodit platby za dárkové poukazy. Dokud není vyplněné,
+              stránka s poukazy na webu zůstane skrytá.
+            </p>
+          </div>
+          <label className={labelCls}>
+            Číslo účtu
+            <input
+              value={form.cislo_uctu_darky}
+              onChange={(e) => set("cislo_uctu_darky", e.target.value)}
+              className={`${inputCls} max-w-xs`}
+              placeholder="Např. 123456789/0800"
+            />
+          </label>
+          {uctuDarkyNeplatne && (
+            <p className="text-xs text-accent-d">Číslo účtu nemá platný tvar (např. 123456789/0800).</p>
+          )}
+        </div>
+
         {error && <p className="text-sm text-accent-d">{error}</p>}
 
         <div className="flex items-center gap-3">
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || uctuDarkyNeplatne}
             className="bg-gradient-aurora rounded-full px-8 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90 disabled:opacity-50"
           >
             {saving ? "Ukládám…" : "Uložit nastavení"}

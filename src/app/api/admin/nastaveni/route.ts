@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
 import { updateNastaveni, dbConfigured, type Nastaveni } from "@/lib/db";
+import { czechAccountToIban } from "@/lib/platba";
 
 export async function PUT(request: Request) {
   if (!(await isAdminRequest(request))) {
@@ -26,7 +27,15 @@ export async function PUT(request: Request) {
     uscreen_login: (body.uscreen_login ?? "").trim(),
     uscreen_plans: (body.uscreen_plans ?? "").trim(),
     domena_expiruje: (body.domena_expiruje ?? "").trim(),
+    cislo_uctu_darky: (body.cislo_uctu_darky ?? "").trim(),
   };
+
+  if (fields.cislo_uctu_darky && !czechAccountToIban(fields.cislo_uctu_darky)) {
+    return NextResponse.json(
+      { error: "Číslo účtu pro dárkové poukazy nemá platný tvar (např. 123456789/0800)." },
+      { status: 400 }
+    );
+  }
 
   await updateNastaveni(fields);
   return NextResponse.json({ ok: true });

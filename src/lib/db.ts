@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { cache } from "react";
+import { randomBytes, randomInt } from "crypto";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Databáze (Vercel Postgres / Neon). Připojení se čte z env proměnných,
@@ -63,6 +64,21 @@ export type CekaciListina = {
   created_at: string;
 };
 
+export type DarkovyPoukaz = {
+  id: number;
+  kod: string;
+  hodnota: string;
+  variabilni_symbol: string;
+  jmeno_kupujici: string;
+  email_kupujici: string;
+  telefon_kupujici: string;
+  jmeno_obdarovane: string;
+  vzkaz: string;
+  zaplaceno: boolean;
+  vyuzito: boolean;
+  created_at: string;
+};
+
 export type Nastaveni = {
   kontakt_email: string;
   instagram_handle: string;
@@ -75,6 +91,7 @@ export type Nastaveni = {
   uscreen_login: string;
   uscreen_plans: string;
   domena_expiruje: string;
+  cislo_uctu_darky: string;
 };
 
 function connectionString() {
@@ -160,6 +177,21 @@ async function ensureSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    CREATE TABLE IF NOT EXISTS darkove_poukazy (
+      id SERIAL PRIMARY KEY,
+      kod TEXT NOT NULL UNIQUE,
+      hodnota TEXT NOT NULL,
+      variabilni_symbol TEXT NOT NULL DEFAULT '',
+      jmeno_kupujici TEXT NOT NULL,
+      email_kupujici TEXT NOT NULL,
+      telefon_kupujici TEXT NOT NULL DEFAULT '',
+      jmeno_obdarovane TEXT NOT NULL DEFAULT '',
+      vzkaz TEXT NOT NULL DEFAULT '',
+      zaplaceno BOOLEAN NOT NULL DEFAULT FALSE,
+      vyuzito BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE TABLE IF NOT EXISTS nastaveni (
       id INTEGER PRIMARY KEY DEFAULT 1,
       kontakt_email TEXT NOT NULL DEFAULT '',
@@ -176,6 +208,7 @@ async function ensureSchema() {
       CHECK (id = 1)
     );
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS domena_expiruje TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS cislo_uctu_darky TEXT NOT NULL DEFAULT '';
   `);
   schemaReady = true;
 }
@@ -390,6 +423,65 @@ export async function deleteCekaciListina(id: number): Promise<void> {
   await query(`DELETE FROM cekaci_listina WHERE id = $1`, [id]);
 }
 
+// ── Dárkové poukazy ─────────────────────────────────────────────────────────
+
+function generateVoucherCode(): string {
+  return `AUR-${randomBytes(4).toString("hex").toUpperCase()}`;
+}
+
+function generateVariabilniSymbol(): string {
+  return String(randomInt(10_000_000, 99_999_999));
+}
+
+export async function createDarkovyPoukaz(p: {
+  hodnota: string;
+  jmeno_kupujici: string;
+  email_kupujici: string;
+  telefon_kupujici: string;
+  jmeno_obdarovane: string;
+  vzkaz: string;
+}): Promise<DarkovyPoukaz> {
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const rows = await query<DarkovyPoukaz>(
+      `INSERT INTO darkove_poukazy (kod, hodnota, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (kod) DO NOTHING RETURNING *`,
+      [
+        generateVoucherCode(),
+        p.hodnota,
+        generateVariabilniSymbol(),
+        p.jmeno_kupujici,
+        p.email_kupujici,
+        p.telefon_kupujici,
+        p.jmeno_obdarovane,
+        p.vzkaz,
+      ]
+    );
+    if (rows[0]) return rows[0];
+  }
+  throw new Error("Nepodařilo se vygenerovat unikátní kód poukazu.");
+}
+
+export async function getDarkovePoukazy(): Promise<DarkovyPoukaz[]> {
+  if (!dbConfigured()) return [];
+  return query<DarkovyPoukaz>(`SELECT * FROM darkove_poukazy ORDER BY created_at DESC`);
+}
+
+export async function updateDarkovyPoukazStav(
+  id: number,
+  fields: { zaplaceno?: boolean; vyuzito?: boolean }
+): Promise<void> {
+  if (fields.zaplaceno !== undefined) {
+    await query(`UPDATE darkove_poukazy SET zaplaceno = $1 WHERE id = $2`, [fields.zaplaceno, id]);
+  }
+  if (fields.vyuzito !== undefined) {
+    await query(`UPDATE darkove_poukazy SET vyuzito = $1 WHERE id = $2`, [fields.vyuzito, id]);
+  }
+}
+
+export async function deleteDarkovyPoukaz(id: number): Promise<void> {
+  await query(`DELETE FROM darkove_poukazy WHERE id = $1`, [id]);
+}
+
 // ── Nastavení ───────────────────────────────────────────────────────────────
 // Statické výchozí hodnoty (z config.ts) — použijí se, dokud si klientka
 // v administraci nevyplní vlastní. Import je tady dole, aby se předešlo
@@ -407,6 +499,7 @@ const NASTAVENI_DEFAULTS: Nastaveni = {
   uscreen_login: "https://aurora.uscreen.io/sign_in",
   uscreen_plans: "https://aurora.uscreen.io/plans",
   domena_expiruje: "",
+  cislo_uctu_darky: "",
 };
 
 type NastaveniRow = Nastaveni & { admin_password_hash: string | null };
@@ -415,8 +508,8 @@ async function ensureNastaveniRow(): Promise<NastaveniRow> {
   const rows = await query<NastaveniRow>(`SELECT * FROM nastaveni WHERE id = 1`);
   if (rows[0]) return rows[0];
   const inserted = await query<NastaveniRow>(
-    `INSERT INTO nastaveni (id, kontakt_email, instagram_handle, instagram_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans, domena_expiruje)
-     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+    `INSERT INTO nastaveni (id, kontakt_email, instagram_handle, instagram_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans, domena_expiruje, cislo_uctu_darky)
+     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
     [
       NASTAVENI_DEFAULTS.kontakt_email,
       NASTAVENI_DEFAULTS.instagram_handle,
@@ -429,6 +522,7 @@ async function ensureNastaveniRow(): Promise<NastaveniRow> {
       NASTAVENI_DEFAULTS.uscreen_login,
       NASTAVENI_DEFAULTS.uscreen_plans,
       NASTAVENI_DEFAULTS.domena_expiruje,
+      NASTAVENI_DEFAULTS.cislo_uctu_darky,
     ]
   );
   return inserted[0];
@@ -449,13 +543,14 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
     uscreen_login: row.uscreen_login || NASTAVENI_DEFAULTS.uscreen_login,
     uscreen_plans: row.uscreen_plans || NASTAVENI_DEFAULTS.uscreen_plans,
     domena_expiruje: row.domena_expiruje || NASTAVENI_DEFAULTS.domena_expiruje,
+    cislo_uctu_darky: row.cislo_uctu_darky || NASTAVENI_DEFAULTS.cislo_uctu_darky,
   };
 });
 
 export async function updateNastaveni(fields: Nastaveni): Promise<void> {
   await ensureNastaveniRow();
   await query(
-    `UPDATE nastaveni SET kontakt_email=$1, instagram_handle=$2, instagram_url=$3, cena_lekce=$4, cena_mesicni=$5, cena_rocni=$6, uscreen_home=$7, uscreen_signup=$8, uscreen_login=$9, uscreen_plans=$10, domena_expiruje=$11 WHERE id = 1`,
+    `UPDATE nastaveni SET kontakt_email=$1, instagram_handle=$2, instagram_url=$3, cena_lekce=$4, cena_mesicni=$5, cena_rocni=$6, uscreen_home=$7, uscreen_signup=$8, uscreen_login=$9, uscreen_plans=$10, domena_expiruje=$11, cislo_uctu_darky=$12 WHERE id = 1`,
     [
       fields.kontakt_email,
       fields.instagram_handle,
@@ -468,6 +563,7 @@ export async function updateNastaveni(fields: Nastaveni): Promise<void> {
       fields.uscreen_login,
       fields.uscreen_plans,
       fields.domena_expiruje,
+      fields.cislo_uctu_darky,
     ]
   );
 }

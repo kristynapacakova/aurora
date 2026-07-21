@@ -4,13 +4,25 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Poptavka, NewsletterSignup, CekaciListina, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 
 type EditorTab = "pobyty" | "clanky";
-type Section = "overview" | "editor" | "objednavky" | "newsletter" | "cekaci-listina" | "statistiky" | "nastaveni";
+type Section =
+  | "overview"
+  | "editor"
+  | "objednavky"
+  | "newsletter"
+  | "cekaci-listina"
+  | "darkove-poukazy"
+  | "statistiky"
+  | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
-type PendingDelete = { kind: "pobyty" | "clanky" | "poptavky" | "newsletter" | "cekaci-listina"; id: number; label: string };
+type PendingDelete = {
+  kind: "pobyty" | "clanky" | "poptavky" | "newsletter" | "cekaci-listina" | "darkove-poukazy";
+  id: number;
+  label: string;
+};
 
 function IconGrid({ className }: { className?: string }) {
   return (
@@ -59,6 +71,18 @@ function IconClock({ className }: { className?: string }) {
   );
 }
 
+function IconGift({ className }: { className?: string }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <polyline points="20 12 20 22 4 22 4 12" />
+      <rect x="2" y="7" width="20" height="5" />
+      <line x1="12" y1="22" x2="12" y2="7" />
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7Z" />
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7Z" />
+    </svg>
+  );
+}
+
 function IconChart({ className }: { className?: string }) {
   return (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
@@ -101,6 +125,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "objednavky", label: "Objednávky", icon: IconInbox },
   { key: "newsletter", label: "Newsletter", icon: IconMail },
   { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
+  { key: "darkove-poukazy", label: "Dárkové poukazy", icon: IconGift },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
 ];
@@ -112,6 +137,7 @@ export default function AdminDashboard({
   poptavky,
   newsletter,
   cekaciListina,
+  darkovePoukazy,
   nastaveni,
 }: {
   configured: boolean;
@@ -120,6 +146,7 @@ export default function AdminDashboard({
   poptavky: Poptavka[];
   newsletter: NewsletterSignup[];
   cekaciListina: CekaciListina[];
+  darkovePoukazy: DarkovyPoukaz[];
   nastaveni: Nastaveni;
 }) {
   const router = useRouter();
@@ -361,12 +388,61 @@ export default function AdminDashboard({
     URL.revokeObjectURL(url);
   }
 
+  function exportDarkovePoukazyCsv() {
+    const hlavicky = ["Datum", "Kód", "Hodnota", "VS", "Kupující", "E-mail", "Telefon", "Obdarovaná", "Vzkaz", "Zaplaceno", "Využito"];
+    const radky = darkovePoukazy.map((p) => [
+      new Date(p.created_at).toLocaleString("cs-CZ"),
+      p.kod,
+      p.hodnota,
+      p.variabilni_symbol,
+      p.jmeno_kupujici,
+      p.email_kupujici,
+      p.telefon_kupujici,
+      p.jmeno_obdarovane,
+      p.vzkaz.replace(/\s+/g, " "),
+      p.zaplaceno ? "Ano" : "Ne",
+      p.vyuzito ? "Ano" : "Ne",
+    ]);
+    const csv = [hlavicky, ...radky]
+      .map((radek) => radek.map((bunka) => `"${String(bunka).replace(/"/g, '""')}"`).join(";"))
+      .join("\r\n");
+    const blob = new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `darkove-poukazy-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function togglePoptavka(q: Poptavka) {
     setBusy(true);
     await fetch("/api/admin/poptavky", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: q.id, precteno: !q.precteno }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function togglePoukazZaplaceno(p: DarkovyPoukaz) {
+    setBusy(true);
+    await fetch("/api/admin/darkove-poukazy", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: p.id, zaplaceno: !p.zaplaceno }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function togglePoukazVyuzito(p: DarkovyPoukaz) {
+    setBusy(true);
+    await fetch("/api/admin/darkove-poukazy", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: p.id, vyuzito: !p.vyuzito }),
     });
     setBusy(false);
     router.refresh();
@@ -428,6 +504,15 @@ export default function AdminDashboard({
       label: "Čekací listina",
       value: cekaciListina.length,
       detail: cekaciListina.length === 0 ? "zatím nikdo" : "čeká na uvolněné místo",
+    },
+    {
+      section: "darkove-poukazy",
+      label: "Dárkové poukazy",
+      value: darkovePoukazy.length,
+      detail:
+        darkovePoukazy.length === 0
+          ? "zatím žádné"
+          : `${darkovePoukazy.filter((p) => p.zaplaceno).length} zaplacených`,
     },
   ];
 
@@ -565,7 +650,7 @@ export default function AdminDashboard({
           {/* ── Overview ── */}
           {section === "overview" && (
             <div className="flex flex-col gap-8">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
                 {stats.map((s) => (
                   <button
                     key={s.label}
@@ -1111,6 +1196,104 @@ export default function AdminDashboard({
                           >
                             Smazat
                           </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </section>
+          )}
+
+          {/* ── Dárkové poukazy ── */}
+          {section === "darkove-poukazy" && (
+            <section>
+              {darkovePoukazy.length === 0 ? (
+                <p className="text-sm text-muted">
+                  Zatím žádné dárkové poukazy. Objeví se tady, jakmile si někdo koupí poukaz na
+                  webu.
+                </p>
+              ) : (
+                <>
+                  <div className="mb-6 flex justify-end">
+                    <button
+                      onClick={exportDarkovePoukazyCsv}
+                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                    >
+                      Export do CSV
+                    </button>
+                  </div>
+                  <ul className="flex flex-col gap-3">
+                    {darkovePoukazy.map((p) => (
+                      <li
+                        key={p.id}
+                        className={`rounded-2xl border bg-white p-5 shadow-sm transition-shadow hover:shadow-md ${
+                          p.zaplaceno ? "border-line" : "border-accent/50"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+                              {p.kod}
+                              <span className="text-xs text-accent">{p.hodnota}</span>
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                                  p.zaplaceno ? "bg-accent/20 text-accent-d" : "bg-line text-muted"
+                                }`}
+                              >
+                                {p.zaplaceno ? "Zaplaceno" : "Čeká na platbu"}
+                              </span>
+                              {p.vyuzito && (
+                                <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                                  Využito
+                                </span>
+                              )}
+                            </p>
+                            <p className="mt-1 text-xs text-muted">
+                              {new Date(p.created_at).toLocaleString("cs-CZ")} · VS: {p.variabilni_symbol}
+                            </p>
+                            <p className="mt-2 text-sm text-ink">
+                              Kupující: {p.jmeno_kupujici} ·{" "}
+                              <a href={`mailto:${p.email_kupujici}`} className="underline underline-offset-2 hover:text-accent-d">
+                                {p.email_kupujici}
+                              </a>
+                              {p.telefon_kupujici && (
+                                <>
+                                  {" · "}
+                                  <a href={`tel:${p.telefon_kupujici}`} className="underline underline-offset-2 hover:text-accent-d">
+                                    {p.telefon_kupujici}
+                                  </a>
+                                </>
+                              )}
+                            </p>
+                            {p.jmeno_obdarovane && (
+                              <p className="mt-1 text-sm text-muted">Pro: {p.jmeno_obdarovane}</p>
+                            )}
+                            {p.vzkaz && <p className="mt-2 text-sm text-muted">{p.vzkaz}</p>}
+                          </div>
+                          <div className="flex shrink-0 flex-col items-end gap-2">
+                            <button
+                              disabled={busy}
+                              onClick={() => setPendingDelete({ kind: "darkove-poukazy", id: p.id, label: p.kod })}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                            >
+                              Smazat
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => togglePoukazZaplaceno(p)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              {p.zaplaceno ? "Označit nezaplaceno" : "Označit zaplaceno"}
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => togglePoukazVyuzito(p)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              {p.vyuzito ? "Zrušit využití" : "Označit využito"}
+                            </button>
+                          </div>
                         </div>
                       </li>
                     ))}
