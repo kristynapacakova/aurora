@@ -66,7 +66,14 @@ export default async function PobytDetailPage({
 
               {/* Text */}
               <div className="flex-1">
-                <h1 className="font-serif text-4xl text-ink sm:text-5xl">{nbsp(pobyt.nadpis)}</h1>
+                <h1 className="flex flex-wrap items-center gap-3 font-serif text-4xl text-ink sm:text-5xl">
+                  {nbsp(pobyt.nadpis)}
+                  {pobyt.vyprodano && (
+                    <span className="rounded-full bg-line px-3 py-1 text-xs uppercase tracking-[0.15em] text-muted">
+                      Vyprodáno
+                    </span>
+                  )}
+                </h1>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
                   {pobyt.termin && <span>📅 {pobyt.termin}</span>}
@@ -93,6 +100,7 @@ export default async function PobytDetailPage({
                     cisloUctu={pobyt.cislo_uctu}
                     variabilniSymbol={pobyt.variabilni_symbol}
                     platebniPokyny={pobyt.platebni_pokyny}
+                    vyprodano={pobyt.vyprodano}
                   />
                 </div>
               </div>

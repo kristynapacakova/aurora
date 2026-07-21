@@ -68,8 +68,13 @@ export default async function PobytyPage() {
 
                       {/* Text */}
                       <div className="flex flex-1 flex-col">
-                        <h2 className="font-serif text-3xl text-ink sm:text-4xl">
+                        <h2 className="flex flex-wrap items-center gap-3 font-serif text-3xl text-ink sm:text-4xl">
                           {nbsp(p.nadpis)}
+                          {p.vyprodano && (
+                            <span className="rounded-full bg-line px-3 py-1 text-xs uppercase tracking-[0.15em] text-muted">
+                              Vyprodáno
+                            </span>
+                          )}
                         </h2>
 
                         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">

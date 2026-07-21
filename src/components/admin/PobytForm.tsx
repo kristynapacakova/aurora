@@ -22,6 +22,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [variabilniSymbol, setVariabilniSymbol] = useState(initial?.variabilni_symbol ?? "");
   const [platebniPokyny, setPlatebniPokyny] = useState(initial?.platebni_pokyny ?? "");
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
+  const [vyprodano, setVyprodano] = useState(initial?.vyprodano ?? false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ index: number; total: number; percent: number } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -114,6 +115,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
       variabilni_symbol: variabilniSymbol,
       platebni_pokyny: platebniPokyny,
       zverejneno,
+      vyprodano,
     };
     const res = await fetch("/api/admin/pobyty", {
       method: initial ? "PUT" : "POST",
@@ -300,6 +302,16 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                 className="h-4 w-4 accent-[#F28D76]"
               />
               Zobrazit na webu
+            </label>
+
+            <label className="flex items-center gap-3 text-sm text-ink">
+              <input
+                type="checkbox"
+                checked={vyprodano}
+                onChange={(e) => setVyprodano(e.target.checked)}
+                className="h-4 w-4 accent-[#F28D76]"
+              />
+              Vyprodáno — místo objednávky nabídnout čekací listinu
             </label>
 
             {error && <p className="text-sm text-accent-d">{error}</p>}
