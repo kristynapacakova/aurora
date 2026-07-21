@@ -4,13 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Poptavka, NewsletterSignup, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Poptavka, NewsletterSignup, CekaciListina, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 
 type EditorTab = "pobyty" | "clanky";
-type Section = "overview" | "editor" | "objednavky" | "newsletter" | "statistiky" | "nastaveni";
+type Section = "overview" | "editor" | "objednavky" | "newsletter" | "cekaci-listina" | "statistiky" | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
-type PendingDelete = { kind: "pobyty" | "clanky" | "poptavky" | "newsletter"; id: number; label: string };
+type PendingDelete = { kind: "pobyty" | "clanky" | "poptavky" | "newsletter" | "cekaci-listina"; id: number; label: string };
 
 function IconGrid({ className }: { className?: string }) {
   return (
@@ -46,6 +46,15 @@ function IconMail({ className }: { className?: string }) {
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
       <rect x="2" y="4" width="20" height="16" rx="2" />
       <path d="m22 6-10 7L2 6" />
+    </svg>
+  );
+}
+
+function IconClock({ className }: { className?: string }) {
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3 3" />
     </svg>
   );
 }
@@ -91,6 +100,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "editor", label: "Editor", icon: IconEdit },
   { key: "objednavky", label: "Objednávky", icon: IconInbox },
   { key: "newsletter", label: "Newsletter", icon: IconMail },
+  { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
 ];
@@ -101,6 +111,7 @@ export default function AdminDashboard({
   clanky,
   poptavky,
   newsletter,
+  cekaciListina,
   nastaveni,
 }: {
   configured: boolean;
@@ -108,6 +119,7 @@ export default function AdminDashboard({
   clanky: Clanek[];
   poptavky: Poptavka[];
   newsletter: NewsletterSignup[];
+  cekaciListina: CekaciListina[];
   nastaveni: Nastaveni;
 }) {
   const router = useRouter();
@@ -150,6 +162,31 @@ export default function AdminDashboard({
         variabilni_symbol: p.variabilni_symbol,
         platebni_pokyny: p.platebni_pokyny,
         zverejneno: !p.zverejneno,
+        vyprodano: p.vyprodano,
+      }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function toggleVyprodano(p: Pobyt) {
+    setBusy(true);
+    await fetch("/api/admin/pobyty", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: p.id,
+        nadpis: p.nadpis,
+        misto: p.misto,
+        termin: p.termin,
+        popis: p.popis,
+        cena: p.cena,
+        fotky: p.fotky,
+        cislo_uctu: p.cislo_uctu,
+        variabilni_symbol: p.variabilni_symbol,
+        platebni_pokyny: p.platebni_pokyny,
+        zverejneno: p.zverejneno,
+        vyprodano: !p.vyprodano,
       }),
     });
     setBusy(false);
@@ -172,6 +209,7 @@ export default function AdminDashboard({
         variabilni_symbol: p.variabilni_symbol,
         platebni_pokyny: p.platebni_pokyny,
         zverejneno: false,
+        vyprodano: p.vyprodano,
       }),
     });
     setBusy(false);
@@ -216,6 +254,7 @@ export default function AdminDashboard({
               variabilni_symbol: p.variabilni_symbol,
               platebni_pokyny: p.platebni_pokyny,
               zverejneno: akce === "zverejnit",
+              vyprodano: p.vyprodano,
             }),
           })
         )
@@ -300,6 +339,28 @@ export default function AdminDashboard({
     URL.revokeObjectURL(url);
   }
 
+  function exportCekaciListinaCsv() {
+    const hlavicky = ["Datum", "Jméno", "E-mail", "Telefon", "Pobyt", "Zpráva"];
+    const radky = cekaciListina.map((c) => [
+      new Date(c.created_at).toLocaleString("cs-CZ"),
+      c.jmeno,
+      c.email,
+      c.telefon,
+      c.pobyt_nadpis ?? "",
+      c.zprava.replace(/\s+/g, " "),
+    ]);
+    const csv = [hlavicky, ...radky]
+      .map((radek) => radek.map((bunka) => `"${String(bunka).replace(/"/g, '""')}"`).join(";"))
+      .join("\r\n");
+    const blob = new Blob([`﻿${csv}`], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `cekaci-listina-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   async function togglePoptavka(q: Poptavka) {
     setBusy(true);
     await fetch("/api/admin/poptavky", {
@@ -361,6 +422,12 @@ export default function AdminDashboard({
       label: "Newsletter",
       value: newsletter.length,
       detail: newsletter.length === 0 ? "zatím nikdo" : "přihlášených e-mailů",
+    },
+    {
+      section: "cekaci-listina",
+      label: "Čekací listina",
+      value: cekaciListina.length,
+      detail: cekaciListina.length === 0 ? "zatím nikdo" : "čeká na uvolněné místo",
     },
   ];
 
@@ -498,7 +565,7 @@ export default function AdminDashboard({
           {/* ── Overview ── */}
           {section === "overview" && (
             <div className="flex flex-col gap-8">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 {stats.map((s) => (
                   <button
                     key={s.label}
@@ -675,6 +742,11 @@ export default function AdminDashboard({
                                     Skrytý
                                   </span>
                                 )}
+                                {p.vyprodano && (
+                                  <span className="shrink-0 rounded-full bg-accent/20 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
+                                    Vyprodáno
+                                  </span>
+                                )}
                               </p>
                               <p className="mt-1 truncate text-xs text-muted">
                                 {[p.misto, p.termin, p.cena].filter(Boolean).join(" · ")}
@@ -688,6 +760,13 @@ export default function AdminDashboard({
                               className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
                             >
                               {p.zverejneno ? "Skrýt" : "Zobrazit"}
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => toggleVyprodano(p)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              {p.vyprodano ? "Zrušit vyprodání" : "Označit vyprodáno"}
                             </button>
                             <button
                               disabled={busy}
@@ -969,6 +1048,70 @@ export default function AdminDashboard({
                         >
                           Smazat
                         </button>
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </section>
+          )}
+
+          {/* ── Čekací listina ── */}
+          {section === "cekaci-listina" && (
+            <section>
+              {cekaciListina.length === 0 ? (
+                <p className="text-sm text-muted">
+                  Zatím se nikdo nepřihlásil na čekací listinu. Objeví se tady, jakmile někdo
+                  projeví zájem o vyprodaný pobyt.
+                </p>
+              ) : (
+                <>
+                  <div className="mb-6 flex justify-end">
+                    <button
+                      onClick={exportCekaciListinaCsv}
+                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                    >
+                      Export do CSV
+                    </button>
+                  </div>
+                  <ul className="flex flex-col gap-3">
+                    {cekaciListina.map((c) => (
+                      <li
+                        key={c.id}
+                        className="rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <div className="min-w-0">
+                            <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+                              {c.jmeno}
+                              {c.pobyt_nadpis && <span className="text-xs text-accent">→ {c.pobyt_nadpis}</span>}
+                            </p>
+                            <p className="mt-1 text-xs text-muted">
+                              {new Date(c.created_at).toLocaleString("cs-CZ")}
+                            </p>
+                            <p className="mt-2 text-sm text-ink">
+                              <a href={`mailto:${c.email}`} className="underline underline-offset-2 hover:text-accent-d">
+                                {c.email}
+                              </a>
+                              {c.telefon && (
+                                <>
+                                  {" · "}
+                                  <a href={`tel:${c.telefon}`} className="underline underline-offset-2 hover:text-accent-d">
+                                    {c.telefon}
+                                  </a>
+                                </>
+                              )}
+                            </p>
+                            {c.zprava && <p className="mt-2 text-sm text-muted">{c.zprava}</p>}
+                          </div>
+                          <button
+                            disabled={busy}
+                            onClick={() => setPendingDelete({ kind: "cekaci-listina", id: c.id, label: `${c.jmeno} (čekací listina)` })}
+                            className="shrink-0 rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                          >
+                            Smazat
+                          </button>
+                        </div>
                       </li>
                     ))}
                   </ul>

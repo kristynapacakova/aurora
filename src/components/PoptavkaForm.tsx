@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
 
-type Mode = "closed" | "objednavka" | "dotaz";
+type Mode = "closed" | "objednavka" | "dotaz" | "cekaci";
 
 export default function PoptavkaForm({
   pobytId,
@@ -13,6 +13,7 @@ export default function PoptavkaForm({
   cisloUctu,
   variabilniSymbol,
   platebniPokyny,
+  vyprodano,
 }: {
   pobytId: number;
   pobytNadpis: string;
@@ -21,6 +22,7 @@ export default function PoptavkaForm({
   cisloUctu?: string;
   variabilniSymbol?: string;
   platebniPokyny?: string;
+  vyprodano?: boolean;
 }) {
   const [mode, setMode] = useState<Mode>("closed");
   const [jmeno, setJmeno] = useState("");
@@ -45,19 +47,26 @@ export default function PoptavkaForm({
     setSending(true);
     setError(null);
 
-    const res = await fetch("/api/poptavka", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        pobyt_id: pobytId,
-        typ: mode === "objednavka" ? "objednavka" : "dotaz",
-        zaplaceno: mode === "objednavka" ? potvrzenoPlatba : false,
-        jmeno,
-        email,
-        telefon,
-        zprava,
-      }),
-    });
+    const res =
+      mode === "cekaci"
+        ? await fetch("/api/cekaci-listina", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pobyt_id: pobytId, jmeno, email, telefon, zprava }),
+          })
+        : await fetch("/api/poptavka", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              pobyt_id: pobytId,
+              typ: mode === "objednavka" ? "objednavka" : "dotaz",
+              zaplaceno: mode === "objednavka" ? potvrzenoPlatba : false,
+              jmeno,
+              email,
+              telefon,
+              zprava,
+            }),
+          });
 
     if (res.ok) {
       setSent(true);
@@ -75,7 +84,9 @@ export default function PoptavkaForm({
         <p className="mt-2 text-sm text-muted">
           {mode === "objednavka"
             ? "Tvoje objednávka je na cestě. Brzy se ti ozveme s potvrzením. 🌿"
-            : "Tvůj dotaz je na cestě. Ozveme se ti co nejdřív. 🌿"}
+            : mode === "cekaci"
+              ? "Jsi na čekací listině. Ozveme se, jakmile se uvolní místo. 🌿"
+              : "Tvůj dotaz je na cestě. Ozveme se ti co nejdřív. 🌿"}
         </p>
       </div>
     );
@@ -84,12 +95,21 @@ export default function PoptavkaForm({
   if (mode === "closed") {
     return (
       <div className="flex flex-wrap items-center gap-3">
-        <button
-          onClick={() => setMode("objednavka")}
-          className="rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
-        >
-          Závazně objednat →
-        </button>
+        {vyprodano ? (
+          <button
+            onClick={() => setMode("cekaci")}
+            className="rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
+          >
+            Přidat se na čekací listinu →
+          </button>
+        ) : (
+          <button
+            onClick={() => setMode("objednavka")}
+            className="rounded-full bg-gradient-aurora px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all duration-200 hover:opacity-90 hover:shadow-md"
+          >
+            Závazně objednat →
+          </button>
+        )}
         <button
           onClick={() => setMode("dotaz")}
           className="rounded-full border border-ink/30 px-8 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-ink"
@@ -109,8 +129,14 @@ export default function PoptavkaForm({
       className="flex flex-col gap-4 rounded-2xl bg-white/70 p-6 ring-1 ring-line"
     >
       <p className="text-xs uppercase tracking-[0.25em] text-accent">
-        {mode === "objednavka" ? "Závazná objednávka" : "Dotaz"} — {pobytNadpis}
+        {mode === "objednavka" ? "Závazná objednávka" : mode === "cekaci" ? "Čekací listina" : "Dotaz"} — {pobytNadpis}
       </p>
+
+      {mode === "cekaci" && (
+        <p className="text-sm text-muted">
+          Pobyt je momentálně vyprodaný. Necháme ti vzkaz a ozveme se, jakmile se uvolní místo.
+        </p>
+      )}
 
       {mode === "objednavka" && (
         <>
@@ -156,7 +182,13 @@ export default function PoptavkaForm({
         value={zprava}
         onChange={(e) => setZprava(e.target.value)}
         rows={3}
-        placeholder={mode === "objednavka" ? "Poznámka (nepovinné)" : "Tvůj dotaz"}
+        placeholder={
+          mode === "objednavka"
+            ? "Poznámka (nepovinné)"
+            : mode === "cekaci"
+              ? "Vzkaz (nepovinné)"
+              : "Tvůj dotaz"
+        }
         required={mode === "dotaz"}
         className={inputCls}
       />
@@ -201,7 +233,9 @@ export default function PoptavkaForm({
             ? "Odesílám…"
             : mode === "objednavka"
               ? "Odeslat závaznou objednávku"
-              : "Odeslat dotaz"}
+              : mode === "cekaci"
+                ? "Přidat se na čekací listinu"
+                : "Odeslat dotaz"}
         </button>
         <button
           type="button"

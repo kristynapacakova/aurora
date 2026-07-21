@@ -19,6 +19,7 @@ export type Pobyt = {
   variabilni_symbol: string;
   platebni_pokyny: string;
   zverejneno: boolean;
+  vyprodano: boolean;
   created_at: string;
 };
 
@@ -48,6 +49,17 @@ export type Poptavka = {
 export type NewsletterSignup = {
   id: number;
   email: string;
+  created_at: string;
+};
+
+export type CekaciListina = {
+  id: number;
+  pobyt_id: number | null;
+  pobyt_nadpis: string | null;
+  jmeno: string;
+  email: string;
+  telefon: string;
+  zprava: string;
   created_at: string;
 };
 
@@ -108,6 +120,7 @@ async function ensureSchema() {
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS platebni_pokyny TEXT NOT NULL DEFAULT '';
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS cislo_uctu TEXT NOT NULL DEFAULT '';
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS variabilni_symbol TEXT NOT NULL DEFAULT '';
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS vyprodano BOOLEAN NOT NULL DEFAULT FALSE;
 
     CREATE TABLE IF NOT EXISTS clanky (
       id SERIAL PRIMARY KEY,
@@ -134,6 +147,16 @@ async function ensureSchema() {
     CREATE TABLE IF NOT EXISTS newsletter (
       id SERIAL PRIMARY KEY,
       email TEXT NOT NULL UNIQUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
+    CREATE TABLE IF NOT EXISTS cekaci_listina (
+      id SERIAL PRIMARY KEY,
+      pobyt_id INTEGER,
+      jmeno TEXT NOT NULL,
+      email TEXT NOT NULL,
+      telefon TEXT NOT NULL DEFAULT '',
+      zprava TEXT NOT NULL DEFAULT '',
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
@@ -180,8 +203,8 @@ export async function getPobyt(id: number): Promise<Pobyt | null> {
 
 export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<Pobyt> {
   const rows = await query<Pobyt>(
-    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zverejneno)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *`,
+    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zverejneno, vyprodano)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
     [
       p.nadpis,
       p.misto,
@@ -193,6 +216,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
       p.variabilni_symbol,
       p.platebni_pokyny,
       p.zverejneno,
+      p.vyprodano,
     ]
   );
   return rows[0];
@@ -200,7 +224,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
 
 export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at">): Promise<void> {
   await query(
-    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zverejneno=$10 WHERE id=$11`,
+    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zverejneno=$10, vyprodano=$11 WHERE id=$12`,
     [
       p.nadpis,
       p.misto,
@@ -212,6 +236,7 @@ export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at"
       p.variabilni_symbol,
       p.platebni_pokyny,
       p.zverejneno,
+      p.vyprodano,
       id,
     ]
   );
@@ -335,6 +360,34 @@ export async function getNewsletterSignups(): Promise<NewsletterSignup[]> {
 
 export async function deleteNewsletterSignup(id: number): Promise<void> {
   await query(`DELETE FROM newsletter WHERE id = $1`, [id]);
+}
+
+// ── Čekací listina ──────────────────────────────────────────────────────────
+
+export async function createCekaciListina(c: {
+  pobyt_id: number | null;
+  jmeno: string;
+  email: string;
+  telefon: string;
+  zprava: string;
+}): Promise<void> {
+  await query(
+    `INSERT INTO cekaci_listina (pobyt_id, jmeno, email, telefon, zprava) VALUES ($1, $2, $3, $4, $5)`,
+    [c.pobyt_id, c.jmeno, c.email, c.telefon, c.zprava]
+  );
+}
+
+export async function getCekaciListina(): Promise<CekaciListina[]> {
+  if (!dbConfigured()) return [];
+  return query<CekaciListina>(
+    `SELECT cekaci_listina.*, pobyty.nadpis AS pobyt_nadpis
+     FROM cekaci_listina LEFT JOIN pobyty ON pobyty.id = cekaci_listina.pobyt_id
+     ORDER BY cekaci_listina.created_at DESC`
+  );
+}
+
+export async function deleteCekaciListina(id: number): Promise<void> {
+  await query(`DELETE FROM cekaci_listina WHERE id = $1`, [id]);
 }
 
 // ── Nastavení ───────────────────────────────────────────────────────────────

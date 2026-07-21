@@ -26,6 +26,7 @@ type Body = {
   variabilni_symbol?: string;
   platebni_pokyny?: string;
   zverejneno?: boolean;
+  vyprodano?: boolean;
 };
 
 function parseFields(body: Body) {
@@ -40,6 +41,7 @@ function parseFields(body: Body) {
     variabilni_symbol: (body.variabilni_symbol ?? "").trim(),
     platebni_pokyny: (body.platebni_pokyny ?? "").trim(),
     zverejneno: body.zverejneno !== false,
+    vyprodano: body.vyprodano === true,
   };
 }
 
