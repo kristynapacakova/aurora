@@ -19,7 +19,7 @@ export default async function InstagramFeed() {
   return (
     <section className="bg-cream relative pt-14 pb-8 sm:pt-16 sm:pb-10">
       <FadeUp>
-        <p className="font-allura mb-8 text-center text-2xl text-ink sm:text-3xl">
+        <p className="font-serif mb-8 text-center text-xl text-ink sm:text-2xl">
           {nbsp("Sleduj nás na Instagramu")}{" "}
           <a
             href={instagram_url}
