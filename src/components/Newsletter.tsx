@@ -32,30 +32,30 @@ export default function Newsletter() {
   }
 
   return (
-    <section className="bg-sand relative py-16 sm:py-20">
+    <section className="bg-sand relative pt-10 pb-14 sm:pt-12 sm:pb-16">
       <div className="mx-auto max-w-2xl px-6 text-center">
         <FadeUp>
-          <div className="mb-4 flex items-center justify-center gap-3">
+          <div className="mb-3 flex items-center justify-center gap-3">
             <IconSparkle size={12} />
             <p className="text-xs uppercase tracking-[0.3em] text-accent">Newsletter</p>
             <IconSparkle size={12} />
           </div>
-          <h2 className="font-allura text-4xl text-ink sm:text-5xl">
-            {nbsp("Zůstaňme v spojení")}
+          <h2 className="font-allura text-3xl text-ink sm:text-4xl">
+            {nbsp("Zůstaňme ve spojení")}
           </h2>
-          <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted">
             {nbsp("Jednou za čas ti pošlu pozvánku na nový pobyt, tip na dechové cvičení nebo pár slov na povzbuzení. Žádný spam, jen věci, které mají smysl.")}
           </p>
         </FadeUp>
 
         <FadeUp delay={0.1}>
           {sent ? (
-            <div className="mt-8 rounded-2xl bg-white/70 p-6 ring-1 ring-line">
+            <div className="mt-6 rounded-2xl bg-white/70 p-6 ring-1 ring-line">
               <p className="font-allura text-2xl text-ink">Děkujeme!</p>
               <p className="mt-2 text-sm text-muted">{nbsp("Brzy se ti ozvu. 🌿")}</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+            <form onSubmit={handleSubmit} className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
