@@ -17,7 +17,7 @@ export default async function InstagramFeed() {
   const { instagram_url, instagram_handle } = await getNastaveni();
 
   return (
-    <section className="bg-cream relative pt-14 pb-14 sm:pt-16 sm:pb-16">
+    <section className="bg-cream relative pt-14 pb-8 sm:pt-16 sm:pb-10">
       <FadeUp>
         <p className="font-allura mb-8 text-center text-2xl text-ink sm:text-3xl">
           {nbsp("Sleduj nás na Instagramu")}{" "}
