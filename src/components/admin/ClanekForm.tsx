@@ -1,8 +1,10 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState, type FormEvent } from "react";
+import { useState, type FormEvent, type ChangeEvent } from "react";
+import { upload } from "@vercel/blob/client";
 import type { Clanek } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 
@@ -10,9 +12,33 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
   const router = useRouter();
   const [nadpis, setNadpis] = useState(initial?.nadpis ?? "");
   const [text, setText] = useState(initial?.text ?? "");
+  const [titulniFoto, setTitulniFoto] = useState(initial?.titulni_foto ?? "");
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
+  const [uploading, setUploading] = useState(false);
+  const [uploadPercent, setUploadPercent] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  async function uploadTitulniFoto(e: ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploading(true);
+    setError(null);
+    const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+    try {
+      const blob = await upload(`clanky/${Date.now()}-${safeName}`, file, {
+        access: "public",
+        handleUploadUrl: "/api/admin/upload",
+        onUploadProgress: ({ percentage }) => setUploadPercent(Math.round(percentage)),
+      });
+      setTitulniFoto(blob.url);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nahrání fotky se nepovedlo.");
+    }
+    setUploading(false);
+    setUploadPercent(0);
+    e.target.value = "";
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -22,7 +48,7 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
     const res = await fetch("/api/admin/clanky", {
       method: initial ? "PUT" : "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: initial?.id, nadpis, text, zverejneno }),
+      body: JSON.stringify({ id: initial?.id, nadpis, text, zverejneno, titulni_foto: titulniFoto }),
     });
 
     if (res.ok) {
@@ -73,6 +99,27 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
               </label>
             </div>
 
+            <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-6 shadow-sm">
+              <p className="text-xs uppercase tracking-[0.25em] text-accent">Titulní fotka (nepovinné)</p>
+              {titulniFoto && (
+                <div className="group relative aspect-[16/9] w-full max-w-xs overflow-hidden rounded-xl">
+                  <Image src={titulniFoto} alt="Titulní fotka" fill className="object-cover" sizes="320px" />
+                  <button
+                    type="button"
+                    onClick={() => setTitulniFoto("")}
+                    className="absolute right-1.5 top-1.5 rounded-full bg-ink/70 px-2 py-0.5 text-xs text-cream opacity-0 transition-opacity group-hover:opacity-100"
+                    aria-label="Odebrat fotku"
+                  >
+                    ✕
+                  </button>
+                </div>
+              )}
+              <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent">
+                {uploading ? `Nahrávám… ${uploadPercent}%` : titulniFoto ? "Nahradit fotku" : "+ Nahrát fotku"}
+                <input type="file" accept="image/*" onChange={uploadTitulniFoto} disabled={uploading} className="hidden" />
+              </label>
+            </div>
+
             <label className="flex items-center gap-3 text-sm text-ink">
               <input
                 type="checkbox"
@@ -88,7 +135,7 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
             <div className="mt-2 flex gap-3">
               <button
                 type="submit"
-                disabled={saving}
+                disabled={saving || uploading}
                 className="rounded-full bg-gradient-aurora px-8 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90 disabled:opacity-50"
               >
                 {saving ? "Ukládám…" : "Uložit článek"}
@@ -108,6 +155,11 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
               Náhled — takhle to uvidí návštěvnice webu
             </p>
             <article className="rounded-3xl border border-line bg-cream p-6 sm:p-8">
+              {titulniFoto && (
+                <div className="relative mb-6 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+                  <Image src={titulniFoto} alt="" fill className="object-cover" sizes="500px" />
+                </div>
+              )}
               <p className="text-xs uppercase tracking-[0.2em] text-accent">
                 {new Date().toLocaleDateString("cs-CZ", { day: "numeric", month: "long", year: "numeric" })}
               </p>

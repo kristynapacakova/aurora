@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { getNastaveni } from "@/lib/db";
 import { SiteSettingsProvider } from "@/components/SiteSettingsProvider";
+import { SITE_URL } from "@/lib/config";
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: "AURORA jóga | Online jógové studio",
   description:
     "Prémiové online jógové studio. Živé streamy, knihovna nahrávek, cvičení na doma — kdykoli a kdekoli chceš.",

@@ -16,6 +16,11 @@ export const USCREEN = {
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// DOMÉNA — použitá v sitemap.xml, robots.txt a pro absolutní odkazy v metadatech
+// ─────────────────────────────────────────────────────────────────────────────
+export const SITE_URL = "https://aurorajoga.cz";
+
+// ─────────────────────────────────────────────────────────────────────────────
 // KONTAKTNÍ ÚDAJE — upravte podle potřeby
 // ─────────────────────────────────────────────────────────────────────────────
 export const CONTACT = {

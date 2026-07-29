@@ -69,8 +69,9 @@ export default async function OchranaOsobnichUdajuPage() {
               <h2 className="mb-3 font-serif text-xl text-ink">4. Doba uchování</h2>
               <p>
                 Osobní údaje uchováváme po dobu nezbytně nutnou k vyřízení
-                objednávky a dále po dobu vyžadovanou právními předpisy
-                (např. účetní a daňové doklady po dobu [DOPLNIT, typicky 10 let]).
+                objednávky a dále po dobu vyžadovanou právními předpisy —
+                účetní a daňové doklady po dobu 10 let od konce zdaňovacího
+                období, v souladu se zákonem o dani z přidané hodnoty.
               </p>
             </section>
 
@@ -81,7 +82,9 @@ export default async function OchranaOsobnichUdajuPage() {
               </p>
               <ul className="mt-2 list-inside list-disc space-y-1">
                 <li>platforma Uscreen — poskytovatel online studia a členství</li>
-                <li>[DOPLNIT — např. e-mailový nástroj, hosting, účetní]</li>
+                <li>Vercel Inc. — hosting webu, databáze a úložiště fotografií</li>
+                <li>Resend — odesílání transakčních e-mailů (potvrzení objednávek a upozornění)</li>
+                <li>[DOPLNIT — např. účetní, pokud si údaje pro fakturaci předáváte]</li>
               </ul>
               <p className="mt-3">
                 Osobní údaje nepředáváme třetím stranám za účelem marketingu bez

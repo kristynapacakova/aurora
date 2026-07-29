@@ -18,6 +18,7 @@ type Body = {
   nadpis?: string;
   text?: string;
   zverejneno?: boolean;
+  titulni_foto?: string;
 };
 
 export async function POST(request: Request) {
@@ -30,7 +31,7 @@ export async function POST(request: Request) {
   if (!nadpis) {
     return NextResponse.json({ error: "Nadpis je povinný." }, { status: 400 });
   }
-  const clanek = await createClanek(nadpis, text, body.zverejneno !== false);
+  const clanek = await createClanek(nadpis, text, body.zverejneno !== false, (body.titulni_foto ?? "").trim());
   return NextResponse.json({ ok: true, clanek });
 }
 
@@ -44,7 +45,13 @@ export async function PUT(request: Request) {
   if (!nadpis) {
     return NextResponse.json({ error: "Nadpis je povinný." }, { status: 400 });
   }
-  await updateClanek(body.id, nadpis, (body.text ?? "").trim(), body.zverejneno !== false);
+  await updateClanek(
+    body.id,
+    nadpis,
+    (body.text ?? "").trim(),
+    body.zverejneno !== false,
+    (body.titulni_foto ?? "").trim()
+  );
   return NextResponse.json({ ok: true });
 }
 
