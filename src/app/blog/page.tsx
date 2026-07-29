@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
@@ -46,21 +47,34 @@ export default async function BlogPage() {
                 <FadeUp key={c.id}>
                   <Link
                     href={`/blog/${c.slug}`}
-                    className="group block rounded-2xl border border-line bg-white/50 p-7 transition-all duration-200 hover:border-accent/60 hover:bg-white/80"
+                    className="group block overflow-hidden rounded-2xl border border-line bg-white/50 transition-all duration-200 hover:border-accent/60 hover:bg-white/80"
                   >
-                    <p className="text-xs uppercase tracking-[0.2em] text-accent">
-                      {new Date(c.created_at).toLocaleDateString("cs-CZ", {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      })}
-                    </p>
-                    <h2 className="mt-2 font-serif text-3xl text-ink">{nbsp(c.nadpis)}</h2>
-                    <p className="mt-3 text-sm leading-relaxed text-muted">{nbsp(perex(c.text))}</p>
-                    <span className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-ink transition-colors group-hover:text-accent">
-                      Číst dál
-                      <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
-                    </span>
+                    {c.titulni_foto && (
+                      <div className="relative aspect-[16/9] w-full overflow-hidden">
+                        <Image
+                          src={c.titulni_foto}
+                          alt=""
+                          fill
+                          className="object-cover transition-transform duration-300 group-hover:scale-105"
+                          sizes="(max-width: 640px) 100vw, 672px"
+                        />
+                      </div>
+                    )}
+                    <div className="p-7">
+                      <p className="text-xs uppercase tracking-[0.2em] text-accent">
+                        {new Date(c.created_at).toLocaleDateString("cs-CZ", {
+                          day: "numeric",
+                          month: "long",
+                          year: "numeric",
+                        })}
+                      </p>
+                      <h2 className="mt-2 font-serif text-3xl text-ink">{nbsp(c.nadpis)}</h2>
+                      <p className="mt-3 text-sm leading-relaxed text-muted">{nbsp(perex(c.text))}</p>
+                      <span className="mt-4 inline-flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-ink transition-colors group-hover:text-accent">
+                        Číst dál
+                        <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
+                      </span>
+                    </div>
                   </Link>
                 </FadeUp>
               ))}

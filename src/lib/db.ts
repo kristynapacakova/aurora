@@ -29,6 +29,7 @@ export type Clanek = {
   nadpis: string;
   slug: string;
   text: string;
+  titulni_foto: string;
   zverejneno: boolean;
   created_at: string;
 };
@@ -147,6 +148,7 @@ async function ensureSchema() {
       zverejneno BOOLEAN NOT NULL DEFAULT TRUE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    ALTER TABLE clanky ADD COLUMN IF NOT EXISTS titulni_foto TEXT NOT NULL DEFAULT '';
 
     CREATE TABLE IF NOT EXISTS poptavky (
       id SERIAL PRIMARY KEY,
@@ -310,7 +312,12 @@ export async function getClanek(id: number): Promise<Clanek | null> {
   return rows[0] ?? null;
 }
 
-export async function createClanek(nadpis: string, text: string, zverejneno: boolean): Promise<Clanek> {
+export async function createClanek(
+  nadpis: string,
+  text: string,
+  zverejneno: boolean,
+  titulniFoto: string = ""
+): Promise<Clanek> {
   const base = makeSlug(nadpis);
   // zajistí unikátní slug (pri kolizi přidá -2, -3, …)
   const existing = await query<{ slug: string }>(
@@ -322,17 +329,24 @@ export async function createClanek(nadpis: string, text: string, zverejneno: boo
   for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
 
   const rows = await query<Clanek>(
-    `INSERT INTO clanky (nadpis, slug, text, zverejneno) VALUES ($1, $2, $3, $4) RETURNING *`,
-    [nadpis, slug, text, zverejneno]
+    `INSERT INTO clanky (nadpis, slug, text, zverejneno, titulni_foto) VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [nadpis, slug, text, zverejneno, titulniFoto]
   );
   return rows[0];
 }
 
-export async function updateClanek(id: number, nadpis: string, text: string, zverejneno: boolean): Promise<void> {
-  await query(`UPDATE clanky SET nadpis=$1, text=$2, zverejneno=$3 WHERE id=$4`, [
+export async function updateClanek(
+  id: number,
+  nadpis: string,
+  text: string,
+  zverejneno: boolean,
+  titulniFoto: string = ""
+): Promise<void> {
+  await query(`UPDATE clanky SET nadpis=$1, text=$2, zverejneno=$3, titulni_foto=$4 WHERE id=$5`, [
     nadpis,
     text,
     zverejneno,
+    titulniFoto,
     id,
   ]);
 }

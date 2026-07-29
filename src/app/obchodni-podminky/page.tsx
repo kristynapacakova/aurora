@@ -57,8 +57,7 @@ export default async function ObchodniPodminkyPage() {
                 Zákazník si vybere požadované členství, jednotlivou lekci nebo pobyt a
                 odešle objednávku prostřednictvím formuláře na webu nebo přes
                 platformu Uscreen. Smlouva mezi poskytovatelem a zákazníkem je
-                uzavřena okamžikem [DOPLNIT — potvrzení objednávky poskytovatelem /
-                přijetí platby].
+                uzavřena okamžikem přijetí platby poskytovatelem.
               </p>
             </section>
 
@@ -67,8 +66,10 @@ export default async function ObchodniPodminkyPage() {
               <p>
                 Ceny členství, jednotlivých lekcí a pobytů jsou uvedeny na webu
                 včetně všech poplatků a jsou platné po celou dobu jejich zobrazení.
-                Platbu lze provést [DOPLNIT — platební kartou přes Uscreen /
-                bankovním převodem dle pokynů uvedených v objednávce].
+                Platbu za online členství a jednotlivé lekce lze provést platební
+                kartou přímo přes platformu Uscreen. Platbu za pobyt nebo dárkový
+                poukaz lze provést bankovním převodem podle platebních údajů a
+                QR kódu uvedených v objednávce.
               </p>
             </section>
 
@@ -87,14 +88,15 @@ export default async function ObchodniPodminkyPage() {
             </section>
 
             <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">5. Pobyty</h2>
+              <h2 className="mb-3 font-serif text-xl text-ink">5. Pobyty a dárkové poukazy</h2>
               <p>
-                Objednávka pobytu se stává závaznou okamžikem [DOPLNIT — potvrzení
-                objednávky poskytovatelem / uhrazení zálohy či celé částky].
-                V souladu s § 1837 písm. j) občanského zákoníku se na smlouvu o
-                poskytnutí ubytování, dopravy, stravování nebo využití volného
-                času poskytovaného v určeném termínu nevztahuje právo spotřebitele
-                na odstoupení od smlouvy do 14 dnů.
+                Objednávka pobytu se stává závaznou okamžikem uhrazení celé částky
+                dle platebních údajů uvedených u pobytu. Stejným způsobem funguje i
+                nákup dárkového poukazu — poukaz je platný po přijetí platby na
+                účet poskytovatele. V souladu s § 1837 písm. j) občanského
+                zákoníku se na smlouvu o poskytnutí ubytování, dopravy, stravování
+                nebo využití volného času poskytovaného v určeném termínu
+                nevztahuje právo spotřebitele na odstoupení od smlouvy do 14 dnů.
               </p>
               <p className="mt-3">
                 Stornopodmínky: <strong className="text-ink">[DOPLNIT — např. výše vratky v % ceny podle počtu dní před začátkem pobytu]</strong>.

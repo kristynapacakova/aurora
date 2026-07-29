@@ -29,6 +29,11 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ── robots.txt a sitemap.xml musí být čitelné pro vyhledávače i přes bránu ──
+  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
+    return NextResponse.next();
+  }
+
   // ── Web zatím není veřejný — vyžaduje přístupový kód ──
   const siteToken = request.cookies.get(SITE_COOKIE_NAME)?.value;
   const siteUnlocked = await verifySiteToken(siteToken);

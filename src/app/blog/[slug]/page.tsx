@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -37,6 +38,12 @@ export default async function ClanekPage({
           <Link href="/blog" className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink">
             ← Všechny články
           </Link>
+
+          {clanek.titulni_foto && (
+            <div className="relative mt-8 aspect-[16/9] w-full overflow-hidden rounded-2xl">
+              <Image src={clanek.titulni_foto} alt="" fill className="object-cover" sizes="672px" priority />
+            </div>
+          )}
 
           <p className="mt-8 text-xs uppercase tracking-[0.2em] text-accent">
             {new Date(clanek.created_at).toLocaleDateString("cs-CZ", {
