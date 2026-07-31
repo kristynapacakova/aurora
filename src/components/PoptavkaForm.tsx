@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useState, type FormEvent } from "react";
-import { HONEYPOT_FIELD } from "@/lib/honeypot";
+import { useState, useEffect, type FormEvent } from "react";
+import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
 
 type Mode = "closed" | "objednavka" | "dotaz" | "cekaci";
 
@@ -33,9 +33,14 @@ export default function PoptavkaForm({
   const [potvrzenoPlatba, setPotvrzenoPlatba] = useState(false);
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
   const [honeypot, setHoneypot] = useState("");
+  const [formLoadedAt, setFormLoadedAt] = useState(0);
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (mode !== "closed") setFormLoadedAt(Date.now());
+  }, [mode]);
 
   const hasPaymentInfo = Boolean(cisloUctu);
 
@@ -54,7 +59,15 @@ export default function PoptavkaForm({
         ? await fetch("/api/cekaci-listina", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pobyt_id: pobytId, jmeno, email, telefon, zprava, [HONEYPOT_FIELD]: honeypot }),
+            body: JSON.stringify({
+              pobyt_id: pobytId,
+              jmeno,
+              email,
+              telefon,
+              zprava,
+              [HONEYPOT_FIELD]: honeypot,
+              [FORM_LOADED_FIELD]: formLoadedAt,
+            }),
           })
         : await fetch("/api/poptavka", {
             method: "POST",
@@ -68,6 +81,7 @@ export default function PoptavkaForm({
               telefon,
               zprava,
               [HONEYPOT_FIELD]: honeypot,
+              [FORM_LOADED_FIELD]: formLoadedAt,
             }),
           });
 

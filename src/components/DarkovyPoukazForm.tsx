@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
 import { nbsp } from "@/lib/typo";
-import { HONEYPOT_FIELD } from "@/lib/honeypot";
+import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
 
 const HODNOTY = ["500 Kč", "1000 Kč", "2000 Kč", "5000 Kč"];
 
@@ -25,6 +25,7 @@ export default function DarkovyPoukazForm() {
   const [vzkaz, setVzkaz] = useState("");
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
   const [honeypot, setHoneypot] = useState("");
+  const [formLoadedAt] = useState(() => Date.now());
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [vysledek, setVysledek] = useState<Vysledek | null>(null);
@@ -47,6 +48,7 @@ export default function DarkovyPoukazForm() {
         jmeno_obdarovane: jmenoObdarovane,
         vzkaz,
         [HONEYPOT_FIELD]: honeypot,
+        [FORM_LOADED_FIELD]: formLoadedAt,
       }),
     });
 

@@ -1,13 +1,24 @@
 import { NextResponse } from "next/server";
 import { createNewsletterSignup, dbConfigured } from "@/lib/db";
-import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
+import {
+  HONEYPOT_FIELD,
+  isHoneypotTripped,
+  FORM_LOADED_FIELD,
+  isSubmittedTooFast,
+  clamp,
+  checkFormRateLimit,
+} from "@/lib/formGuard";
 
 // Veřejný formulář (newsletter / lead magnet) — uloží e-mail do databáze,
 // zobrazí se v administraci v sekci Newsletter i s exportem do CSV.
 export async function POST(request: Request) {
-  const body = (await request.json()) as { email?: string; [HONEYPOT_FIELD]?: string };
+  const body = (await request.json()) as {
+    email?: string;
+    [HONEYPOT_FIELD]?: string;
+    [FORM_LOADED_FIELD]?: number;
+  };
 
-  if (isHoneypotTripped(body)) {
+  if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
     return NextResponse.json({ ok: true });
   }
   if (!checkFormRateLimit(request, "newsletter")) {

@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createCekaciListina, getPobyt, dbConfigured } from "@/lib/db";
-import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
+import {
+  HONEYPOT_FIELD,
+  isHoneypotTripped,
+  FORM_LOADED_FIELD,
+  isSubmittedTooFast,
+  clamp,
+  checkFormRateLimit,
+} from "@/lib/formGuard";
 
 // Veřejný formulář u vyprodaného pobytu — bez platby, jen zájem o uvolněné
 // místo. Uloží se do databáze (zobrazí se v administraci) a pokud je
@@ -14,9 +21,10 @@ export async function POST(request: Request) {
     telefon?: string;
     zprava?: string;
     [HONEYPOT_FIELD]?: string;
+    [FORM_LOADED_FIELD]?: number;
   };
 
-  if (isHoneypotTripped(body)) {
+  if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
     return NextResponse.json({ ok: true });
   }
   if (!checkFormRateLimit(request, "cekaci-listina")) {

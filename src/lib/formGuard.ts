@@ -1,6 +1,6 @@
 import { checkRateLimit, clientIp } from "./rateLimit";
 
-export { HONEYPOT_FIELD, isHoneypotTripped } from "./honeypot";
+export { HONEYPOT_FIELD, isHoneypotTripped, FORM_LOADED_FIELD, isSubmittedTooFast } from "./honeypot";
 
 export function clamp(value: string, max: number): string {
   return value.length > max ? value.slice(0, max) : value;
