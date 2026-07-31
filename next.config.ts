@@ -29,6 +29,14 @@ const SECURITY_HEADERS = [
   { key: "Strict-Transport-Security", value: "max-age=63072000; includeSubDomains; preload" },
 ];
 
+// Administrace a API vrací osobní údaje zákaznic (jména, e-maily, telefony,
+// kódy poukazů…) — nesmí je ukládat do mezipaměti prohlížeče ani žádné
+// mezilehlé proxy a nesmí skončit ve výsledcích vyhledávačů.
+const NO_STORE_HEADERS = [
+  { key: "Cache-Control", value: "no-store, must-revalidate" },
+  { key: "X-Robots-Tag", value: "noindex, nofollow" },
+];
+
 const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
@@ -47,6 +55,14 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: SECURITY_HEADERS,
+      },
+      {
+        source: "/admin/:path*",
+        headers: NO_STORE_HEADERS,
+      },
+      {
+        source: "/api/:path*",
+        headers: NO_STORE_HEADERS,
       },
     ];
   },
