@@ -15,8 +15,8 @@ export async function PUT(request: Request) {
   }
 
   const { heslo } = (await request.json()) as { heslo?: string };
-  if (!heslo || heslo.length < 6) {
-    return NextResponse.json({ error: "Heslo musí mít aspoň 6 znaků." }, { status: 400 });
+  if (!heslo || heslo.length < 8) {
+    return NextResponse.json({ error: "Heslo musí mít aspoň 8 znaků." }, { status: 400 });
   }
 
   await setAdminPasswordHash(hashPassword(heslo));

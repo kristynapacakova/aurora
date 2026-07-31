@@ -1,50 +1,23 @@
+import { createSecureToken, verifySecureToken, hasConfiguredSecret } from "./secureToken";
+
 export const ADMIN_COOKIE_NAME = "admin_session";
 
 const SESSION_VALUE = "admin-unlocked";
+const ENV_VARS = ["ADMIN_COOKIE_SECRET"];
+const MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 dní — stejně jako maxAge cookie
 
-function getSecret() {
-  return (
-    process.env.ADMIN_COOKIE_SECRET ??
-    process.env.STUDIO_COOKIE_SECRET ??
-    "dev-admin-secret-change-me"
-  );
+export function adminAuthConfigured(): boolean {
+  return hasConfiguredSecret(ENV_VARS);
 }
 
-async function getKey() {
-  return crypto.subtle.importKey(
-    "raw",
-    new TextEncoder().encode(getSecret()),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
+// Vrátí null, pokud ADMIN_COOKIE_SECRET není nastavený — volající (login
+// routa) to musí ošetřit zvlášť, dřív než se pokusí heslo ověřovat.
+export async function createAdminToken(): Promise<string | null> {
+  return createSecureToken(ENV_VARS, SESSION_VALUE);
 }
 
-function toBase64Url(buffer: ArrayBuffer) {
-  const bytes = new Uint8Array(buffer);
-  let binary = "";
-  for (const byte of bytes) binary += String.fromCharCode(byte);
-  return btoa(binary)
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
-// Podepsaný token pro admin cookie — stejný princip jako studioAuth.
-export async function createAdminToken() {
-  const key = await getKey();
-  const signature = await crypto.subtle.sign(
-    "HMAC",
-    key,
-    new TextEncoder().encode(SESSION_VALUE)
-  );
-  return toBase64Url(signature);
-}
-
-export async function verifyAdminToken(token: string | undefined) {
-  if (!token) return false;
-  const expected = await createAdminToken();
-  return token === expected;
+export async function verifyAdminToken(token: string | undefined): Promise<boolean> {
+  return verifySecureToken(ENV_VARS, SESSION_VALUE, token, MAX_AGE_MS);
 }
 
 // Ověření admin session přímo z Request (pro API routy).

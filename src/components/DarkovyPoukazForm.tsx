@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
 import { nbsp } from "@/lib/typo";
+import { HONEYPOT_FIELD } from "@/lib/honeypot";
 
 const HODNOTY = ["500 Kč", "1000 Kč", "2000 Kč", "5000 Kč"];
 
@@ -23,6 +24,7 @@ export default function DarkovyPoukazForm() {
   const [jmenoObdarovane, setJmenoObdarovane] = useState("");
   const [vzkaz, setVzkaz] = useState("");
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [vysledek, setVysledek] = useState<Vysledek | null>(null);
@@ -44,6 +46,7 @@ export default function DarkovyPoukazForm() {
         telefon_kupujici: telefonKupujici,
         jmeno_obdarovane: jmenoObdarovane,
         vzkaz,
+        [HONEYPOT_FIELD]: honeypot,
       }),
     });
 
@@ -99,6 +102,16 @@ export default function DarkovyPoukazForm() {
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4 rounded-2xl bg-white/70 p-6 ring-1 ring-line">
+      <input
+        type="text"
+        name={HONEYPOT_FIELD}
+        value={honeypot}
+        onChange={(e) => setHoneypot(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="pointer-events-none absolute left-[-9999px] top-0 h-0 w-0 opacity-0"
+      />
       <div>
         <p className="mb-3 text-xs uppercase tracking-[0.25em] text-accent">Hodnota poukazu</p>
         <div className="flex flex-wrap gap-2">

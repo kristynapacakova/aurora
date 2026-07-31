@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createPoptavka, getPobyt, dbConfigured } from "@/lib/db";
+import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
 
 // Veřejný formulář u pobytu — buď závazná objednávka (po potvrzení platby),
 // nebo prostý dotaz. Uloží se do databáze (zobrazí se v administraci) a
@@ -15,12 +16,20 @@ export async function POST(request: Request) {
     email?: string;
     telefon?: string;
     zprava?: string;
+    [HONEYPOT_FIELD]?: string;
   };
 
-  const jmeno = (body.jmeno ?? "").trim();
-  const email = (body.email ?? "").trim();
-  const telefon = (body.telefon ?? "").trim();
-  const zprava = (body.zprava ?? "").trim();
+  if (isHoneypotTripped(body)) {
+    return NextResponse.json({ ok: true });
+  }
+  if (!checkFormRateLimit(request, "poptavka")) {
+    return NextResponse.json({ error: "Příliš mnoho pokusů. Zkus to prosím za chvíli." }, { status: 429 });
+  }
+
+  const jmeno = clamp((body.jmeno ?? "").trim(), 200);
+  const email = clamp((body.email ?? "").trim(), 200);
+  const telefon = clamp((body.telefon ?? "").trim(), 50);
+  const zprava = clamp((body.zprava ?? "").trim(), 5000);
   const typ: "dotaz" | "objednavka" = body.typ === "objednavka" ? "objednavka" : "dotaz";
   const zaplaceno = typ === "objednavka" && body.zaplaceno === true;
 

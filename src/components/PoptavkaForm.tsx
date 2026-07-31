@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, type FormEvent } from "react";
+import { HONEYPOT_FIELD } from "@/lib/honeypot";
 
 type Mode = "closed" | "objednavka" | "dotaz" | "cekaci";
 
@@ -31,6 +32,7 @@ export default function PoptavkaForm({
   const [zprava, setZprava] = useState("");
   const [potvrzenoPlatba, setPotvrzenoPlatba] = useState(false);
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function PoptavkaForm({
         ? await fetch("/api/cekaci-listina", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ pobyt_id: pobytId, jmeno, email, telefon, zprava }),
+            body: JSON.stringify({ pobyt_id: pobytId, jmeno, email, telefon, zprava, [HONEYPOT_FIELD]: honeypot }),
           })
         : await fetch("/api/poptavka", {
             method: "POST",
@@ -65,6 +67,7 @@ export default function PoptavkaForm({
               email,
               telefon,
               zprava,
+              [HONEYPOT_FIELD]: honeypot,
             }),
           });
 
@@ -172,6 +175,17 @@ export default function PoptavkaForm({
           )}
         </>
       )}
+
+      <input
+        type="text"
+        name={HONEYPOT_FIELD}
+        value={honeypot}
+        onChange={(e) => setHoneypot(e.target.value)}
+        tabIndex={-1}
+        autoComplete="off"
+        aria-hidden="true"
+        className="pointer-events-none absolute left-[-9999px] top-0 h-0 w-0 opacity-0"
+      />
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <input value={jmeno} onChange={(e) => setJmeno(e.target.value)} required placeholder="Jméno *" className={inputCls} />

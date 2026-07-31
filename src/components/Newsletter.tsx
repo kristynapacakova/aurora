@@ -4,9 +4,11 @@ import { useState, type FormEvent } from "react";
 import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "./BrandIcons";
+import { HONEYPOT_FIELD } from "@/lib/honeypot";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
+  const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,7 +21,7 @@ export default function Newsletter() {
     const res = await fetch("/api/newsletter", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({ email, [HONEYPOT_FIELD]: honeypot }),
     });
 
     if (res.ok) {
@@ -56,6 +58,16 @@ export default function Newsletter() {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="mt-6 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+              <input
+                type="text"
+                name={HONEYPOT_FIELD}
+                value={honeypot}
+                onChange={(e) => setHoneypot(e.target.value)}
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                className="pointer-events-none absolute left-[-9999px] top-0 h-0 w-0 opacity-0"
+              />
               <input
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
