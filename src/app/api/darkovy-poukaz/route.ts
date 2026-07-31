@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createDarkovyPoukaz, getNastaveni, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
+import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
 
 // Veřejný formulář pro nákup dárkového poukazu. Vytvoří nezaplacený poukaz
 // s unikátním kódem a variabilním symbolem, vrátí QR kód pro platbu.
@@ -22,14 +23,22 @@ export async function POST(request: Request) {
     telefon_kupujici?: string;
     jmeno_obdarovane?: string;
     vzkaz?: string;
+    [HONEYPOT_FIELD]?: string;
   };
 
-  const hodnota = (body.hodnota ?? "").trim();
-  const jmeno_kupujici = (body.jmeno_kupujici ?? "").trim();
-  const email_kupujici = (body.email_kupujici ?? "").trim();
-  const telefon_kupujici = (body.telefon_kupujici ?? "").trim();
-  const jmeno_obdarovane = (body.jmeno_obdarovane ?? "").trim();
-  const vzkaz = (body.vzkaz ?? "").trim();
+  if (isHoneypotTripped(body)) {
+    return NextResponse.json({ ok: true });
+  }
+  if (!checkFormRateLimit(request, "darkovy-poukaz")) {
+    return NextResponse.json({ error: "Příliš mnoho pokusů. Zkus to prosím za chvíli." }, { status: 429 });
+  }
+
+  const hodnota = clamp((body.hodnota ?? "").trim(), 100);
+  const jmeno_kupujici = clamp((body.jmeno_kupujici ?? "").trim(), 200);
+  const email_kupujici = clamp((body.email_kupujici ?? "").trim(), 200);
+  const telefon_kupujici = clamp((body.telefon_kupujici ?? "").trim(), 50);
+  const jmeno_obdarovane = clamp((body.jmeno_obdarovane ?? "").trim(), 200);
+  const vzkaz = clamp((body.vzkaz ?? "").trim(), 2000);
 
   if (!hodnota || !jmeno_kupujici || !email_kupujici) {
     return NextResponse.json({ error: "Vyplňte prosím hodnotu, jméno a e-mail." }, { status: 400 });

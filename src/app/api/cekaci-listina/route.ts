@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createCekaciListina, getPobyt, dbConfigured } from "@/lib/db";
+import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
 
 // Veřejný formulář u vyprodaného pobytu — bez platby, jen zájem o uvolněné
 // místo. Uloží se do databáze (zobrazí se v administraci) a pokud je
@@ -12,12 +13,20 @@ export async function POST(request: Request) {
     email?: string;
     telefon?: string;
     zprava?: string;
+    [HONEYPOT_FIELD]?: string;
   };
 
-  const jmeno = (body.jmeno ?? "").trim();
-  const email = (body.email ?? "").trim();
-  const telefon = (body.telefon ?? "").trim();
-  const zprava = (body.zprava ?? "").trim();
+  if (isHoneypotTripped(body)) {
+    return NextResponse.json({ ok: true });
+  }
+  if (!checkFormRateLimit(request, "cekaci-listina")) {
+    return NextResponse.json({ error: "Příliš mnoho pokusů. Zkus to prosím za chvíli." }, { status: 429 });
+  }
+
+  const jmeno = clamp((body.jmeno ?? "").trim(), 200);
+  const email = clamp((body.email ?? "").trim(), 200);
+  const telefon = clamp((body.telefon ?? "").trim(), 50);
+  const zprava = clamp((body.zprava ?? "").trim(), 5000);
 
   if (!jmeno || !email) {
     return NextResponse.json({ error: "Vyplňte prosím jméno a e-mail." }, { status: 400 });
