@@ -4,11 +4,12 @@ import { useState, type FormEvent } from "react";
 import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "./BrandIcons";
-import { HONEYPOT_FIELD } from "@/lib/honeypot";
+import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
 
 export default function Newsletter() {
   const [email, setEmail] = useState("");
   const [honeypot, setHoneypot] = useState("");
+  const [formLoadedAt] = useState(() => Date.now());
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -21,7 +22,7 @@ export default function Newsletter() {
     const res = await fetch("/api/newsletter", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, [HONEYPOT_FIELD]: honeypot }),
+      body: JSON.stringify({ email, [HONEYPOT_FIELD]: honeypot, [FORM_LOADED_FIELD]: formLoadedAt }),
     });
 
     if (res.ok) {

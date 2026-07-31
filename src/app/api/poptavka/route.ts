@@ -1,7 +1,14 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createPoptavka, getPobyt, dbConfigured } from "@/lib/db";
-import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
+import {
+  HONEYPOT_FIELD,
+  isHoneypotTripped,
+  FORM_LOADED_FIELD,
+  isSubmittedTooFast,
+  clamp,
+  checkFormRateLimit,
+} from "@/lib/formGuard";
 
 // Veřejný formulář u pobytu — buď závazná objednávka (po potvrzení platby),
 // nebo prostý dotaz. Uloží se do databáze (zobrazí se v administraci) a
@@ -17,9 +24,10 @@ export async function POST(request: Request) {
     telefon?: string;
     zprava?: string;
     [HONEYPOT_FIELD]?: string;
+    [FORM_LOADED_FIELD]?: number;
   };
 
-  if (isHoneypotTripped(body)) {
+  if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
     return NextResponse.json({ ok: true });
   }
   if (!checkFormRateLimit(request, "poptavka")) {

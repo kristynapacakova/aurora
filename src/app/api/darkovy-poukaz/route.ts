@@ -2,7 +2,14 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createDarkovyPoukaz, getNastaveni, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
-import { HONEYPOT_FIELD, isHoneypotTripped, clamp, checkFormRateLimit } from "@/lib/formGuard";
+import {
+  HONEYPOT_FIELD,
+  isHoneypotTripped,
+  FORM_LOADED_FIELD,
+  isSubmittedTooFast,
+  clamp,
+  checkFormRateLimit,
+} from "@/lib/formGuard";
 
 // Veřejný formulář pro nákup dárkového poukazu. Vytvoří nezaplacený poukaz
 // s unikátním kódem a variabilním symbolem, vrátí QR kód pro platbu.
@@ -24,9 +31,10 @@ export async function POST(request: Request) {
     jmeno_obdarovane?: string;
     vzkaz?: string;
     [HONEYPOT_FIELD]?: string;
+    [FORM_LOADED_FIELD]?: number;
   };
 
-  if (isHoneypotTripped(body)) {
+  if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
     return NextResponse.json({ ok: true });
   }
   if (!checkFormRateLimit(request, "darkovy-poukaz")) {
