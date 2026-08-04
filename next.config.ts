@@ -12,7 +12,10 @@ const CSP = [
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https://*.public.blob.vercel-storage.com https://images.unsplash.com",
   "font-src 'self' data:",
-  "connect-src 'self'",
+  // Nahrávání fotek (@vercel/blob/client) posílá soubor přímo z prohlížeče
+  // na vercel.com/api/blob, mimo náš vlastní server — bez téhle výjimky by
+  // to CSP zablokovala a nahrávání by vůbec nefungovalo.
+  "connect-src 'self' https://vercel.com https://*.public.blob.vercel-storage.com",
   "frame-src https://snapwidget.com",
   "object-src 'none'",
   "base-uri 'self'",
