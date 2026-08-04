@@ -16,7 +16,10 @@ export const metadata: Metadata = {
     "Ženské jógové pobyty — čas, který patří jen tobě. Pohyb, dech, odpočinek a příroda.",
 };
 
-function excerpt(text: string, max = 140): string {
+// Ukázka popisu ve výpisu — dost dlouhá na to, aby text vedle fotky
+// vyplnil prostor až k tlačítku, ale pořád jen ukázka (celý popis je
+// na detailu pobytu).
+function excerpt(text: string, max = 700): string {
   const plain = text.replace(/\s+/g, " ").trim();
   if (plain.length <= max) return plain;
   return plain.slice(0, max).replace(/\s+\S*$/, "") + "…";
@@ -100,7 +103,7 @@ export default async function PobytyPage() {
                         </div>
 
                         {p.popis && (
-                          <p className="mt-5 max-w-md text-sm leading-relaxed text-muted">
+                          <p className="mt-5 text-sm leading-relaxed text-muted">
                             {nbsp(excerpt(p.popis))}
                           </p>
                         )}
