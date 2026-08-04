@@ -63,7 +63,7 @@ export default async function PobytyPage() {
                       </div>
                     )}
                     <article
-                      className={`flex flex-col gap-8 md:gap-14 ${
+                      className={`flex flex-col gap-8 md:items-start md:gap-14 ${
                         i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                       }`}
                     >
@@ -77,8 +77,8 @@ export default async function PobytyPage() {
                         />
                       </div>
 
-                      {/* Text — na desktopu stejná výška jako fotka, obsah svisle vycentrovaný */}
-                      <div className="flex flex-1 flex-col md:justify-center">
+                      {/* Text — začíná na stejné lince jako fotka (stejně jako na detailu pobytu) */}
+                      <div className="flex flex-1 flex-col">
                         <h2 className="flex flex-wrap items-center gap-3 font-serif text-3xl text-ink sm:text-4xl">
                           {nbsp(p.nadpis)}
                           {p.vyprodano && (
