@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import PobytGallery from "@/components/PobytGallery";
+import { IconSparkle } from "@/components/BrandIcons";
 import { getPobyty } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 
@@ -37,6 +38,9 @@ export default async function PobytyPage() {
             <h1 className="font-allura text-4xl text-ink sm:text-5xl">
               Čas, který patří jen Tobě
             </h1>
+            <p className="mx-auto mt-5 max-w-md text-sm leading-relaxed text-muted">
+              {nbsp("Vyber si termín, který ti sedne, a dovol si pár dní jen pro sebe — jógu, klid, přírodu a společnost žen, které tomu rozumí.")}
+            </p>
           </FadeUp>
         </section>
 
@@ -47,12 +51,19 @@ export default async function PobytyPage() {
               {nbsp("Právě teď není vypsaný žádný pobyt. Sleduj nás na Instagramu, ať ti nový termín neuteče. 🌿")}
             </p>
           ) : (
-            <div className="flex flex-col gap-24">
+            <div className="flex flex-col gap-16 sm:gap-20">
               {pobyty.map((p, i) => {
                 return (
                   <FadeUp key={p.id}>
+                    {i > 0 && (
+                      <div className="mb-16 flex items-center justify-center gap-4 sm:mb-20" aria-hidden="true">
+                        <span className="h-px w-16 bg-line sm:w-24" />
+                        <IconSparkle size={12} />
+                        <span className="h-px w-16 bg-line sm:w-24" />
+                      </div>
+                    )}
                     <article
-                      className={`flex flex-col gap-8 md:items-start md:gap-14 ${
+                      className={`flex flex-col gap-8 md:gap-14 ${
                         i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
                       }`}
                     >
@@ -66,13 +77,18 @@ export default async function PobytyPage() {
                         />
                       </div>
 
-                      {/* Text */}
-                      <div className="flex flex-1 flex-col">
+                      {/* Text — na desktopu stejná výška jako fotka, obsah svisle vycentrovaný */}
+                      <div className="flex flex-1 flex-col md:justify-center">
                         <h2 className="flex flex-wrap items-center gap-3 font-serif text-3xl text-ink sm:text-4xl">
                           {nbsp(p.nadpis)}
                           {p.vyprodano && (
                             <span className="rounded-full bg-line px-3 py-1 text-xs uppercase tracking-[0.15em] text-muted">
                               Vyprodáno
+                            </span>
+                          )}
+                          {p.pripravuje_se && (
+                            <span className="rounded-full bg-accent/20 px-3 py-1 text-xs uppercase tracking-[0.15em] text-accent-d">
+                              Připravujeme
                             </span>
                           )}
                         </h2>

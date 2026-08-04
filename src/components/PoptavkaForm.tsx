@@ -15,6 +15,7 @@ export default function PoptavkaForm({
   variabilniSymbol,
   platebniPokyny,
   vyprodano,
+  pripravujeSe,
 }: {
   pobytId: number;
   pobytNadpis: string;
@@ -24,6 +25,7 @@ export default function PoptavkaForm({
   variabilniSymbol?: string;
   platebniPokyny?: string;
   vyprodano?: boolean;
+  pripravujeSe?: boolean;
 }) {
   const [mode, setMode] = useState<Mode>("closed");
   const [jmeno, setJmeno] = useState("");
@@ -119,6 +121,10 @@ export default function PoptavkaForm({
           >
             Přidat se na čekací listinu →
           </button>
+        ) : pripravujeSe ? (
+          <p className="text-sm text-muted">
+            Tenhle pobyt se připravuje — termín i objednávky budou brzy.
+          </p>
         ) : (
           <button
             onClick={() => setMode("objednavka")}

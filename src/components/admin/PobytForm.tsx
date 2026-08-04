@@ -24,6 +24,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [platebniPokyny, setPlatebniPokyny] = useState(initial?.platebni_pokyny ?? "");
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [vyprodano, setVyprodano] = useState(initial?.vyprodano ?? false);
+  const [pripravujeSe, setPripravujeSe] = useState(initial?.pripravuje_se ?? false);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ index: number; total: number; percent: number; faze: "zmensuji" | "nahravam" } | null>(null);
   const [saving, setSaving] = useState(false);
@@ -117,6 +118,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
       platebni_pokyny: platebniPokyny,
       zverejneno,
       vyprodano,
+      pripravuje_se: pripravujeSe,
     };
     const res = await fetch("/api/admin/pobyty", {
       method: initial ? "PUT" : "POST",
@@ -317,6 +319,16 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                 className="h-4 w-4 accent-[#F28D76]"
               />
               Vyprodáno — místo objednávky nabídnout čekací listinu
+            </label>
+
+            <label className="flex items-center gap-3 text-sm text-ink">
+              <input
+                type="checkbox"
+                checked={pripravujeSe}
+                onChange={(e) => setPripravujeSe(e.target.checked)}
+                className="h-4 w-4 accent-[#F28D76]"
+              />
+              Připravujeme — zatím nejde objednat, jen se ukáže štítek
             </label>
 
             {error && <p className="text-sm text-accent-d">{error}</p>}
