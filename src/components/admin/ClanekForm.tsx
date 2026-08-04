@@ -16,6 +16,7 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
   const [titulniFoto, setTitulniFoto] = useState(initial?.titulni_foto ?? "");
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [uploading, setUploading] = useState(false);
+  const [uploadFaze, setUploadFaze] = useState<"zmensuji" | "nahravam">("zmensuji");
   const [uploadPercent, setUploadPercent] = useState(0);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -24,8 +25,10 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
     const rawFile = e.target.files?.[0];
     if (!rawFile) return;
     setUploading(true);
+    setUploadFaze("zmensuji");
     setError(null);
     const file = await resizeImageFile(rawFile);
+    setUploadFaze("nahravam");
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     try {
       const blob = await upload(`clanky/${Date.now()}-${safeName}`, file, {
@@ -117,7 +120,13 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
                 </div>
               )}
               <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent">
-                {uploading ? `Nahrávám… ${uploadPercent}%` : titulniFoto ? "Nahradit fotku" : "+ Nahrát fotku"}
+                {uploading
+                  ? uploadFaze === "zmensuji"
+                    ? "Zmenšuji fotku…"
+                    : `Nahrávám… ${uploadPercent}%`
+                  : titulniFoto
+                    ? "Nahradit fotku"
+                    : "+ Nahrát fotku"}
                 <input type="file" accept="image/*" onChange={uploadTitulniFoto} disabled={uploading} className="hidden" />
               </label>
             </div>

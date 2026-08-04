@@ -25,7 +25,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [vyprodano, setVyprodano] = useState(initial?.vyprodano ?? false);
   const [uploading, setUploading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ index: number; total: number; percent: number } | null>(null);
+  const [uploadProgress, setUploadProgress] = useState<{ index: number; total: number; percent: number; faze: "zmensuji" | "nahravam" } | null>(null);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [qrPreview, setQrPreview] = useState<string | null>(null);
@@ -70,7 +70,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
     setError(null);
 
     for (let i = 0; i < files.length; i++) {
-      setUploadProgress({ index: i + 1, total: files.length, percent: 0 });
+      setUploadProgress({ index: i + 1, total: files.length, percent: 0, faze: "zmensuji" });
       const file = await resizeImageFile(files[i]);
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       try {
@@ -78,7 +78,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
           access: "public",
           handleUploadUrl: "/api/admin/upload",
           onUploadProgress: ({ percentage }) =>
-            setUploadProgress({ index: i + 1, total: files.length, percent: Math.round(percentage) }),
+            setUploadProgress({ index: i + 1, total: files.length, percent: Math.round(percentage), faze: "nahravam" }),
         });
         setFotky((prev) => [...prev, blob.url]);
       } catch (err) {
@@ -228,12 +228,16 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
               {uploadProgress && (
                 <div className="flex flex-col gap-1.5">
                   <p className="text-xs text-muted">
-                    Nahrávám fotku {uploadProgress.index} z {uploadProgress.total} — {uploadProgress.percent}%
+                    {uploadProgress.faze === "zmensuji"
+                      ? `Zmenšuji fotku ${uploadProgress.index} z ${uploadProgress.total}… (u velkých fotek to může chvíli trvat)`
+                      : `Nahrávám fotku ${uploadProgress.index} z ${uploadProgress.total} — ${uploadProgress.percent}%`}
                   </p>
                   <div className="h-1.5 w-full max-w-xs overflow-hidden rounded-full bg-line">
                     <div
-                      className="h-full rounded-full bg-gradient-aurora transition-all duration-200"
-                      style={{ width: `${uploadProgress.percent}%` }}
+                      className={`h-full rounded-full bg-gradient-aurora transition-all duration-200 ${
+                        uploadProgress.faze === "zmensuji" ? "w-1/6 animate-pulse" : ""
+                      }`}
+                      style={uploadProgress.faze === "nahravam" ? { width: `${uploadProgress.percent}%` } : undefined}
                     />
                   </div>
                 </div>
