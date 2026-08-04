@@ -7,6 +7,7 @@ import { useState, type FormEvent, type ChangeEvent } from "react";
 import { upload } from "@vercel/blob/client";
 import type { Clanek } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
+import { resizeImageFile } from "@/lib/imageResize";
 
 export default function ClanekForm({ initial }: { initial: Clanek | null }) {
   const router = useRouter();
@@ -20,10 +21,11 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
   const [error, setError] = useState<string | null>(null);
 
   async function uploadTitulniFoto(e: ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const rawFile = e.target.files?.[0];
+    if (!rawFile) return;
     setUploading(true);
     setError(null);
+    const file = await resizeImageFile(rawFile);
     const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
     try {
       const blob = await upload(`clanky/${Date.now()}-${safeName}`, file, {

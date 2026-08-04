@@ -9,6 +9,7 @@ import QRCode from "qrcode";
 import type { Pobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { czechAccountToIban } from "@/lib/platba";
+import { resizeImageFile } from "@/lib/imageResize";
 
 export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const router = useRouter();
@@ -69,8 +70,8 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
     setError(null);
 
     for (let i = 0; i < files.length; i++) {
-      const file = files[i];
       setUploadProgress({ index: i + 1, total: files.length, percent: 0 });
+      const file = await resizeImageFile(files[i]);
       const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
       try {
         const blob = await upload(`pobyty/${Date.now()}-${safeName}`, file, {
