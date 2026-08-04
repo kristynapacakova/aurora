@@ -27,6 +27,7 @@ type Body = {
   platebni_pokyny?: string;
   zverejneno?: boolean;
   vyprodano?: boolean;
+  pripravuje_se?: boolean;
 };
 
 function parseFields(body: Body) {
@@ -42,6 +43,7 @@ function parseFields(body: Body) {
     platebni_pokyny: (body.platebni_pokyny ?? "").trim(),
     zverejneno: body.zverejneno !== false,
     vyprodano: body.vyprodano === true,
+    pripravuje_se: body.pripravuje_se === true,
   };
 }
 

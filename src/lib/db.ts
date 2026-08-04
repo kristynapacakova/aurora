@@ -21,6 +21,7 @@ export type Pobyt = {
   platebni_pokyny: string;
   zverejneno: boolean;
   vyprodano: boolean;
+  pripravuje_se: boolean;
   created_at: string;
 };
 
@@ -144,6 +145,7 @@ async function ensureSchema() {
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS cislo_uctu TEXT NOT NULL DEFAULT '';
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS variabilni_symbol TEXT NOT NULL DEFAULT '';
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS vyprodano BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS pripravuje_se BOOLEAN NOT NULL DEFAULT FALSE;
 
     CREATE TABLE IF NOT EXISTS clanky (
       id SERIAL PRIMARY KEY,
@@ -243,8 +245,8 @@ export async function getPobyt(id: number): Promise<Pobyt | null> {
 
 export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<Pobyt> {
   const rows = await query<Pobyt>(
-    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zverejneno, vyprodano)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *`,
+    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zverejneno, vyprodano, pripravuje_se)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
     [
       p.nadpis,
       p.misto,
@@ -257,6 +259,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
       p.platebni_pokyny,
       p.zverejneno,
       p.vyprodano,
+      p.pripravuje_se,
     ]
   );
   return rows[0];
@@ -264,7 +267,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
 
 export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at">): Promise<void> {
   await query(
-    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zverejneno=$10, vyprodano=$11 WHERE id=$12`,
+    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zverejneno=$10, vyprodano=$11, pripravuje_se=$12 WHERE id=$13`,
     [
       p.nadpis,
       p.misto,
@@ -277,6 +280,7 @@ export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at"
       p.platebni_pokyny,
       p.zverejneno,
       p.vyprodano,
+      p.pripravuje_se,
       id,
     ]
   );

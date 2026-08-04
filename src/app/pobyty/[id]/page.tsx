@@ -73,6 +73,11 @@ export default async function PobytDetailPage({
                       Vyprodáno
                     </span>
                   )}
+                  {pobyt.pripravuje_se && (
+                    <span className="rounded-full bg-accent/20 px-3 py-1 text-xs uppercase tracking-[0.15em] text-accent-d">
+                      Připravujeme
+                    </span>
+                  )}
                 </h1>
 
                 <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs uppercase tracking-[0.2em] text-accent">
@@ -101,6 +106,7 @@ export default async function PobytDetailPage({
                     variabilniSymbol={pobyt.variabilni_symbol}
                     platebniPokyny={pobyt.platebni_pokyny}
                     vyprodano={pobyt.vyprodano}
+                    pripravujeSe={pobyt.pripravuje_se}
                   />
                 </div>
               </div>

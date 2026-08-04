@@ -190,6 +190,7 @@ export default function AdminDashboard({
         platebni_pokyny: p.platebni_pokyny,
         zverejneno: !p.zverejneno,
         vyprodano: p.vyprodano,
+        pripravuje_se: p.pripravuje_se,
       }),
     });
     setBusy(false);
@@ -214,6 +215,32 @@ export default function AdminDashboard({
         platebni_pokyny: p.platebni_pokyny,
         zverejneno: p.zverejneno,
         vyprodano: !p.vyprodano,
+        pripravuje_se: p.pripravuje_se,
+      }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function togglePripravujeSe(p: Pobyt) {
+    setBusy(true);
+    await fetch("/api/admin/pobyty", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: p.id,
+        nadpis: p.nadpis,
+        misto: p.misto,
+        termin: p.termin,
+        popis: p.popis,
+        cena: p.cena,
+        fotky: p.fotky,
+        cislo_uctu: p.cislo_uctu,
+        variabilni_symbol: p.variabilni_symbol,
+        platebni_pokyny: p.platebni_pokyny,
+        zverejneno: p.zverejneno,
+        vyprodano: p.vyprodano,
+        pripravuje_se: !p.pripravuje_se,
       }),
     });
     setBusy(false);
@@ -237,6 +264,7 @@ export default function AdminDashboard({
         platebni_pokyny: p.platebni_pokyny,
         zverejneno: false,
         vyprodano: p.vyprodano,
+        pripravuje_se: p.pripravuje_se,
       }),
     });
     setBusy(false);
@@ -282,6 +310,7 @@ export default function AdminDashboard({
               platebni_pokyny: p.platebni_pokyny,
               zverejneno: akce === "zverejnit",
               vyprodano: p.vyprodano,
+              pripravuje_se: p.pripravuje_se,
             }),
           })
         )
@@ -832,6 +861,11 @@ export default function AdminDashboard({
                                     Vyprodáno
                                   </span>
                                 )}
+                                {p.pripravuje_se && (
+                                  <span className="shrink-0 rounded-full bg-accent/20 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
+                                    Připravujeme
+                                  </span>
+                                )}
                               </p>
                               <p className="mt-1 truncate text-xs text-muted">
                                 {[p.misto, p.termin, p.cena].filter(Boolean).join(" · ")}
@@ -852,6 +886,13 @@ export default function AdminDashboard({
                               className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
                             >
                               {p.vyprodano ? "Zrušit vyprodání" : "Označit vyprodáno"}
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => togglePripravujeSe(p)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              {p.pripravuje_se ? "Zrušit připravujeme" : "Označit připravujeme"}
                             </button>
                             <button
                               disabled={busy}
