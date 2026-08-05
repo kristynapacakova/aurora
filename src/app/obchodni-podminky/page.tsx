@@ -32,7 +32,7 @@ export default async function ObchodniPodminkyPage() {
                 poskytovatelem a zákazníkem (spotřebitelem) vznikající v souvislosti
                 nebo na základě smlouvy o poskytování online jógového členství,
                 jednotlivých lekcí a pobytů uzavírané přes webové stránky
-                aurorajoga.cz.
+                aurorayoga.cz.
               </p>
               <p className="mt-3">
                 Poskytovatel: <strong className="text-ink">[DOPLNIT jméno a příjmení / název firmy]</strong>
