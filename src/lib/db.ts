@@ -511,7 +511,7 @@ export async function deleteDarkovyPoukaz(id: number): Promise<void> {
 // cyklické závislosti (config.ts nic z db.ts nepotřebuje).
 
 const NASTAVENI_DEFAULTS: Nastaveni = {
-  kontakt_email: "ahoj@aurorajoga.cz",
+  kontakt_email: "ahoj@aurorayoga.cz",
   instagram_handle: "@aurora_yogaa",
   instagram_url: "https://www.instagram.com/aurora_yogaa",
   cena_lekce: "120",

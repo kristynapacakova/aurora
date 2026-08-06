@@ -24,7 +24,7 @@ export const SITE_URL = "https://www.aurorayoga.cz";
 // KONTAKTNÍ ÚDAJE — upravte podle potřeby
 // ─────────────────────────────────────────────────────────────────────────────
 export const CONTACT = {
-  email: "ahoj@aurorajoga.cz",
+  email: "ahoj@aurorayoga.cz",
   instagram: "https://www.instagram.com/aurora_yogaa",
   instagramHandle: "@aurora_yogaa",
   facebook: "https://www.facebook.com/aurora.joga",
