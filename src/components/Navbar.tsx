@@ -22,7 +22,7 @@ export default function Navbar() {
     { label: "Pobyty pro ženy", href: "/pobyty" },
     { label: "Dárkový poukaz", href: "/darkovy-poukaz" },
     { label: "Blog", href: "/blog" },
-    { label: "Kontakt", href: "/#kontakt" },
+    { label: "Kontakt", href: "/kontakt" },
   ];
 
   useEffect(() => {

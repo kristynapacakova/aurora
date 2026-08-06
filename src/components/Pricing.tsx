@@ -73,8 +73,10 @@ export default async function Pricing() {
             <h2 className="font-allura text-4xl text-ink sm:text-5xl">
               Vyber si svůj plán
             </h2>
-            <p className="mx-auto mt-5 max-w-sm text-muted">
-              {nbsp("Členství jako dárek? Mrkni na ")}
+            {/* max-w-2xl místo max-w-sm, ať se věta na počítači vejde na jeden
+                řádek; na mobilu se přirozeně zalomí. */}
+            <p className="mx-auto mt-5 max-w-2xl text-muted">
+              {nbsp("Lekce, členství nebo pobyt jako dárek? Mrkni na ")}
               <Link
                 href="/darkovy-poukaz"
                 className="text-ink underline underline-offset-4 transition-colors hover:text-accent-d"
@@ -155,15 +157,11 @@ export default async function Pricing() {
         </div>
 
         <FadeUp delay={0.2}>
+          {/* E-mail schválně jako obyčejný text, ne odkaz — klientka nechce,
+              aby se návštěvnicím otevíral poštovní program. */}
           <p className="mt-10 text-center text-xs text-muted">
-            Máš otázky k členství?{" "}
-            <a
-              href={`mailto:${kontakt_email}`}
-              className="underline underline-offset-4 hover:text-ink"
-            >
-              Napiš mi
-            </a>
-            .
+            Máš otázky k členství? Napiš mi na{" "}
+            <span className="text-ink">{kontakt_email}</span>.
           </p>
         </FadeUp>
       </div>
