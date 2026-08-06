@@ -1,3 +1,4 @@
+import Link from "next/link";
 import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "./BrandIcons";
@@ -73,7 +74,14 @@ export default async function Pricing() {
               Vyber si svůj plán
             </h2>
             <p className="mx-auto mt-5 max-w-sm text-muted">
-              {nbsp("Bez závazků. Kdykoli zruš.")}
+              {nbsp("Členství jako dárek? Mrkni na ")}
+              <Link
+                href="/darkovy-poukaz"
+                className="text-ink underline underline-offset-4 transition-colors hover:text-accent-d"
+              >
+                {nbsp("Aurora dárkové poukazy")}
+              </Link>
+              .
             </p>
           </div>
         </FadeUp>
