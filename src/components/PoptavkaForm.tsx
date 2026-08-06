@@ -234,7 +234,7 @@ export default function PoptavkaForm({
             checked={potvrzenoPlatba}
             onChange={(e) => setPotvrzenoPlatba(e.target.checked)}
             required
-            className="mt-0.5 h-4 w-4 accent-[#F28D76]"
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
           />
           Potvrzuji, že jsem platbu provedla podle uvedených údajů.
         </label>
@@ -246,13 +246,15 @@ export default function PoptavkaForm({
           checked={souhlasGdpr}
           onChange={(e) => setSouhlasGdpr(e.target.checked)}
           required
-          className="mt-0.5 h-4 w-4 accent-[#F28D76]"
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
         />
-        Souhlasím se zpracováním osobních údajů dle{" "}
-        <a href="/ochrana-osobnich-udaju" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-accent-d">
-          zásad ochrany osobních údajů
-        </a>
-        .
+        <span>
+          Souhlasím se zpracováním osobních údajů dle{" "}
+          <a href="/ochrana-osobnich-udaju" target="_blank" rel="noopener noreferrer" className="underline underline-offset-4 hover:text-accent-d">
+            zásad ochrany osobních údajů
+          </a>
+          .
+        </span>
       </label>
 
       {error && <p className="text-sm text-accent-d">{error}</p>}

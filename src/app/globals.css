@@ -161,9 +161,14 @@
 }
 
 /* ─── Organické zaoblení fotek (cik-cak sekce) ───────────────────────────── */
-.photo-arch-left,
-.photo-arch-right {
-  border-radius: 24px; /* mobil — symetrické */
+/* Oblouk v jednom rohu — stejný tvar na mobilu i na desktopu.
+   Na užší obrazovce je poloměr menší, aby oblouk nezabral celou fotku. */
+.photo-arch-left  { border-radius: 96px 16px 16px 16px; }
+.photo-arch-right { border-radius: 16px 96px 16px 16px; }
+
+@media (min-width: 640px) {
+  .photo-arch-left  { border-radius: 128px 18px 18px 18px; }
+  .photo-arch-right { border-radius: 18px 128px 18px 18px; }
 }
 @media (min-width: 768px) {
   .photo-arch-left  { border-radius: 160px 20px 20px 20px; }
