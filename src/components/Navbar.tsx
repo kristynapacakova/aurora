@@ -58,9 +58,9 @@ export default function Navbar() {
             className="relative z-[60] ml-auto flex flex-col gap-[7px] p-2"
             aria-label="Menu"
           >
-            <span className={`block h-px w-7 transition-all duration-300 ${open ? "translate-y-[10px] rotate-45 bg-cream" : "bg-ink"}`} />
-            <span className={`block h-px w-7 transition-all duration-300 ${open ? "opacity-0 bg-cream" : "bg-ink"}`} />
-            <span className={`block h-px w-7 transition-all duration-300 ${open ? "-translate-y-[10px] -rotate-45 bg-cream" : "bg-ink"}`} />
+            <span className={`block h-px w-7 bg-ink transition-all duration-300 ${open ? "translate-y-[10px] rotate-45" : ""}`} />
+            <span className={`block h-px w-7 bg-ink transition-all duration-300 ${open ? "opacity-0" : ""}`} />
+            <span className={`block h-px w-7 bg-ink transition-all duration-300 ${open ? "-translate-y-[10px] -rotate-45" : ""}`} />
           </button>
         </div>
       </header>
@@ -74,7 +74,7 @@ export default function Navbar() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.35 }}
-            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-ink"
+            className="fixed inset-0 z-40 flex flex-col items-center justify-center bg-cream"
           >
             <nav className="flex flex-col items-center gap-8">
               {MENU_ITEMS.map((item, i) => (
@@ -89,7 +89,7 @@ export default function Navbar() {
                     target={item.external ? "_blank" : undefined}
                     rel={item.external ? "noopener noreferrer" : undefined}
                     onClick={() => setOpen(false)}
-                    className="font-serif text-[20px] tracking-[0.08em] text-cream transition-colors duration-200 hover:text-accent md:text-[26px]"
+                    className="font-serif text-[20px] tracking-[0.08em] text-ink transition-colors duration-200 hover:text-accent-d md:text-[26px]"
                   >
                     {item.label}
                   </a>
