@@ -16,8 +16,10 @@ const GRID_PHOTOS = [
 export default async function InstagramFeed() {
   const { instagram_url, instagram_handle } = await getNastaveni();
 
+  // Bez spodního odsazení — mřížka fotek navazuje přímo na newsletter,
+  // aby mezi nimi nezůstal světlý proužek pozadí.
   return (
-    <section className="bg-cream relative pt-14 pb-8 sm:pt-16 sm:pb-10">
+    <section className="bg-cream relative pt-14 pb-0 sm:pt-16">
       <FadeUp>
         <p className="font-serif mb-8 text-center text-xl text-ink sm:text-2xl">
           {nbsp("Sleduj nás na Instagramu")}{" "}

@@ -86,10 +86,10 @@ export default function Hero() {
             Vstoupit do online studia
           </a>
           <a
-            href="#lekce"
+            href="/pobyty"
             className="group inline-flex items-center gap-2 rounded-full border border-ink/40 px-7 py-3.5 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-ink hover:bg-ink/5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent"
           >
-            Aktuální lekce
+            Pobyty pro ženy
             <span className="transition-transform duration-200 group-hover:translate-x-1">→</span>
           </a>
         </motion.div>
