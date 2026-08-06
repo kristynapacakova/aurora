@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { createDarkovyPoukaz, getNastaveni, dbConfigured } from "@/lib/db";
+import { createDarkovyPoukaz, getNastaveni, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
 import {
   HONEYPOT_FIELD,
@@ -10,6 +10,7 @@ import {
   clamp,
   checkFormRateLimit,
 } from "@/lib/formGuard";
+import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 
 // Veřejný formulář pro nákup dárkového poukazu. Vytvoří nezaplacený poukaz
 // s unikátním kódem a variabilním symbolem, vrátí QR kód pro platbu.
@@ -32,6 +33,7 @@ export async function POST(request: Request) {
     vzkaz?: string;
     [HONEYPOT_FIELD]?: string;
     [FORM_LOADED_FIELD]?: number;
+    [NEWSLETTER_FIELD]?: boolean;
   };
 
   if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
@@ -71,6 +73,15 @@ export async function POST(request: Request) {
     jmeno_obdarovane,
     vzkaz,
   });
+
+  // Do newsletteru jen se zaškrtnutým souhlasem.
+  if (wantsNewsletter(body)) {
+    try {
+      await createNewsletterSignup(email_kupujici);
+    } catch {
+      // záměrně tiše — poukaz se vytvoří i tak
+    }
+  }
 
   const qrDataUrl = await generatePlatebniQr({
     cisloUctu: nastaveni.cislo_uctu_darky,

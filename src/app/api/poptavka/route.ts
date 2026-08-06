@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { createPoptavka, getPobyt, dbConfigured } from "@/lib/db";
+import { createPoptavka, getPobyt, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import {
   HONEYPOT_FIELD,
   isHoneypotTripped,
@@ -9,6 +9,7 @@ import {
   clamp,
   checkFormRateLimit,
 } from "@/lib/formGuard";
+import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 
 // Veřejný formulář u pobytu — buď závazná objednávka (po potvrzení platby),
 // nebo prostý dotaz. Uloží se do databáze (zobrazí se v administraci) a
@@ -25,6 +26,7 @@ export async function POST(request: Request) {
     zprava?: string;
     [HONEYPOT_FIELD]?: string;
     [FORM_LOADED_FIELD]?: number;
+    [NEWSLETTER_FIELD]?: boolean;
   };
 
   if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
@@ -68,6 +70,15 @@ export async function POST(request: Request) {
   // 1) Uložit do databáze (administrace → Poptávky)
   if (dbConfigured()) {
     await createPoptavka({ pobyt_id: pobytId, typ, zaplaceno, jmeno, email, telefon, zprava });
+
+    // Do newsletteru jen se zaškrtnutým souhlasem.
+    if (wantsNewsletter(body)) {
+      try {
+        await createNewsletterSignup(email);
+      } catch {
+        // záměrně tiše — objednávka/dotaz se uloží i tak
+      }
+    }
   }
 
   // 2) Poslat e-mail klientce (pokud je Resend nastaven)

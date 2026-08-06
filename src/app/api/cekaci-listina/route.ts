@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
-import { createCekaciListina, getPobyt, dbConfigured } from "@/lib/db";
+import { createCekaciListina, getPobyt, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import {
   HONEYPOT_FIELD,
   isHoneypotTripped,
@@ -9,6 +9,7 @@ import {
   clamp,
   checkFormRateLimit,
 } from "@/lib/formGuard";
+import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 
 // Veřejný formulář u vyprodaného pobytu — bez platby, jen zájem o uvolněné
 // místo. Uloží se do databáze (zobrazí se v administraci) a pokud je
@@ -22,6 +23,7 @@ export async function POST(request: Request) {
     zprava?: string;
     [HONEYPOT_FIELD]?: string;
     [FORM_LOADED_FIELD]?: number;
+    [NEWSLETTER_FIELD]?: boolean;
   };
 
   if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
@@ -48,6 +50,15 @@ export async function POST(request: Request) {
 
   if (dbConfigured()) {
     await createCekaciListina({ pobyt_id: pobytId, jmeno, email, telefon, zprava });
+
+    // Do newsletteru jen se zaškrtnutým souhlasem.
+    if (wantsNewsletter(body)) {
+      try {
+        await createNewsletterSignup(email);
+      } catch {
+        // záměrně tiše — přihlášení na čekačku se uloží i tak
+      }
+    }
   }
 
   const apiKey = process.env.RESEND_API_KEY;

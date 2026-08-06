@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState, useEffect, type FormEvent } from "react";
 import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
+import { NEWSLETTER_FIELD, NEWSLETTER_LABEL } from "@/lib/newsletterOptIn";
 
 type Mode = "closed" | "objednavka" | "dotaz" | "cekaci";
 
@@ -34,6 +35,7 @@ export default function PoptavkaForm({
   const [zprava, setZprava] = useState("");
   const [potvrzenoPlatba, setPotvrzenoPlatba] = useState(false);
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
+  const [chceNovinky, setChceNovinky] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [formLoadedAt, setFormLoadedAt] = useState(0);
   const [sending, setSending] = useState(false);
@@ -69,6 +71,7 @@ export default function PoptavkaForm({
               zprava,
               [HONEYPOT_FIELD]: honeypot,
               [FORM_LOADED_FIELD]: formLoadedAt,
+              [NEWSLETTER_FIELD]: chceNovinky,
             }),
           })
         : await fetch("/api/poptavka", {
@@ -84,6 +87,7 @@ export default function PoptavkaForm({
               zprava,
               [HONEYPOT_FIELD]: honeypot,
               [FORM_LOADED_FIELD]: formLoadedAt,
+              [NEWSLETTER_FIELD]: chceNovinky,
             }),
           });
 
@@ -239,6 +243,16 @@ export default function PoptavkaForm({
           Potvrzuji, že jsem platbu provedla podle uvedených údajů.
         </label>
       )}
+
+      <label className="flex items-start gap-2.5 text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={chceNovinky}
+          onChange={(e) => setChceNovinky(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
+        />
+        <span>{NEWSLETTER_LABEL}</span>
+      </label>
 
       <label className="flex items-start gap-2.5 text-sm text-ink">
         <input

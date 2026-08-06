@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, type FormEvent } from "react";
 import { nbsp } from "@/lib/typo";
 import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
+import { NEWSLETTER_FIELD, NEWSLETTER_LABEL } from "@/lib/newsletterOptIn";
 
 const HODNOTY = ["500 Kč", "1000 Kč", "2000 Kč", "5000 Kč"];
 
@@ -24,6 +25,7 @@ export default function DarkovyPoukazForm() {
   const [jmenoObdarovane, setJmenoObdarovane] = useState("");
   const [vzkaz, setVzkaz] = useState("");
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
+  const [chceNovinky, setChceNovinky] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [formLoadedAt] = useState(() => Date.now());
   const [sending, setSending] = useState(false);
@@ -49,6 +51,7 @@ export default function DarkovyPoukazForm() {
         vzkaz,
         [HONEYPOT_FIELD]: honeypot,
         [FORM_LOADED_FIELD]: formLoadedAt,
+        [NEWSLETTER_FIELD]: chceNovinky,
       }),
     });
 
@@ -169,6 +172,16 @@ export default function DarkovyPoukazForm() {
         placeholder="Vzkaz pro obdarovanou (nepovinné)"
         className={inputCls}
       />
+
+      <label className="flex items-start gap-2.5 text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={chceNovinky}
+          onChange={(e) => setChceNovinky(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
+        />
+        <span>{NEWSLETTER_LABEL}</span>
+      </label>
 
       <label className="flex items-start gap-2.5 text-sm text-ink">
         <input

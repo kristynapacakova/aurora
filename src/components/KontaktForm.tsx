@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { nbsp } from "@/lib/typo";
 import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
+import { NEWSLETTER_FIELD, NEWSLETTER_LABEL } from "@/lib/newsletterOptIn";
 
 export default function KontaktForm() {
   const [jmeno, setJmeno] = useState("");
@@ -10,6 +11,7 @@ export default function KontaktForm() {
   const [telefon, setTelefon] = useState("");
   const [zprava, setZprava] = useState("");
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
+  const [chceNovinky, setChceNovinky] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [formLoadedAt] = useState(() => Date.now());
   const [sending, setSending] = useState(false);
@@ -31,6 +33,7 @@ export default function KontaktForm() {
         zprava,
         [HONEYPOT_FIELD]: honeypot,
         [FORM_LOADED_FIELD]: formLoadedAt,
+        [NEWSLETTER_FIELD]: chceNovinky,
       }),
     });
 
@@ -81,6 +84,16 @@ export default function KontaktForm() {
         placeholder="Tvoje zpráva *"
         className={inputCls}
       />
+
+      <label className="flex items-start gap-2.5 text-sm text-ink">
+        <input
+          type="checkbox"
+          checked={chceNovinky}
+          onChange={(e) => setChceNovinky(e.target.checked)}
+          className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
+        />
+        <span>{NEWSLETTER_LABEL}</span>
+      </label>
 
       <label className="flex items-start gap-2.5 text-sm text-ink">
         <input

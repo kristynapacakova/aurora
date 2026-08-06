@@ -8,6 +8,8 @@ import {
   clamp,
   checkFormRateLimit,
 } from "@/lib/formGuard";
+import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
+import { createNewsletterSignup, dbConfigured } from "@/lib/db";
 
 // Kontaktní formulář ze stránky /kontakt. Zpráva se posílá e-mailem
 // přes Resend na adresu z RESEND_TO_EMAIL — do databáze se neukládá,
@@ -20,6 +22,7 @@ export async function POST(request: Request) {
     zprava?: string;
     [HONEYPOT_FIELD]?: string;
     [FORM_LOADED_FIELD]?: number;
+    [NEWSLETTER_FIELD]?: boolean;
   };
 
   if (isHoneypotTripped(body) || isSubmittedTooFast(body)) {
@@ -42,6 +45,16 @@ export async function POST(request: Request) {
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: "E-mail nemá platný tvar." }, { status: 400 });
+  }
+
+  // Do newsletteru jen se zaškrtnutým souhlasem. Případná chyba ukládání
+  // nesmí shodit odeslání zprávy — ta je pro návštěvnici to podstatné.
+  if (wantsNewsletter(body) && dbConfigured()) {
+    try {
+      await createNewsletterSignup(email);
+    } catch {
+      // záměrně tiše — zpráva se odešle i tak
+    }
   }
 
   const apiKey = process.env.RESEND_API_KEY;
