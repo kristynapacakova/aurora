@@ -46,9 +46,6 @@ export default function AboutTeaser() {
   return (
     <section id="o-mne" className="bg-cream py-20 sm:py-24">
       <div className="mx-auto flex w-full max-w-6xl flex-col items-center px-6">
-        <div className="mb-4 flex items-center gap-3">
-          <span className="text-xs uppercase tracking-[0.3em] text-accent">O mně</span>
-        </div>
         <p className="font-allura mb-12 text-4xl text-ink sm:text-5xl">{nbsp("Poznej můj příběh")}</p>
         <div className="grid w-full grid-cols-1 gap-14 sm:grid-cols-3 sm:gap-8">
           {PANELS.map((panel, i) => (
