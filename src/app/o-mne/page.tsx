@@ -45,7 +45,7 @@ export default function OMnePage() {
         {/* ── Úvod: text + portrét ──
             Fotka vyplňuje celou pravou stranu a směrem k textu se ztrácí
             do pozadí — stejný princip jako video v hero sekci. */}
-        <section className="relative overflow-hidden">
+        <section className="relative overflow-hidden md:min-h-[660px]">
           {/* Počítač: fotka na celou pravou stranu, vlevo přechod do krémové.
               Začíná pod hlavičkou, ať hamburger zůstane na krémovém podkladu. */}
           <div className="absolute bottom-0 right-0 top-24 hidden w-[58%] md:block">
@@ -53,7 +53,7 @@ export default function OMnePage() {
               src="/anezka-o-mne.jpg"
               alt="Anežka — lektorka jógy"
               fill
-              className="object-cover object-top"
+              className="object-cover"
               sizes="58vw"
               priority
             />
@@ -112,7 +112,7 @@ export default function OMnePage() {
               src="/anezka-o-mne.jpg"
               alt="Anežka — lektorka jógy"
               fill
-              className="object-cover object-top"
+              className="object-cover"
               sizes="100vw"
             />
             <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cream to-transparent" />
