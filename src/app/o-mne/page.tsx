@@ -42,10 +42,32 @@ export default function OMnePage() {
       <Navbar />
 
       <main className="min-h-screen bg-cream">
-        {/* ── Úvod: text + portrét ── */}
-        <section className="px-6 pt-32 pb-16 sm:pt-36 sm:pb-20">
-          <div className="mx-auto grid max-w-6xl grid-cols-1 items-center gap-10 md:grid-cols-2 md:gap-16">
-            <div>
+        {/* ── Úvod: text + portrét ──
+            Fotka vyplňuje celou pravou stranu a směrem k textu se ztrácí
+            do pozadí — stejný princip jako video v hero sekci. */}
+        <section className="relative overflow-hidden">
+          {/* Počítač: fotka na celou pravou stranu, vlevo přechod do krémové.
+              Začíná pod hlavičkou, ať hamburger zůstane na krémovém podkladu. */}
+          <div className="absolute bottom-0 right-0 top-24 hidden w-[58%] md:block">
+            <Image
+              src="/anezka-o-mne.jpg"
+              alt="Anežka — lektorka jógy"
+              fill
+              className="object-cover object-top"
+              sizes="58vw"
+              priority
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to right, #FCF4F1 0%, rgba(252,244,241,0.94) 16%, rgba(252,244,241,0.6) 36%, rgba(252,244,241,0.2) 58%, transparent 78%)",
+              }}
+            />
+          </div>
+
+          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
+            <div className="md:w-[52%] md:pr-8">
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
                   <IconSparkle size={12} />
@@ -82,19 +104,18 @@ export default function OMnePage() {
                 </div>
               </FadeUp>
             </div>
+          </div>
 
-            <FadeUp delay={0.12}>
-              <div className="photo-arch-right relative mx-auto h-[380px] w-full max-w-sm overflow-hidden sm:h-[460px] md:h-[520px] md:max-w-none">
-                <Image
-                  src="/anezka-o-mne.jpg"
-                  alt="Anežka — lektorka jógy"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 45vw"
-                  priority
-                />
-              </div>
-            </FadeUp>
+          {/* Telefon: fotka přes celou šířku pod textem, nahoře se ztrácí */}
+          <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
+            <Image
+              src="/anezka-o-mne.jpg"
+              alt="Anežka — lektorka jógy"
+              fill
+              className="object-cover object-top"
+              sizes="100vw"
+            />
+            <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cream to-transparent" />
           </div>
         </section>
 
