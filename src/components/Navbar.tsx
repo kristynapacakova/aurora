@@ -16,7 +16,7 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
 
   const MENU_ITEMS: MenuItem[] = [
-    { label: "O mně", href: "/#o-mne" },
+    { label: "O mně", href: "/o-mne" },
     { label: "Lekce", href: "/#lekce" },
     { label: "Online studio", href: uscreen_signup, external: true },
     { label: "Pobyty pro ženy", href: "/pobyty" },

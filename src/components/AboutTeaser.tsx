@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { IconLeafBranch, IconWave } from "./BrandIcons";
 import { nbsp } from "@/lib/typo";
 
@@ -85,6 +86,14 @@ export default function AboutTeaser() {
             </div>
           ))}
         </div>
+
+        {/* Menu vede na /o-mne, tahle sekce by jinak nikam nepokračovala. */}
+        <Link
+          href="/o-mne"
+          className="mt-14 inline-flex items-center gap-2 rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
+        >
+          Poznej celý příběh →
+        </Link>
       </div>
     </section>
   );
