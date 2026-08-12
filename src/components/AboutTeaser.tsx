@@ -5,24 +5,39 @@ import { nbsp } from "@/lib/typo";
 type Panel = {
   photo: string;
   eyebrow: string;
-  body: string;
+  body: string[];
 };
 
 const PANELS: Panel[] = [
   {
     photo: "/anezka-cesta.png",
     eyebrow: "Moje cesta k józe",
-    body: "Jmenuji se Anežka a jóga je pro mě mnohem víc než pohyb. Vytvářím prostor, kde nemusíš nic dokazovat ani zvládat dokonale.",
+    body: [
+      "Jmenuji se Anežka a jóga změnila způsob, jakým žiju.",
+      "Začínala jsem sama doma, s touhou cítit se lépe ve svém těle. Postupně jsem ale zjistila, že jóga není jen o pohybu. Je o zastavení, dechu a návratu k sobě.",
+      "Dnes vytvářím prostor, kde můžeš na chvíli zpomalit, nadechnout se a být sama sebou.",
+      // Nezlomitelná mezera před srdíčkem, ať nespadne samo na další řádek.
+      "Stačí přijít taková, jaká právě jsi. ♡",
+    ],
   },
   {
     photo: "/anezka-online.png",
     eyebrow: "Proč jsem začala učit online",
-    body: "Online lekce vznikly z potřeby být blízko i těm, které se ke mně nedostanou na podložku osobně. Stačí pár minut jen pro sebe.",
+    body: [
+      "Ne každá žena má možnost přijít na lekci osobně.",
+      "Právě proto vzniklo online studio.",
+      "Abys mohla rozložit podložku doma, zapálit si svíčku a dopřát si chvíli jen pro sebe – kdykoliv budeš potřebovat.",
+      "Protože někdy stačí i dvacet minut, aby se celý den změnil.",
+    ],
   },
   {
     photo: "/anezka-pobyty.png",
     eyebrow: "Proč pořádám pobyty",
-    body: "Pobyty jsou moje srdcovka — čas, kdy si na pár dní odložíme role, které běžně hrajeme, a jsme konečně jen samy sebou.",
+    body: [
+      "Pobyty jsou pro mě víc než jen víkend s jógou.",
+      "Jsou to dny, kdy na chvíli zpomalíme, odložíme všechny role a znovu uslyšíme samy sebe.",
+      "Vznikají nová přátelství, sdílíme smích, ticho i společné chvíle.",
+    ],
   },
 ];
 
@@ -62,9 +77,11 @@ export default function AboutTeaser() {
                 <IconLeafBranch size={14} className="text-accent-d" />
                 <p className="text-[11px] uppercase tracking-[0.25em] text-accent-d">{nbsp(panel.eyebrow)}</p>
               </div>
-              <p className="mt-3 max-w-[26ch] text-sm leading-relaxed text-ink">
-                {nbsp(panel.body)}
-              </p>
+              <div className="mt-3 flex max-w-[26ch] flex-col gap-3 text-sm leading-relaxed text-ink">
+                {panel.body.map((odstavec) => (
+                  <p key={odstavec}>{nbsp(odstavec)}</p>
+                ))}
+              </div>
             </div>
           ))}
         </div>
