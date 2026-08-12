@@ -10,7 +10,6 @@ import {
   IconSun,
   IconLeafBranch,
   IconRetreaty,
-  IconWave,
 } from "@/components/BrandIcons";
 
 export const metadata: Metadata = {
@@ -19,21 +18,26 @@ export const metadata: Metadata = {
     "Můj jógový příběh — jak jsem se k józe dostala, co mi dala a proč vytvářím prostor, kde nemusíš nic dokazovat.",
 };
 
-// Co mi jóga dala — čtyři karty pod úvodem. Velikosti se liší záměrně:
-// každá ikona má jiný poměr stran (větev je na výšku), takže stejné číslo
-// by dalo různě velké obrázky. Takhle mají stejnou optickou váhu.
-const DARY = [
-  { icon: <IconHeart size={26} />, text: "Naučila mě zastavit se." },
-  { icon: <IconLeafBranch size={34} />, text: "Naslouchat sama sobě." },
-  { icon: <IconSun size={30} className="text-accent" />, text: "Vnímat své tělo." },
-  { icon: <IconRetreaty size={32} />, text: "Důvěřovat tomu, co cítím." },
+// Vzdušná průsvitná karta — používá se v obou pásech, ať drží jeden rukopis.
+const KARTA =
+  "h-full rounded-[28px] bg-white/40 px-6 ring-1 ring-white/60 backdrop-blur-[2px] shadow-[0_2px_24px_rgba(140,95,71,0.05)]";
+
+// Co mi jóga dala. Texty jsou zalomené natvrdo na dva řádky — jsou krátké
+// a pevné, takže je hezčí určit zlom ručně než ho nechat na šířce okna.
+// Velikosti ikon se liší záměrně: každá má jiný poměr stran (větev je na
+// výšku), takže stejné číslo by dalo opticky různě velké obrázky.
+const DARY: { icon: React.ReactNode; radky: [string, string] }[] = [
+  { icon: <IconHeart size={26} />, radky: ["Naučila mě", "zastavit se."] },
+  { icon: <IconLeafBranch size={34} />, radky: ["Naslouchat", "sama sobě."] },
+  { icon: <IconSun size={30} className="text-accent" />, radky: ["Vnímat", "své tělo."] },
+  { icon: <IconRetreaty size={32} />, radky: ["Důvěřovat tomu,", "co cítím."] },
 ];
 
 // Můj prostor je prostor pro tebe — tři sliby v závěru.
-const SLIBY = [
-  "Prostor, kde nemusíš podávat výkon.",
-  "Nemusíš být dokonalá.",
-  "Nemusíš nic dokazovat.",
+const SLIBY: [string, string][] = [
+  ["Prostor, kde nemusíš", "podávat výkon."],
+  ["Nemusíš být", "dokonalá."],
+  ["Nemusíš nic", "dokazovat."],
 ];
 
 export default function OMnePage() {
@@ -43,31 +47,43 @@ export default function OMnePage() {
 
       <main className="min-h-screen bg-cream">
         {/* ── Úvod: text + portrét ──
-            Fotka vyplňuje celou pravou stranu a směrem k textu se ztrácí
-            do pozadí — stejný princip jako video v hero sekci. */}
-        <section className="relative overflow-hidden md:min-h-[660px]">
-          {/* Počítač: fotka na celou pravou stranu, vlevo přechod do krémové.
-              Začíná pod hlavičkou, ať hamburger zůstane na krémovém podkladu. */}
-          <div className="absolute bottom-0 right-0 top-24 hidden w-[58%] md:block">
+            Stejný princip jako video v hero sekci: fotka drží pravou stranu,
+            přes celou šířku leží vodorovný přechod, který je pod textem plně
+            krémový — tam fotka prosvítat nemá. */}
+        <section className="relative overflow-hidden md:min-h-[680px]">
+          {/* Počítač: fotka na pravé straně, začíná pod hlavičkou, ať
+              hamburger zůstane na krémovém podkladu. */}
+          <div className="absolute bottom-0 right-0 top-24 hidden w-[62%] md:block">
             <Image
               src="/anezka-o-mne.jpg"
               alt="Anežka — lektorka jógy"
               fill
               className="object-cover"
-              sizes="58vw"
+              sizes="62vw"
               priority
-            />
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  "linear-gradient(to right, #FCF4F1 0%, rgba(252,244,241,0.94) 16%, rgba(252,244,241,0.6) 36%, rgba(252,244,241,0.2) 58%, transparent 78%)",
-              }}
             />
           </div>
 
+          <div
+            className="absolute bottom-0 left-0 right-0 top-24 hidden md:block"
+            style={{
+              background:
+                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 50%, rgba(252,244,241,0.72) 60%, rgba(252,244,241,0.24) 71%, transparent 82%)",
+            }}
+          />
+
+          {/* Prolnutí spodní hrany do další sekce — jako v hero sekci,
+              ať fotka nekončí ostrým řezem. */}
+          <div
+            className="absolute inset-x-0 bottom-0 hidden h-32 md:block"
+            style={{
+              background:
+                "linear-gradient(to top, #FCF4F1 0%, rgba(252,244,241,0.85) 20%, rgba(252,244,241,0.55) 42%, rgba(252,244,241,0.28) 65%, rgba(252,244,241,0.08) 85%, transparent 100%)",
+            }}
+          />
+
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
-            <div className="md:w-[52%] md:pr-8">
+            <div className="md:w-[46%] md:pr-6">
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
                   <IconSparkle size={12} />
@@ -79,13 +95,15 @@ export default function OMnePage() {
               </FadeUp>
 
               <FadeUp delay={0.1}>
-                <p className="mt-6 text-lg font-medium leading-relaxed text-accent-d">
+                {/* Užší míra + vyvážené zalomení, ať věta drží jako dva
+                    stejně dlouhé řádky, ne jako řádek a osamocený zbytek. */}
+                <p className="mt-6 max-w-[32ch] text-balance text-lg font-medium leading-snug text-accent-d">
                   {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
                 </p>
               </FadeUp>
 
               <FadeUp delay={0.18}>
-                <div className="mt-6 flex flex-col gap-4 text-sm leading-relaxed text-muted">
+                <div className="mt-7 flex flex-col gap-4 text-sm leading-relaxed text-muted">
                   <p>
                     {nbsp("To, že teď nevidíš nebo neznáš svoji cestu, ještě neznamená, že neexistuje.")}
                   </p>
@@ -116,28 +134,29 @@ export default function OMnePage() {
               sizes="100vw"
             />
             <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-cream to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-cream to-transparent" />
           </div>
         </section>
 
         {/* ── Co mi jóga dala ── */}
-        <section className="bg-sand px-6 py-16 sm:py-20">
+        <section className="px-6 py-16 sm:py-24">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="flex items-center justify-center gap-4">
-                <IconWave width={54} height={12} className="text-muted/60" />
-                <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">
-                  Co mi jóga dala
-                </p>
-                <IconWave width={54} height={12} className="text-muted/60" />
-              </div>
+              <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">
+                Co mi jóga dala
+              </p>
             </FadeUp>
 
-            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {DARY.map((dar, i) => (
-                <FadeUp key={dar.text} delay={0.06 * i}>
-                  <div className="flex h-full flex-col items-center gap-3 rounded-2xl bg-cream/70 px-5 py-7 text-center ring-1 ring-line">
+                <FadeUp key={dar.radky.join(" ")} delay={0.06 * i}>
+                  <div className={`${KARTA} flex flex-col items-center gap-4 py-10 text-center`}>
                     <span className="flex h-9 items-center justify-center">{dar.icon}</span>
-                    <p className="text-sm leading-relaxed text-ink">{nbsp(dar.text)}</p>
+                    <p className="text-sm leading-relaxed text-ink">
+                      {nbsp(dar.radky[0])}
+                      <br />
+                      {nbsp(dar.radky[1])}
+                    </p>
                   </div>
                 </FadeUp>
               ))}
@@ -171,24 +190,24 @@ export default function OMnePage() {
         </section>
 
         {/* ── Můj prostor je prostor pro tebe ── */}
-        <section className="bg-sand px-6 py-16 sm:py-20">
-          <div className="mx-auto max-w-4xl">
+        <section className="px-6 py-16 sm:py-24">
+          <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="flex items-center justify-center gap-4">
-                <IconWave width={54} height={12} className="text-muted/60" />
-                <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">
-                  Můj prostor je prostor pro tebe
-                </p>
-                <IconWave width={54} height={12} className="text-muted/60" />
-              </div>
+              <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">
+                Můj prostor je prostor pro tebe
+              </p>
             </FadeUp>
 
-            <div className="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
               {SLIBY.map((slib, i) => (
-                <FadeUp key={slib} delay={0.06 * i}>
-                  <div className="flex h-full items-start gap-3 rounded-2xl bg-cream/70 px-5 py-6 ring-1 ring-line">
+                <FadeUp key={slib.join(" ")} delay={0.06 * i}>
+                  <div className={`${KARTA} flex items-start gap-3.5 py-8`}>
                     <IconHeart size={18} className="mt-0.5 shrink-0 text-accent" />
-                    <p className="text-sm leading-relaxed text-ink">{nbsp(slib)}</p>
+                    <p className="text-sm leading-relaxed text-ink">
+                      {nbsp(slib[0])}
+                      <br />
+                      {nbsp(slib[1])}
+                    </p>
                   </div>
                 </FadeUp>
               ))}
@@ -197,7 +216,7 @@ export default function OMnePage() {
         </section>
 
         {/* ── Závěr ── */}
-        <section className="px-6 py-20 sm:py-24">
+        <section className="px-6 pb-24 pt-8 sm:pb-28">
           <FadeUp>
             <div className="mx-auto flex max-w-xl flex-col items-center gap-4 text-center">
               <p className="font-allura text-3xl leading-tight text-ink sm:text-4xl">

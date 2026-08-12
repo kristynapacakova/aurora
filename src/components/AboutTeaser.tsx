@@ -85,12 +85,15 @@ export default function AboutTeaser() {
         </div>
 
         {/* Menu vede na /o-mne, tahle sekce by jinak nikam nepokračovala. */}
-        <Link
-          href="/o-mne"
-          className="mt-14 inline-flex items-center gap-2 rounded-full border border-ink/30 px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all duration-200 hover:border-accent hover:text-accent"
-        >
-          Poznej celý příběh →
-        </Link>
+        <p className="mt-14 text-center text-sm leading-relaxed text-muted">
+          {nbsp("Zajímá tě celý můj příběh? ")}
+          <Link
+            href="/o-mne"
+            className="text-ink underline underline-offset-4 transition-colors duration-200 hover:text-accent-d"
+          >
+            {nbsp("Přečti si ho tady")}
+          </Link>
+        </p>
       </div>
     </section>
   );
