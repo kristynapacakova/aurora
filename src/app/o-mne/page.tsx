@@ -113,23 +113,10 @@ const DARY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] =
 ];
 
 // Můj prostor je prostor pro tebe — tři sliby v závěru.
-const SLIBY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] = [
-  {
-    ikona: <IconHeart size={24} />,
-    radky: ["Prostor, kde nemusíš", "podávat výkon."],
-    // Stejná velikost i sytost jako list u třetí karty, jen zrcadlově.
-    dekor: <List velikost={110} trida="-bottom-5 -left-16 -rotate-[32deg] text-accent/30" />,
-  },
-  // Prostřední karta zůstává čistá, ať řada nemá pravidelný rytmus.
-  {
-    ikona: <IconHeart size={24} />,
-    radky: ["Nemusíš být", "dokonalá."],
-  },
-  {
-    ikona: <IconHeart size={24} />,
-    radky: ["Nemusíš nic", "dokazovat."],
-    dekor: <List velikost={116} trida="-right-12 -top-12 rotate-[34deg] text-accent/30" />,
-  },
+const SLIBY: { ikona: ReactNode; radky: [string, string] }[] = [
+  { ikona: <IconHeart size={24} />, radky: ["Prostor, kde nemusíš", "podávat výkon."] },
+  { ikona: <IconHeart size={24} />, radky: ["Nemusíš být", "dokonalá."] },
+  { ikona: <IconHeart size={24} />, radky: ["Nemusíš nic", "dokazovat."] },
 ];
 
 export default function OMnePage() {
@@ -141,31 +128,30 @@ export default function OMnePage() {
         {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
             Žádné dělení na sloupce. Fotka vyplňuje sekci od hrany k hraně
             a čitelnost textu drží dlouhý broskvový přechod zleva. */}
-        <section className="relative overflow-hidden bg-[#FDF6F0] md:min-h-[720px]">
-          {/* Počítač: fotka přes celou plochu sekce — všechny hrany ostré */}
-          <div className="absolute inset-0 hidden md:block">
+        <section className="relative overflow-hidden bg-[#FDF6F0] md:min-h-[600px]">
+          {/* Počítač: fotka drží pravou polovinu sekce. Začíná pod hlavičkou,
+              jinak by na ní ležel hamburger a ztratil se v tmavém lese.
+              Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
+              levý okraj, a to maskou — překryv by fotku zakalil. */}
+          <div
+            className="absolute bottom-0 right-0 top-24 hidden w-[50%] md:block"
+            style={{
+              WebkitMaskImage: "linear-gradient(to right, transparent 0%, #000 16%)",
+              maskImage: "linear-gradient(to right, transparent 0%, #000 16%)",
+            }}
+          >
             <Image
               src="/anezka-o-mne.jpg"
               alt="Anežka — lektorka jógy"
               fill
               className="object-cover"
-              sizes="100vw"
+              sizes="50vw"
               priority
             />
           </div>
 
-          {/* Dlouhý, velmi pozvolný přechod od levé hrany. Pod textem fotku
-              jen zjemní, doprava mizí až daleko za polovinou šířky. */}
-          <div
-            className="absolute inset-0 hidden md:block"
-            style={{
-              background:
-                "linear-gradient(to right, #FDF6F0 0%, #FDF6F0 20%, rgba(253,246,240,0.96) 33%, rgba(253,246,240,0.86) 44%, rgba(253,246,240,0.62) 56%, rgba(253,246,240,0.34) 68%, rgba(253,246,240,0.12) 81%, rgba(253,246,240,0) 92%)",
-            }}
-          />
-
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
-            <div className="md:w-[46%] md:pr-6">
+            <div className="md:w-[46%] md:pr-8">
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
                   <IconSparkle size={12} />
@@ -268,13 +254,30 @@ export default function OMnePage() {
               <Popisek>Můj prostor je prostor pro tebe</Popisek>
             </FadeUp>
 
-            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
-              {SLIBY.map((slib, i) => (
-                <FadeUp key={slib.radky.join(" ")} delay={0.06 * i}>
-                  <Karta ikona={slib.ikona} radky={slib.radky} dekor={slib.dekor} />
-                </FadeUp>
-              ))}
-            </div>
+            {/* Bez rámečků — jen ikony ve třech sloupcích, které dělí
+                jemná svislá linka. Na telefonu se linka otočí naležato. */}
+            <FadeUp delay={0.08}>
+              <div className="relative mt-10">
+                <List velikost={110} trida="-bottom-6 -left-14 -rotate-[32deg] text-accent/30" />
+                <List velikost={116} trida="-right-14 -top-10 rotate-[34deg] text-accent/30" />
+
+                <div className="relative grid grid-cols-1 divide-y divide-line/80 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+                  {SLIBY.map((slib) => (
+                    <div
+                      key={slib.radky.join(" ")}
+                      className="flex items-center justify-center gap-4 px-6 py-7"
+                    >
+                      <span className="shrink-0">{slib.ikona}</span>
+                      <p className="font-serif text-xl leading-snug text-ink">
+                        {nbsp(slib.radky[0])}
+                        <br />
+                        {nbsp(slib.radky[1])}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </FadeUp>
           </div>
         </section>
 
