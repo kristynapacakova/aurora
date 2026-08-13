@@ -101,14 +101,14 @@ function IkonaSoubor({
  *  rukopis jako dlaždice na téhle stránce. */
 function Ramecek({ soubor, popis }: { soubor: string; popis: string }) {
   return (
-    <div className="rounded-[26px] bg-sand/70 p-2 shadow-[0_4px_20px_rgba(140,95,71,0.07)] ring-1 ring-white/60">
-      <div className="relative h-[190px] w-full overflow-hidden rounded-[20px] sm:h-[210px]">
+    <div className="rounded-[21px] bg-sand/70 p-1.5 shadow-[0_4px_18px_rgba(140,95,71,0.07)] ring-1 ring-white/60">
+      <div className="relative h-[132px] w-full overflow-hidden rounded-[16px] sm:h-[146px]">
         <Image
           src={soubor}
           alt={popis}
           fill
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, 40vw"
+          sizes="(max-width: 768px) 100vw, 300px"
         />
       </div>
     </div>
@@ -220,18 +220,18 @@ export default function OMnePage() {
 
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
             <div className="md:w-[46%] md:pr-8">
-              {/* Nadpis nese prostrkaný popisek, hlavní myšlenka pod ním je
-                  psacím písmem — ta je na stránce to první, co má zaznít.
-                  H1 zůstává na názvu, i když je opticky menší; velikost
-                  písma s úrovní nadpisu nesouvisí. */}
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
                   <IconSparkle size={12} />
-                  <h1 className="text-xs uppercase tracking-[0.3em] text-accent">
-                    {nbsp("Můj jógový příběh")}
-                  </h1>
+                  <p className="text-xs uppercase tracking-[0.3em] text-accent">O mně</p>
                 </div>
-                <p className="font-allura text-[28px] leading-snug text-ink sm:text-3xl lg:text-[34px]">
+                <h1 className="font-allura text-4xl leading-tight text-ink sm:text-5xl">
+                  {nbsp("Můj jógový příběh")}
+                </h1>
+                {/* Hlavní myšlenka ve stylu popisků sekcí — prostrkané
+                    verzálky v korálové. Řádkování je vyšší, verzálky se
+                    přes dva řádky jinak lepí na sebe. */}
+                <p className="mt-5 text-xs uppercase leading-[2] tracking-[0.3em] text-accent">
                   {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
                 </p>
               </FadeUp>
@@ -294,7 +294,7 @@ export default function OMnePage() {
         {/* ── Následovala jsem svůj vnitřní hlas ──
             Záměrně jen text na krémovém podkladu, žádná fotka na pozadí. */}
         <section className="px-6 py-12 sm:py-16">
-          <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-[1.1fr_1fr] md:gap-14">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-[1.45fr_1fr] md:gap-14">
             <div>
               <FadeUp>
                 <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
@@ -320,12 +320,12 @@ export default function OMnePage() {
             {/* Dvě menší fotky nad sebou v broskvovém rámečku — spodní je
                 odsazená, aby dvojice nestála jako sloupec, ale působila
                 volně položeně. Rámeček drží stejný rukopis jako dlaždice. */}
-            <div className="flex flex-col gap-5">
+            <div className="flex flex-col gap-4 md:w-[280px] md:justify-self-end">
               <FadeUp delay={0.12}>
                 <Ramecek soubor="/lekce.jpeg" popis="Anežka při józe v přírodě" />
               </FadeUp>
               <FadeUp delay={0.2}>
-                <div className="md:ml-10">
+                <div className="md:mr-8">
                   <Ramecek soubor="/pobyty-skupina.jpg" popis="Společná lekce na ženském pobytu" />
                 </div>
               </FadeUp>
