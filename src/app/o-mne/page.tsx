@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -18,26 +19,57 @@ export const metadata: Metadata = {
     "Můj jógový příběh — jak jsem se k józe dostala, co mi dala a proč vytvářím prostor, kde nemusíš nic dokazovat.",
 };
 
-// Vzdušná průsvitná karta — používá se v obou pásech, ať drží jeden rukopis.
-const KARTA =
-  "h-full rounded-[28px] bg-white/40 px-6 ring-1 ring-white/60 backdrop-blur-[2px] shadow-[0_2px_24px_rgba(140,95,71,0.05)]";
+/** Dlaždice s ikonou, patkovým textem a snítkami v rozích.
+ *  Snítky jsou hodně světlé — mají kartu dozdobit, ne přebít text. */
+function Karta({ ikona, radky }: { ikona: ReactNode; radky: [string, string] }) {
+  return (
+    <div className="relative h-full overflow-hidden rounded-[30px] bg-sand/60 px-6 py-9 text-center shadow-[0_8px_30px_rgba(140,95,71,0.07)] ring-1 ring-white/70">
+      <IconLeafBranch
+        size={86}
+        className="pointer-events-none absolute -right-6 -top-5 rotate-[20deg] text-accent/[0.13]"
+      />
+      <IconLeafBranch
+        size={58}
+        className="pointer-events-none absolute -bottom-4 -left-5 -rotate-[28deg] text-accent/[0.10]"
+      />
+
+      <span className="relative flex h-9 items-center justify-center">{ikona}</span>
+      <p className="relative mt-4 font-serif text-xl leading-snug text-ink">
+        {nbsp(radky[0])}
+        <br />
+        {nbsp(radky[1])}
+      </p>
+    </div>
+  );
+}
+
+/** Růžový prostrkaný popisek sekce. */
+function Popisek({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex items-center justify-center gap-3">
+      <IconSparkle size={11} />
+      <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">{children}</p>
+      <IconSparkle size={11} />
+    </div>
+  );
+}
 
 // Co mi jóga dala. Texty jsou zalomené natvrdo na dva řádky — jsou krátké
 // a pevné, takže je hezčí určit zlom ručně než ho nechat na šířce okna.
 // Velikosti ikon se liší záměrně: každá má jiný poměr stran (větev je na
 // výšku), takže stejné číslo by dalo opticky různě velké obrázky.
-const DARY: { icon: React.ReactNode; radky: [string, string] }[] = [
-  { icon: <IconHeart size={26} />, radky: ["Naučila mě", "zastavit se."] },
-  { icon: <IconLeafBranch size={34} />, radky: ["Naslouchat", "sama sobě."] },
-  { icon: <IconSun size={30} className="text-accent" />, radky: ["Vnímat", "své tělo."] },
-  { icon: <IconRetreaty size={32} />, radky: ["Důvěřovat tomu,", "co cítím."] },
+const DARY: { ikona: ReactNode; radky: [string, string] }[] = [
+  { ikona: <IconHeart size={26} />, radky: ["Naučila mě", "zastavit se."] },
+  { ikona: <IconLeafBranch size={34} />, radky: ["Naslouchat", "sama sobě."] },
+  { ikona: <IconSun size={30} className="text-accent" />, radky: ["Vnímat", "své tělo."] },
+  { ikona: <IconRetreaty size={32} />, radky: ["Důvěřovat tomu,", "co cítím."] },
 ];
 
 // Můj prostor je prostor pro tebe — tři sliby v závěru.
-const SLIBY: [string, string][] = [
-  ["Prostor, kde nemusíš", "podávat výkon."],
-  ["Nemusíš být", "dokonalá."],
-  ["Nemusíš nic", "dokazovat."],
+const SLIBY: { ikona: ReactNode; radky: [string, string] }[] = [
+  { ikona: <IconHeart size={24} />, radky: ["Prostor, kde nemusíš", "podávat výkon."] },
+  { ikona: <IconHeart size={24} />, radky: ["Nemusíš být", "dokonalá."] },
+  { ikona: <IconHeart size={24} />, radky: ["Nemusíš nic", "dokazovat."] },
 ];
 
 export default function OMnePage() {
@@ -46,10 +78,10 @@ export default function OMnePage() {
       <Navbar />
 
       <main className="min-h-screen bg-cream">
-        {/* ── Úvod: text + portrét ──
-            Stejný princip jako video v hero sekci: fotka drží pravou stranu,
-            přes celou šířku leží vodorovný přechod, který je pod textem plně
-            krémový — tam fotka prosvítat nemá. */}
+        {/* ── Úvod: text vlevo, fotka vpravo ──
+            Stejný princip jako video v hero sekci: přechod leží přes celou
+            šířku a v pásu s textem je plně krémový, aby fotka pod písmem
+            neprosvítala. */}
         <section className="relative overflow-hidden md:min-h-[680px]">
           {/* Počítač: fotka na pravé straně, začíná pod hlavičkou, ať
               hamburger zůstane na krémovém podkladu. */}
@@ -72,8 +104,7 @@ export default function OMnePage() {
             }}
           />
 
-          {/* Prolnutí spodní hrany do další sekce — jako v hero sekci,
-              ať fotka nekončí ostrým řezem. */}
+          {/* Prolnutí spodní hrany do další sekce, ať fotka nekončí řezem. */}
           <div
             className="absolute inset-x-0 bottom-0 hidden h-32 md:block"
             style={{
@@ -124,7 +155,7 @@ export default function OMnePage() {
             </div>
           </div>
 
-          {/* Telefon: fotka přes celou šířku pod textem, nahoře se ztrácí */}
+          {/* Telefon: fotka přes celou šířku pod textem, nahoře i dole mizí */}
           <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
             <Image
               src="/anezka-o-mne.jpg"
@@ -139,34 +170,26 @@ export default function OMnePage() {
         </section>
 
         {/* ── Co mi jóga dala ── */}
-        <section className="px-6 py-16 sm:py-24">
+        <section className="px-6 py-12 sm:py-16">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">
-                Co mi jóga dala
-              </p>
+              <Popisek>Co mi jóga dala</Popisek>
             </FadeUp>
 
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
               {DARY.map((dar, i) => (
                 <FadeUp key={dar.radky.join(" ")} delay={0.06 * i}>
-                  <div className={`${KARTA} flex flex-col items-center gap-4 py-10 text-center`}>
-                    <span className="flex h-9 items-center justify-center">{dar.icon}</span>
-                    <p className="text-sm leading-relaxed text-ink">
-                      {nbsp(dar.radky[0])}
-                      <br />
-                      {nbsp(dar.radky[1])}
-                    </p>
-                  </div>
+                  <Karta ikona={dar.ikona} radky={dar.radky} />
                 </FadeUp>
               ))}
             </div>
           </div>
         </section>
 
-        {/* ── Následovala jsem svůj vnitřní hlas ── */}
-        <section className="px-6 py-16 sm:py-24">
-          <div className="mx-auto max-w-2xl text-center">
+        {/* ── Následovala jsem svůj vnitřní hlas ──
+            Záměrně jen text na krémovém podkladu, žádná fotka na pozadí. */}
+        <section className="px-6 py-12 sm:py-16">
+          <div className="mx-auto max-w-3xl text-center">
             <FadeUp>
               <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
                 {nbsp("Následovala jsem svůj vnitřní hlas")}
@@ -174,7 +197,7 @@ export default function OMnePage() {
             </FadeUp>
 
             <FadeUp delay={0.1}>
-              <div className="mt-7 flex flex-col gap-4 text-sm leading-relaxed text-muted">
+              <div className="mt-7 flex flex-col gap-4 leading-relaxed text-muted">
                 <p>
                   {nbsp("Přestože si tehdy mnoho lidí kolem mě myslelo, že je bláznivé chtít se stát lektorkou jógy, něco uvnitř mě vedlo dál.")}
                 </p>
@@ -190,25 +213,16 @@ export default function OMnePage() {
         </section>
 
         {/* ── Můj prostor je prostor pro tebe ── */}
-        <section className="px-6 py-16 sm:py-24">
+        <section className="px-6 py-12 sm:py-16">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <p className="text-center text-xs uppercase tracking-[0.3em] text-accent">
-                Můj prostor je prostor pro tebe
-              </p>
+              <Popisek>Můj prostor je prostor pro tebe</Popisek>
             </FadeUp>
 
             <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-3">
               {SLIBY.map((slib, i) => (
-                <FadeUp key={slib.join(" ")} delay={0.06 * i}>
-                  <div className={`${KARTA} flex items-start gap-3.5 py-8`}>
-                    <IconHeart size={18} className="mt-0.5 shrink-0 text-accent" />
-                    <p className="text-sm leading-relaxed text-ink">
-                      {nbsp(slib[0])}
-                      <br />
-                      {nbsp(slib[1])}
-                    </p>
-                  </div>
+                <FadeUp key={slib.radky.join(" ")} delay={0.06 * i}>
+                  <Karta ikona={slib.ikona} radky={slib.radky} />
                 </FadeUp>
               ))}
             </div>
@@ -216,7 +230,7 @@ export default function OMnePage() {
         </section>
 
         {/* ── Závěr ── */}
-        <section className="px-6 pb-24 pt-8 sm:pb-28">
+        <section className="px-6 pb-24 pt-6 sm:pb-28">
           <FadeUp>
             <div className="mx-auto flex max-w-xl flex-col items-center gap-4 text-center">
               <p className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
