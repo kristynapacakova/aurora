@@ -155,7 +155,7 @@ const SLIBY: { ikona: ReactNode; radky: [string, string] }[] = [
     radky: ["Nemusíš být", "dokonalá."],
   },
   {
-    ikona: <IkonaSoubor soubor="ikona-dokazovat.svg" sirka={68} vyska={50} />,
+    ikona: <IkonaSoubor soubor="ikona-dokazovat.svg" sirka={84} vyska={62} />,
     radky: ["Nemusíš nic", "dokazovat."],
   },
 ];
@@ -169,7 +169,7 @@ export default function OMnePage() {
         {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
             Žádné dělení na sloupce. Fotka vyplňuje sekci od hrany k hraně
             a čitelnost textu drží dlouhý broskvový přechod zleva. */}
-        <section className="relative overflow-hidden bg-[#FDF6F0] md:min-h-[600px]">
+        <section className="relative overflow-hidden md:min-h-[600px]">
           {/* Počítač: fotka drží pravou polovinu sekce. Začíná pod hlavičkou,
               jinak by na ní ležel hamburger a ztratil se v tmavém lese.
               Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
@@ -182,7 +182,7 @@ export default function OMnePage() {
             }}
           >
             <Image
-              src="/anezka-o-mne.jpg"
+              src="/anezka-o-mne-les.jpg"
               alt="Anežka — lektorka jógy"
               fill
               className="object-cover"
@@ -204,16 +204,8 @@ export default function OMnePage() {
                 </h1>
               </FadeUp>
 
-              <FadeUp delay={0.1}>
-                {/* Užší míra + vyvážené zalomení, ať věta drží jako dva
-                    stejně dlouhé řádky, ne jako řádek a osamocený zbytek. */}
-                <p className="mt-6 max-w-[32ch] text-balance text-lg font-medium leading-snug text-accent-d">
-                  {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
-                </p>
-              </FadeUp>
-
               <FadeUp delay={0.18}>
-                <div className="mt-7 flex flex-col gap-4 text-sm leading-relaxed text-muted">
+                <div className="mt-8 flex flex-col gap-4 text-sm leading-relaxed text-muted">
                   <p>
                     {nbsp("To, že teď nevidíš nebo neznáš svoji cestu, ještě neznamená, že neexistuje.")}
                   </p>
@@ -237,13 +229,25 @@ export default function OMnePage() {
           {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
           <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
             <Image
-              src="/anezka-o-mne.jpg"
+              src="/anezka-o-mne-les.jpg"
               alt="Anežka — lektorka jógy"
               fill
               className="object-cover"
               sizes="100vw"
             />
           </div>
+        </section>
+
+        {/* ── Hlavní myšlenka přes celou šířku ──
+            Psacím písmem jako nadpisy, aby to znělo jako věta lektorky,
+            ne jako další odstavec. Vlastní pás pod úvodem, ne přes fotku —
+            přes tmavý les by nebyla čitelná. */}
+        <section className="px-6 pb-14 pt-10 sm:pb-16 sm:pt-12">
+          <FadeUp>
+            <p className="mx-auto max-w-6xl text-center font-allura text-[26px] leading-tight text-accent-d sm:text-4xl lg:text-[42px]">
+              {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
+            </p>
+          </FadeUp>
         </section>
 
         {/* ── Co mi jóga dala ── */}
