@@ -86,7 +86,8 @@ const DARY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] =
   {
     ikona: <IconHeart size={26} />,
     radky: ["Naučila mě", "zastavit se."],
-    dekor: <List velikost={138} trida="-left-12 -top-14 -rotate-[26deg] text-accent/30" />,
+    // Větší úhel — stonek leží do boku, ne vzhůru.
+    dekor: <List velikost={138} trida="-left-16 -top-4 -rotate-[64deg] text-accent/30" />,
   },
   // Záměrně bez dekorace — pravidelnost je to, co působí tiskařsky.
   {
