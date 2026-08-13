@@ -174,22 +174,41 @@ export default function OMnePage() {
               jinak by na ní ležel hamburger a ztratil se v tmavém lese.
               Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
               levý okraj, a to maskou — překryv by fotku zakalil. */}
-          <div
-            className="absolute bottom-0 right-0 top-24 hidden w-[50%] md:block"
-            style={{
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, #000 16%)",
-              maskImage: "linear-gradient(to right, transparent 0%, #000 16%)",
-            }}
-          >
-            <Image
-              src="/anezka-o-mne-les.jpg"
-              alt="Anežka — lektorka jógy"
-              fill
-              className="object-cover"
-              style={{ objectPosition: "center 62%" }}
-              sizes="50vw"
-              priority
-            />
+          <div className="absolute bottom-0 right-0 top-24 hidden w-[58%] md:block">
+            {/* Náběh je dlouhý a odstupňovaný. Krátký lineární přechod
+                končil viditelnou hranou a nad světlým kmenem působil jako
+                šmouha; takhle se fotka do pozadí opravdu vytratí. */}
+            <div
+              className="absolute inset-0"
+              style={{
+                WebkitMaskImage:
+                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.18) 9%, rgba(0,0,0,0.42) 13%, rgba(0,0,0,0.7) 17%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,1) 24%)",
+                maskImage:
+                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.18) 9%, rgba(0,0,0,0.42) 13%, rgba(0,0,0,0.7) 17%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,1) 24%)",
+              }}
+            >
+              <Image
+                src="/anezka-o-mne-les.jpg"
+                alt="Anežka — lektorka jógy"
+                fill
+                className="object-cover"
+                style={{ objectPosition: "center 62%" }}
+                sizes="50vw"
+                priority
+              />
+            </div>
+
+            {/* Citát leží na fotce v tmavé části lesa, vlevo od postavy.
+                Krémová z palety webu na tmavém podkladu drží kontrast;
+                jemný stín pod písmem ho jistí i tam, kde je les světlejší. */}
+            <FadeUp delay={0.25}>
+              <p
+                className="absolute left-[24%] top-[11%] w-[27%] text-right font-serif text-xl leading-snug text-cream lg:text-2xl"
+                style={{ textShadow: "0 1px 14px rgba(48,32,24,0.55)" }}
+              >
+                {nbsp("„Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.“")}
+              </p>
+            </FadeUp>
           </div>
 
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
@@ -235,19 +254,13 @@ export default function OMnePage() {
               className="object-cover"
               sizes="100vw"
             />
-          </div>
-        </section>
-
-        {/* ── Hlavní myšlenka přes celou šířku ──
-            Psacím písmem jako nadpisy, aby to znělo jako věta lektorky,
-            ne jako další odstavec. Vlastní pás pod úvodem, ne přes fotku —
-            přes tmavý les by nebyla čitelná. */}
-        <section className="px-6 pb-14 pt-10 sm:pb-16 sm:pt-12">
-          <FadeUp>
-            <p className="mx-auto max-w-6xl text-center font-allura text-[26px] leading-tight text-accent-d sm:text-4xl lg:text-[42px]">
+            <p
+              className="absolute left-5 top-6 w-[58%] font-serif text-lg leading-snug text-cream"
+              style={{ textShadow: "0 1px 14px rgba(48,32,24,0.55)" }}
+            >
               {nbsp("„Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.“")}
             </p>
-          </FadeUp>
+          </div>
         </section>
 
         {/* ── Co mi jóga dala ── */}
