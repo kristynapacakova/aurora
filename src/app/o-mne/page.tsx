@@ -86,7 +86,7 @@ const DARY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] =
   {
     ikona: <IconHeart size={26} />,
     radky: ["Naučila mě", "zastavit se."],
-    dekor: <List velikost={138} trida="-right-12 -top-14 rotate-[26deg] text-accent/30" />,
+    dekor: <List velikost={138} trida="-left-12 -top-14 -rotate-[26deg] text-accent/30" />,
   },
   // Záměrně bez dekorace — pravidelnost je to, co působí tiskařsky.
   {
@@ -117,7 +117,7 @@ const SLIBY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] 
     ikona: <IconHeart size={24} />,
     radky: ["Prostor, kde nemusíš", "podávat výkon."],
     // Stejná velikost i sytost jako list u třetí karty, jen zrcadlově.
-    dekor: <List velikost={110} trida="-bottom-12 -left-12 -rotate-[32deg] text-accent/30" />,
+    dekor: <List velikost={110} trida="-bottom-5 -left-16 -rotate-[32deg] text-accent/30" />,
   },
   // Prostřední karta zůstává čistá, ať řada nemá pravidelný rytmus.
   {
