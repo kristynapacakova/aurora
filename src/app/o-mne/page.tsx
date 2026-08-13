@@ -106,7 +106,8 @@ const DARY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] =
   {
     ikona: <IconRetreaty size={32} />,
     radky: ["Důvěřovat tomu,", "co cítím."],
-    dekor: <List velikost={86} trida="-bottom-10 -right-9 rotate-[142deg] text-accent/30" />,
+    // Stonek vychází zpod pravého dolního rohu, lístky rostou ven a nahoru.
+    dekor: <List velikost={92} trida="-bottom-12 -right-11 rotate-[36deg] text-accent/30" />,
   },
 ];
 
@@ -115,7 +116,8 @@ const SLIBY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] 
   {
     ikona: <IconHeart size={24} />,
     radky: ["Prostor, kde nemusíš", "podávat výkon."],
-    dekor: <List velikost={70} trida="-bottom-11 -left-7 -rotate-[22deg] text-accent/28" />,
+    // Stejná velikost i sytost jako list u třetí karty, jen zrcadlově.
+    dekor: <List velikost={110} trida="-bottom-12 -left-12 -rotate-[32deg] text-accent/30" />,
   },
   // Prostřední karta zůstává čistá, ať řada nemá pravidelný rytmus.
   {
@@ -135,29 +137,31 @@ export default function OMnePage() {
       <Navbar />
 
       <main className="min-h-screen bg-cream">
-        {/* ── Úvod: text vlevo, fotka vpravo ──
-            Fotka je ostrá a plně krytá. Do ztracena jde jen její levý okraj,
-            a to maskou — ne překryvem, ten by ji celou zakalil. */}
-        <section className="relative overflow-hidden md:min-h-[680px]">
-          {/* Počítač: fotka drží pravou polovinu. Začíná pod hlavičkou, ať
-              hamburger zůstane na krémovém podkladu; horní, pravá i spodní
-              hrana jsou ostré. */}
-          <div
-            className="absolute bottom-0 right-0 top-24 hidden w-[50%] md:block"
-            style={{
-              WebkitMaskImage: "linear-gradient(to right, transparent 0%, #000 12%)",
-              maskImage: "linear-gradient(to right, transparent 0%, #000 12%)",
-            }}
-          >
+        {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
+            Žádné dělení na sloupce. Fotka vyplňuje sekci od hrany k hraně
+            a čitelnost textu drží dlouhý broskvový přechod zleva. */}
+        <section className="relative overflow-hidden bg-[#FDF6F0] md:min-h-[720px]">
+          {/* Počítač: fotka přes celou plochu sekce — všechny hrany ostré */}
+          <div className="absolute inset-0 hidden md:block">
             <Image
               src="/anezka-o-mne.jpg"
               alt="Anežka — lektorka jógy"
               fill
               className="object-cover"
-              sizes="50vw"
+              sizes="100vw"
               priority
             />
           </div>
+
+          {/* Dlouhý, velmi pozvolný přechod od levé hrany. Pod textem fotku
+              jen zjemní, doprava mizí až daleko za polovinou šířky. */}
+          <div
+            className="absolute inset-0 hidden md:block"
+            style={{
+              background:
+                "linear-gradient(to right, #FDF6F0 0%, #FDF6F0 20%, rgba(253,246,240,0.96) 33%, rgba(253,246,240,0.86) 44%, rgba(253,246,240,0.62) 56%, rgba(253,246,240,0.34) 68%, rgba(253,246,240,0.12) 81%, rgba(253,246,240,0) 92%)",
+            }}
+          />
 
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
             <div className="md:w-[46%] md:pr-6">
