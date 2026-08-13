@@ -258,9 +258,6 @@ export default function OMnePage() {
                 jemná svislá linka. Na telefonu se linka otočí naležato. */}
             <FadeUp delay={0.08}>
               <div className="relative mt-10">
-                <List velikost={110} trida="-bottom-6 -left-14 -rotate-[32deg] text-accent/30" />
-                <List velikost={116} trida="-right-14 -top-10 rotate-[34deg] text-accent/30" />
-
                 <div className="relative grid grid-cols-1 divide-y divide-line/80 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
                   {SLIBY.map((slib) => (
                     <div
