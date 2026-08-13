@@ -97,6 +97,24 @@ function IkonaSoubor({
   );
 }
 
+/** Fotka v broskvovém rámečku — světlé pasparta okolo snímku, stejný
+ *  rukopis jako dlaždice na téhle stránce. */
+function Ramecek({ soubor, popis }: { soubor: string; popis: string }) {
+  return (
+    <div className="rounded-[26px] bg-sand/70 p-2 shadow-[0_4px_20px_rgba(140,95,71,0.07)] ring-1 ring-white/60">
+      <div className="relative h-[190px] w-full overflow-hidden rounded-[20px] sm:h-[210px]">
+        <Image
+          src={soubor}
+          alt={popis}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 100vw, 40vw"
+        />
+      </div>
+    </div>
+  );
+}
+
 /** Růžový prostrkaný popisek sekce. */
 function Popisek({ children }: { children: ReactNode }) {
   return (
@@ -202,14 +220,20 @@ export default function OMnePage() {
 
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
             <div className="md:w-[46%] md:pr-8">
+              {/* Nadpis nese prostrkaný popisek, hlavní myšlenka pod ním je
+                  psacím písmem — ta je na stránce to první, co má zaznít.
+                  H1 zůstává na názvu, i když je opticky menší; velikost
+                  písma s úrovní nadpisu nesouvisí. */}
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
                   <IconSparkle size={12} />
-                  <p className="text-xs uppercase tracking-[0.3em] text-accent">O mně</p>
+                  <h1 className="text-xs uppercase tracking-[0.3em] text-accent">
+                    {nbsp("Můj jógový příběh")}
+                  </h1>
                 </div>
-                <h1 className="font-allura text-4xl leading-tight text-ink sm:text-5xl">
-                  {nbsp("Můj jógový příběh")}
-                </h1>
+                <p className="font-allura text-[28px] leading-snug text-ink sm:text-3xl lg:text-[34px]">
+                  {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
+                </p>
               </FadeUp>
 
               <FadeUp delay={0.18}>
@@ -235,14 +259,6 @@ export default function OMnePage() {
                 </div>
               </FadeUp>
 
-              {/* Hlavní myšlenka pod příběhem. Odlišuje ji patková kurziva
-                  v terakotové a tenká linka vlevo — čte se pak jako vyjmutá
-                  věta, ne jako další odstavec, a nepotřebuje uvozovky. */}
-              <FadeUp delay={0.26}>
-                <p className="mt-8 border-l-2 border-accent/45 py-1 pl-5 font-serif text-xl italic leading-snug text-accent-d lg:text-[26px]">
-                  {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
-                </p>
-              </FadeUp>
             </div>
           </div>
 
@@ -278,26 +294,42 @@ export default function OMnePage() {
         {/* ── Následovala jsem svůj vnitřní hlas ──
             Záměrně jen text na krémovém podkladu, žádná fotka na pozadí. */}
         <section className="px-6 py-12 sm:py-16">
-          <div className="mx-auto max-w-3xl text-center">
-            <FadeUp>
-              <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
-                {nbsp("Následovala jsem svůj vnitřní hlas")}
-              </h2>
-            </FadeUp>
+          <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-[1.1fr_1fr] md:gap-14">
+            <div>
+              <FadeUp>
+                <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
+                  {nbsp("Následovala jsem svůj vnitřní hlas")}
+                </h2>
+              </FadeUp>
 
-            <FadeUp delay={0.1}>
-              <div className="mt-7 flex flex-col gap-4 text-justify leading-relaxed text-muted">
-                <p>
-                  {nbsp("Přestože si tehdy mnoho lidí kolem mě myslelo, že je bláznivé chtít se stát lektorkou jógy, něco uvnitř mě vedlo dál.")}
-                </p>
-                <p>
-                  {nbsp("Nevěděla jsem, kam mě tato cesta zavede. Jen jsem cítila, že ji chci následovat.")}
-                </p>
-                <p>
-                  {nbsp("Dnes provázím ženy na skupinových lekcích, v online studiu i na ženských pobytech. A s pokorou sleduji, jak si každá žena nachází svou vlastní cestu zpět k sobě.")}
-                </p>
-              </div>
-            </FadeUp>
+              <FadeUp delay={0.1}>
+                <div className="mt-7 flex flex-col gap-4 text-justify text-sm leading-relaxed text-muted sm:text-base">
+                  <p>
+                    {nbsp("Přestože si tehdy mnoho lidí kolem mě myslelo, že je bláznivé chtít se stát lektorkou jógy, něco uvnitř mě vedlo dál.")}
+                  </p>
+                  <p>
+                    {nbsp("Nevěděla jsem, kam mě tato cesta zavede. Jen jsem cítila, že ji chci následovat.")}
+                  </p>
+                  <p>
+                    {nbsp("Dnes provázím ženy na skupinových lekcích, v online studiu i na ženských pobytech. A s pokorou sleduji, jak si každá žena nachází svou vlastní cestu zpět k sobě.")}
+                  </p>
+                </div>
+              </FadeUp>
+            </div>
+
+            {/* Dvě menší fotky nad sebou v broskvovém rámečku — spodní je
+                odsazená, aby dvojice nestála jako sloupec, ale působila
+                volně položeně. Rámeček drží stejný rukopis jako dlaždice. */}
+            <div className="flex flex-col gap-5">
+              <FadeUp delay={0.12}>
+                <Ramecek soubor="/lekce.jpeg" popis="Anežka při józe v přírodě" />
+              </FadeUp>
+              <FadeUp delay={0.2}>
+                <div className="md:ml-10">
+                  <Ramecek soubor="/pobyty-skupina.jpg" popis="Společná lekce na ženském pobytu" />
+                </div>
+              </FadeUp>
+            </div>
           </div>
         </section>
 
