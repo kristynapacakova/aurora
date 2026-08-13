@@ -10,7 +10,6 @@ import {
   IconHeart,
   IconSun,
   IconLeafBranch,
-  IconRetreaty,
 } from "@/components/BrandIcons";
 
 export const metadata: Metadata = {
@@ -65,6 +64,39 @@ function Karta({
   );
 }
 
+/** Ikona z SVG souboru od klientky. Soubor je černý a slouží jako maska —
+ *  barvu tak určuje CSS a ikona sedí do palety webu. Rozměry se zadávají
+ *  po dvojicích, protože kresby mají hodně rozdílné poměry stran a stejné
+ *  číslo by dalo opticky různě velké ikony. */
+function IkonaSoubor({
+  soubor,
+  sirka,
+  vyska,
+}: {
+  soubor: string;
+  sirka: number;
+  vyska: number;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className="block shrink-0 bg-accent"
+      style={{
+        width: sirka,
+        height: vyska,
+        WebkitMaskImage: `url(/icons/${soubor})`,
+        maskImage: `url(/icons/${soubor})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+      }}
+    />
+  );
+}
+
 /** Růžový prostrkaný popisek sekce. */
 function Popisek({ children }: { children: ReactNode }) {
   return (
@@ -105,7 +137,7 @@ const DARY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] =
     ),
   },
   {
-    ikona: <IconRetreaty size={32} />,
+    ikona: <IkonaSoubor soubor="ikona-citim.svg" sirka={58} vyska={34} />,
     radky: ["Důvěřovat tomu,", "co cítím."],
     // Stonek vychází zpod pravého dolního rohu, lístky rostou ven a nahoru.
     dekor: <List velikost={92} trida="-bottom-12 -right-11 rotate-[36deg] text-accent/30" />,
@@ -114,9 +146,18 @@ const DARY: { ikona: ReactNode; radky: [string, string]; dekor?: ReactNode }[] =
 
 // Můj prostor je prostor pro tebe — tři sliby v závěru.
 const SLIBY: { ikona: ReactNode; radky: [string, string] }[] = [
-  { ikona: <IconHeart size={24} />, radky: ["Prostor, kde nemusíš", "podávat výkon."] },
-  { ikona: <IconHeart size={24} />, radky: ["Nemusíš být", "dokonalá."] },
-  { ikona: <IconHeart size={24} />, radky: ["Nemusíš nic", "dokazovat."] },
+  {
+    ikona: <IkonaSoubor soubor="ikona-prostor.svg" sirka={30} vyska={68} />,
+    radky: ["Prostor, kde nemusíš", "podávat výkon."],
+  },
+  {
+    ikona: <IkonaSoubor soubor="ikona-dokonala.svg" sirka={78} vyska={39} />,
+    radky: ["Nemusíš být", "dokonalá."],
+  },
+  {
+    ikona: <IkonaSoubor soubor="ikona-dokazovat.svg" sirka={68} vyska={50} />,
+    radky: ["Nemusíš nic", "dokazovat."],
+  },
 ];
 
 export default function OMnePage() {
@@ -145,6 +186,7 @@ export default function OMnePage() {
               alt="Anežka — lektorka jógy"
               fill
               className="object-cover"
+              style={{ objectPosition: "center 62%" }}
               sizes="50vw"
               priority
             />
