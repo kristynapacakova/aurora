@@ -97,20 +97,32 @@ function IkonaSoubor({
   );
 }
 
-/** Fotka v broskvovém rámečku — světlé pasparta okolo snímku, stejný
- *  rukopis jako dlaždice na téhle stránce. */
-function Ramecek({ soubor, popis }: { soubor: string; popis: string }) {
+/** Fotka v obloukovém tvaru, jaký má web u fotek v sekcích na úvodní
+ *  stránce. Poloměr je menší než tam, protože snímek je menší — plný
+ *  oblouk by na téhle velikosti spolkl půlku fotky. */
+function Ramecek({
+  soubor,
+  popis,
+  oblouk,
+}: {
+  soubor: string;
+  popis: string;
+  oblouk: "vlevo" | "vpravo";
+}) {
   return (
-    <div className="rounded-[21px] bg-sand/70 p-1.5 shadow-[0_4px_18px_rgba(140,95,71,0.07)] ring-1 ring-white/60">
-      <div className="relative h-[132px] w-full overflow-hidden rounded-[16px] sm:h-[146px]">
-        <Image
-          src={soubor}
-          alt={popis}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 300px"
-        />
-      </div>
+    <div
+      className="relative h-[150px] w-full overflow-hidden sm:h-[168px]"
+      style={{
+        borderRadius: oblouk === "vlevo" ? "76px 14px 14px 14px" : "14px 76px 14px 14px",
+      }}
+    >
+      <Image
+        src={soubor}
+        alt={popis}
+        fill
+        className="object-cover"
+        sizes="(max-width: 768px) 100vw, 300px"
+      />
     </div>
   );
 }
@@ -317,16 +329,16 @@ export default function OMnePage() {
               </FadeUp>
             </div>
 
-            {/* Dvě menší fotky nad sebou v broskvovém rámečku — spodní je
-                odsazená, aby dvojice nestála jako sloupec, ale působila
-                volně položeně. Rámeček drží stejný rukopis jako dlaždice. */}
+            {/* Dvě menší fotky nad sebou v obloukovém tvaru, jaký má web
+                u fotek jinde. Spodní je odsazená, aby dvojice nestála
+                jako sloupec, ale působila volně položeně. */}
             <div className="flex flex-col gap-4 md:w-[280px] md:justify-self-end">
               <FadeUp delay={0.12}>
-                <Ramecek soubor="/lekce.jpeg" popis="Anežka při józe v přírodě" />
+                <Ramecek soubor="/lekce.jpeg" popis="Anežka při józe v přírodě" oblouk="vlevo" />
               </FadeUp>
               <FadeUp delay={0.2}>
                 <div className="md:mr-8">
-                  <Ramecek soubor="/pobyty-skupina.jpg" popis="Společná lekce na ženském pobytu" />
+                  <Ramecek soubor="/pobyty-skupina.jpg" popis="Společná lekce na ženském pobytu" oblouk="vpravo" />
                 </div>
               </FadeUp>
             </div>
