@@ -245,7 +245,7 @@ export default function OMnePage() {
         <section className="px-6 pb-14 pt-10 sm:pb-16 sm:pt-12">
           <FadeUp>
             <p className="mx-auto max-w-6xl text-center font-allura text-[26px] leading-tight text-accent-d sm:text-4xl lg:text-[42px]">
-              {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
+              {nbsp("„Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.“")}
             </p>
           </FadeUp>
         </section>
