@@ -169,7 +169,7 @@ export default function OMnePage() {
         {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
             Žádné dělení na sloupce. Fotka vyplňuje sekci od hrany k hraně
             a čitelnost textu drží dlouhý broskvový přechod zleva. */}
-        <section className="relative overflow-hidden md:min-h-[600px] lg:min-h-[660px] xl:min-h-[730px]">
+        <section className="relative overflow-hidden md:min-h-[max(620px,44vw)]">
           {/* Počítač: fotka drží pravou polovinu sekce. Začíná pod hlavičkou,
               jinak by na ní ležel hamburger a ztratil se v tmavém lese.
               Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
@@ -192,7 +192,7 @@ export default function OMnePage() {
                 alt="Anežka — lektorka jógy"
                 fill
                 className="object-cover"
-                style={{ objectPosition: "center 42%" }}
+                style={{ objectPosition: "center 58%" }}
                 sizes="50vw"
                 priority
               />
