@@ -198,17 +198,6 @@ export default function OMnePage() {
               />
             </div>
 
-            {/* Citát leží na fotce v tmavé části lesa, vlevo od postavy.
-                Krémová z palety webu na tmavém podkladu drží kontrast;
-                jemný stín pod písmem ho jistí i tam, kde je les světlejší. */}
-            <FadeUp delay={0.25}>
-              <p
-                className="absolute left-[24%] top-[11%] w-[27%] text-right font-serif text-xl leading-snug text-cream lg:text-2xl"
-                style={{ textShadow: "0 1px 14px rgba(48,32,24,0.55)" }}
-              >
-                {nbsp("„Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.“")}
-              </p>
-            </FadeUp>
           </div>
 
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
@@ -224,9 +213,10 @@ export default function OMnePage() {
               </FadeUp>
 
               <FadeUp delay={0.18}>
-                {/* Bloková sazba s dělením slov — bez dělení dělá čeština
-                    v úzkém sloupci mezi slovy díry. */}
-                <div className="mt-8 flex flex-col gap-4 hyphens-auto text-justify text-sm leading-relaxed text-muted">
+                {/* Bloková sazba bez dělení slov — dlouhé slovo se radši
+                    přesune celé na další řádek. Krátké předložky drží
+                    u následujícího slova přes nbsp() z lib/typo. */}
+                <div className="mt-8 flex flex-col gap-4 text-justify text-sm leading-relaxed text-muted">
                   <p>
                     {nbsp("To, že teď nevidíš nebo neznáš svoji cestu, ještě neznamená, že neexistuje.")}
                   </p>
@@ -244,6 +234,15 @@ export default function OMnePage() {
                   </p>
                 </div>
               </FadeUp>
+
+              {/* Hlavní myšlenka pod příběhem. Odlišuje ji patková kurziva
+                  v terakotové a tenká linka vlevo — čte se pak jako vyjmutá
+                  věta, ne jako další odstavec, a nepotřebuje uvozovky. */}
+              <FadeUp delay={0.26}>
+                <p className="mt-8 border-l-2 border-accent/45 py-1 pl-5 font-serif text-xl italic leading-snug text-accent-d lg:text-[26px]">
+                  {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
+                </p>
+              </FadeUp>
             </div>
           </div>
 
@@ -256,12 +255,6 @@ export default function OMnePage() {
               className="object-cover"
               sizes="100vw"
             />
-            <p
-              className="absolute left-5 top-6 w-[58%] font-serif text-lg leading-snug text-cream"
-              style={{ textShadow: "0 1px 14px rgba(48,32,24,0.55)" }}
-            >
-              {nbsp("„Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.“")}
-            </p>
           </div>
         </section>
 
@@ -293,7 +286,7 @@ export default function OMnePage() {
             </FadeUp>
 
             <FadeUp delay={0.1}>
-              <div className="mt-7 flex flex-col gap-4 hyphens-auto text-justify leading-relaxed text-muted">
+              <div className="mt-7 flex flex-col gap-4 text-justify leading-relaxed text-muted">
                 <p>
                   {nbsp("Přestože si tehdy mnoho lidí kolem mě myslelo, že je bláznivé chtít se stát lektorkou jógy, něco uvnitř mě vedlo dál.")}
                 </p>
