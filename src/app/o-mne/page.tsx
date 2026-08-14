@@ -174,7 +174,7 @@ export default function OMnePage() {
               jinak by na ní ležel hamburger a ztratil se v tmavém lese.
               Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
               levý okraj, a to maskou — překryv by fotku zakalil. */}
-          <div className="absolute bottom-0 right-0 top-24 hidden w-[48%] md:block">
+          <div className="absolute bottom-0 right-0 top-24 hidden w-[51%] md:block">
             {/* Náběh je dlouhý a odstupňovaný. Krátký lineární přechod
                 končil viditelnou hranou a nad světlým kmenem působil jako
                 šmouha; takhle se fotka do pozadí opravdu vytratí. */}
@@ -193,7 +193,7 @@ export default function OMnePage() {
                 fill
                 className="object-cover"
                 style={{ objectPosition: "center 66%" }}
-                sizes="48vw"
+                sizes="51vw"
                 priority
               />
             </div>
@@ -213,7 +213,7 @@ export default function OMnePage() {
                 {/* Hlavní myšlenka ve stylu popisků sekcí — prostrkané
                     verzálky v korálové. Řádkování je vyšší, verzálky se
                     přes dva řádky jinak lepí na sebe. */}
-                <p className="mt-5 text-xs uppercase leading-[2] tracking-[0.3em] text-accent">
+                <p className="mt-5 text-[11px] uppercase leading-[2] tracking-[0.14em] text-accent sm:text-xs lg:tracking-[0.3em]">
                   {nbsp("Věřím, že každá žena si zaslouží místo,")}
                   <br />
                   {nbsp("kde může na chvíli jen být.")}
@@ -306,15 +306,11 @@ export default function OMnePage() {
                 Vysoká je jako textový sloupec vedle ní. */}
             <FadeUp delay={0.12} className="md:h-full">
               <div className="relative mx-auto h-[280px] w-full max-w-[360px] md:h-full md:min-h-[300px] md:max-w-none">
-                {/* Stín musí kopírovat vykrojený tvar, ne obdélník kolem
-                    obrázku — proto drop-shadow, který jde podle průhlednosti,
-                    a ne box-shadow. */}
                 <Image
                   src="/anezka-les-tvar.webp"
                   alt="Anežka při józe v lese"
                   fill
                   className="object-contain"
-                  style={{ filter: "drop-shadow(0 14px 22px rgba(140,95,71,0.22))" }}
                   sizes="(max-width: 768px) 360px, 400px"
                 />
               </div>
