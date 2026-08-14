@@ -97,36 +97,6 @@ function IkonaSoubor({
   );
 }
 
-/** Fotka v obloukovém tvaru, jaký má web u fotek v sekcích na úvodní
- *  stránce. Poloměr je menší než tam, protože snímek je menší — plný
- *  oblouk by na téhle velikosti spolkl půlku fotky. */
-function Ramecek({
-  soubor,
-  popis,
-  oblouk,
-}: {
-  soubor: string;
-  popis: string;
-  oblouk: "vlevo" | "vpravo";
-}) {
-  return (
-    <div
-      className="relative h-[150px] w-full overflow-hidden sm:h-[168px]"
-      style={{
-        borderRadius: oblouk === "vlevo" ? "76px 14px 14px 14px" : "14px 76px 14px 14px",
-      }}
-    >
-      <Image
-        src={soubor}
-        alt={popis}
-        fill
-        className="object-cover"
-        sizes="(max-width: 768px) 100vw, 300px"
-      />
-    </div>
-  );
-}
-
 /** Růžový prostrkaný popisek sekce. */
 function Popisek({ children }: { children: ReactNode }) {
   return (
@@ -244,7 +214,9 @@ export default function OMnePage() {
                     verzálky v korálové. Řádkování je vyšší, verzálky se
                     přes dva řádky jinak lepí na sebe. */}
                 <p className="mt-5 text-xs uppercase leading-[2] tracking-[0.3em] text-accent">
-                  {nbsp("Věřím, že každá žena si zaslouží místo, kde může na chvíli jen být.")}
+                  {nbsp("Věřím, že každá žena si zaslouží místo,")}
+                  <br />
+                  {nbsp("kde může na chvíli jen být.")}
                 </p>
               </FadeUp>
 
@@ -306,7 +278,7 @@ export default function OMnePage() {
         {/* ── Následovala jsem svůj vnitřní hlas ──
             Záměrně jen text na krémovém podkladu, žádná fotka na pozadí. */}
         <section className="px-6 py-12 sm:py-16">
-          <div className="mx-auto grid max-w-5xl grid-cols-1 items-center gap-10 md:grid-cols-[1.45fr_1fr] md:gap-14">
+          <div className="mx-auto grid max-w-5xl grid-cols-1 items-stretch gap-10 md:grid-cols-[1.45fr_1fr] md:gap-14">
             <div>
               <FadeUp>
                 <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
@@ -329,19 +301,20 @@ export default function OMnePage() {
               </FadeUp>
             </div>
 
-            {/* Dvě menší fotky nad sebou v obloukovém tvaru, jaký má web
-                u fotek jinde. Spodní je odsazená, aby dvojice nestála
-                jako sloupec, ale působila volně položeně. */}
-            <div className="flex flex-col gap-4 md:w-[280px] md:justify-self-end">
-              <FadeUp delay={0.12}>
-                <Ramecek soubor="/lekce.jpeg" popis="Anežka při józe v přírodě" oblouk="vlevo" />
-              </FadeUp>
-              <FadeUp delay={0.2}>
-                <div className="md:mr-8">
-                  <Ramecek soubor="/pobyty-skupina.jpg" popis="Společná lekce na ženském pobytu" oblouk="vpravo" />
-                </div>
-              </FadeUp>
-            </div>
+            {/* Fotka nese organický tvar rovnou v souboru a okolo něj je
+                průhledno, takže na krémovém podkladu nepotřebuje žádný rám.
+                Vysoká je jako textový sloupec vedle ní. */}
+            <FadeUp delay={0.12} className="md:h-full">
+              <div className="relative mx-auto h-[280px] w-full max-w-[360px] md:h-full md:min-h-[300px] md:max-w-none">
+                <Image
+                  src="/anezka-les-tvar.webp"
+                  alt="Anežka při józe v lese"
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 360px, 400px"
+                />
+              </div>
+            </FadeUp>
           </div>
         </section>
 
