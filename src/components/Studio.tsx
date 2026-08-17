@@ -5,7 +5,7 @@ import { IconSparkle, IconSun, IconLeafBranch } from "./BrandIcons";
 import { getNastaveni } from "@/lib/db";
 
 export default async function Studio() {
-  const { uscreen_home, uscreen_signup } = await getNastaveni();
+  const { uscreen_signup } = await getNastaveni();
 
   const SERVICES = [
     {
@@ -17,9 +17,10 @@ export default async function Studio() {
         "Společné lekce jsou místem, kde můžeš na chvíli odložit každodenní starosti, věnovat pozornost svému tělu a dopřát si čas jen pro sebe.",
         "Čeká tě jemně plynoucí pohyb, vědomý dech, uvolnění i chvíle klidu. Nemusíš mít žádné předchozí zkušenosti — stačí přijít taková, jaká právě jsi.",
       ],
+      // Společné lekce jsou naživo, ne na Uscreenu — odkaz míří na vlastní
+      // stránku s rozvrhem.
       cta: "Zobrazit rozvrh lekcí",
-      href: uscreen_home,
-      external: true,
+      href: "/lekce",
       photo: "/lekce.jpeg",
       alt: "Lekce jógy",
       photoLeft: true,

@@ -4,10 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 
-type EditorTab = "pobyty" | "clanky";
+type EditorTab = "pobyty" | "clanky" | "lekce";
 type Section =
   | "overview"
   | "editor"
@@ -19,7 +19,7 @@ type Section =
   | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
 type PendingDelete = {
-  kind: "pobyty" | "clanky" | "poptavky" | "newsletter" | "cekaci-listina" | "darkove-poukazy";
+  kind: "pobyty" | "clanky" | "lekce" | "poptavky" | "newsletter" | "cekaci-listina" | "darkove-poukazy";
   id: number;
   label: string;
 };
@@ -134,6 +134,7 @@ export default function AdminDashboard({
   configured,
   pobyty,
   clanky,
+  lekce,
   poptavky,
   newsletter,
   cekaciListina,
@@ -143,6 +144,7 @@ export default function AdminDashboard({
   configured: boolean;
   pobyty: Pobyt[];
   clanky: Clanek[];
+  lekce: Lekce[];
   poptavky: Poptavka[];
   newsletter: NewsletterSignup[];
   cekaciListina: CekaciListina[];
@@ -265,6 +267,24 @@ export default function AdminDashboard({
         zverejneno: false,
         vyprodano: p.vyprodano,
         pripravuje_se: p.pripravuje_se,
+      }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function toggleLekce(l: Lekce) {
+    setBusy(true);
+    await fetch("/api/admin/lekce", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: l.id,
+        den: l.den,
+        misto: l.misto,
+        cas: l.cas,
+        poznamka: l.poznamka,
+        zverejneno: !l.zverejneno,
       }),
     });
     setBusy(false);
@@ -485,11 +505,13 @@ export default function AdminDashboard({
 
   const editorTabs: { key: EditorTab; label: string; count: number }[] = [
     { key: "pobyty", label: "Pobyty", count: pobyty.length },
+    { key: "lekce", label: "Lekce", count: lekce.length },
     { key: "clanky", label: "Články", count: clanky.length },
   ];
 
   const pobytyZverejnene = pobyty.filter((p) => p.zverejneno).length;
   const clankyZverejnene = clanky.filter((c) => c.zverejneno).length;
+  const lekceZverejnene = lekce.filter((l) => l.zverejneno).length;
   const objednavky = poptavky.filter((q) => q.typ === "objednavka");
   const zaplacene = objednavky.filter((q) => q.zaplaceno).length;
   const cekaNaPlatbu = objednavky.filter((q) => !q.zaplaceno).length;
@@ -503,6 +525,13 @@ export default function AdminDashboard({
       label: "Pobyty",
       value: pobyty.length,
       detail: `${pobytyZverejnene} zveřejněných`,
+    },
+    {
+      section: "editor",
+      editorTab: "lekce",
+      label: "Lekce",
+      value: lekce.length,
+      detail: `${lekceZverejnene} zveřejněných`,
     },
     {
       section: "editor",
@@ -679,7 +708,8 @@ export default function AdminDashboard({
           {/* ── Overview ── */}
           {section === "overview" && (
             <div className="flex flex-col gap-8">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
+              {/* Sedm dlaždic — na xl se vejdou do jedné řady, níž se lámou po čtyřech. */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
                 {stats.map((s) => (
                   <button
                     key={s.label}
@@ -742,6 +772,14 @@ export default function AdminDashboard({
                   <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{clanky.length}</span></div>
                   <div className="flex justify-between"><span className="text-muted">Zveřejněných</span><span>{clankyZverejnene}</span></div>
                   <div className="flex justify-between"><span className="text-muted">Skrytých</span><span>{clanky.length - clankyZverejnene}</span></div>
+                </div>
+              </div>
+              <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+                <p className="text-xs uppercase tracking-[0.25em] text-accent">Lekce</p>
+                <div className="mt-4 flex flex-col gap-2 text-sm text-ink">
+                  <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{lekce.length}</span></div>
+                  <div className="flex justify-between"><span className="text-muted">Zveřejněných</span><span>{lekceZverejnene}</span></div>
+                  <div className="flex justify-between"><span className="text-muted">Skrytých</span><span>{lekce.length - lekceZverejnene}</span></div>
                 </div>
               </div>
               <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:col-span-2">
@@ -910,6 +948,83 @@ export default function AdminDashboard({
                             <button
                               disabled={busy}
                               onClick={() => setPendingDelete({ kind: "pobyty", id: p.id, label: p.nadpis })}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                            >
+                              Smazat
+                            </button>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              )}
+
+              {/* ── Lekce ── */}
+              {editorTab === "lekce" && (
+                <section>
+                  <div className="mb-6 flex flex-wrap items-center gap-3">
+                    <Link
+                      href="/admin/lekce/nova"
+                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+                    >
+                      + Přidat lekci
+                    </Link>
+                    <p className="text-xs text-muted">
+                      Lekce se na stránce řadí samy podle dne v týdnu.
+                    </p>
+                  </div>
+                  {lekce.length === 0 ? (
+                    <p className="text-sm text-muted">
+                      Zatím žádné lekce. Přidej první — objeví se na stránce{" "}
+                      <Link href="/lekce" className="underline underline-offset-2 hover:text-ink">
+                        Lekce
+                      </Link>
+                      .
+                    </p>
+                  ) : (
+                    <ul className="flex flex-col gap-3">
+                      {lekce.map((l) => (
+                        <li
+                          key={l.id}
+                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                        >
+                          <div className="min-w-0">
+                            <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
+                              {l.den} — {l.misto}
+                              {!l.zverejneno && (
+                                <span className="shrink-0 rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                                  Skrytá
+                                </span>
+                              )}
+                            </p>
+                            <p className="mt-1 truncate text-xs text-muted">
+                              {[l.cas, l.poznamka].filter(Boolean).join(" · ")}
+                            </p>
+                          </div>
+                          <div className="flex shrink-0 gap-2">
+                            <button
+                              disabled={busy}
+                              onClick={() => toggleLekce(l)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              {l.zverejneno ? "Skrýt" : "Zobrazit"}
+                            </button>
+                            <Link
+                              href={`/admin/lekce/${l.id}`}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              Upravit
+                            </Link>
+                            <button
+                              disabled={busy}
+                              onClick={() =>
+                                setPendingDelete({
+                                  kind: "lekce",
+                                  id: l.id,
+                                  label: `${l.den} — ${l.misto}`,
+                                })
+                              }
                               className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
                             >
                               Smazat

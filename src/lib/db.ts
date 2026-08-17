@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import { cache } from "react";
 import { randomBytes, randomInt } from "crypto";
+import { poradiDne } from "./dny";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Databáze (Vercel Postgres / Neon). Připojení se čte z env proměnných,
@@ -34,6 +35,19 @@ export type Clanek = {
   zverejneno: boolean;
   created_at: string;
 };
+
+// Pravidelná lekce naživo (offline). Den se vybírá ze seznamu, ať se karty
+// na webu samy řadí od pondělí — pořadí se tak nemusí nikde ručně hlídat.
+export type Lekce = {
+  id: number;
+  den: string;
+  misto: string;
+  cas: string;
+  poznamka: string;
+  zverejneno: boolean;
+  created_at: string;
+};
+
 
 // Pozn.: jmeno/email/telefon/zprava u Poptavka, CekaciListina a
 // DarkovyPoukaz pochází z veřejného formuláře — je to nedůvěryhodný
@@ -88,8 +102,11 @@ export type DarkovyPoukaz = {
 
 export type Nastaveni = {
   kontakt_email: string;
+  telefon: string;
   instagram_handle: string;
   instagram_url: string;
+  facebook_handle: string;
+  facebook_url: string;
   cena_lekce: string;
   cena_mesicni: string;
   cena_rocni: string;
@@ -157,6 +174,16 @@ async function ensureSchema() {
     );
     ALTER TABLE clanky ADD COLUMN IF NOT EXISTS titulni_foto TEXT NOT NULL DEFAULT '';
 
+    CREATE TABLE IF NOT EXISTS lekce (
+      id SERIAL PRIMARY KEY,
+      den TEXT NOT NULL DEFAULT '',
+      misto TEXT NOT NULL DEFAULT '',
+      cas TEXT NOT NULL DEFAULT '',
+      poznamka TEXT NOT NULL DEFAULT '',
+      zverejneno BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     CREATE TABLE IF NOT EXISTS poptavky (
       id SERIAL PRIMARY KEY,
       pobyt_id INTEGER,
@@ -218,6 +245,9 @@ async function ensureSchema() {
     );
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS domena_expiruje TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS cislo_uctu_darky TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS telefon TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS facebook_handle TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS facebook_url TEXT NOT NULL DEFAULT '';
   `);
   schemaReady = true;
 }
@@ -362,6 +392,44 @@ export async function updateClanek(
 
 export async function deleteClanek(id: number): Promise<void> {
   await query(`DELETE FROM clanky WHERE id = $1`, [id]);
+}
+
+// ── Lekce ───────────────────────────────────────────────────────────────────
+
+export async function getLekce(onlyPublished = true): Promise<Lekce[]> {
+  if (!dbConfigured()) return [];
+  const rows = await query<Lekce>(
+    `SELECT * FROM lekce ${onlyPublished ? "WHERE zverejneno = TRUE" : ""}`
+  );
+  // Řadíme až tady, ne v SQL — pořadí dní je dané seznamem DNY_V_TYDNU,
+  // takže by se stejně muselo do dotazu vypisovat ručně přes CASE.
+  return rows.sort((a, b) => poradiDne(a.den) - poradiDne(b.den) || a.id - b.id);
+}
+
+export async function getLekci(id: number): Promise<Lekce | null> {
+  if (!dbConfigured()) return null;
+  const rows = await query<Lekce>(`SELECT * FROM lekce WHERE id = $1`, [id]);
+  return rows[0] ?? null;
+}
+
+export async function createLekce(l: Omit<Lekce, "id" | "created_at">): Promise<Lekce> {
+  const rows = await query<Lekce>(
+    `INSERT INTO lekce (den, misto, cas, poznamka, zverejneno)
+     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [l.den, l.misto, l.cas, l.poznamka, l.zverejneno]
+  );
+  return rows[0];
+}
+
+export async function updateLekce(id: number, l: Omit<Lekce, "id" | "created_at">): Promise<void> {
+  await query(
+    `UPDATE lekce SET den=$1, misto=$2, cas=$3, poznamka=$4, zverejneno=$5 WHERE id=$6`,
+    [l.den, l.misto, l.cas, l.poznamka, l.zverejneno, id]
+  );
+}
+
+export async function deleteLekce(id: number): Promise<void> {
+  await query(`DELETE FROM lekce WHERE id = $1`, [id]);
 }
 
 // ── Poptávky ────────────────────────────────────────────────────────────────
@@ -512,8 +580,11 @@ export async function deleteDarkovyPoukaz(id: number): Promise<void> {
 
 const NASTAVENI_DEFAULTS: Nastaveni = {
   kontakt_email: "aurora.yogaaa@gmail.com",
+  telefon: "776 892 955",
   instagram_handle: "@aurora_yogaa",
   instagram_url: "https://www.instagram.com/aurora_yogaa",
+  facebook_handle: "Aurora Yoga",
+  facebook_url: "https://www.facebook.com/aurora.joga",
   cena_lekce: "120",
   cena_mesicni: "399",
   cena_rocni: "299",
@@ -531,12 +602,15 @@ async function ensureNastaveniRow(): Promise<NastaveniRow> {
   const rows = await query<NastaveniRow>(`SELECT * FROM nastaveni WHERE id = 1`);
   if (rows[0]) return rows[0];
   const inserted = await query<NastaveniRow>(
-    `INSERT INTO nastaveni (id, kontakt_email, instagram_handle, instagram_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans, domena_expiruje, cislo_uctu_darky)
-     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
+    `INSERT INTO nastaveni (id, kontakt_email, telefon, instagram_handle, instagram_url, facebook_handle, facebook_url, cena_lekce, cena_mesicni, cena_rocni, uscreen_home, uscreen_signup, uscreen_login, uscreen_plans, domena_expiruje, cislo_uctu_darky)
+     VALUES (1, $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
     [
       NASTAVENI_DEFAULTS.kontakt_email,
+      NASTAVENI_DEFAULTS.telefon,
       NASTAVENI_DEFAULTS.instagram_handle,
       NASTAVENI_DEFAULTS.instagram_url,
+      NASTAVENI_DEFAULTS.facebook_handle,
+      NASTAVENI_DEFAULTS.facebook_url,
       NASTAVENI_DEFAULTS.cena_lekce,
       NASTAVENI_DEFAULTS.cena_mesicni,
       NASTAVENI_DEFAULTS.cena_rocni,
@@ -556,8 +630,11 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
   const row = await ensureNastaveniRow();
   return {
     kontakt_email: row.kontakt_email || NASTAVENI_DEFAULTS.kontakt_email,
+    telefon: row.telefon || NASTAVENI_DEFAULTS.telefon,
     instagram_handle: row.instagram_handle || NASTAVENI_DEFAULTS.instagram_handle,
     instagram_url: row.instagram_url || NASTAVENI_DEFAULTS.instagram_url,
+    facebook_handle: row.facebook_handle || NASTAVENI_DEFAULTS.facebook_handle,
+    facebook_url: row.facebook_url || NASTAVENI_DEFAULTS.facebook_url,
     cena_lekce: row.cena_lekce || NASTAVENI_DEFAULTS.cena_lekce,
     cena_mesicni: row.cena_mesicni || NASTAVENI_DEFAULTS.cena_mesicni,
     cena_rocni: row.cena_rocni || NASTAVENI_DEFAULTS.cena_rocni,
@@ -573,11 +650,14 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
 export async function updateNastaveni(fields: Nastaveni): Promise<void> {
   await ensureNastaveniRow();
   await query(
-    `UPDATE nastaveni SET kontakt_email=$1, instagram_handle=$2, instagram_url=$3, cena_lekce=$4, cena_mesicni=$5, cena_rocni=$6, uscreen_home=$7, uscreen_signup=$8, uscreen_login=$9, uscreen_plans=$10, domena_expiruje=$11, cislo_uctu_darky=$12 WHERE id = 1`,
+    `UPDATE nastaveni SET kontakt_email=$1, telefon=$2, instagram_handle=$3, instagram_url=$4, facebook_handle=$5, facebook_url=$6, cena_lekce=$7, cena_mesicni=$8, cena_rocni=$9, uscreen_home=$10, uscreen_signup=$11, uscreen_login=$12, uscreen_plans=$13, domena_expiruje=$14, cislo_uctu_darky=$15 WHERE id = 1`,
     [
       fields.kontakt_email,
+      fields.telefon,
       fields.instagram_handle,
       fields.instagram_url,
+      fields.facebook_handle,
+      fields.facebook_url,
       fields.cena_lekce,
       fields.cena_mesicni,
       fields.cena_rocni,

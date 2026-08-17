@@ -3,6 +3,8 @@
    Barva řízena přes className (text-* → currentColor).
    ───────────────────────────────────────────────────────────── */
 
+import type { ReactNode } from "react";
+
 /** ✦ Hvězdička / jiskra — icon 5 */
 export function IconSparkle({ size = 24, className = "text-accent" }: { size?: number; className?: string }) {
   return (
@@ -122,6 +124,119 @@ export function IconRetreaty({ size = 38, className = "text-accent" }: { size?: 
       <path d="M20 30 L20 35" />
       <path d="M20 33 C18 32 16 31 15 30" />
     </svg>
+  );
+}
+
+/* ─── Ikony pro stránku Lekce ─────────────────────────────────────────────
+   Všechny sdílí viewBox 24×24 a tenkou linku, aby vedle sebe opticky
+   seděly i při různých velikostech. Kreslené ručně — designér k nim
+   předlohu nedodal. */
+
+type LinkaProps = { size?: number; className?: string };
+
+function Linka({
+  size = 24,
+  className = "text-accent",
+  sila = 1.4,
+  children,
+}: LinkaProps & { sila?: number; children: ReactNode }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={sila}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+    >
+      {children}
+    </svg>
+  );
+}
+
+/** Špendlík do mapy — místo konání lekce */
+export function IconPin({ size = 24, className = "text-accent" }: LinkaProps) {
+  return (
+    <Linka size={size} className={className}>
+      <path d="M12 21s6.6-6 6.6-10.6a6.6 6.6 0 1 0-13.2 0C5.4 15 12 21 12 21Z" />
+      <circle cx="12" cy="10.2" r="2.5" />
+    </Linka>
+  );
+}
+
+/** Kresba od designéra ze souboru v public/icons. Soubor slouží jako maska —
+ *  barvu tak určuje CSS (bg-accent) a ikona sedí do palety webu.
+ *
+ *  Rozměry se zadávají po dvojicích: kresby mají hodně rozdílné poměry stran
+ *  (láhev je na výšku, ruce se srdcem na šířku), takže stejné číslo by dalo
+ *  opticky různě velké ikony.
+ *
+ *  Pozn.: stránka O mně má svou vlastní kopii téhle pomocné komponenty.
+ *  Až se bude upravovat, dá se sjednotit na tuhle. */
+export function IkonaSoubor({
+  soubor,
+  sirka,
+  vyska,
+  className = "bg-accent",
+}: {
+  soubor: string;
+  sirka: number;
+  vyska: number;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden="true"
+      className={`block shrink-0 ${className}`}
+      style={{
+        width: sirka,
+        height: vyska,
+        WebkitMaskImage: `url(/icons/${soubor})`,
+        maskImage: `url(/icons/${soubor})`,
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+      }}
+    />
+  );
+}
+
+/** Telefonní sluchátko — rezervace */
+export function IconTelefon({ size = 24, className = "text-accent" }: LinkaProps) {
+  return (
+    <Linka size={size} className={className}>
+      <path d="M6.3 3.6h2.8l1.4 3.5-1.8 1.3a11.6 11.6 0 0 0 5.4 5.4l1.3-1.8 3.5 1.4v2.8a1.8 1.8 0 0 1-2 1.8A15.2 15.2 0 0 1 4.5 5.6a1.8 1.8 0 0 1 1.8-2Z" />
+    </Linka>
+  );
+}
+
+/** Instagram */
+export function IconInstagram({ size = 24, className = "text-accent" }: LinkaProps) {
+  return (
+    <Linka size={size} className={className}>
+      <rect x="3.3" y="3.3" width="17.4" height="17.4" rx="5" />
+      <circle cx="12" cy="12" r="3.9" />
+      <circle cx="16.9" cy="7.1" r="0.9" fill="currentColor" stroke="none" />
+    </Linka>
+  );
+}
+
+/** Facebook — samotné „f“ bez kolečka. Sází se na plný odznak, kolečko tedy
+ *  dělá odznak; vlastní kruh by dal kruh v kruhu. Linka je silnější, aby se
+ *  drobné písmeno na barevném podkladu neztratilo. */
+export function IconFacebook({ size = 24, className = "text-accent" }: LinkaProps) {
+  return (
+    <Linka size={size} className={className} sila={2}>
+      <path d="M15.4 4.6h-1.8A3.1 3.1 0 0 0 10.5 7.7v11.7" />
+      <path d="M7.4 11.4h6.6" />
+    </Linka>
   );
 }
 

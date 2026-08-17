@@ -17,8 +17,11 @@ export async function PUT(request: Request) {
   const body = (await request.json()) as Partial<Nastaveni>;
   const fields: Nastaveni = {
     kontakt_email: (body.kontakt_email ?? "").trim(),
+    telefon: (body.telefon ?? "").trim(),
     instagram_handle: (body.instagram_handle ?? "").trim(),
     instagram_url: (body.instagram_url ?? "").trim(),
+    facebook_handle: (body.facebook_handle ?? "").trim(),
+    facebook_url: (body.facebook_url ?? "").trim(),
     cena_lekce: (body.cena_lekce ?? "").trim(),
     cena_mesicni: (body.cena_mesicni ?? "").trim(),
     cena_rocni: (body.cena_rocni ?? "").trim(),

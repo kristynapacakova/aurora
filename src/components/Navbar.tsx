@@ -17,7 +17,7 @@ export default function Navbar() {
 
   const MENU_ITEMS: MenuItem[] = [
     { label: "O mně", href: "/o-mne" },
-    { label: "Lekce", href: "/#lekce" },
+    { label: "Lekce", href: "/lekce" },
     { label: "Online studio", href: uscreen_signup, external: true },
     { label: "Pobyty pro ženy", href: "/pobyty" },
     { label: "Dárkový poukaz", href: "/darkovy-poukaz" },

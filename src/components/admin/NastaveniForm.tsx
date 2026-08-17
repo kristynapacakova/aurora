@@ -57,14 +57,29 @@ export default function NastaveniForm({ initial }: { initial: Nastaveni }) {
               <input type="email" value={form.kontakt_email} onChange={(e) => set("kontakt_email", e.target.value)} className={inputCls} />
             </label>
             <label className={labelCls}>
+              Telefon
+              <input value={form.telefon} onChange={(e) => set("telefon", e.target.value)} className={inputCls} placeholder="Např. 776 892 955" />
+            </label>
+            <label className={labelCls}>
               Instagram — popisek (@handle)
               <input value={form.instagram_handle} onChange={(e) => set("instagram_handle", e.target.value)} className={inputCls} />
             </label>
+            <label className={labelCls}>
+              Instagram — odkaz
+              <input value={form.instagram_url} onChange={(e) => set("instagram_url", e.target.value)} className={inputCls} />
+            </label>
+            <label className={labelCls}>
+              Facebook — popisek
+              <input value={form.facebook_handle} onChange={(e) => set("facebook_handle", e.target.value)} className={inputCls} placeholder="Např. Aurora Yoga" />
+            </label>
+            <label className={labelCls}>
+              Facebook — odkaz
+              <input value={form.facebook_url} onChange={(e) => set("facebook_url", e.target.value)} className={inputCls} />
+            </label>
           </div>
-          <label className={labelCls}>
-            Instagram — odkaz
-            <input value={form.instagram_url} onChange={(e) => set("instagram_url", e.target.value)} className={inputCls} />
-          </label>
+          <p className="text-xs text-muted">
+            Telefon a odkazy na sítě se ukazují na stránce Lekce v bloku „Rezervace“.
+          </p>
         </div>
 
         <div className={cardCls}>
