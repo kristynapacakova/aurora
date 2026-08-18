@@ -975,13 +975,21 @@ export default function AdminDashboard({
                     </p>
                   </div>
                   {lekce.length === 0 ? (
-                    <p className="text-sm text-muted">
-                      Zatím žádné lekce. Přidej první — objeví se na stránce{" "}
-                      <Link href="/lekce" className="underline underline-offset-2 hover:text-ink">
-                        Lekce
-                      </Link>
-                      .
-                    </p>
+                    <div className="rounded-2xl border border-line bg-white p-5 text-sm text-muted shadow-sm">
+                      <p className="font-medium text-ink">
+                        Zatím tu žádné lekce nejsou — na webu běží výchozí rozvrh.
+                      </p>
+                      <p className="mt-2">
+                        Na stránce{" "}
+                        <Link href="/lekce" className="underline underline-offset-2 hover:text-ink">
+                          Lekce
+                        </Link>{" "}
+                        se teď ukazují termíny zapsané napevno v kódu (úterý Maršovice,
+                        středa Svratka, čtvrtek Sněžné). Jakmile tady přidáš první lekci,
+                        výchozí rozvrh se přestane používat a web se bude řídit jen tímhle
+                        seznamem.
+                      </p>
+                    </div>
                   ) : (
                     <ul className="flex flex-col gap-3">
                       {lekce.map((l) => (

@@ -6,6 +6,7 @@ import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import { nbsp } from "@/lib/typo";
 import { getLekce, getNastaveni } from "@/lib/db";
+import { VYCHOZI_LEKCE } from "@/lib/vychoziLekce";
 import {
   IconSparkle,
   IconSun,
@@ -75,7 +76,12 @@ const VYBAVA: { ikona: ReactNode; radky: [string, string] }[] = [
 ];
 
 export default async function LekcePage() {
-  const [lekce, nastaveni] = await Promise.all([getLekce(true), getNastaveni()]);
+  const [lekceZAdministrace, nastaveni] = await Promise.all([getLekce(true), getNastaveni()]);
+
+  // Dokud v administraci není ani jedna lekce, ukáže se výchozí rozvrh
+  // zapsaný v kódu — skutečné termíny, které klientka učí. Jakmile si tam
+  // přidá vlastní, řídí rozvrh už jen administrace.
+  const lekce = lekceZAdministrace.length > 0 ? lekceZAdministrace : VYCHOZI_LEKCE;
   const { telefon, instagram_handle, instagram_url, facebook_handle, facebook_url } = nastaveni;
 
   // Telefon do odkazu tel: — mezery v čísle by odkaz rozbily.
@@ -207,47 +213,29 @@ export default async function LekcePage() {
               <Popisek>Pravidelné lekce</Popisek>
             </FadeUp>
 
-            {lekce.length === 0 ? (
-              <FadeUp delay={0.08}>
-                {/* Prázdný rozvrh nesmí vypadat jako rozbitá stránka — místo
-                    karet se ukáže pozvánka napsat si o aktuální termíny. */}
-                <div className="mt-10 rounded-[20px] bg-sand/50 px-8 py-10 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70">
-                  <p className="font-serif text-xl leading-snug text-ink">
-                    {nbsp("Termíny nových lekcí právě ladím.")}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-muted">
-                    {nbsp("Napiš mi a ráda ti dám vědět, jakmile budu mít rozvrh hotový.")}
-                  </p>
-                </div>
-              </FadeUp>
-            ) : (
-              <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {lekce.map((l, i) => (
-                  <FadeUp key={l.id} delay={0.06 * i}>
-                    <div className="relative h-full">
-                      {/* Lístek leží celý uvnitř karty, s odstupem od rohu.
-                          Dřív přesahoval přes okraj a ořez z něj dělal
-                          odseknutý pahýl. */}
-                      <div className="relative flex h-full flex-col items-center rounded-[20px] bg-sand/50 px-6 py-8 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70">
-                        <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/70">
-                          <IconPin size={20} />
-                        </span>
-                        <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-accent">
-                          {l.den}
-                        </p>
-                        <p className="mt-1 font-serif text-3xl leading-tight text-ink">
-                          {nbsp(l.misto)}
-                        </p>
-                        <p className="mt-3 text-sm text-muted">{nbsp(l.cas)}</p>
-                        {l.poznamka && (
-                          <p className="mt-1 text-xs text-muted/80">{nbsp(l.poznamka)}</p>
-                        )}
-                      </div>
-                    </div>
-                  </FadeUp>
-                ))}
-              </div>
-            )}
+            {/* Rozvrh nikdy není prázdný — když v administraci nic není,
+                nastoupí výchozí termíny z kódu. */}
+            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {lekce.map((l, i) => (
+                <FadeUp key={l.id} delay={0.06 * i}>
+                  <div className="flex h-full flex-col items-center rounded-[20px] bg-sand/50 px-6 py-8 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/70">
+                      <IconPin size={20} />
+                    </span>
+                    <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-accent">
+                      {l.den}
+                    </p>
+                    <p className="mt-1 font-serif text-3xl leading-tight text-ink">
+                      {nbsp(l.misto)}
+                    </p>
+                    <p className="mt-3 text-sm text-muted">{nbsp(l.cas)}</p>
+                    {l.poznamka && (
+                      <p className="mt-1 text-xs text-muted/80">{nbsp(l.poznamka)}</p>
+                    )}
+                  </div>
+                </FadeUp>
+              ))}
+            </div>
 
             {/* Jiskra je uvnitř textu, ne vedle bloku — jinak se při zalomení
                 na dva řádky odtrhne a zůstane sama u levého okraje. */}
