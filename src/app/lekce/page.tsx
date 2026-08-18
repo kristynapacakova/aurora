@@ -29,11 +29,6 @@ export const metadata: Metadata = {
 // vygenerované verzi z buildu.
 export const dynamic = "force-dynamic";
 
-// Fotka u „První lekce?“. Má organický tvar zapečený v souboru a okolo něj
-// průhledno, takže na podkladu rámečku nepotřebuje rám. Výměna = přepsat
-// tenhle řádek (nová fotka musí mít taky průhledné pozadí).
-const FOTKA_PRVNI_LEKCE = "/anezka-prvni-lekce.webp";
-
 /** Sušený lístek rozesetý kolem karet — leží pod kartou a smí přesahovat
  *  přes její okraj. Stejný princip jako na stránce O mně. */
 function List({ velikost, trida }: { velikost: number; trida: string }) {
@@ -335,43 +330,24 @@ export default async function LekcePage() {
         </section>
 
         {/* ── První lekce? ──
-            Bez rámečku — jen fotka a text na krémovém podkladu. Aby text nebyl
-            vystředěný jen ve zbylém místě vpravo od fotky, drží mřížka napravo
-            prázdný sloupec stejné šířky jako fotka; střed textu tak padne na
-            střed stránky. Na telefonu se fotka skládá nad text. */}
+            Bez rámečku a bez fotky — jen text na střed, volně na krémovém
+            podkladu. */}
         <section className="px-6 pb-24 pt-6 sm:pb-28">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="px-2 py-4 sm:px-6">
-                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[auto_1fr_auto] md:items-start md:gap-10">
-                  <div className="relative mx-auto h-56 w-56 shrink-0 sm:h-64 sm:w-64">
-                    <Image
-                      src={FOTKA_PRVNI_LEKCE}
-                      alt="Anežka, lektorka jógy"
-                      fill
-                      className="object-contain"
-                      sizes="256px"
-                    />
-                  </div>
-
-                  <div className="text-center">
-                    <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
-                      {nbsp("První lekce?")}
-                    </h2>
-                    <div className="mx-auto mt-4 flex max-w-xl flex-col gap-3 text-sm leading-relaxed text-muted">
-                      <p>
-                        {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
-                      </p>
-                      <p>
-                        {nbsp("Přijď přesně taková, jaká jsi.")}
-                        {"\u00A0"}
-                        <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Protiváha fotky — drží text uprostřed rámečku. */}
-                  <div aria-hidden="true" className="hidden shrink-0 md:block md:h-64 md:w-64" />
+              <div className="text-center">
+                <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
+                  {nbsp("První lekce?")}
+                </h2>
+                <div className="mx-auto mt-4 flex max-w-xl flex-col gap-3 text-sm leading-relaxed text-muted">
+                  <p>
+                    {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
+                  </p>
+                  <p>
+                    {nbsp("Přijď přesně taková, jaká jsi.")}
+                    {"\u00A0"}
+                    <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
+                  </p>
                 </div>
               </div>
             </FadeUp>
