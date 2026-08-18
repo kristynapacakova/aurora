@@ -335,15 +335,15 @@ export default async function LekcePage() {
         </section>
 
         {/* ── První lekce? ──
-            Fotka vlevo, text na střed rámečku. Aby text nebyl vystředěný jen
-            ve zbylém místě vpravo od fotky, drží mřížka napravo prázdný sloupec
-            stejné šířky jako fotka — střed textu tak padne na střed rámečku
-            jako u ostatních bloků. Na telefonu se fotka skládá nad text. */}
+            Bez rámečku — jen fotka a text na krémovém podkladu. Aby text nebyl
+            vystředěný jen ve zbylém místě vpravo od fotky, drží mřížka napravo
+            prázdný sloupec stejné šířky jako fotka; střed textu tak padne na
+            střed stránky. Na telefonu se fotka skládá nad text. */}
         <section className="px-6 pb-24 pt-6 sm:pb-28">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="rounded-[20px] bg-sand/50 px-8 py-10 shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-12">
-                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[auto_1fr_auto] md:gap-10">
+              <div className="px-2 py-4 sm:px-6">
+                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[auto_1fr_auto] md:items-start md:gap-10">
                   <div className="relative mx-auto h-56 w-56 shrink-0 sm:h-64 sm:w-64">
                     <Image
                       src={FOTKA_PRVNI_LEKCE}
