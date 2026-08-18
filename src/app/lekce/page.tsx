@@ -29,11 +29,10 @@ export const metadata: Metadata = {
 // vygenerované verzi z buildu.
 export const dynamic = "force-dynamic";
 
-// DOČASNÁ fotka u „První lekce?“ — klientka ji bude měnit. Musí mít organický
-// tvar zapečený v souboru a okolo něj průhledno, jinak bude na podkladu
-// rámečku vidět obdélník. Až dorazí finální snímek, stačí přepsat tenhle
-// jeden řádek.
-const FOTKA_PRVNI_LEKCE = "/anezka-les-tvar.webp";
+// Fotka u „První lekce?“. Má organický tvar zapečený v souboru a okolo něj
+// průhledno, takže na podkladu rámečku nepotřebuje rám. Výměna = přepsat
+// tenhle řádek (nová fotka musí mít taky průhledné pozadí).
+const FOTKA_PRVNI_LEKCE = "/anezka-prvni-lekce.webp";
 
 /** Sušený lístek rozesetý kolem karet — leží pod kartou a smí přesahovat
  *  přes její okraj. Stejný princip jako na stránce O mně. */
@@ -336,14 +335,24 @@ export default async function LekcePage() {
         </section>
 
         {/* ── První lekce? ──
-            Text vlevo, fotka vpravo. Fotka nese organický tvar rovnou
-            v souboru a okolo něj je průhledno, takže na podkladu rámečku
-            nepotřebuje žádný rám. Na telefonu se skládá pod text. */}
+            Fotka vlevo, text vpravo. Na telefonu se fotka skládá nad text.
+            Text je zarovnaný na střed jako zbytek stránky a má omezenou
+            šířku, aby se vedle fotky lámal na čitelné řádky. */}
         <section className="px-6 pb-24 pt-6 sm:pb-28">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
               <div className="rounded-[20px] bg-sand/50 px-8 py-10 shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-12">
-                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_auto] md:gap-12">
+                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[auto_1fr] md:gap-12">
+                  <div className="relative mx-auto h-56 w-56 shrink-0 sm:h-64 sm:w-64">
+                    <Image
+                      src={FOTKA_PRVNI_LEKCE}
+                      alt="Anežka, lektorka jógy"
+                      fill
+                      className="object-contain"
+                      sizes="256px"
+                    />
+                  </div>
+
                   <div className="text-center">
                     <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
                       {nbsp("První lekce?")}
@@ -358,16 +367,6 @@ export default async function LekcePage() {
                         <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
                       </p>
                     </div>
-                  </div>
-
-                  <div className="relative mx-auto h-48 w-48 shrink-0 sm:h-56 sm:w-56">
-                    <Image
-                      src={FOTKA_PRVNI_LEKCE}
-                      alt="Anežka, lektorka jógy"
-                      fill
-                      className="object-contain"
-                      sizes="224px"
-                    />
                   </div>
                 </div>
               </div>
