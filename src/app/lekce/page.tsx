@@ -336,35 +336,39 @@ export default async function LekcePage() {
         </section>
 
         {/* ── První lekce? ──
-            Celý blok je zarovnaný na střed jako zbytek stránky. Fotka nese
-            organický tvar rovnou v souboru a okolo něj je průhledno, takže
-            na podkladu rámečku nepotřebuje žádný rám. */}
+            Text vlevo, fotka vpravo. Fotka nese organický tvar rovnou
+            v souboru a okolo něj je průhledno, takže na podkladu rámečku
+            nepotřebuje žádný rám. Na telefonu se skládá pod text. */}
         <section className="px-6 pb-24 pt-6 sm:pb-28">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="rounded-[20px] bg-sand/50 px-8 py-10 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-12">
-                <div className="relative mx-auto h-44 w-44 sm:h-52 sm:w-52">
-                  <Image
-                    src={FOTKA_PRVNI_LEKCE}
-                    alt="Anežka, lektorka jógy"
-                    fill
-                    className="object-contain"
-                    sizes="208px"
-                  />
-                </div>
+              <div className="rounded-[20px] bg-sand/50 px-8 py-10 shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-12">
+                <div className="grid grid-cols-1 items-center gap-8 md:grid-cols-[1fr_auto] md:gap-12">
+                  <div className="text-center">
+                    <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
+                      {nbsp("První lekce?")}
+                    </h2>
+                    <div className="mx-auto mt-4 flex max-w-xl flex-col gap-3 text-sm leading-relaxed text-muted">
+                      <p>
+                        {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
+                      </p>
+                      <p>
+                        {nbsp("Přijď přesně taková, jaká jsi.")}
+                        {"\u00A0"}
+                        <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
+                      </p>
+                    </div>
+                  </div>
 
-                <h2 className="mt-6 font-allura text-3xl leading-tight text-ink sm:text-4xl">
-                  {nbsp("První lekce?")}
-                </h2>
-                <div className="mx-auto mt-4 flex max-w-xl flex-col gap-3 text-sm leading-relaxed text-muted">
-                  <p>
-                    {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
-                  </p>
-                  <p>
-                    {nbsp("Přijď přesně taková, jaká jsi.")}
-                    {"\u00A0"}
-                    <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
-                  </p>
+                  <div className="relative mx-auto h-48 w-48 shrink-0 sm:h-56 sm:w-56">
+                    <Image
+                      src={FOTKA_PRVNI_LEKCE}
+                      alt="Anežka, lektorka jógy"
+                      fill
+                      className="object-contain"
+                      sizes="224px"
+                    />
+                  </div>
                 </div>
               </div>
             </FadeUp>
