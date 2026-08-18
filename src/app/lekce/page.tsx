@@ -29,6 +29,12 @@ export const metadata: Metadata = {
 // vygenerované verzi z buildu.
 export const dynamic = "force-dynamic";
 
+// DOČASNÁ fotka u „První lekce?“ — klientka ji bude měnit. Musí mít organický
+// tvar zapečený v souboru a okolo něj průhledno, jinak bude na podkladu
+// rámečku vidět obdélník. Až dorazí finální snímek, stačí přepsat tenhle
+// jeden řádek.
+const FOTKA_PRVNI_LEKCE = "/anezka-les-tvar.webp";
+
 /** Sušený lístek rozesetý kolem karet — leží pod kartou a smí přesahovat
  *  přes její okraj. Stejný princip jako na stránce O mně. */
 function List({ velikost, trida }: { velikost: number; trida: string }) {
@@ -249,13 +255,15 @@ export default async function LekcePage() {
         </section>
 
         {/* ── Rezervace ──
-            Karta je schválně užší než ostatní sekce: přes celou šířku zbývalo
-            Dřív byl blok dělený na levou a pravou půlku, mezi kterými zelo
-            prázdno. Teď je vystředěný jako zbytek stránky. */}
-        <section className="px-6 pb-12 pt-4 sm:pb-16 sm:pt-6">
+            Blok je vystředěný jako zbytek stránky. Lístek přesahuje přes levý
+            horní roh rámečku a leží pod ním, proto je obalen ještě jedním
+            relativním divem a sekce ořezává přetečení. */}
+        <section className="overflow-hidden px-6 pb-12 pt-4 sm:pb-16 sm:pt-6">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="rounded-[20px] bg-sand/50 px-8 py-6 shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-10">
+              <div className="relative">
+                <List velikost={150} trida="-left-16 -top-6 -rotate-[64deg] text-accent/25" />
+              <div className="relative rounded-[20px] bg-sand/50 px-8 py-6 shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-10">
                 <div className="text-center">
                   <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
                     Rezervace
@@ -293,6 +301,7 @@ export default async function LekcePage() {
                   ))}
                 </div>
               </div>
+              </div>
             </FadeUp>
           </div>
         </section>
@@ -326,33 +335,42 @@ export default async function LekcePage() {
           </div>
         </section>
 
-        {/* ── První lekce? ── */}
-        <section className="overflow-hidden px-6 pb-24 pt-6 sm:pb-28">
+        {/* ── První lekce? ──
+            Celý blok je zarovnaný na střed jako zbytek stránky. Fotka nese
+            organický tvar rovnou v souboru a okolo něj je průhledno, takže
+            na podkladu rámečku nepotřebuje žádný rám. */}
+        <section className="px-6 pb-24 pt-6 sm:pb-28">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
-              <div className="relative">
-                <List velikost={150} trida="-left-16 -top-6 -rotate-[64deg] text-accent/25" />
-                {/* Odsazení je větší, než by text potřeboval — díky tomu má
-                    rámeček stejnou výšku jako karty s termíny a Rezervace. */}
-                <div className="relative rounded-[20px] bg-sand/50 px-8 py-12 shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-12">
-                  <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
-                    {nbsp("První lekce?")}
-                  </h2>
-                  <div className="mt-4 flex flex-col gap-3 text-sm leading-relaxed text-muted">
-                    <p>
-                      {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
-                    </p>
-                    <p>
-                      {nbsp("Přijď přesně taková, jaká jsi.")}
-                      {"\u00A0"}
-                      <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
-                    </p>
-                  </div>
+              <div className="rounded-[20px] bg-sand/50 px-8 py-10 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:px-12">
+                <div className="relative mx-auto h-44 w-44 sm:h-52 sm:w-52">
+                  <Image
+                    src={FOTKA_PRVNI_LEKCE}
+                    alt="Anežka, lektorka jógy"
+                    fill
+                    className="object-contain"
+                    sizes="208px"
+                  />
+                </div>
+
+                <h2 className="mt-6 font-allura text-3xl leading-tight text-ink sm:text-4xl">
+                  {nbsp("První lekce?")}
+                </h2>
+                <div className="mx-auto mt-4 flex max-w-xl flex-col gap-3 text-sm leading-relaxed text-muted">
+                  <p>
+                    {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
+                  </p>
+                  <p>
+                    {nbsp("Přijď přesně taková, jaká jsi.")}
+                    {"\u00A0"}
+                    <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
+                  </p>
                 </div>
               </div>
             </FadeUp>
           </div>
         </section>
+
       </main>
 
       <Footer />
