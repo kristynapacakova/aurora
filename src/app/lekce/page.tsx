@@ -137,7 +137,11 @@ export default async function LekcePage() {
             a do textu se vytrácí dlouhou maskou, ne překryvem.
             Sekce nemá pevnou výšku — určuje ji text, takže fotka nikdy
             nepřeroste textový sloupec. */}
-        <section className="relative overflow-hidden">
+        {/* Minimální výška sekce určuje velikost fotky: rám sahá od top-24
+            ke spodní hraně, takže výška fotky = tahle hodnota minus 6rem
+            a šířka se z ní dopočítá poměrem stran. Vyjde tedy přesně
+            min(60vw, 900px) na šířku — roste s oknem, ale nepřeroste. */}
+        <section className="relative overflow-hidden md:min-h-[calc(min(60vw,900px)/1.4147+6rem)]">
           {/* Fotka přijde hotová od klientky už oříznutá do oblouku — je to
               průhledné PNG, takže tvar dělá sám obrázek, ne CSS. Rám má jeho
               poměr stran, aby se nic nezkreslilo; výšku určuje text.
