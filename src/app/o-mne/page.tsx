@@ -176,17 +176,16 @@ export default function OMnePage() {
               levý okraj, a to maskou — překryv by fotku zakalil. */}
           {/* Rám má poměr fotky, takže je vidět celá postava i s podložkou
               a nic se neořezává. Šířka se dopočítá z výšky sekce. */}
-          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[888/1000] md:block">
-            {/* Náběh je dlouhý a odstupňovaný. Krátký lineární přechod
-                končil viditelnou hranou a nad světlým kmenem působil jako
-                šmouha; takhle se fotka do pozadí opravdu vytratí. */}
+          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[3406/3835] md:block">
+            {/* Náběh je krátký — jen změkčí levou hranu. Dlouhý přechod
+                sahal až na postavu a působil jako filtr přes fotku. */}
             <div
               className="absolute inset-0"
               style={{
                 WebkitMaskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.18) 9%, rgba(0,0,0,0.42) 13%, rgba(0,0,0,0.7) 17%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,1) 24%)",
+                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 3%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,0.8) 9%, rgba(0,0,0,1) 12%)",
                 maskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.18) 9%, rgba(0,0,0,0.42) 13%, rgba(0,0,0,0.7) 17%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,1) 24%)",
+                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 3%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,0.8) 9%, rgba(0,0,0,1) 12%)",
               }}
             >
               <Image
@@ -248,7 +247,7 @@ export default function OMnePage() {
           </div>
 
           {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
-          <div className="relative aspect-[888/1000] w-full overflow-hidden md:hidden">
+          <div className="relative aspect-[3406/3835] w-full overflow-hidden md:hidden">
             <Image
               src="/anezka-o-mne.webp"
               alt="Anežka se srolovanou podložkou v lese"
