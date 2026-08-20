@@ -188,11 +188,11 @@ export default function OMnePage() {
               }}
             >
               <Image
-                src="/anezka-o-mne-les.jpg"
-                alt="Anežka — lektorka jógy"
+                src="/anezka-o-mne.webp"
+                alt="Anežka se srolovanou podložkou v lese"
                 fill
                 className="object-cover"
-                style={{ objectPosition: "center 66%" }}
+                style={{ objectPosition: "center 32%" }}
                 sizes="51vw"
                 priority
               />
@@ -249,8 +249,8 @@ export default function OMnePage() {
           {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
           <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
             <Image
-              src="/anezka-o-mne-les.jpg"
-              alt="Anežka — lektorka jógy"
+              src="/anezka-o-mne.webp"
+              alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
               sizes="100vw"
