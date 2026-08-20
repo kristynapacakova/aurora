@@ -170,13 +170,15 @@ export default function OMnePage() {
             Žádné dělení na sloupce. Fotka vyplňuje sekci od hrany k hraně
             a čitelnost textu drží dlouhý broskvový přechod zleva. */}
         <section className="relative overflow-hidden md:min-h-[max(620px,44vw)]">
-          {/* Počítač: fotka drží pravou polovinu sekce. Začíná pod hlavičkou,
-              jinak by na ní ležel hamburger a ztratil se v tmavém lese.
+          {/* Počítač: fotka drží pravou polovinu sekce. Horní hrana začíná
+              přesně na řádku „O mně“ vedle — top-36 je stejná hodnota jako
+              sm:pt-36 u textového sloupce, takže obojí stojí na jedné lince.
+              Zároveň je pod hlavičkou, takže na fotce neleží hamburger.
               Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
               levý okraj, a to maskou — překryv by fotku zakalil. */}
           {/* Rám má poměr fotky, takže je vidět celá postava i s podložkou
               a nic se neořezává. Šířka se dopočítá z výšky sekce. */}
-          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[1500/1689] md:block">
+          <div className="absolute bottom-0 right-0 top-36 hidden aspect-[1500/1689] md:block">
             {/* Náběh je krátký — jen změkčí levou hranu. Dlouhý přechod
                 sahal až na postavu a působil jako filtr přes fotku. */}
             <div
