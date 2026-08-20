@@ -218,20 +218,20 @@ export default async function LekcePage() {
 
             {/* Rozvrh nikdy není prázdný — když v administraci nic není,
                 nastoupí výchozí termíny z kódu. */}
-            <div className="mt-10 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="mt-10 grid grid-cols-3 gap-2 sm:gap-5">
               {lekce.map((l, i) => (
                 <FadeUp key={l.id} delay={0.06 * i}>
-                  <div className="flex h-full flex-col items-center rounded-[20px] bg-sand/50 px-6 py-8 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70">
-                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-white/70">
+                  <div className="flex h-full flex-col items-center rounded-[14px] bg-sand/50 px-2 py-5 text-center shadow-[0_2px_12px_rgba(140,95,71,0.045)] ring-1 ring-white/70 sm:rounded-[20px] sm:px-6 sm:py-8">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/70 sm:h-11 sm:w-11">
                       <IconPin size={20} />
                     </span>
-                    <p className="mt-4 text-[11px] uppercase tracking-[0.25em] text-accent">
+                    <p className="mt-3 text-[9px] uppercase tracking-[0.12em] text-accent sm:mt-4 sm:text-[11px] sm:tracking-[0.25em]">
                       {l.den}
                     </p>
-                    <p className="mt-1 font-serif text-3xl leading-tight text-ink">
+                    <p className="mt-1 font-serif text-lg leading-tight text-ink sm:text-3xl">
                       {nbsp(l.misto)}
                     </p>
-                    <p className="mt-3 text-sm text-muted">{nbsp(l.cas)}</p>
+                    <p className="mt-2 text-[11px] text-muted sm:mt-3 sm:text-sm">{nbsp(l.cas)}</p>
                     {l.poznamka && (
                       <p className="mt-1 text-xs text-muted/80">{nbsp(l.poznamka)}</p>
                     )}
