@@ -166,97 +166,78 @@ export default function OMnePage() {
       <Navbar />
 
       <main className="min-h-screen bg-cream">
-        {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
-            Žádné dělení na sloupce. Fotka vyplňuje sekci od hrany k hraně
-            a čitelnost textu drží dlouhý broskvový přechod zleva. */}
-        <section className="relative overflow-hidden md:min-h-[max(620px,44vw)]">
-          {/* Počítač: fotka drží pravou polovinu sekce. Horní hrana začíná
-              přesně na řádku „O mně“ vedle — top-36 je stejná hodnota jako
-              sm:pt-36 u textového sloupce, takže obojí stojí na jedné lince.
-              Zároveň je pod hlavičkou, takže na fotce neleží hamburger.
-              Horní, pravá i spodní hrana jsou ostré; do ztracena jde jen
-              levý okraj, a to maskou — překryv by fotku zakalil. */}
-          {/* Rám má poměr fotky, takže je vidět celá postava i s podložkou
-              a nic se neořezává. Šířka se dopočítá z výšky sekce. */}
-          <div className="absolute bottom-0 right-0 top-36 hidden aspect-[1500/1689] md:block">
-            {/* Náběh je krátký — jen změkčí levou hranu. Dlouhý přechod
-                sahal až na postavu a působil jako filtr přes fotku. */}
-            <div
-              className="absolute inset-0"
-              style={{
-                WebkitMaskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 3%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,0.8) 9%, rgba(0,0,0,1) 12%)",
-                maskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 3%, rgba(0,0,0,0.5) 6%, rgba(0,0,0,0.8) 9%, rgba(0,0,0,1) 12%)",
-              }}
-            >
-              <Image
-                src="/anezka-o-mne.webp"
-                alt="Anežka se srolovanou podložkou v lese"
-                fill
-                className="object-cover"
-                sizes="40vw"
-                priority
-              />
-            </div>
-
-          </div>
-
-          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
-            <div className="md:w-[46%] md:pr-8">
-              <FadeUp>
-                <div className="mb-4 flex items-center gap-3">
-                  <IconSparkle size={12} />
-                  <p className="text-xs uppercase tracking-[0.3em] text-accent">O mně</p>
-                </div>
-                <h1 className="font-allura text-4xl leading-tight text-ink sm:text-5xl">
-                  {nbsp("Můj jógový příběh")}
-                </h1>
-                {/* Hlavní myšlenka ve stylu popisků sekcí — prostrkané
-                    verzálky v korálové. Řádkování je vyšší, verzálky se
-                    přes dva řádky jinak lepí na sebe. */}
-                <p className="mt-5 text-[11px] uppercase leading-[2] tracking-[0.14em] text-accent sm:text-xs lg:tracking-[0.3em]">
-                  {nbsp("Věřím, že každá žena si zaslouží místo,")}
-                  <br />
-                  {nbsp("kde může na chvíli jen být.")}
-                </p>
-              </FadeUp>
-
-              <FadeUp delay={0.18}>
-                {/* Bloková sazba bez dělení slov — dlouhé slovo se radši
-                    přesune celé na další řádek. Krátké předložky drží
-                    u následujícího slova přes nbsp() z lib/typo. */}
-                <div className="mt-8 flex flex-col gap-4 text-justify text-sm leading-relaxed text-muted">
-                  <p>
-                    {nbsp("To, že teď nevidíš nebo neznáš svoji cestu, ještě neznamená, že neexistuje.")}
+        {/* ── Úvod: text vlevo, fotka v oblouku vpravo ──
+            Fotka už neleží pod textem jako pozadí. Stojí vedle něj jako
+            samostatný objekt v oblouku — stejný tvar má i úvodní fotka na
+            domovské stránce, takže to drží jednu vizuální rodinu. Text tak
+            neleží na fotce a nepotřebuje žádné prolnutí do pozadí. */}
+        <section className="relative">
+          <div className="mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
+            {/* Text stojí svisle na střed oblouku (items-center). Zarovnání
+                na horní hranu tady nefunguje — oblouk se nahoře zužuje, takže
+                jeho hmota začíná níž a text by opticky plaval nad fotkou. */}
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.15fr_1fr] md:items-center md:gap-16">
+              <div>
+                <FadeUp>
+                  <div className="mb-4 flex items-center gap-3">
+                    <IconSparkle size={12} />
+                    <p className="text-xs uppercase tracking-[0.3em] text-accent">O mně</p>
+                  </div>
+                  <h1 className="font-allura text-4xl leading-tight text-ink sm:text-5xl">
+                    {nbsp("Můj jógový příběh")}
+                  </h1>
+                  {/* Hlavní myšlenka ve stylu popisků sekcí — prostrkané
+                      verzálky v korálové. Řádkování je vyšší, verzálky se
+                      přes dva řádky jinak lepí na sebe. */}
+                  <p className="mt-5 text-[11px] uppercase leading-[2] tracking-[0.14em] text-accent sm:text-xs lg:tracking-[0.3em]">
+                    {nbsp("Věřím, že každá žena si zaslouží místo,")}
+                    <br />
+                    {nbsp("kde může na chvíli jen být.")}
                   </p>
-                  <p>
-                    {nbsp("Ani já bych si před pěti lety nepomyslela, že jednou budu provázet ženy jógou.")}
-                  </p>
-                  <p>
-                    {nbsp("K józe jsem se nedostala přes studia ani ")}
-                    <strong className="font-medium text-ink">{nbsp("skupinové lekce")}</strong>
-                    {nbsp(". Začínala jsem sama doma, ")}
-                    <strong className="font-medium text-ink">
-                      {nbsp("prostřednictvím online lekcí")}
-                    </strong>
-                    {nbsp(". Hledala jsem způsob, jak se cítit lépe ve svém těle, uvolnit napětí a dopřát si chvíli jen pro sebe.")}
-                  </p>
+                </FadeUp>
+
+                <FadeUp delay={0.18}>
+                  {/* Bloková sazba bez dělení slov — dlouhé slovo se radši
+                      přesune celé na další řádek. Krátké předložky drží
+                      u následujícího slova přes nbsp() z lib/typo. */}
+                  <div className="mt-8 flex flex-col gap-4 text-justify text-sm leading-relaxed text-muted">
+                    <p>
+                      {nbsp("To, že teď nevidíš nebo neznáš svoji cestu, ještě neznamená, že neexistuje.")}
+                    </p>
+                    <p>
+                      {nbsp("Ani já bych si před pěti lety nepomyslela, že jednou budu provázet ženy jógou.")}
+                    </p>
+                    <p>
+                      {nbsp("K józe jsem se nedostala přes studia ani ")}
+                      <strong className="font-medium text-ink">{nbsp("skupinové lekce")}</strong>
+                      {nbsp(". Začínala jsem sama doma, ")}
+                      <strong className="font-medium text-ink">
+                        {nbsp("prostřednictvím online lekcí")}
+                      </strong>
+                      {nbsp(". Hledala jsem způsob, jak se cítit lépe ve svém těle, uvolnit napětí a dopřát si chvíli jen pro sebe.")}
+                    </p>
+                  </div>
+                </FadeUp>
+
+              </div>
+
+              {/* Fotka v oblouku — na telefonu pod textem, na počítači vedle.
+                  Poloměr rounded-t-full udělá z horní hrany půlkruh, spodní
+                  pravý roh je jen změkčený, aby tvar nebyl symetrický.
+                  Rám má poměr fotky, takže se nic neořezává. */}
+              <FadeUp delay={0.1}>
+                <div className="relative mx-auto aspect-[1500/1689] w-full max-w-xs overflow-hidden rounded-t-full rounded-bl-none rounded-br-[5rem] bg-sand sm:max-w-sm md:ml-auto md:mr-0 md:max-w-md">
+                  <Image
+                    src="/anezka-o-mne.webp"
+                    alt="Anežka se srolovanou podložkou v lese"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 80vw, 28rem"
+                    fetchPriority="high"
+                  />
                 </div>
               </FadeUp>
-
             </div>
-          </div>
-
-          {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
-          <div className="relative aspect-[1500/1689] w-full overflow-hidden md:hidden">
-            <Image
-              src="/anezka-o-mne.webp"
-              alt="Anežka se srolovanou podložkou v lese"
-              fill
-              className="object-cover"
-              sizes="100vw"
-            />
           </div>
         </section>
 
