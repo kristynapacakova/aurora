@@ -138,27 +138,30 @@ export default async function LekcePage() {
             Sekce nemá pevnou výšku — určuje ji text, takže fotka nikdy
             nepřeroste textový sloupec. */}
         <section className="relative overflow-hidden">
-          {/* Rám má stejný poměr stran jako fotka (3:2), takže se nic neořezává.
-              Výšku určuje text, šířka se z ní dopočítá. */}
-          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[3/2] md:block">
+          {/* Fotka přijde hotová od klientky už oříznutá do oblouku — je to
+              průhledné PNG, takže tvar dělá sám obrázek, ne CSS. Rám má jeho
+              poměr stran, aby se nic nezkreslilo; výšku určuje text.
+              Maska navíc zleva rozpouští fotku do pozadí — násobí se
+              s průhledností obrázku, takže oblouk zůstane, jen zleva mizí. */}
+          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[2000/1414] md:block">
             <div
               className="absolute inset-0"
               style={{
                 WebkitMaskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.18) 9%, rgba(0,0,0,0.42) 13%, rgba(0,0,0,0.7) 17%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,1) 24%)",
+                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.2) 15%, rgba(0,0,0,0.44) 22%, rgba(0,0,0,0.72) 29%, rgba(0,0,0,0.92) 35%, rgba(0,0,0,1) 40%)",
                 maskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.05) 5%, rgba(0,0,0,0.18) 9%, rgba(0,0,0,0.42) 13%, rgba(0,0,0,0.7) 17%, rgba(0,0,0,0.9) 20%, rgba(0,0,0,1) 24%)",
+                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.06) 8%, rgba(0,0,0,0.2) 15%, rgba(0,0,0,0.44) 22%, rgba(0,0,0,0.72) 29%, rgba(0,0,0,0.92) 35%, rgba(0,0,0,1) 40%)",
               }}
             >
               {/* Záměrně bez preload: fotka je na telefonu schovaná a LCP
                   prvek se podle šířky okna liší. fetchPriority ji upřednostní
                   až ve chvíli, kdy ji prohlížeč opravdu vykresluje. */}
               <Image
-                src="/lekce-uvod.webp"
+                src="/lekce-oblouk.webp"
                 alt="Anežka při józe na louce"
                 fill
-                className="object-cover"
-                sizes="50vw"
+                className="object-contain"
+                sizes="55vw"
                 fetchPriority="high"
               />
             </div>
@@ -196,14 +199,14 @@ export default async function LekcePage() {
             </div>
           </div>
 
-          {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
-          <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
+          {/* Telefon: fotka pod textem přes celou šířku. Poměr stran sedí
+              na obrázek, takže se oblouk nikde neořízne. */}
+          <div className="relative aspect-[2000/1414] w-full md:hidden">
             <Image
-              src="/lekce-uvod.webp"
+              src="/lekce-oblouk.webp"
               alt="Anežka při józe na louce"
               fill
-              className="object-cover"
-              style={{ objectPosition: "center 45%" }}
+              className="object-contain"
               sizes="100vw"
             />
           </div>

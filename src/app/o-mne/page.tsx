@@ -227,40 +227,25 @@ export default function OMnePage() {
 
               </div>
 
-              {/* Fotka v oblouku — na telefonu pod textem, na počítači vedle.
-                  Poloměr rounded-t-full udělá z horní hrany půlkruh, spodní
-                  pravý roh je jen změkčený, aby tvar nebyl symetrický.
-                  Rám má poměr fotky, takže se nic neořezává. */}
-              {/* Na počítači leží obsah buňky absolutně (lg:absolute inset-0).
+              {/* Fotka i s obloukem přijde hotová od klientky — je to průhledné
+                  PNG, kde je oblouk namalovaný za postavou. Proto tu není žádný
+                  rámeček, ořezávání ani barva pozadí; obrázek se jen položí na
+                  krémové pozadí stránky (object-contain, aby se nic nezkreslilo).
+                  Na počítači leží obsah buňky absolutně (lg:absolute inset-0).
                   Díky tomu do výšky řádku sám nemluví — tu určí jen text — a
-                  oblouk se do ní vejde na výšku přesně. Šířku si dopočítá
-                  z poměru fotky, takže se pořád nic neořezává.
-                  Na telefonu je to obyčejný blok přes celou šířku. */}
+                  fotka se do ní vejde na výšku přesně. Šířku si dopočítá
+                  z poměru stran. Na telefonu je to obyčejný blok pod textem. */}
               <FadeUp delay={0.1} className="lg:h-full">
                 <div className="relative lg:h-full">
                   <div className="lg:absolute lg:inset-0 lg:flex lg:justify-end">
-                    <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:mx-0 lg:h-full lg:w-auto lg:max-w-none">
-                      {/* Lístky leží pod fotkou a smějí přesahovat přes její
-                          okraj. Základní poloha větvičky míří vzhůru, takže
-                          kladné otočení ji naklání doprava — spodní roste ke
-                          kraji a nahoru. */}
-                      <IconLeafBranch
-                        size={126}
-                        className="pointer-events-none absolute -left-4 top-12 -rotate-[58deg] text-accent/30 sm:-left-8 lg:-left-12"
-                      />
-                      <div className="relative aspect-[1500/1689] w-full overflow-hidden rounded-t-full rounded-bl-none rounded-br-[5rem] bg-sand lg:h-full lg:w-auto">
-                        <Image
-                          src="/anezka-o-mne.webp"
-                          alt="Anežka se srolovanou podložkou v lese"
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 1024px) 80vw, 24rem"
-                          fetchPriority="high"
-                        />
-                      </div>
-                      <IconLeafBranch
-                        size={92}
-                        className="pointer-events-none absolute -bottom-8 -right-8 rotate-[45deg] text-accent/30 lg:-right-16"
+                    <div className="relative mx-auto aspect-[1000/1417] w-full max-w-[15rem] sm:max-w-xs lg:mx-0 lg:h-full lg:w-auto lg:max-w-none">
+                      <Image
+                        src="/anezka-oblouk.webp"
+                        alt="Anežka se srolovanou podložkou"
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 1024px) 70vw, 22rem"
+                        fetchPriority="high"
                       />
                     </div>
                   </div>
