@@ -135,7 +135,7 @@ export default async function LekcePage() {
         {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
             Stejné řešení jako na stránce O mně: fotka drží pravou polovinu
             a do textu se vytrácí dlouhou maskou, ne překryvem. */}
-        <section className="relative overflow-hidden md:min-h-[max(520px,36vw)]">
+        <section className="relative overflow-hidden md:min-h-[max(640px,46vw)]">
           <div className="absolute bottom-0 right-0 top-24 hidden w-[51%] md:block">
             <div
               className="absolute inset-0"
@@ -150,11 +150,11 @@ export default async function LekcePage() {
                   prvek se podle šířky okna liší. fetchPriority ji upřednostní
                   až ve chvíli, kdy ji prohlížeč opravdu vykresluje. */}
               <Image
-                src="/lekce.jpeg"
-                alt="Anežka na lekci jógy"
+                src="/potkejme-se-na-podlozce.webp"
+                alt="Anežka se srolovanou podložkou v lese"
                 fill
                 className="object-cover"
-                style={{ objectPosition: "center 30%" }}
+                style={{ objectPosition: "center 28%" }}
                 sizes="51vw"
                 fetchPriority="high"
               />
@@ -196,11 +196,11 @@ export default async function LekcePage() {
           {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
           <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
             <Image
-              src="/lekce.jpeg"
-              alt="Anežka na lekci jógy"
+              src="/potkejme-se-na-podlozce.webp"
+              alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
-              style={{ objectPosition: "center 30%" }}
+              style={{ objectPosition: "center 28%" }}
               sizes="100vw"
             />
           </div>
@@ -340,7 +340,7 @@ export default async function LekcePage() {
                 <h2 className="font-allura text-3xl leading-tight text-ink sm:text-4xl">
                   {nbsp("První lekce?")}
                 </h2>
-                <div className="mx-auto mt-4 flex max-w-xl flex-col gap-3 text-sm leading-relaxed text-muted">
+                <div className="mx-auto mt-4 flex flex-col gap-3 text-sm leading-relaxed text-muted">
                   <p>
                     {nbsp("Pokud jdeš na jógu poprvé, nemusíš mít žádné obavy. Vše ti ráda vysvětlím a provedu tě lekcí krok za krokem.")}
                   </p>
