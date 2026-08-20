@@ -134,9 +134,13 @@ export default async function LekcePage() {
       <main className="min-h-screen bg-cream">
         {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
             Stejné řešení jako na stránce O mně: fotka drží pravou polovinu
-            a do textu se vytrácí dlouhou maskou, ne překryvem. */}
-        <section className="relative overflow-hidden md:min-h-[max(600px,42vw)]">
-          <div className="absolute bottom-0 right-0 top-24 hidden w-[51%] md:block">
+            a do textu se vytrácí dlouhou maskou, ne překryvem.
+            Sekce nemá pevnou výšku — určuje ji text, takže fotka nikdy
+            nepřeroste textový sloupec. */}
+        <section className="relative overflow-hidden">
+          {/* Rám má stejný poměr stran jako fotka (3:2), takže se nic neořezává.
+              Výšku určuje text, šířka se z ní dopočítá. */}
+          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[3/2] md:block">
             <div
               className="absolute inset-0"
               style={{
@@ -154,8 +158,7 @@ export default async function LekcePage() {
                 alt="Anežka při józe na louce"
                 fill
                 className="object-cover"
-                style={{ objectPosition: "center 45%" }}
-                sizes="51vw"
+                sizes="50vw"
                 fetchPriority="high"
               />
             </div>
