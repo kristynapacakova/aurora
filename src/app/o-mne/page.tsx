@@ -176,7 +176,7 @@ export default function OMnePage() {
               levý okraj, a to maskou — překryv by fotku zakalil. */}
           {/* Rám má poměr fotky, takže je vidět celá postava i s podložkou
               a nic se neořezává. Šířka se dopočítá z výšky sekce. */}
-          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[3406/3835] md:block">
+          <div className="absolute bottom-0 right-0 top-24 hidden aspect-[1500/1689] md:block">
             {/* Náběh je krátký — jen změkčí levou hranu. Dlouhý přechod
                 sahal až na postavu a působil jako filtr přes fotku. */}
             <div
@@ -247,7 +247,7 @@ export default function OMnePage() {
           </div>
 
           {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
-          <div className="relative aspect-[3406/3835] w-full overflow-hidden md:hidden">
+          <div className="relative aspect-[1500/1689] w-full overflow-hidden md:hidden">
             <Image
               src="/anezka-o-mne.webp"
               alt="Anežka se srolovanou podložkou v lese"
