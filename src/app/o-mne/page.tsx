@@ -175,10 +175,9 @@ export default function OMnePage() {
             okraj sloupce, ale nesmí vytáhnout vodorovné posouvání stránky. */}
         <section className="relative overflow-hidden">
           <div className="mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-28">
-            {/* Text stojí svisle na střed oblouku (items-center). Zarovnání
-                na horní hranu tady nefunguje — oblouk se nahoře zužuje, takže
-                jeho hmota začíná níž a text by opticky plaval nad fotkou. */}
-            <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.15fr_1fr] md:items-center md:gap-16">
+            {/* Výšku řádku určuje text; oblouk se do ní vejde přesně (viz
+                níže), takže obě strany začínají i končí na stejné lince. */}
+            <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.15fr_1fr] md:gap-16">
               <div>
                 <FadeUp>
                   <div className="mb-4 flex items-center gap-3">
@@ -227,29 +226,39 @@ export default function OMnePage() {
                   Poloměr rounded-t-full udělá z horní hrany půlkruh, spodní
                   pravý roh je jen změkčený, aby tvar nebyl symetrický.
                   Rám má poměr fotky, takže se nic neořezává. */}
-              <FadeUp delay={0.1}>
-                <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:ml-auto md:mr-0 md:max-w-md">
-                  {/* Lístky leží pod fotkou a smějí přesahovat přes její okraj.
-                      Základní poloha větvičky míří vzhůru, takže kladné otočení
-                      ji naklání doprava — spodní roste ke kraji a nahoru. */}
-                  <IconLeafBranch
-                    size={126}
-                    className="pointer-events-none absolute -left-4 top-12 -rotate-[58deg] text-accent/30 sm:-left-8 md:-left-12"
-                  />
-                  <div className="relative aspect-[1500/1689] w-full overflow-hidden rounded-t-full rounded-bl-none rounded-br-[5rem] bg-sand">
-                    <Image
-                      src="/anezka-o-mne.webp"
-                      alt="Anežka se srolovanou podložkou v lese"
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 768px) 80vw, 28rem"
-                      fetchPriority="high"
-                    />
+              {/* Na počítači leží obsah buňky absolutně (md:absolute inset-0).
+                  Díky tomu do výšky řádku sám nemluví — tu určí jen text — a
+                  oblouk se do ní vejde na výšku přesně. Šířku si dopočítá
+                  z poměru fotky, takže se pořád nic neořezává.
+                  Na telefonu je to obyčejný blok přes celou šířku. */}
+              <FadeUp delay={0.1} className="md:h-full">
+                <div className="relative md:h-full">
+                  <div className="md:absolute md:inset-0 md:flex md:justify-end">
+                    <div className="relative mx-auto w-full max-w-xs sm:max-w-sm md:mx-0 md:h-full md:w-auto md:max-w-none">
+                      {/* Lístky leží pod fotkou a smějí přesahovat přes její
+                          okraj. Základní poloha větvičky míří vzhůru, takže
+                          kladné otočení ji naklání doprava — spodní roste ke
+                          kraji a nahoru. */}
+                      <IconLeafBranch
+                        size={126}
+                        className="pointer-events-none absolute -left-4 top-12 -rotate-[58deg] text-accent/30 sm:-left-8 md:-left-12"
+                      />
+                      <div className="relative aspect-[1500/1689] w-full overflow-hidden rounded-t-full rounded-bl-none rounded-br-[5rem] bg-sand md:h-full md:w-auto">
+                        <Image
+                          src="/anezka-o-mne.webp"
+                          alt="Anežka se srolovanou podložkou v lese"
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 80vw, 28rem"
+                          fetchPriority="high"
+                        />
+                      </div>
+                      <IconLeafBranch
+                        size={92}
+                        className="pointer-events-none absolute -bottom-8 -right-8 rotate-[45deg] text-accent/30 md:-right-16"
+                      />
+                    </div>
                   </div>
-                  <IconLeafBranch
-                    size={92}
-                    className="pointer-events-none absolute -bottom-8 -right-8 rotate-[45deg] text-accent/30 md:-right-16"
-                  />
                 </div>
               </FadeUp>
             </div>
