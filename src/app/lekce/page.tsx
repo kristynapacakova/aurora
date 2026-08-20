@@ -135,7 +135,7 @@ export default async function LekcePage() {
         {/* ── Úvod: fotka jako pozadí celé sekce, text leží na ní ──
             Stejné řešení jako na stránce O mně: fotka drží pravou polovinu
             a do textu se vytrácí dlouhou maskou, ne překryvem. */}
-        <section className="relative overflow-hidden md:min-h-[max(640px,46vw)]">
+        <section className="relative overflow-hidden md:min-h-[max(600px,42vw)]">
           <div className="absolute bottom-0 right-0 top-24 hidden w-[51%] md:block">
             <div
               className="absolute inset-0"
@@ -150,11 +150,11 @@ export default async function LekcePage() {
                   prvek se podle šířky okna liší. fetchPriority ji upřednostní
                   až ve chvíli, kdy ji prohlížeč opravdu vykresluje. */}
               <Image
-                src="/potkejme-se-na-podlozce.webp"
-                alt="Anežka se srolovanou podložkou v lese"
+                src="/lekce-uvod.webp"
+                alt="Anežka při józe na louce"
                 fill
                 className="object-cover"
-                style={{ objectPosition: "center 28%" }}
+                style={{ objectPosition: "center 45%" }}
                 sizes="51vw"
                 fetchPriority="high"
               />
@@ -196,11 +196,11 @@ export default async function LekcePage() {
           {/* Telefon: fotka přes celou šířku pod textem, ostrá po všech hranách */}
           <div className="relative h-[92vw] min-h-[340px] w-full overflow-hidden md:hidden">
             <Image
-              src="/potkejme-se-na-podlozce.webp"
-              alt="Anežka se srolovanou podložkou v lese"
+              src="/lekce-uvod.webp"
+              alt="Anežka při józe na louce"
               fill
               className="object-cover"
-              style={{ objectPosition: "center 28%" }}
+              style={{ objectPosition: "center 45%" }}
               sizes="100vw"
             />
           </div>
