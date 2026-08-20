@@ -330,8 +330,9 @@ export default async function LekcePage() {
         </section>
 
         {/* ── První lekce? ──
-            Bez rámečku a bez fotky — jen text na střed, volně na krémovém
-            podkladu. */}
+            Bez rámečku — text na střed a pod ním pás tří fotek. Pás má
+            průhledné pozadí a poměr stran zhruba 3,5 : 1, takže se sází přes
+            celou šířku obsahu a výška se dopočítá sama. */}
         <section className="px-6 pb-24 pt-6 sm:pb-28">
           <div className="mx-auto max-w-5xl">
             <FadeUp>
@@ -350,6 +351,17 @@ export default async function LekcePage() {
                   </p>
                 </div>
               </div>
+            </FadeUp>
+
+            <FadeUp delay={0.12}>
+              <Image
+                src="/prvni-lekce-pas.webp"
+                alt="Anežka při józe — pozdrav v sedě, protažení na podložce a pozice se vzpaženýma rukama"
+                width={1600}
+                height={457}
+                className="mt-10 h-auto w-full"
+                sizes="(max-width: 1024px) 100vw, 1024px"
+              />
             </FadeUp>
           </div>
         </section>
