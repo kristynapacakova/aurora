@@ -5,7 +5,8 @@ import { IconSparkle } from "./BrandIcons";
 import { getNastaveni } from "@/lib/db";
 
 export default async function Pricing() {
-  const { uscreen_signup, cena_lekce, cena_mesicni, cena_rocni, kontakt_email } = await getNastaveni();
+  const { uscreen_signup, uscreen_plans, cena_lekce, cena_mesicni, cena_rocni, kontakt_email } =
+    await getNastaveni();
 
   const PLANS = [
     {
@@ -20,9 +21,12 @@ export default async function Pricing() {
         "Možnost pustit si ji opakovaně",
         "Bez měsíčního členství",
       ],
-      ctaLabel: "Aktuální lekce",
-      ctaHref: "#lekce",
-      ctaExternal: false,
+      // Tenhle tarif je online nahrávka, ne živá lekce — vede proto na ceník
+      // Uscreenu, kde se lekce kupuje. Původní odkaz mířil na #lekce, což
+      // je kotva, která na webu nikde neexistuje, takže tlačítko nic nedělalo.
+      ctaLabel: "Koupit lekci",
+      ctaHref: uscreen_plans,
+      ctaExternal: true,
     },
     {
       name: "Měsíční",
