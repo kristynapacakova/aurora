@@ -137,29 +137,27 @@ export default async function LekcePage() {
             a do textu se vytrácí dlouhou maskou, ne překryvem.
             Sekce nemá pevnou výšku — určuje ji text, takže fotka nikdy
             nepřeroste textový sloupec. */}
-        {/* Velikost fotky určuje jen šířka okna, ne výška textu: rám má pevnou
-            výšku a z poměru stran mu vyjde šířka přesně min(62vw, 1100px).
-            Sekce má stejnou hodnotu jako minimální výšku (plus místo na
-            hlavičku), aby se fotka měla kam vejít. Dřív ji roztahoval text
-            a při delším odstavci fotka vyrostla přes celý sloupec. */}
-        <section className="relative overflow-hidden md:min-h-[calc(min(62vw,1100px)/1.4147+6rem)]">
+        {/* Fotka začíná na stejné lince jako text (top-36 = jeho pt-36) a je
+            velká — šířka min(70vw, 1200px), výška z poměru stran. Sekce má
+            tuhle výšku jako minimum, aby se fotka měla kam vejít. */}
+        <section className="relative overflow-hidden md:min-h-[calc(min(70vw,1200px)/1.4147+9rem)]">
           {/* Fotka přijde hotová od klientky už oříznutá do oblouku — je to
               průhledné PNG, takže tvar dělá sám obrázek, ne CSS. Rám má jeho
               poměr stran, aby se nic nezkreslilo; výšku určuje text.
-              Maska navíc zleva rozpouští fotku do pozadí — násobí se
-              s průhledností obrázku, takže oblouk zůstane, jen zleva mizí.
-              Přechod končí na 13,5 % šířky rámu: přesně tam, kde v obrázku
-              začíná levý cíp podložky (změřeno, žlutá začíná na 9,4 %
-              a plná sytost na 11,7 %). Podložka je tak celá vidět a mizí
-              jen louka nalevo od ní. */}
-          <div className="absolute bottom-0 right-0 hidden aspect-[2000/1414] md:block md:h-[calc(min(62vw,1100px)/1.4147)]">
+              Fotka je široká a zasahuje daleko pod text, takže ji maska
+              zleva rozpouští do pozadí. Prvních 22 % šířky rámu je úplně
+              průhledných a plné sytosti nabírá až na 50 % — v místě, kde
+              končí text, je tedy fotka dávno pryč a písmena leží na čistém
+              krémovém pozadí. Maska se násobí s průhledností obrázku, takže
+              oblouk drží tvar a mizí jen zleva. */}
+          <div className="absolute right-0 hidden aspect-[2000/1414] md:top-36 md:block md:w-[min(70vw,1200px)]">
             <div
               className="absolute inset-0"
               style={{
                 WebkitMaskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.02) 3%, rgba(0,0,0,0.18) 6%, rgba(0,0,0,0.45) 8.5%, rgba(0,0,0,0.72) 10.5%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,1) 13.5%)",
+                  "linear-gradient(to right, rgba(0,0,0,0) 22%, rgba(0,0,0,0.1) 27%, rgba(0,0,0,0.3) 32%, rgba(0,0,0,0.56) 37%, rgba(0,0,0,0.8) 42%, rgba(0,0,0,0.94) 46%, rgba(0,0,0,1) 50%)",
                 maskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 0%, rgba(0,0,0,0.02) 3%, rgba(0,0,0,0.18) 6%, rgba(0,0,0,0.45) 8.5%, rgba(0,0,0,0.72) 10.5%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,1) 13.5%)",
+                  "linear-gradient(to right, rgba(0,0,0,0) 22%, rgba(0,0,0,0.1) 27%, rgba(0,0,0,0.3) 32%, rgba(0,0,0,0.56) 37%, rgba(0,0,0,0.8) 42%, rgba(0,0,0,0.94) 46%, rgba(0,0,0,1) 50%)",
               }}
             >
               {/* Záměrně bez preload: fotka je na telefonu schovaná a LCP
@@ -177,10 +175,7 @@ export default async function LekcePage() {
           </div>
 
           <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-24">
-            {/* Užší sloupec než 46 %: přechod fotky teď končí hned u podložky,
-                takže text musí skončit dřív, než fotka nabere plnou sytost —
-                jinak by ležel na louce místo na krémovém pozadí. */}
-            <div className="md:w-[40%] md:pr-8">
+            <div className="md:w-[46%] md:pr-8">
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
                   <IconSun size={14} className="text-accent" />
