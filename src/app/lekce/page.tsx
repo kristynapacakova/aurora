@@ -174,7 +174,12 @@ export default async function LekcePage() {
             </div>
           </div>
 
-          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:pb-24">
+          {/* Text stojí svisle na střed fotky, ne u její horní hrany: fotka je
+              o dost vyšší než text, a kdyby oba začínaly na stejné lince,
+              zůstala by pod textem prázdná díra. Obal má proto stejnou
+              minimální výšku jako fotka a text v něm centruje.
+              Na telefonu je fotka až pod textem, takže se necentruje nic. */}
+          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:flex md:min-h-[calc(min(70vw,1200px)/1.4147+9rem)] md:items-center md:pb-0">
             <div className="md:w-[46%] md:pr-8">
               <FadeUp>
                 <div className="mb-4 flex items-center gap-3">
