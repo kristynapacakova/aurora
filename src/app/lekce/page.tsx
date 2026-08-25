@@ -137,90 +137,73 @@ export default async function LekcePage() {
             a do textu se vytrácí dlouhou maskou, ne překryvem.
             Sekce nemá pevnou výšku — určuje ji text, takže fotka nikdy
             nepřeroste textový sloupec. */}
-        {/* Fotka začíná na stejné lince jako text (top-36 = jeho pt-36) a je
-            velká — šířka min(70vw, 1200px), výška z poměru stran. Sekce má
-            tuhle výšku jako minimum, aby se fotka měla kam vejít. */}
-        <section className="relative overflow-hidden md:min-h-[calc(min(70vw,1200px)/1.4147+9rem)]">
-          {/* Fotka přijde hotová od klientky už oříznutá do oblouku — je to
-              průhledné PNG, takže tvar dělá sám obrázek, ne CSS. Rám má jeho
-              poměr stran, aby se nic nezkreslilo; výšku určuje text.
-              Fotka je široká a zasahuje daleko pod text, takže ji maska
-              zleva rozpouští do pozadí. Prvních 22 % šířky rámu je úplně
-              průhledných a plné sytosti nabírá až na 50 % — v místě, kde
-              končí text, je tedy fotka dávno pryč a písmena leží na čistém
-              krémovém pozadí. Maska se násobí s průhledností obrázku, takže
-              oblouk drží tvar a mizí jen zleva. */}
-          <div className="absolute right-0 hidden aspect-[2000/1414] md:top-36 md:block md:w-[min(70vw,1200px)]">
-            <div
-              className="absolute inset-0"
-              style={{
-                WebkitMaskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 22%, rgba(0,0,0,0.1) 27%, rgba(0,0,0,0.3) 32%, rgba(0,0,0,0.56) 37%, rgba(0,0,0,0.8) 42%, rgba(0,0,0,0.94) 46%, rgba(0,0,0,1) 50%)",
-                maskImage:
-                  "linear-gradient(to right, rgba(0,0,0,0) 22%, rgba(0,0,0,0.1) 27%, rgba(0,0,0,0.3) 32%, rgba(0,0,0,0.56) 37%, rgba(0,0,0,0.8) 42%, rgba(0,0,0,0.94) 46%, rgba(0,0,0,1) 50%)",
-              }}
-            >
-              {/* Záměrně bez preload: fotka je na telefonu schovaná a LCP
-                  prvek se podle šířky okna liší. fetchPriority ji upřednostní
-                  až ve chvíli, kdy ji prohlížeč opravdu vykresluje. */}
-              <Image
-                src="/lekce-oblouk.webp"
-                alt="Anežka při józe na louce"
-                fill
-                className="object-contain"
-                sizes="55vw"
-                fetchPriority="high"
-              />
-            </div>
-          </div>
-
-          {/* Text stojí svisle na střed fotky, ne u její horní hrany: fotka je
-              o dost vyšší než text, a kdyby oba začínaly na stejné lince,
-              zůstala by pod textem prázdná díra. Obal má proto stejnou
-              minimální výšku jako fotka a text v něm centruje.
-              Na telefonu je fotka až pod textem, takže se necentruje nic. */}
-          <div className="relative z-10 mx-auto max-w-6xl px-6 pt-32 pb-14 sm:pt-36 md:flex md:min-h-[calc(min(70vw,1200px)/1.4147+9rem)] md:items-center md:pb-0">
-            <div className="md:w-[46%] md:pr-8">
-              <FadeUp>
-                <div className="mb-4 flex items-center gap-3">
-                  <IconSun size={14} className="text-accent" />
-                  <p className="text-xs uppercase tracking-[0.3em] text-accent">Lekce</p>
-                </div>
-                <h1 className="font-allura text-4xl leading-tight text-ink sm:text-5xl">
-                  {nbsp("Potkejme se na podložce")}
-                </h1>
-              </FadeUp>
-
-              <FadeUp delay={0.18}>
-                <div className="mt-7 flex flex-col gap-4 text-justify text-sm leading-relaxed text-muted">
-                  <p>
-                    {nbsp("Společné lekce jsou místem, kde můžeš na chvíli odložit každodenní starosti, věnovat pozornost svému tělu a dopřát si čas jen pro sebe.")}
-                  </p>
-                  <p>
-                    {nbsp("Čeká tě jemně plynoucí pohyb, vědomý dech, uvolnění i chvíle klidu.")}
-                  </p>
-                  {/* Srdíčko drží u poslední věty přes nbsp — jinak se umí
-                      zalomit samo na další řádek. */}
-                  <p>
-                    {nbsp("Nemusíš mít žádné předchozí zkušenosti. Přijď přesně taková, jaká jsi.")}
-                    {"\u00A0"}
-                    <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
-                  </p>
-                </div>
-              </FadeUp>
-            </div>
-          </div>
-
-          {/* Telefon: fotka pod textem přes celou šířku. Poměr stran sedí
-              na obrázek, takže se oblouk nikde neořízne. */}
-          <div className="relative aspect-[2000/1414] w-full md:hidden">
+        {/* ── Úvod: fotka vyplňuje celé hero, text leží na ní ──
+            Stejná skladba jako hero na domovské stránce: fotka drží pravou
+            část sekce a do textu se ztrácí vodorovným přechodem z krémové,
+            ne překryvem přes celou plochu. */}
+        <section className="relative overflow-hidden bg-cream md:flex md:min-h-screen md:items-center">
+          {/* Počítač: fotka v pravé části, postava tak zůstane mimo text. */}
+          <div className="absolute inset-y-0 right-0 hidden w-[72%] md:block">
             <Image
-              src="/lekce-oblouk.webp"
+              src="/lekce-hero.webp"
               alt="Anežka při józe na louce"
               fill
-              className="object-contain"
+              className="object-cover"
+              sizes="72vw"
+              fetchPriority="high"
+            />
+          </div>
+
+          {/* Počítač: vodorovný přechod krémová → průhledná. Stejné hodnoty
+              jako na domovské stránce, ať to působí jako jedna rodina. */}
+          <div
+            className="absolute inset-0 hidden md:block"
+            style={{
+              background:
+                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 34%, rgba(252,244,241,0.78) 50%, rgba(252,244,241,0.28) 66%, transparent 80%)",
+            }}
+          />
+
+          {/* Telefon: fotka jako blok nad textem, dole se ztrácí do pozadí. */}
+          <div className="relative h-[68vw] min-h-[300px] overflow-hidden md:hidden">
+            <Image
+              src="/lekce-hero.webp"
+              alt="Anežka při józe na louce"
+              fill
+              className="object-cover"
               sizes="100vw"
             />
+            <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent" />
+          </div>
+
+          <div className="relative z-10 px-8 py-14 md:w-[48%] md:py-0 md:pl-[7vw] md:pr-6 lg:pl-[8vw]">
+            <FadeUp>
+              <div className="mb-4 flex items-center gap-3">
+                <IconSun size={14} className="text-accent" />
+                <p className="text-xs uppercase tracking-[0.3em] text-accent">Lekce</p>
+              </div>
+              <h1 className="font-allura text-4xl leading-tight text-ink sm:text-5xl lg:text-6xl">
+                {nbsp("Potkejme se na podložce")}
+              </h1>
+            </FadeUp>
+
+            <FadeUp delay={0.18}>
+              <div className="mt-7 flex max-w-md flex-col gap-4 text-sm leading-relaxed text-muted">
+                <p>
+                  {nbsp("Společné lekce jsou místem, kde můžeš na chvíli odložit každodenní starosti, věnovat pozornost svému tělu a dopřát si čas jen pro sebe.")}
+                </p>
+                <p>
+                  {nbsp("Čeká tě jemně plynoucí pohyb, vědomý dech, uvolnění i chvíle klidu.")}
+                </p>
+                {/* Srdíčko drží u poslední věty přes nbsp — jinak se umí
+                    zalomit samo na další řádek. */}
+                <p>
+                  {nbsp("Nemusíš mít žádné předchozí zkušenosti. Přijď přesně taková, jaká jsi.")}
+                  {"\u00A0"}
+                  <IconHeart size={13} className="inline-block align-[-0.1em] text-accent" />
+                </p>
+              </div>
+            </FadeUp>
           </div>
         </section>
 
