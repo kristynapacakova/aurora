@@ -32,13 +32,11 @@ export const CONTACT = {
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
-// ŽIVÝ INSTAGRAM FEED — vyplňte po registraci na snapwidget.com
+// INSTAGRAM
 //
-// 1. Zaregistrujte se zadarmo na https://snapwidget.com
-// 2. Připojte svůj Instagram účet a vytvořte nový widget (styl "Grid")
-// 3. V kódu pro vložení (Embed Code) zkopírujte adresu z atributu
-//    src="..." (vypadá jako https://snapwidget.com/embed/123456)
-// 4. Vložte ji sem místo prázdného řetězce — feed se pak bude
-//    automaticky aktualizovat s vašimi novými příspěvky.
+// Prázdná adresa je záměr, ne nedodělek — klientka živý widget nechce, takže
+// se v sekci Instagram zobrazuje pevná mřížka fotek z InstagramFeed.tsx.
+// Kdyby si to někdy rozmyslela, stačí sem vložit adresu widgetu ze
+// snapwidget.com (v kódu pro vložení atribut src="…") a feed se přepne sám.
 // ─────────────────────────────────────────────────────────────────────────────
 export const INSTAGRAM_WIDGET_URL = "";
