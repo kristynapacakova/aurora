@@ -171,19 +171,20 @@ export default function OMnePage() {
             fotka drží pravou část sekce a do textu se ztrácí vodorovným
             přechodem z krémové, ne překryvem přes celou plochu. */}
         <section className="relative overflow-hidden bg-cream xl:flex xl:min-h-screen xl:items-center">
-          {/* Počítač: fotka v pravé části, postava tak zůstane mimo text.
-              Šířka i výška sekce jsou stejné jako u hera na Lekcích, aby
-              přechod do krémové vycházel na obou stránkách identicky.
+          {/* Počítač: fotka přes celou šířku sekce, ne jen v pravé části.
+              Prolnutí tak má na přechod dvakrát tolik místa a nezačíná ostrou
+              hranou tam, kde by fotka jinak začínala. Levou část fotky
+              překryv stejně schová.
               Postava stojí vpravo od středu, proto je výřez posunutý doprava —
               při ořezu na střed by ji ukrojil. */}
-          <div className="absolute inset-y-0 right-0 hidden w-[72%] xl:block">
+          <div className="absolute inset-0 hidden xl:block">
             <Image
               src="/omne-les.webp"
               alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
               style={{ objectPosition: "68% 50%" }}
-              sizes="72vw"
+              sizes="100vw"
               fetchPriority="high"
             />
           </div>
@@ -194,7 +195,7 @@ export default function OMnePage() {
             className="absolute inset-0 hidden xl:block"
             style={{
               background:
-                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 39%, rgba(252,244,241,0.93) 41.5%, rgba(252,244,241,0.8) 43.5%, rgba(252,244,241,0.62) 45%, rgba(252,244,241,0.42) 46.5%, rgba(252,244,241,0.24) 48%, rgba(252,244,241,0.09) 49.5%, transparent 51%)",
+                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 24%, rgba(252,244,241,0.99) 28%, rgba(252,244,241,0.96) 32%, rgba(252,244,241,0.9) 35.5%, rgba(252,244,241,0.8) 38.5%, rgba(252,244,241,0.66) 41.5%, rgba(252,244,241,0.5) 44%, rgba(252,244,241,0.33) 46.5%, rgba(252,244,241,0.17) 49%, rgba(252,244,241,0.06) 51%, transparent 53%)",
             }}
           />
 
