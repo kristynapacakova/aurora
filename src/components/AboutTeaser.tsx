@@ -9,16 +9,17 @@ type Panel = {
   body: string[];
 };
 
+// Texty jsou zkrácené na tři odstavce a podobnou délku schválně — tři sloupce
+// vedle sebe působí neklidně, když jeden padá výrazně níž než ostatní.
 const PANELS: Panel[] = [
   {
     photo: "/anezka-cesta.png",
     eyebrow: "Moje cesta k józe",
     body: [
       "Jmenuji se Anežka a jóga změnila způsob, jakým žiju.",
-      "Začínala jsem sama doma, s touhou cítit se lépe ve svém těle. Postupně jsem ale zjistila, že jóga není jen o pohybu. Je o zastavení, dechu a návratu k sobě.",
-      "Dnes vytvářím prostor, kde můžeš na chvíli zpomalit, nadechnout se a být sama sebou.",
+      "Začínala jsem sama doma a časem zjistila, že jóga není jen o pohybu, ale o návratu k sobě.",
       // Nezlomitelná mezera před srdíčkem, ať nespadne samo na další řádek.
-      "Stačí přijít taková, jaká právě jsi. ♡",
+      "Dnes vytvářím prostor, kde můžeš zpomalit a být sama sebou. ♡",
     ],
   },
   {
@@ -26,9 +27,8 @@ const PANELS: Panel[] = [
     eyebrow: "Proč jsem začala učit online",
     body: [
       "Ne každá žena má možnost přijít na lekci osobně.",
-      "Právě proto vzniklo online studio.",
-      "Abys mohla rozložit podložku doma, zapálit si svíčku a dopřát si chvíli jen pro sebe – kdykoliv budeš potřebovat.",
-      "Protože někdy stačí i dvacet minut, aby se celý den změnil.",
+      "Právě proto vzniklo online studio – abys mohla rozložit podložku doma a dopřát si chvíli jen pro sebe.",
+      "Někdy stačí dvacet minut, aby se celý den změnil.",
     ],
   },
   {
@@ -36,8 +36,8 @@ const PANELS: Panel[] = [
     eyebrow: "Proč pořádám pobyty",
     body: [
       "Pobyty jsou pro mě víc než jen víkend s jógou.",
-      "Jsou to dny, kdy na chvíli zpomalíme, odložíme všechny role a znovu uslyšíme samy sebe.",
-      "Vznikají nová přátelství, sdílíme smích, ticho i společné chvíle.",
+      "Jsou to dny, kdy na chvíli zpomalíme, odložíme všechny role a uslyšíme samy sebe.",
+      "Vznikají nová přátelství, sdílíme smích, ticho i chvíle jen tak beze slov.",
     ],
   },
 ];
