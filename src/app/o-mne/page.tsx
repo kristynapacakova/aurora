@@ -198,13 +198,16 @@ export default function OMnePage() {
             }}
           />
 
-          {/* Telefon: fotka jako blok nad textem, dole se ztrácí do pozadí. */}
+          {/* Telefon: fotka jako blok nad textem, dole se ztrácí do pozadí.
+              Výřez je posunutý doprava stejně jako na počítači — levá třetina
+              fotky je rozostřená a světlá, na střed by ji ořez ukázal. */}
           <div className="relative h-[68vw] min-h-[300px] overflow-hidden lg:hidden">
             <Image
               src="/omne-les.webp"
               alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
+              style={{ objectPosition: "68% 50%" }}
               sizes="100vw"
             />
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent" />
