@@ -13,7 +13,7 @@ type Panel = {
 // vedle sebe působí neklidně, když jeden padá výrazně níž než ostatní.
 const PANELS: Panel[] = [
   {
-    photo: "/anezka-cesta.png",
+    photo: "/pribeh-cesta.webp",
     eyebrow: "Moje cesta k józe",
     body: [
       "Jmenuji se Anežka a jóga změnila způsob, jakým žiju.",
@@ -23,7 +23,7 @@ const PANELS: Panel[] = [
     ],
   },
   {
-    photo: "/anezka-online.png",
+    photo: "/pribeh-online.webp",
     eyebrow: "Proč jsem začala učit online",
     body: [
       "Ne každá žena má možnost přijít na lekci osobně.",
@@ -32,7 +32,7 @@ const PANELS: Panel[] = [
     ],
   },
   {
-    photo: "/anezka-pobyty.png",
+    photo: "/pribeh-pobyty.webp",
     eyebrow: "Proč pořádám pobyty",
     body: [
       "Pobyty jsou pro mě víc než jen víkend s jógou.",
@@ -52,7 +52,7 @@ export default function AboutTeaser() {
             <div key={panel.eyebrow} className="relative flex flex-col items-center text-center">
               <div
                 className="relative w-[170px] shrink-0 sm:w-[198px]"
-                style={{ aspectRatio: "684 / 842" }}
+                style={{ aspectRatio: "560 / 688" }}
               >
                 <Image
                   src={panel.photo}
