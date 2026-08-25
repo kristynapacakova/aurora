@@ -194,7 +194,7 @@ export default function OMnePage() {
             className="absolute inset-0 hidden lg:block"
             style={{
               background:
-                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 44%, rgba(252,244,241,0.82) 52%, rgba(252,244,241,0.4) 58%, transparent 64%)",
+                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 40%, rgba(252,244,241,0.94) 46%, rgba(252,244,241,0.82) 51%, rgba(252,244,241,0.66) 55%, rgba(252,244,241,0.47) 59%, rgba(252,244,241,0.3) 62%, rgba(252,244,241,0.15) 65%, transparent 68%)",
             }}
           />
 
