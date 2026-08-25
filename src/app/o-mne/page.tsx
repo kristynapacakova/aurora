@@ -170,9 +170,11 @@ export default function OMnePage() {
             Stejná skladba jako hero na domovské stránce a na stránce Lekce:
             fotka drží pravou část sekce a do textu se ztrácí vodorovným
             přechodem z krémové, ne překryvem přes celou plochu. */}
-        <section className="relative overflow-hidden bg-cream md:flex md:min-h-screen md:items-center">
-          {/* Počítač: fotka v pravé části, postava tak zůstane mimo text. */}
-          <div className="absolute inset-y-0 right-0 hidden w-[72%] md:block">
+        <section className="relative overflow-hidden bg-cream md:flex md:min-h-[76vh] md:items-center">
+          {/* Počítač: fotka v pravé části, postava tak zůstane mimo text.
+              Užší a nižší než hero na Lekcích — fotka je na šířku a při plné
+              výšce okna se ořezem nafoukla tak, že postava přebíjela text. */}
+          <div className="absolute inset-y-0 right-0 hidden w-[64%] md:block">
             <Image
               src="/omne-hero.webp"
               alt="Anežka se srolovanou podložkou v lese"
