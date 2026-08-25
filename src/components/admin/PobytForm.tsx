@@ -9,6 +9,7 @@ import QRCode from "qrcode";
 import type { Pobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { czechAccountToIban } from "@/lib/platba";
+import { rozpadPlatby, formatKc } from "@/lib/castky";
 import { resizeImageFile } from "@/lib/imageResize";
 
 export default function PobytForm({ initial }: { initial: Pobyt | null }) {
@@ -22,6 +23,10 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [cisloUctu, setCisloUctu] = useState(initial?.cislo_uctu ?? "");
   const [variabilniSymbol, setVariabilniSymbol] = useState(initial?.variabilni_symbol ?? "");
   const [platebniPokyny, setPlatebniPokyny] = useState(initial?.platebni_pokyny ?? "");
+  // Prázdný řetězec = zálohu nenabízíme (v databázi 0).
+  const [zalohaProcento, setZalohaProcento] = useState(
+    initial?.zaloha_procento ? String(initial.zaloha_procento) : ""
+  );
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [vyprodano, setVyprodano] = useState(initial?.vyprodano ?? false);
   const [pripravujeSe, setPripravujeSe] = useState(initial?.pripravuje_se ?? false);
@@ -30,39 +35,46 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [qrPreview, setQrPreview] = useState<string | null>(null);
+  const [qrZalohaPreview, setQrZalohaPreview] = useState<string | null>(null);
 
   const iban = cisloUctu ? czechAccountToIban(cisloUctu) : null;
   const cisloUctuNeplatne = cisloUctu.length > 0 && !iban;
 
-  // Živý náhled QR kódu — přegeneruje se při každé změně účtu/ceny/VS.
+  const rozpad = rozpadPlatby({ cena, zalohaProcento: Number(zalohaProcento) || 0 });
+  // Procento je vyplněné, ale z ceny nejde vyčíst číslo — pak zálohu nabídnout
+  // neumíme a je fér to klientce rovnou říct.
+  const zalohaBezCeny = Number(zalohaProcento) > 0 && rozpad.zaloha === null;
+
+  // Živý náhled QR kódu — přegeneruje se při každé změně účtu/ceny/VS/zálohy.
   useEffect(() => {
     let cancelled = false;
 
-    async function updatePreview() {
-      if (!iban) {
-        if (!cancelled) setQrPreview(null);
-        return;
-      }
-      const amountMatch = cena.replace(/\s/g, "").match(/(\d+)(?:[.,](\d{1,2}))?/);
-      const amount = amountMatch ? Number(`${amountMatch[1]}.${(amountMatch[2] ?? "00").padEnd(2, "0")}`) : null;
+    async function qr(amount: number | null): Promise<string | null> {
+      if (!iban) return null;
       const vsDigits = variabilniSymbol.replace(/\D/g, "").slice(0, 10);
       const parts = ["SPD*1.0", `ACC:${iban}`];
       if (amount) parts.push(`AM:${amount.toFixed(2)}`);
       parts.push("CC:CZK");
       if (vsDigits) parts.push(`X-VS:${vsDigits}`);
       try {
-        const url = await QRCode.toDataURL(parts.join("*"), { margin: 1, width: 240 });
-        if (!cancelled) setQrPreview(url);
+        return await QRCode.toDataURL(parts.join("*"), { margin: 1, width: 240 });
       } catch {
-        if (!cancelled) setQrPreview(null);
+        return null;
       }
+    }
+
+    async function updatePreview() {
+      const [cely, zalohovy] = await Promise.all([qr(rozpad.celkem), qr(rozpad.zaloha)]);
+      if (cancelled) return;
+      setQrPreview(cely);
+      setQrZalohaPreview(rozpad.zaloha ? zalohovy : null);
     }
 
     updatePreview();
     return () => {
       cancelled = true;
     };
-  }, [iban, cena, variabilniSymbol]);
+  }, [iban, variabilniSymbol, rozpad.celkem, rozpad.zaloha]);
 
   async function uploadPhotos(e: ChangeEvent<HTMLInputElement>) {
     const files = Array.from(e.target.files ?? []);
@@ -116,6 +128,7 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
       cislo_uctu: cisloUctu,
       variabilni_symbol: variabilniSymbol,
       platebni_pokyny: platebniPokyny,
+      zaloha_procento: Number(zalohaProcento) || 0,
       zverejneno,
       vyprodano,
       pripravuje_se: pripravujeSe,
@@ -280,6 +293,33 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                 <p className="text-xs text-accent-d">Číslo účtu nemá platný tvar (např. 123456789/0800).</p>
               )}
 
+              {/* Záloha — když je pole prázdné nebo 0, zákaznice uvidí jen
+                  jednu možnost: zaplatit celou částku. */}
+              <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                Záloha (% z ceny)
+                <input
+                  value={zalohaProcento}
+                  onChange={(e) => setZalohaProcento(e.target.value.replace(/\D/g, "").slice(0, 2))}
+                  inputMode="numeric"
+                  className={inputCls}
+                  placeholder="Např. 30 — nech prázdné, když se platí jen celá částka"
+                />
+              </label>
+              {rozpad.zaloha !== null && rozpad.celkem !== null && (
+                <p className="text-xs text-muted">
+                  Zákaznice si vybere: celá částka{" "}
+                  <span className="text-ink">{formatKc(rozpad.celkem)}</span>, nebo záloha{" "}
+                  <span className="text-ink">{formatKc(rozpad.zaloha)}</span> a doplatek{" "}
+                  <span className="text-ink">{formatKc(rozpad.doplatek ?? 0)}</span> 14 dnů před pobytem.
+                </p>
+              )}
+              {zalohaBezCeny && (
+                <p className="text-xs text-accent-d">
+                  Z ceny nejde vyčíst částka, takže zálohu spočítat neumíme — zákaznici se nabídne jen platba
+                  celé částky. Napiš cenu třeba jako „4 900 Kč“.
+                </p>
+              )}
+
               <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
                 Platební pokyny (nepovinné)
                 <textarea
@@ -292,11 +332,28 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
               </label>
 
               {qrPreview && (
-                <div className="flex items-center gap-3">
-                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-white">
-                    <Image src={qrPreview} alt="Náhled QR kódu" fill className="object-contain p-1.5" sizes="80px" unoptimized />
+                <div className="flex flex-wrap items-center gap-5">
+                  <div className="flex items-center gap-3">
+                    <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-white">
+                      <Image src={qrPreview} alt="Náhled QR kódu na celou částku" fill className="object-contain p-1.5" sizes="80px" unoptimized />
+                    </div>
+                    <p className="text-xs text-muted">
+                      QR kód na celou částku
+                      {rozpad.celkem !== null && <><br />{formatKc(rozpad.celkem)}</>}
+                    </p>
                   </div>
-                  <p className="text-xs text-muted">Takhle bude vypadat QR kód pro platbu.</p>
+                  {qrZalohaPreview && rozpad.zaloha !== null && (
+                    <div className="flex items-center gap-3">
+                      <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border border-line bg-white">
+                        <Image src={qrZalohaPreview} alt="Náhled QR kódu na zálohu" fill className="object-contain p-1.5" sizes="80px" unoptimized />
+                      </div>
+                      <p className="text-xs text-muted">
+                        QR kód na zálohu
+                        <br />
+                        {formatKc(rozpad.zaloha)}
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -427,6 +484,12 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                           Účet: {cisloUctu || "—"}
                           {variabilniSymbol && <> · VS: {variabilniSymbol}</>}
                         </p>
+                        {rozpad.zaloha !== null && rozpad.celkem !== null && (
+                          <p className="mt-1">
+                            A vybere si, jestli pošle celou částku {formatKc(rozpad.celkem)}, nebo zálohu{" "}
+                            {formatKc(rozpad.zaloha)}.
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}

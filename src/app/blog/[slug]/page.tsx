@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { getClanekBySlug } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 
-export const dynamic = "force-dynamic";
+export const revalidate = 60;
 
 export async function generateMetadata({
   params,

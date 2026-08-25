@@ -25,6 +25,7 @@ type Body = {
   cislo_uctu?: string;
   variabilni_symbol?: string;
   platebni_pokyny?: string;
+  zaloha_procento?: number;
   zverejneno?: boolean;
   vyprodano?: boolean;
   pripravuje_se?: boolean;
@@ -41,6 +42,9 @@ function parseFields(body: Body) {
     cislo_uctu: (body.cislo_uctu ?? "").trim(),
     variabilni_symbol: (body.variabilni_symbol ?? "").trim(),
     platebni_pokyny: (body.platebni_pokyny ?? "").trim(),
+    // Procento držíme v rozsahu 0–99: 100 % by byla „záloha" ve výši celé
+    // ceny, tedy druhé tlačítko, které dělá totéž co první.
+    zaloha_procento: Math.min(99, Math.max(0, Math.round(Number(body.zaloha_procento) || 0))),
     zverejneno: body.zverejneno !== false,
     vyprodano: body.vyprodano === true,
     pripravuje_se: body.pripravuje_se === true,

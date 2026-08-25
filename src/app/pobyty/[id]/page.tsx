@@ -8,7 +8,7 @@ import PoptavkaForm from "@/components/PoptavkaForm";
 import PobytGallery from "@/components/PobytGallery";
 import { getPobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
-import { generatePlatebniQr } from "@/lib/platba";
+import { generatePlatebniQr, rozpadPlatby } from "@/lib/platba";
 
 export const revalidate = 60;
 
@@ -34,11 +34,23 @@ export default async function PobytDetailPage({
   const { id } = await params;
   const pobyt = await getPobyt(Number(id));
   if (!pobyt || !pobyt.zverejneno) notFound();
-  const qrDataUrl = await generatePlatebniQr({
-    cisloUctu: pobyt.cislo_uctu,
-    cena: pobyt.cena,
-    variabilniSymbol: pobyt.variabilni_symbol,
-  });
+  // Dva QR kódy — na celou částku a na zálohu. Formulář mezi nimi jen
+  // přepíná, aby se při změně volby nemuselo nic dogenerovávat.
+  const rozpad = rozpadPlatby({ cena: pobyt.cena, zalohaProcento: pobyt.zaloha_procento });
+  const [qrDataUrl, qrZalohaDataUrl] = await Promise.all([
+    generatePlatebniQr({
+      cisloUctu: pobyt.cislo_uctu,
+      cena: pobyt.cena,
+      variabilniSymbol: pobyt.variabilni_symbol,
+    }),
+    rozpad.zaloha
+      ? generatePlatebniQr({
+          cisloUctu: pobyt.cislo_uctu,
+          castka: rozpad.zaloha,
+          variabilniSymbol: pobyt.variabilni_symbol,
+        })
+      : Promise.resolve(null),
+  ]);
 
   return (
     <>
@@ -102,6 +114,11 @@ export default async function PobytDetailPage({
                     pobytNadpis={pobyt.nadpis}
                     cena={pobyt.cena}
                     qrDataUrl={qrDataUrl ?? undefined}
+                    qrZalohaDataUrl={qrZalohaDataUrl ?? undefined}
+                    castkaCelkem={rozpad.celkem}
+                    zaloha={rozpad.zaloha}
+                    doplatek={rozpad.doplatek}
+                    zalohaProcento={rozpad.procento}
                     cisloUctu={pobyt.cislo_uctu}
                     variabilniSymbol={pobyt.variabilni_symbol}
                     platebniPokyny={pobyt.platebni_pokyny}

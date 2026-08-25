@@ -14,16 +14,32 @@ export default function Hero() {
       id="hero"
       className="relative overflow-hidden bg-cream md:flex md:min-h-screen md:items-center"
     >
-      {/* ── Desktop: video jen v pravé části — postava mimo textovou zónu ── */}
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-y-0 right-0 hidden h-full w-[72%] object-cover md:block"
-      >
-        <source src="/hero.mp4" type="video/mp4" />
-      </video>
+      {/* ── Video ──
+          Schválně jediný <video> element, který se jen jinak umisťuje:
+          na počítači vyplňuje pravou část sekce, na telefonu je to blok nad
+          textem. Dřív tu byly dva a prohlížeč stahoval video dvakrát —
+          display:none stahování nezastaví, takže úvodní stránka tahala
+          přes 7 MB.
+          poster = první snímek, aby hero nebylo do načtení videa prázdné. */}
+      <div className="relative h-[68vw] min-h-[300px] overflow-hidden md:absolute md:inset-y-0 md:right-0 md:h-full md:min-h-0 md:w-[72%]">
+        <video
+          autoPlay
+          muted
+          loop
+          playsInline
+          poster="/hero-poster.webp"
+          className="absolute inset-0 h-full w-full object-cover"
+        >
+          {/* Telefonům stačí menší soubor (891 kB místo 1,8 MB). Pořadí je
+              schválně takhle: prohlížeč, který by atribut media ignoroval,
+              sáhne po plné verzi, ne po té zmenšené. */}
+          <source src="/hero-uvod.mp4" type="video/mp4" media="(min-width: 768px)" />
+          <source src="/hero-uvod-mobil.mp4" type="video/mp4" />
+        </video>
+        {/* Na telefonu se video dole ztrácí do pozadí; na počítači to řeší
+            horizontální gradient přes celou sekci. */}
+        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent md:hidden" />
+      </div>
 
       {/* ── Desktop: horizontální gradient cream → průhlednost ── */}
       <div
@@ -33,20 +49,6 @@ export default function Hero() {
             "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 34%, rgba(252,244,241,0.78) 50%, rgba(252,244,241,0.28) 66%, transparent 80%)",
         }}
       />
-
-      {/* ── Mobil: video jako blokový element nad textem ── */}
-      <div className="relative h-[68vw] min-h-[300px] overflow-hidden md:hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 h-full w-full object-cover"
-        >
-          <source src="/hero.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent" />
-      </div>
 
       {/* ── Textový blok ── */}
       <div className="relative z-10 px-8 py-14 md:w-[48%] md:py-0 md:pl-[7vw] md:pr-6 lg:pl-[8vw]">

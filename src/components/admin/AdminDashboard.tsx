@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
 import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
+import { formatKc } from "@/lib/castky";
 
 type EditorTab = "pobyty" | "clanky" | "lekce";
 type Section =
@@ -376,7 +377,19 @@ export default function AdminDashboard({
   }
 
   function exportObjednavkyCsv() {
-    const hlavicky = ["Datum", "Typ", "Jméno", "E-mail", "Telefon", "Pobyt", "Zaplaceno", "Přečteno", "Zpráva"];
+    const hlavicky = [
+      "Datum",
+      "Typ",
+      "Jméno",
+      "E-mail",
+      "Telefon",
+      "Pobyt",
+      "Způsob platby",
+      "Částka (Kč)",
+      "Zaplaceno",
+      "Přečteno",
+      "Zpráva",
+    ];
     const radky = poptavkyFiltrovane.map((q) => [
       new Date(q.created_at).toLocaleString("cs-CZ"),
       q.typ === "objednavka" ? "Objednávka" : "Dotaz",
@@ -384,6 +397,8 @@ export default function AdminDashboard({
       q.email,
       q.telefon,
       q.pobyt_nadpis ?? "",
+      q.zpusob_platby === "zaloha" ? "Záloha" : q.zpusob_platby === "cela" ? "Celá částka" : "",
+      q.castka ? String(q.castka) : "",
       q.zaplaceno ? "Ano" : "Ne",
       q.precteno ? "Ano" : "Ne",
       q.zprava.replace(/\s+/g, " "),
@@ -1217,6 +1232,14 @@ export default function AdminDashboard({
                               <p className="mt-1 text-xs text-muted">
                                 {new Date(q.created_at).toLocaleString("cs-CZ")}
                               </p>
+                              {/* Co si zákaznice zvolila — u zálohy je hned
+                                  vidět, že se ještě čeká na doplatek. */}
+                              {q.typ === "objednavka" && q.castka > 0 && (
+                                <p className="mt-1 text-xs text-ink">
+                                  {q.zpusob_platby === "zaloha" ? "Záloha" : "Celá částka"}:{" "}
+                                  {formatKc(q.castka)}
+                                </p>
+                              )}
                               <p className="mt-2 text-sm text-ink">
                                 <a href={`mailto:${q.email}`} className="underline underline-offset-2 hover:text-accent-d">
                                   {q.email}

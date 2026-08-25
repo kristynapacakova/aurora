@@ -20,6 +20,9 @@ export type Pobyt = {
   cislo_uctu: string;
   variabilni_symbol: string;
   platebni_pokyny: string;
+  // Kolik procent z ceny tvoří záloha. 0 = zálohu nenabízíme a pobyt se platí
+  // jen celý najednou.
+  zaloha_procento: number;
   zverejneno: boolean;
   vyprodano: boolean;
   pripravuje_se: boolean;
@@ -60,6 +63,11 @@ export type Poptavka = {
   pobyt_nadpis: string | null;
   typ: "dotaz" | "objednavka";
   zaplaceno: boolean;
+  // Co si zákaznice zvolila: celou částku, nebo jen zálohu. U dotazů prázdné.
+  zpusob_platby: "" | "cela" | "zaloha";
+  // Kolik podle své volby poslala (v Kč). Počítá se na serveru z ceny pobytu,
+  // ne z toho, co pošle prohlížeč.
+  castka: number;
   precteno: boolean;
   jmeno: string;
   email: string;
@@ -163,6 +171,7 @@ async function ensureSchema() {
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS variabilni_symbol TEXT NOT NULL DEFAULT '';
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS vyprodano BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS pripravuje_se BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS zaloha_procento INTEGER NOT NULL DEFAULT 0;
 
     CREATE TABLE IF NOT EXISTS clanky (
       id SERIAL PRIMARY KEY,
@@ -196,6 +205,8 @@ async function ensureSchema() {
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS typ TEXT NOT NULL DEFAULT 'dotaz';
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS zaplaceno BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS precteno BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS zpusob_platby TEXT NOT NULL DEFAULT '';
+    ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS castka INTEGER NOT NULL DEFAULT 0;
 
     CREATE TABLE IF NOT EXISTS newsletter (
       id SERIAL PRIMARY KEY,
@@ -275,8 +286,8 @@ export async function getPobyt(id: number): Promise<Pobyt | null> {
 
 export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<Pobyt> {
   const rows = await query<Pobyt>(
-    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zverejneno, vyprodano, pripravuje_se)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *`,
+    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zaloha_procento, zverejneno, vyprodano, pripravuje_se)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
     [
       p.nadpis,
       p.misto,
@@ -287,6 +298,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
       p.cislo_uctu,
       p.variabilni_symbol,
       p.platebni_pokyny,
+      p.zaloha_procento,
       p.zverejneno,
       p.vyprodano,
       p.pripravuje_se,
@@ -297,7 +309,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
 
 export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at">): Promise<void> {
   await query(
-    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zverejneno=$10, vyprodano=$11, pripravuje_se=$12 WHERE id=$13`,
+    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zaloha_procento=$10, zverejneno=$11, vyprodano=$12, pripravuje_se=$13 WHERE id=$14`,
     [
       p.nadpis,
       p.misto,
@@ -308,6 +320,7 @@ export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at"
       p.cislo_uctu,
       p.variabilni_symbol,
       p.platebni_pokyny,
+      p.zaloha_procento,
       p.zverejneno,
       p.vyprodano,
       p.pripravuje_se,
@@ -438,15 +451,17 @@ export async function createPoptavka(p: {
   pobyt_id: number | null;
   typ: "dotaz" | "objednavka";
   zaplaceno: boolean;
+  zpusob_platby: "" | "cela" | "zaloha";
+  castka: number;
   jmeno: string;
   email: string;
   telefon: string;
   zprava: string;
 }): Promise<void> {
   await query(
-    `INSERT INTO poptavky (pobyt_id, typ, zaplaceno, jmeno, email, telefon, zprava)
-     VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-    [p.pobyt_id, p.typ, p.zaplaceno, p.jmeno, p.email, p.telefon, p.zprava]
+    `INSERT INTO poptavky (pobyt_id, typ, zaplaceno, zpusob_platby, castka, jmeno, email, telefon, zprava)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+    [p.pobyt_id, p.typ, p.zaplaceno, p.zpusob_platby, p.castka, p.jmeno, p.email, p.telefon, p.zprava]
   );
 }
 

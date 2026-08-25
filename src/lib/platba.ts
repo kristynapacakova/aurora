@@ -1,4 +1,7 @@
 import QRCode from "qrcode";
+import { parseAmount } from "./castky";
+
+export * from "./castky";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // České QR platby (formát SPD dle České bankovní asociace).
@@ -35,17 +38,6 @@ export function czechAccountToIban(accountNumber: string): string | null {
   return `CZ${checkDigits}${bban}`;
 }
 
-// Zkusí z volného textu ceny ("4 900 Kč", "od 3 500,50 Kč") vytáhnout částku.
-// Vrací null, když se nepovede — v tom případě QR částku prostě neobsahuje
-// a zákaznice ji do bankovní aplikace zadá ručně (bezpečnější než hádat).
-export function parseAmount(cena: string): number | null {
-  const match = cena.replace(/\s/g, "").match(/(\d+)(?:[.,](\d{1,2}))?/);
-  if (!match) return null;
-  const whole = match[1];
-  const decimals = (match[2] ?? "00").padEnd(2, "0");
-  return Number(`${whole}.${decimals}`);
-}
-
 function buildSpdString({
   iban,
   amount,
@@ -68,17 +60,20 @@ function buildSpdString({
 export async function generatePlatebniQr({
   cisloUctu,
   cena,
+  castka,
   variabilniSymbol,
 }: {
   cisloUctu: string;
   cena?: string;
+  // Konkrétní částka (třeba záloha) má přednost před vyčítáním z textu ceny.
+  castka?: number | null;
   variabilniSymbol?: string;
 }): Promise<string | null> {
   if (!cisloUctu) return null;
   const iban = czechAccountToIban(cisloUctu);
   if (!iban) return null;
 
-  const amount = cena ? parseAmount(cena) : null;
+  const amount = castka ?? (cena ? parseAmount(cena) : null);
   const spd = buildSpdString({ iban, amount, vs: variabilniSymbol });
 
   return QRCode.toDataURL(spd, { margin: 1, width: 300 });

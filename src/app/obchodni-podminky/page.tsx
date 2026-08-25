@@ -69,7 +69,9 @@ export default async function ObchodniPodminkyPage() {
                 Platbu za online členství a jednotlivé lekce lze provést platební
                 kartou přímo přes platformu Uscreen. Platbu za pobyt nebo dárkový
                 poukaz lze provést bankovním převodem podle platebních údajů a
-                QR kódu uvedených v objednávce.
+                QR kódu uvedených v objednávce. U pobytů si zákazník
+                v objednávkovém formuláři volí mezi úhradou celé částky a úhradou
+                zálohy s pozdějším doplatkem.
               </p>
             </section>
 
@@ -90,8 +92,12 @@ export default async function ObchodniPodminkyPage() {
             <section>
               <h2 className="mb-3 font-serif text-xl text-ink">5. Pobyty a dárkové poukazy</h2>
               <p>
-                Objednávka pobytu se stává závaznou okamžikem uhrazení celé částky
-                dle platebních údajů uvedených u pobytu. Stejným způsobem funguje i
+                Cenu pobytu lze uhradit buď celou najednou, nebo formou zálohy,
+                jejíž výše je uvedena u konkrétního pobytu v objednávkovém
+                formuláři. Objednávka pobytu se stává závaznou okamžikem uhrazení
+                celé částky, případně zálohy, dle platebních údajů uvedených u
+                pobytu. Zbývající doplatek je splatný nejpozději 14 dnů před
+                začátkem pobytu. Stejným způsobem funguje i
                 nákup dárkového poukazu — poukaz je platný po přijetí platby na
                 účet poskytovatele. V souladu s § 1837 písm. j) občanského
                 zákoníku se na smlouvu o poskytnutí ubytování, dopravy, stravování

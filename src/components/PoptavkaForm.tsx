@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, type FormEvent } from "react";
 import { HONEYPOT_FIELD, FORM_LOADED_FIELD } from "@/lib/honeypot";
 import { NEWSLETTER_FIELD, NEWSLETTER_LABEL } from "@/lib/newsletterOptIn";
+import { formatKc, type ZpusobPlatby } from "@/lib/castky";
 
 type Mode = "closed" | "objednavka" | "dotaz" | "cekaci";
 
@@ -12,6 +13,11 @@ export default function PoptavkaForm({
   pobytNadpis,
   cena,
   qrDataUrl,
+  qrZalohaDataUrl,
+  castkaCelkem,
+  zaloha,
+  doplatek,
+  zalohaProcento,
   cisloUctu,
   variabilniSymbol,
   platebniPokyny,
@@ -22,6 +28,11 @@ export default function PoptavkaForm({
   pobytNadpis: string;
   cena?: string;
   qrDataUrl?: string;
+  qrZalohaDataUrl?: string;
+  castkaCelkem?: number | null;
+  zaloha?: number | null;
+  doplatek?: number | null;
+  zalohaProcento?: number;
   cisloUctu?: string;
   variabilniSymbol?: string;
   platebniPokyny?: string;
@@ -34,6 +45,7 @@ export default function PoptavkaForm({
   const [telefon, setTelefon] = useState("");
   const [zprava, setZprava] = useState("");
   const [potvrzenoPlatba, setPotvrzenoPlatba] = useState(false);
+  const [zpusobPlatby, setZpusobPlatby] = useState<ZpusobPlatby>("cela");
   const [souhlasGdpr, setSouhlasGdpr] = useState(false);
   const [chceNovinky, setChceNovinky] = useState(false);
   const [honeypot, setHoneypot] = useState("");
@@ -47,6 +59,11 @@ export default function PoptavkaForm({
   }, [mode]);
 
   const hasPaymentInfo = Boolean(cisloUctu);
+  // Zálohu nabízíme jen tehdy, když ji administrace umí spočítat z ceny.
+  const lzeZaloha = Boolean(zaloha && zalohaProcento);
+  const platiZalohu = lzeZaloha && zpusobPlatby === "zaloha";
+  const aktualniQr = platiZalohu ? qrZalohaDataUrl : qrDataUrl;
+  const aktualniCastka = platiZalohu ? zaloha : castkaCelkem;
 
   function reset() {
     setMode("closed");
@@ -81,6 +98,7 @@ export default function PoptavkaForm({
               pobyt_id: pobytId,
               typ: mode === "objednavka" ? "objednavka" : "dotaz",
               zaplaceno: mode === "objednavka" ? potvrzenoPlatba : false,
+              zpusob_platby: mode === "objednavka" ? (platiZalohu ? "zaloha" : "cela") : "",
               jmeno,
               email,
               telefon,
@@ -106,7 +124,9 @@ export default function PoptavkaForm({
         <p className="font-allura text-2xl text-ink">Děkujeme!</p>
         <p className="mt-2 text-sm text-muted">
           {mode === "objednavka"
-            ? "Tvoje objednávka je na cestě. Brzy se ti ozveme s potvrzením. 🌿"
+            ? platiZalohu && doplatek != null
+              ? `Tvoje objednávka je na cestě. Jakmile zálohu uvidíme na účtu, máš místo závazně rezervované. Doplatek ${formatKc(doplatek)} pošleš 14 dnů před pobytem. 🌿`
+              : "Tvoje objednávka je na cestě. Brzy se ti ozveme s potvrzením. 🌿"
             : mode === "cekaci"
               ? "Jsi na čekací listině. Ozveme se, jakmile se uvolní místo. 🌿"
               : "Tvůj dotaz je na cestě. Ozveme se ti co nejdřív. 🌿"}
@@ -173,15 +193,79 @@ export default function PoptavkaForm({
             </p>
           )}
 
+          {/* Volba platby — buď celá částka hned, nebo záloha a doplatek
+              14 dnů před pobytem. QR kód i částka se přepnou podle volby. */}
+          {lzeZaloha && (
+            <fieldset className="flex flex-col gap-2">
+              <legend className="mb-1 text-sm font-medium text-ink">Jak chceš zaplatit?</legend>
+
+              <label
+                className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 text-sm transition-colors ${
+                  zpusobPlatby === "cela" ? "border-accent bg-sand/50" : "border-line"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="zpusob-platby"
+                  checked={zpusobPlatby === "cela"}
+                  onChange={() => setZpusobPlatby("cela")}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
+                />
+                <span className="text-ink">
+                  Celou částku najednou
+                  {castkaCelkem != null && (
+                    <span className="block text-muted">{formatKc(castkaCelkem)}</span>
+                  )}
+                </span>
+              </label>
+
+              <label
+                className={`flex cursor-pointer items-start gap-2.5 rounded-xl border p-3 text-sm transition-colors ${
+                  zpusobPlatby === "zaloha" ? "border-accent bg-sand/50" : "border-line"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="zpusob-platby"
+                  checked={zpusobPlatby === "zaloha"}
+                  onChange={() => setZpusobPlatby("zaloha")}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
+                />
+                <span className="text-ink">
+                  Zálohu {zalohaProcento} % teď, zbytek před pobytem
+                  <span className="block text-muted">Záloha {formatKc(zaloha ?? 0)}</span>
+                  {doplatek != null && (
+                    <span className="block text-muted">
+                      Doplatek {formatKc(doplatek)} 14 dnů před pobytem
+                    </span>
+                  )}
+                </span>
+              </label>
+            </fieldset>
+          )}
+
           {hasPaymentInfo && (
             <div className="flex flex-col gap-3 rounded-xl bg-sand/60 p-4 sm:flex-row sm:items-start">
-              {qrDataUrl && (
+              {aktualniQr && (
                 <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-white">
-                  <Image src={qrDataUrl} alt="QR kód pro platbu" fill className="object-contain p-2" sizes="128px" unoptimized />
+                  <Image
+                    src={aktualniQr}
+                    alt={platiZalohu ? "QR kód pro platbu zálohy" : "QR kód pro platbu"}
+                    fill
+                    className="object-contain p-2"
+                    sizes="128px"
+                    unoptimized
+                  />
                 </div>
               )}
               <div className="text-sm">
                 <p className="font-medium text-ink">Platební údaje</p>
+                {aktualniCastka != null && (
+                  <p className="mt-1 text-muted">
+                    {platiZalohu ? "Záloha k úhradě" : "Částka k úhradě"}:{" "}
+                    <span className="text-ink">{formatKc(aktualniCastka)}</span>
+                  </p>
+                )}
                 <p className="mt-1 text-muted">
                   Číslo účtu: <span className="text-ink">{cisloUctu}</span>
                   {variabilniSymbol && (
@@ -191,6 +275,12 @@ export default function PoptavkaForm({
                     </>
                   )}
                 </p>
+                {platiZalohu && doplatek != null && (
+                  <p className="mt-2 text-muted">
+                    Doplatek <span className="text-ink">{formatKc(doplatek)}</span> pošleš na stejný účet
+                    nejpozději 14 dnů před začátkem pobytu.
+                  </p>
+                )}
                 {platebniPokyny && (
                   <p className="mt-2 whitespace-pre-line text-muted">{platebniPokyny}</p>
                 )}
@@ -240,7 +330,9 @@ export default function PoptavkaForm({
             required
             className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
           />
-          Potvrzuji, že jsem platbu provedla podle uvedených údajů.
+          {platiZalohu
+            ? "Potvrzuji, že jsem zálohu uhradila podle uvedených údajů."
+            : "Potvrzuji, že jsem platbu provedla podle uvedených údajů."}
         </label>
       )}
 

@@ -10,6 +10,7 @@ import {
   checkFormRateLimit,
 } from "@/lib/formGuard";
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
+import { rozpadPlatby, formatKc } from "@/lib/platba";
 
 // Veřejný formulář u pobytu — buď závazná objednávka (po potvrzení platby),
 // nebo prostý dotaz. Uloží se do databáze (zobrazí se v administraci) a
@@ -20,6 +21,7 @@ export async function POST(request: Request) {
     pobyt_id?: number;
     typ?: "dotaz" | "objednavka";
     zaplaceno?: boolean;
+    zpusob_platby?: string;
     jmeno?: string;
     email?: string;
     telefon?: string;
@@ -67,9 +69,28 @@ export async function POST(request: Request) {
     );
   }
 
+  // Částku počítáme z pobytu v databázi, ne z toho, co pošle prohlížeč —
+  // z formuláře bereme jen volbu „celá částka / záloha".
+  const rozpad = rozpadPlatby({ cena: pobyt?.cena, zalohaProcento: pobyt?.zaloha_procento });
+  const chceZalohu = body.zpusob_platby === "zaloha" && rozpad.zaloha !== null;
+  const zpusobPlatby: "" | "cela" | "zaloha" =
+    typ !== "objednavka" ? "" : chceZalohu ? "zaloha" : "cela";
+  const castka =
+    typ !== "objednavka" ? 0 : chceZalohu ? (rozpad.zaloha ?? 0) : Math.round(rozpad.celkem ?? 0);
+
   // 1) Uložit do databáze (administrace → Poptávky)
   if (dbConfigured()) {
-    await createPoptavka({ pobyt_id: pobytId, typ, zaplaceno, jmeno, email, telefon, zprava });
+    await createPoptavka({
+      pobyt_id: pobytId,
+      typ,
+      zaplaceno,
+      zpusob_platby: zpusobPlatby,
+      castka,
+      jmeno,
+      email,
+      telefon,
+      zprava,
+    });
 
     // Do newsletteru jen se zaškrtnutým souhlasem.
     if (wantsNewsletter(body)) {
@@ -90,17 +111,31 @@ export async function POST(request: Request) {
     const resend = new Resend(apiKey);
     const subject =
       typ === "objednavka"
-        ? `Závazná objednávka (zaplaceno): ${pobyt?.nadpis ?? "pobyt"}`
+        ? `Závazná objednávka (${zpusobPlatby === "zaloha" ? "záloha" : "zaplaceno"}): ${pobyt?.nadpis ?? "pobyt"}`
         : `Nový dotaz: ${pobyt?.nadpis ?? "pobyt"}`;
+    const platbaRadky =
+      typ === "objednavka" && castka > 0
+        ? zpusobPlatby === "zaloha"
+          ? [
+              `Platba: záloha ${rozpad.procento} % — ${formatKc(castka)}`,
+              `Doplatek: ${formatKc(rozpad.doplatek ?? 0)} (14 dnů před pobytem)`,
+            ]
+          : [`Platba: celá částka — ${formatKc(castka)}`]
+        : [];
     await resend.emails.send({
       from: fromEmail,
       to: toEmail,
       replyTo: email,
       subject,
       text: [
-        typ === "objednavka" ? "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu." : "Nezávazný dotaz.",
+        typ === "objednavka"
+          ? zpusobPlatby === "zaloha"
+            ? "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu zálohy."
+            : "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu celé částky."
+          : "Nezávazný dotaz.",
         ``,
         `Pobyt: ${pobyt?.nadpis ?? "—"}`,
+        ...platbaRadky,
         `Jméno: ${jmeno}`,
         `E-mail: ${email}`,
         `Telefon: ${telefon || "—"}`,

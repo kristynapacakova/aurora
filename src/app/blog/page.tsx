@@ -7,7 +7,9 @@ import FadeUp from "@/components/FadeUp";
 import { getClanky } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 
-export const dynamic = "force-dynamic";
+// Články se plní z administrace; minutová cache stačí a ušetří dotaz do
+// databáze při každém načtení.
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: "Blog | AURORA jóga",

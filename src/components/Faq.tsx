@@ -35,7 +35,7 @@ const FAQ_ITEMS = [
   {
     otazka: "Jak funguje platba za pobyt?",
     odpoved:
-      "Po odeslání objednávky ti přijdou platební údaje i QR kód pro rychlou platbu. Jakmile platbu potvrdíš, je tvoje místo na pobytu závazně rezervované.",
+      "V objednávce si vybereš, jestli chceš zaplatit celou částku najednou, nebo jen zálohu — její výši uvidíš rovnou u pobytu. K vybrané variantě se ti zobrazí platební údaje i QR kód. Jakmile platbu uhradíš, je tvoje místo na pobytu závazně rezervované. Pokud jsi platila zálohu, doplatek se hradí 14 dnů před začátkem pobytu.",
   },
 ];
 

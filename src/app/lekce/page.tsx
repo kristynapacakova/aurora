@@ -26,8 +26,10 @@ export const metadata: Metadata = {
 };
 
 // Rozvrh se plní z administrace, takže stránka nesmí zůstat viset na staticky
-// vygenerované verzi z buildu.
-export const dynamic = "force-dynamic";
+// vygenerované verzi z buildu. Dřív tu bylo force-dynamic, jenže to znamenalo
+// dotaz do databáze při každém načtení — takhle se stránka servíruje z cache
+// a nejpozději po minutě se přegeneruje.
+export const revalidate = 60;
 
 /** Sušený lístek rozesetý kolem karet — leží pod kartou a smí přesahovat
  *  přes její okraj. Stejný princip jako na stránce O mně. */
