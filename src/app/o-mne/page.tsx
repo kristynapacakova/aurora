@@ -248,7 +248,9 @@ export default function OMnePage() {
                   <strong className="font-medium text-ink">
                     {nbsp("prostřednictvím online lekcí")}
                   </strong>
-                  {nbsp(". Hledala jsem způsob, jak se cítit lépe ve svém těle, uvolnit napětí a dopřát si chvíli jen pro sebe.")}
+                  {/* „Hledala“ drží u „jsem“ přes nezlomitelnou mezeru — samotné
+                      na konci řádku zbytečně vyčnívalo do fotky. */}
+                  {nbsp(". Hledala\u00A0jsem způsob, jak se cítit lépe ve svém těle, uvolnit napětí a dopřát si chvíli jen pro sebe.")}
                 </p>
               </div>
             </FadeUp>
