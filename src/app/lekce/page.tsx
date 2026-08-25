@@ -160,7 +160,7 @@ export default async function LekcePage() {
             className="absolute inset-0 hidden lg:block"
             style={{
               background:
-                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 34%, rgba(252,244,241,0.78) 50%, rgba(252,244,241,0.28) 66%, transparent 80%)",
+                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 44%, rgba(252,244,241,0.82) 52%, rgba(252,244,241,0.4) 58%, transparent 64%)",
             }}
           />
 
