@@ -170,13 +170,13 @@ export default function OMnePage() {
             Stejná skladba jako hero na domovské stránce a na stránce Lekce:
             fotka drží pravou část sekce a do textu se ztrácí vodorovným
             přechodem z krémové, ne překryvem přes celou plochu. */}
-        <section className="relative overflow-hidden bg-cream lg:flex lg:min-h-screen lg:items-center">
+        <section className="relative overflow-hidden bg-cream xl:flex xl:min-h-screen xl:items-center">
           {/* Počítač: fotka v pravé části, postava tak zůstane mimo text.
               Šířka i výška sekce jsou stejné jako u hera na Lekcích, aby
               přechod do krémové vycházel na obou stránkách identicky.
               Postava stojí vpravo od středu, proto je výřez posunutý doprava —
               při ořezu na střed by ji ukrojil. */}
-          <div className="absolute inset-y-0 right-0 hidden w-[72%] lg:block">
+          <div className="absolute inset-y-0 right-0 hidden w-[72%] xl:block">
             <Image
               src="/omne-les.webp"
               alt="Anežka se srolovanou podložkou v lese"
@@ -191,17 +191,17 @@ export default function OMnePage() {
           {/* Počítač: vodorovný přechod krémová → průhledná. Stejné hodnoty
               jako na domovské stránce, ať to působí jako jedna rodina. */}
           <div
-            className="absolute inset-0 hidden lg:block"
+            className="absolute inset-0 hidden xl:block"
             style={{
               background:
-                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 40%, rgba(252,244,241,0.94) 46%, rgba(252,244,241,0.82) 51%, rgba(252,244,241,0.66) 55%, rgba(252,244,241,0.47) 59%, rgba(252,244,241,0.3) 62%, rgba(252,244,241,0.15) 65%, transparent 68%)",
+                "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 39%, rgba(252,244,241,0.93) 41.5%, rgba(252,244,241,0.8) 43.5%, rgba(252,244,241,0.62) 45%, rgba(252,244,241,0.42) 46.5%, rgba(252,244,241,0.24) 48%, rgba(252,244,241,0.09) 49.5%, transparent 51%)",
             }}
           />
 
           {/* Telefon: fotka jako blok nad textem, dole se ztrácí do pozadí.
               Výřez je posunutý doprava stejně jako na počítači — levá třetina
               fotky je rozostřená a světlá, na střed by ji ořez ukázal. */}
-          <div className="relative h-[68vw] min-h-[300px] overflow-hidden lg:hidden">
+          <div className="relative h-[68vw] min-h-[300px] overflow-hidden xl:hidden">
             <Image
               src="/omne-les.webp"
               alt="Anežka se srolovanou podložkou v lese"
@@ -213,7 +213,7 @@ export default function OMnePage() {
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent" />
           </div>
 
-          <div className="relative z-10 px-8 py-14 lg:w-[48%] lg:py-28 lg:pl-[8vw] lg:pr-6">
+          <div className="relative z-10 px-8 py-14 xl:w-[48%] xl:py-28 xl:pl-[8vw] xl:pr-6">
             <FadeUp>
               <div className="mb-4 flex items-center gap-3">
                 <IconSparkle size={12} />
