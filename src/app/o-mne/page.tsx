@@ -243,7 +243,7 @@ export default function OMnePage() {
                   <div className="lg:absolute lg:inset-0 lg:flex lg:justify-center">
                     <div className="relative mx-auto aspect-[1000/1385] w-full max-w-[15rem] sm:max-w-xs lg:mx-0 lg:h-full lg:w-auto lg:max-w-none">
                       <Image
-                        src="/anezka-oblouk.webp"
+                        src="/anezka-uvod.webp"
                         alt="Anežka se srolovanou podložkou"
                         fill
                         className="object-contain"
