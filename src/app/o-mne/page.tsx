@@ -177,10 +177,13 @@ export default function OMnePage() {
           {/* Stejný obal jako zbytek stránky (px-6 na sekci, max-w-5xl uvnitř),
               takže levá hrana textu i pravá hrana oblouku stojí přesně nad
               kartami v sekci níž. */}
-          <div className="mx-auto max-w-5xl pt-32 pb-14 sm:pt-36 md:pb-28">
+          <div className="mx-auto max-w-5xl pt-32 pb-14 sm:pt-36 md:pb-12">
             {/* Výšku řádku určuje text; oblouk se do ní vejde přesně (viz
                 níže), takže obě strany začínají i končí na stejné lince. */}
-            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.6fr_1fr] lg:gap-14">
+            {/* Stejné dělení sloupců i mezera jako u sekce „Následovala jsem
+                svůj vnitřní hlas" níž, takže pravý sloupec je na obou místech
+                stejně široký a obě fotky stojí na jedné svislé ose. */}
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-[1.45fr_1fr] lg:gap-14">
               {/* Dokud jsou sloupce pod sebou, drží text rozumnou délku řádku —
                   na tabletu by přes celou šířku sekce byl špatně čitelný. */}
               <div className="max-w-2xl lg:max-w-none">
@@ -237,7 +240,7 @@ export default function OMnePage() {
                   z poměru stran. Na telefonu je to obyčejný blok pod textem. */}
               <FadeUp delay={0.1} className="lg:h-full">
                 <div className="relative lg:h-full">
-                  <div className="lg:absolute lg:inset-0 lg:flex lg:justify-end">
+                  <div className="lg:absolute lg:inset-0 lg:flex lg:justify-center">
                     <div className="relative mx-auto aspect-[1000/1417] w-full max-w-[15rem] sm:max-w-xs lg:mx-0 lg:h-full lg:w-auto lg:max-w-none">
                       <Image
                         src="/anezka-oblouk.webp"
