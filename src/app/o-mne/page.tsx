@@ -178,7 +178,7 @@ export default function OMnePage() {
               při ořezu na střed by ji ukrojil. */}
           <div className="absolute inset-y-0 right-0 hidden w-[72%] lg:block">
             <Image
-              src="/omne-uvod.webp"
+              src="/omne-les.webp"
               alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
@@ -201,7 +201,7 @@ export default function OMnePage() {
           {/* Telefon: fotka jako blok nad textem, dole se ztrácí do pozadí. */}
           <div className="relative h-[68vw] min-h-[300px] overflow-hidden lg:hidden">
             <Image
-              src="/omne-uvod.webp"
+              src="/omne-les.webp"
               alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
