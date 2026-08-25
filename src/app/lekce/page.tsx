@@ -141,9 +141,9 @@ export default async function LekcePage() {
             Stejná skladba jako hero na domovské stránce: fotka drží pravou
             část sekce a do textu se ztrácí vodorovným přechodem z krémové,
             ne překryvem přes celou plochu. */}
-        <section className="relative overflow-hidden bg-cream md:flex md:min-h-screen md:items-center">
+        <section className="relative overflow-hidden bg-cream lg:flex lg:min-h-screen lg:items-center">
           {/* Počítač: fotka v pravé části, postava tak zůstane mimo text. */}
-          <div className="absolute inset-y-0 right-0 hidden w-[72%] md:block">
+          <div className="absolute inset-y-0 right-0 hidden w-[72%] lg:block">
             <Image
               src="/lekce-hero.webp"
               alt="Anežka při józe na louce"
@@ -157,7 +157,7 @@ export default async function LekcePage() {
           {/* Počítač: vodorovný přechod krémová → průhledná. Stejné hodnoty
               jako na domovské stránce, ať to působí jako jedna rodina. */}
           <div
-            className="absolute inset-0 hidden md:block"
+            className="absolute inset-0 hidden lg:block"
             style={{
               background:
                 "linear-gradient(to right, #FCF4F1 0%, #FCF4F1 34%, rgba(252,244,241,0.78) 50%, rgba(252,244,241,0.28) 66%, transparent 80%)",
@@ -165,7 +165,7 @@ export default async function LekcePage() {
           />
 
           {/* Telefon: fotka jako blok nad textem, dole se ztrácí do pozadí. */}
-          <div className="relative h-[68vw] min-h-[300px] overflow-hidden md:hidden">
+          <div className="relative h-[68vw] min-h-[300px] overflow-hidden lg:hidden">
             <Image
               src="/lekce-hero.webp"
               alt="Anežka při józe na louce"
@@ -176,7 +176,7 @@ export default async function LekcePage() {
             <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-cream to-transparent" />
           </div>
 
-          <div className="relative z-10 px-8 py-14 md:w-[48%] md:py-0 md:pl-[7vw] md:pr-6 lg:pl-[8vw]">
+          <div className="relative z-10 px-8 py-14 lg:w-[48%] lg:py-28 lg:pl-[8vw] lg:pr-6">
             <FadeUp>
               <div className="mb-4 flex items-center gap-3">
                 <IconSun size={14} className="text-accent" />
