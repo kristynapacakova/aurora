@@ -172,15 +172,17 @@ export default function OMnePage() {
             přechodem z krémové, ne překryvem přes celou plochu. */}
         <section className="relative overflow-hidden bg-cream md:flex md:min-h-[76vh] md:items-center">
           {/* Počítač: fotka v pravé části, postava tak zůstane mimo text.
-              Užší a nižší než hero na Lekcích — fotka je na šířku a při plné
-              výšce okna se ořezem nafoukla tak, že postava přebíjela text. */}
+              Fotka je hodně na šířku (2,1:1), takže se do vysokého rámu vejde
+              jen ořezem po stranách. Postava stojí vpravo od středu, proto je
+              i výřez posunutý doprava — jinak by ji ořez ukrojil. */}
           <div className="absolute inset-y-0 right-0 hidden w-[64%] md:block">
             <Image
               src="/omne-hero.webp"
               alt="Anežka se srolovanou podložkou v lese"
               fill
               className="object-cover"
-              sizes="72vw"
+              style={{ objectPosition: "68% 50%" }}
+              sizes="64vw"
               fetchPriority="high"
             />
           </div>
