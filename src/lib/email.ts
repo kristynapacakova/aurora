@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { SITE_URL, CONTACT } from "./config";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Odchozí e-maily.
@@ -87,7 +88,15 @@ function escapeHtml(text: string): string {
 
 // Tabulkové rozložení a inline styly schválně — poštovní programy si se
 // současným CSS neporadí a Gmail navíc zahazuje <style> v hlavičce.
-function sablona(o: {
+// Patkové písmo webu (Cormorant) se v e-mailu načíst nedá, proto Georgia —
+// nejbližší patkové písmo, které má po ruce každý.
+const PISMO_NADPIS = "Georgia, 'Times New Roman', Times, serif";
+const PISMO_TEXT =
+  "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
+
+// Exportovaná schválně — jde o čistou funkci, takže se dá vyrenderovat
+// do souboru a šablona se zkontroluje očima, aniž by se něco odesílalo.
+export function sablona(o: {
   nadpis: string;
   odstavce: string[];
   radky?: Radek[];
@@ -96,7 +105,7 @@ function sablona(o: {
   const odstavce = o.odstavce
     .map(
       (t) =>
-        `<p style="margin:0 0 14px;font-size:15px;line-height:1.6;color:#6B5347;">${escapeHtml(t)}</p>`
+        `<p style="margin:0 0 14px;font-family:${PISMO_TEXT};font-size:15px;line-height:1.7;color:#6B5347;">${escapeHtml(t)}</p>`
     )
     .join("");
 
@@ -104,8 +113,8 @@ function sablona(o: {
     .map(
       (r) =>
         `<tr>
-           <td style="padding:6px 12px 6px 0;font-size:14px;color:#6B5347;white-space:nowrap;">${escapeHtml(r.popisek)}</td>
-           <td style="padding:6px 0;font-size:14px;color:#8C5F47;font-weight:600;">${escapeHtml(r.hodnota)}</td>
+           <td style="padding:5px 14px 5px 0;font-family:${PISMO_TEXT};font-size:14px;line-height:1.5;color:#6B5347;">${escapeHtml(r.popisek)}</td>
+           <td style="padding:5px 0;font-family:${PISMO_TEXT};font-size:14px;line-height:1.5;color:#8C5F47;font-weight:600;">${escapeHtml(r.hodnota)}</td>
          </tr>`
     )
     .join("");
@@ -113,30 +122,56 @@ function sablona(o: {
   const zavěr = (o.zavěr ?? [])
     .map(
       (t) =>
-        `<p style="margin:0 0 12px;font-size:14px;line-height:1.6;color:#6B5347;">${escapeHtml(t)}</p>`
+        `<p style="margin:0 0 10px;font-family:${PISMO_TEXT};font-size:13px;line-height:1.7;color:#8A7263;">${escapeHtml(t)}</p>`
     )
     .join("");
 
   return `<!doctype html>
-<html lang="cs"><body style="margin:0;padding:0;background:#FCF4F1;">
-  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#FCF4F1;padding:28px 12px;">
+<html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
+<body style="margin:0;padding:0;background:#FCF4F1;">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#FCF4F1;padding:32px 12px;">
     <tr><td align="center">
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:540px;background:#ffffff;border-radius:18px;padding:32px;">
-        <tr><td>
-          <p style="margin:0 0 6px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#F28D76;">Aurora jóga</p>
-          <h1 style="margin:0 0 20px;font-size:24px;font-weight:400;color:#8C5F47;">${escapeHtml(o.nadpis)}</h1>
+
+      <!-- Logo -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+        <tr><td align="center" style="padding-bottom:22px;">
+          <img src="${SITE_URL}/logo.png" alt="Aurora jóga" width="104" height="82"
+               style="display:block;border:0;outline:none;width:104px;height:auto;" />
+        </td></tr>
+      </table>
+
+      <!-- Karta -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;background:#ffffff;border-radius:20px;">
+        <tr><td style="padding:36px 34px 30px;">
+          <p style="margin:0 0 8px;font-family:${PISMO_TEXT};font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:#F28D76;">Aurora jóga</p>
+          <h1 style="margin:0 0 22px;font-family:${PISMO_NADPIS};font-size:27px;font-weight:400;line-height:1.25;color:#8C5F47;">${escapeHtml(o.nadpis)}</h1>
           ${odstavce}
           ${
             radky
-              ? `<table role="presentation" cellpadding="0" cellspacing="0" style="margin:20px 0;background:#FBE9DE;border-radius:12px;padding:16px 18px;width:100%;"><tr><td>
-                   <table role="presentation" cellpadding="0" cellspacing="0">${radky}</table>
+              ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:22px 0 6px;background:#FBE9DE;border-radius:14px;"><tr><td style="padding:18px 20px;">
+                   <table role="presentation" cellpadding="0" cellspacing="0" border="0">${radky}</table>
                  </td></tr></table>`
               : ""
           }
-          ${zavěr}
+          ${
+            zavěr
+              ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="padding-top:18px;border-top:1px solid #F2E4DC;">${zavěr}</td></tr></table>`
+              : ""
+          }
         </td></tr>
       </table>
-      <p style="margin:16px 0 0;font-size:12px;color:#A08573;">Aurora jóga</p>
+
+      <!-- Patička -->
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
+        <tr><td align="center" style="padding:20px 12px 0;font-family:${PISMO_TEXT};font-size:12px;line-height:1.8;color:#A08573;">
+          <a href="${SITE_URL}" style="color:#A08573;text-decoration:none;">aurorayoga.cz</a>
+          &nbsp;·&nbsp;
+          <a href="mailto:${CONTACT.email}" style="color:#A08573;text-decoration:none;">${CONTACT.email}</a>
+          <br />
+          <a href="${CONTACT.instagram}" style="color:#A08573;text-decoration:none;">Instagram ${CONTACT.instagramHandle}</a>
+        </td></tr>
+      </table>
+
     </td></tr>
   </table>
 </body></html>`;

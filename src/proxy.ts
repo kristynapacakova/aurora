@@ -34,6 +34,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // ── Logo v potvrzovacích e-mailech ──
+  // E-mail si obrázek stahuje z webu, ale poštovní program žádnou přístupovou
+  // cookie nemá — bez téhle výjimky by se logo v e-mailu nenačetlo, dokud je
+  // web za heslem. Je to veřejná grafika, nic se tím neodkrývá.
+  if (pathname === "/logo.png") {
+    return NextResponse.next();
+  }
+
   // ── Web zatím není veřejný — vyžaduje přístupový kód ──
   const siteToken = request.cookies.get(SITE_COOKIE_NAME)?.value;
   const siteUnlocked = await verifySiteToken(siteToken);
