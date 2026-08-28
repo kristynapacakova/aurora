@@ -80,7 +80,7 @@ export default async function Pricing() {
             {/* max-w-2xl místo max-w-sm, ať se věta na počítači vejde na jeden
                 řádek; na mobilu se přirozeně zalomí. */}
             <p className="mx-auto mt-5 max-w-2xl text-muted">
-              {nbsp("Lekce, členství nebo pobyt jako dárek? Mrkni na ")}
+              {nbsp("Pobyt nebo společné lekce jako dárek? Mrkni na ")}
               <Link
                 href="/darkovy-poukaz"
                 className="text-ink underline underline-offset-4 transition-colors hover:text-accent-d"

@@ -35,7 +35,7 @@ const FAQ_ITEMS = [
   {
     otazka: "Jak uplatním dárkový poukaz?",
     odpoved:
-      "Kód poukazu zadáš přímo v objednávce pobytu a částka se ti hned odečte — zbytek doplatíš převodem. Poukaz jde vyčerpat i po částech, co se nevyužije, zůstane na příště. Chceš ho uplatnit na společnou lekci? Napiš mi a domluvíme se.",
+      "Kód poukazu zadáš přímo v objednávce pobytu a částka se ti hned odečte — zbytek doplatíš převodem. Poukaz jde vyčerpat i po částech, co se nevyužije, zůstane na příště. Chceš ho uplatnit na společnou lekci naživo? Napiš mi a domluvíme se. Na online členství poukaz bohužel použít nejde, to se platí zvlášť přes online studio.",
   },
   {
     otazka: "Jak funguje platba za pobyt?",

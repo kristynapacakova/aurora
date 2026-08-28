@@ -30,7 +30,7 @@ export default async function DarkovyPoukazPage() {
               {nbsp("Daruj chvíli jen pro ni")}
             </h1>
             <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
-              {nbsp("Vyber hodnotu a my se postaráme o zbytek. Kód poukazu pošleme e-mailem, jakmile platbu přijmeme. Platí 6 měsíců, uplatnit ho jde na pobyty přímo v objednávce a na společné lekce po domluvě — klidně i na několikrát, co se nevyužije, zůstává na příště.")}
+              {nbsp("Vyber hodnotu a my se postaráme o zbytek. Kód poukazu pošleme e-mailem, jakmile platbu přijmeme. Platí 6 měsíců a uplatní se na pobyty přímo v objednávce a na společné lekce naživo — klidně i na několikrát, co se nevyužije, zůstává na příště. Na online členství ho použít nelze, to má vlastní platbu.")}
             </p>
           </FadeUp>
 
