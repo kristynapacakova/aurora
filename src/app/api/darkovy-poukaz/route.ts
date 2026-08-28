@@ -84,7 +84,7 @@ export async function POST(request: Request) {
   // takže objednávka bez potvrzení platby by klientku jen mátla.
   if (body.platba_potvrzena !== true) {
     return NextResponse.json(
-      { error: "Potvrď prosím, že jsi platbu odeslala." },
+      { error: "Potvrď prosím odeslání platby." },
       { status: 400 }
     );
   }
@@ -124,7 +124,7 @@ export async function POST(request: Request) {
     replyTo: email_kupujici,
     nadpis: "Nový dárkový poukaz",
     odstavce: [
-      "Zákaznice objednala poukaz a potvrdila, že platbu odeslala. Až ji uvidíš na účtu, označ poukaz v administraci jako zaplacený — tím jí odejde e-mail s kódem.",
+      "Někdo si objednal poukaz a potvrdil odeslání platby. Až ji uvidíš na účtu, označ poukaz v administraci jako zaplacený — tím odejde e-mail s kódem.",
     ],
     radky: [
       { popisek: "Kód:", hodnota: poukaz.kod },
@@ -147,7 +147,7 @@ export async function POST(request: Request) {
     subject: `🎁 Dárkový poukaz — platební údaje (${poukaz.hodnota})`,
     nadpis: "Děkujeme za objednávku poukazu",
     odstavce: [
-      `Milá ${jmeno_kupujici}, poukaz pro tebe máme připravený. Zbývá ho uhradit.`,
+      `Ahoj ${jmeno_kupujici}, poukaz máme připravený. Zbývá ho uhradit.`,
       "Jakmile platbu uvidíme na účtu, pošleme ti e-mailem kód poukazu.",
     ],
     radky: [

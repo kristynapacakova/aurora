@@ -38,7 +38,7 @@ async function posliKodPoukazu(id: number): Promise<void> {
     subject: `✨ Tvůj dárkový poukaz ${poukaz.kod}`,
     nadpis: "Poukaz je připravený",
     odstavce: [
-      `Milá ${poukaz.jmeno_kupujici}, platbu máme, díky!`,
+      `Ahoj ${poukaz.jmeno_kupujici}, platbu máme, díky!`,
       poukaz.jmeno_obdarovane
         ? `Tady je kód poukazu pro ${poukaz.jmeno_obdarovane} — stačí ho zadat v objednávce pobytu.`
         : "Tady je kód poukazu — stačí ho zadat v objednávce pobytu.",

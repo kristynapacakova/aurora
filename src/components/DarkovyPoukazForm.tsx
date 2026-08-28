@@ -256,7 +256,7 @@ export default function DarkovyPoukazForm({
               required
               className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
             />
-            {nbsp(`Potvrzuji, že jsem odeslala ${vybranaHodnota} podle uvedených údajů.`)}
+            {nbsp(`Potvrzuji odeslání platby ${vybranaHodnota} podle uvedených údajů.`)}
           </label>
 
           <label className="flex items-start gap-2.5 text-sm text-ink">
