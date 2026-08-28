@@ -33,6 +33,8 @@ export default function DarkovyPoukazForm({
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [vysledek, setVysledek] = useState<Vysledek | null>(null);
+  const [ohlasuji, setOhlasuji] = useState(false);
+  const [platbaOhlasena, setPlatbaOhlasena] = useState(false);
 
   const vybranaHodnota = formatKc(hodnotaKc);
 
@@ -70,37 +72,84 @@ export default function DarkovyPoukazForm({
     setSending(false);
   }
 
+  async function ohlasitPlatbu() {
+    if (!vysledek) return;
+    setOhlasuji(true);
+    await fetch("/api/poukaz/platba", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ kod: vysledek.kod }),
+    }).catch(() => {});
+    setOhlasuji(false);
+    setPlatbaOhlasena(true);
+  }
+
   if (vysledek) {
     return (
-      <div className="flex flex-col gap-4 rounded-2xl bg-white/70 p-6 ring-1 ring-line">
-        <p className="font-allura text-2xl text-ink">Děkujeme!</p>
-        <p className="text-sm text-muted">
-          {nbsp(`Tvůj poukaz v hodnotě ${vybranaHodnota} čeká na platbu. Jakmile ji přijmeme, pošleme ti poukaz e-mailem.`)}
-        </p>
+      <div className="flex flex-col gap-5 rounded-3xl bg-white p-6 ring-1 ring-line sm:p-8">
+        <div>
+          <p className="text-xs uppercase tracking-[0.25em] text-accent">Zbývá poslední krok</p>
+          <h3 className="mt-2 font-allura text-3xl text-ink">Zaplať a poukaz je tvůj</h3>
+          <p className="mt-2 text-sm leading-relaxed text-muted">
+            {nbsp(`Objednávku máme. Jakmile platbu ${vybranaHodnota} uvidíme na účtu, pošleme ti kód poukazu e-mailem.`)}
+          </p>
+        </div>
 
-        <div className="flex flex-col gap-3 rounded-xl bg-sand/60 p-4 sm:flex-row sm:items-start">
+        {/* Platba — to hlavní, proto je to vizuálně nejsilnější blok. */}
+        <div className="flex flex-col items-center gap-5 rounded-2xl bg-sand/60 p-5 sm:flex-row sm:items-start">
           {vysledek.qrDataUrl && (
-            <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-white">
-              <Image src={vysledek.qrDataUrl} alt="QR kód pro platbu" fill className="object-contain p-2" sizes="128px" unoptimized />
+            <div className="relative h-40 w-40 shrink-0 overflow-hidden rounded-xl bg-white">
+              <Image
+                src={vysledek.qrDataUrl}
+                alt="QR kód pro platbu"
+                fill
+                className="object-contain p-2"
+                sizes="160px"
+                unoptimized
+              />
             </div>
           )}
-          <div className="text-sm">
-            <p className="font-medium text-ink">Platební údaje</p>
-            <p className="mt-1 text-muted">
+          <div className="text-center text-sm sm:text-left">
+            <p className="font-medium text-ink">Naskenuj QR kód v bankovní aplikaci</p>
+            <p className="mt-1 text-muted">nebo zaplať převodem na:</p>
+            <p className="mt-3 text-muted">
               Číslo účtu: <span className="text-ink">{vysledek.cisloUctu}</span>
               <br />
               Variabilní symbol: <span className="text-ink">{vysledek.variabilniSymbol}</span>
               <br />
-              Částka: <span className="text-ink">{vybranaHodnota}</span>
+              Částka: <span className="font-medium text-ink">{vybranaHodnota}</span>
             </p>
           </div>
         </div>
 
-        {/* Kód schválně jen pro přehled — použitelný bude až po zaplacení,
-            do té doby by ho zadání v objednávce stejně odmítlo. */}
-        <p className="text-sm text-muted">
-          Kód poukazu <strong className="font-medium text-ink">{vysledek.kod}</strong> aktivujeme,
-          jakmile platbu uvidíme na účtu — pošleme ti ho pak e-mailem i s platností.
+        {/* Potvrzení odeslané platby — klientce tím dorazí upozornění, ať ví,
+            na co se na účtu dívat. */}
+        {platbaOhlasena ? (
+          <div className="rounded-2xl bg-sand/40 p-4 text-sm">
+            <p className="font-medium text-ink">Díky, máme to. 🌿</p>
+            <p className="mt-1 text-muted">
+              Kód poukazu ti pošleme e-mailem na{" "}
+              <span className="text-ink">{emailKupujici}</span>, jakmile platbu uvidíme na účtu.
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-wrap items-center gap-4">
+            <button
+              type="button"
+              onClick={ohlasitPlatbu}
+              disabled={ohlasuji}
+              className="rounded-full bg-gradient-aurora px-8 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90 disabled:opacity-50"
+            >
+              {ohlasuji ? "Odesílám…" : "Platbu jsem odeslala"}
+            </button>
+            <p className="text-xs text-muted">Dáš nám tím vědět, že se máme na účet podívat.</p>
+          </div>
+        )}
+
+        <p className="border-t border-line pt-4 text-xs leading-relaxed text-muted">
+          Číslo tvého poukazu je{" "}
+          <strong className="font-medium text-ink">{vysledek.kod}</strong>. Uplatnit ho půjde,
+          jakmile platbu potvrdíme — do té doby ho nikdo použít nemůže.
         </p>
       </div>
     );

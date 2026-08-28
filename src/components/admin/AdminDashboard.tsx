@@ -1747,6 +1747,11 @@ export default function AdminDashboard({
                               >
                                 {p.zaplaceno ? "Zaplaceno" : "Čeká na platbu"}
                               </span>
+                              {!p.zaplaceno && p.platba_ohlasena && (
+                                <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
+                                  Zákaznice odeslala platbu
+                                </span>
+                              )}
                               {p.vyuzito && (
                                 <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
                                   Vyčerpáno

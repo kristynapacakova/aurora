@@ -117,6 +117,10 @@ export type DarkovyPoukaz = {
   jmeno_obdarovane: string;
   vzkaz: string;
   zaplaceno: boolean;
+  // Zákaznice po objednávce potvrdila, že platbu odeslala. Není to potvrzení
+  // platby — to zůstává na klientce, až ji uvidí na účtu — ale klientka díky
+  // tomu ví, na co se dívat.
+  platba_ohlasena: boolean;
   vyuzito: boolean;
   created_at: string;
 };
@@ -289,6 +293,7 @@ async function ensureSchema() {
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS zustatek_kc INTEGER NOT NULL DEFAULT 0;
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS plati_do DATE;
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS fotka TEXT NOT NULL DEFAULT '';
+    ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS platba_ohlasena BOOLEAN NOT NULL DEFAULT FALSE;
     -- Poukazy vystavené dřív mají hodnotu jen v textu („1000 Kč"); číslo z ní
     -- vytáhneme jednou, ať se s nimi počítá stejně jako s novými.
     UPDATE darkove_poukazy
@@ -816,6 +821,18 @@ export async function vratitCerpani(cerpaniId: number): Promise<void> {
 export async function getPoukazyCerpani(): Promise<PoukazCerpani[]> {
   if (!dbConfigured()) return [];
   return query<PoukazCerpani>(`SELECT * FROM poukazy_cerpani ORDER BY created_at DESC`);
+}
+
+// Ohlášení platby zákaznicí. Hledá se podle kódu, protože ten má
+// v prohlížeči po objednávce k dispozici — id nikoliv.
+export async function ohlasitPlatbuPoukazu(kod: string): Promise<boolean> {
+  const rows = await query<{ id: number }>(
+    `UPDATE darkove_poukazy SET platba_ohlasena = TRUE
+      WHERE UPPER(kod) = UPPER($1) AND zaplaceno = FALSE
+      RETURNING id`,
+    [kod.trim()]
+  );
+  return rows.length > 0;
 }
 
 export async function updateDarkovyPoukazFotka(id: number, fotka: string): Promise<void> {
