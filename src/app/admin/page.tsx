@@ -11,6 +11,8 @@ import {
   dbConfigured,
 } from "@/lib/db";
 import AdminDashboard from "@/components/admin/AdminDashboard";
+import { stavOdesilani } from "@/lib/email";
+import { SITE_URL } from "@/lib/config";
 
 export const dynamic = "force-dynamic";
 
@@ -29,6 +31,9 @@ export default async function AdminPage() {
       ])
     : [[], [], [], [], [], [], [], []];
   const nastaveni = await getNastaveni();
+  // Doména bez protokolu a bez www — proti ní se porovnává adresa odesílatele.
+  const domena = SITE_URL.replace(/^https?:\/\//, "").replace(/^www\./, "");
+  const email = stavOdesilani(domena);
 
   return (
     <AdminDashboard
@@ -42,6 +47,7 @@ export default async function AdminPage() {
       darkovePoukazy={darkovePoukazy}
       poukazyCerpani={poukazyCerpani}
       nastaveni={nastaveni}
+      email={email}
     />
   );
 }

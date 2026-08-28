@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
 import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
+import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
 
 type EditorTab = "pobyty" | "clanky" | "lekce";
@@ -142,6 +143,7 @@ export default function AdminDashboard({
   darkovePoukazy,
   poukazyCerpani,
   nastaveni,
+  email,
 }: {
   configured: boolean;
   pobyty: Pobyt[];
@@ -153,6 +155,7 @@ export default function AdminDashboard({
   darkovePoukazy: DarkovyPoukaz[];
   poukazyCerpani: PoukazCerpani[];
   nastaveni: Nastaveni;
+  email: StavOdesilani;
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("overview");
@@ -871,7 +874,7 @@ export default function AdminDashboard({
           {/* ── Nastavení ── */}
           {section === "nastaveni" && (
             <div className="max-w-3xl">
-              <NastaveniForm initial={nastaveni} />
+              <NastaveniForm initial={nastaveni} email={email} />
             </div>
           )}
 

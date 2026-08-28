@@ -22,6 +22,63 @@ export function emailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL);
 }
 
+// Stav odesílání pro administraci. Klíč se schválně jen potvrzuje, nikdy
+// nevypisuje — adresy jsou vlastní klientky, ty ukázat můžeme.
+export type StavOdesilani = {
+  klic: boolean;
+  odesilatel: string;
+  notifikace: string;
+  // Odesílatel na cizí doméně (typicky gmail) je nejčastější důvod, proč
+  // e-maily zákaznicím nikam nedojdou.
+  odesilatelNaVlastniDomene: boolean;
+};
+
+export function stavOdesilani(domena: string): StavOdesilani {
+  const odesilatel = process.env.RESEND_FROM_EMAIL ?? "";
+  // Odesílatel může být i ve tvaru „Jméno <adresa>".
+  const adresa = odesilatel.match(/<([^>]+)>/)?.[1] ?? odesilatel;
+  return {
+    klic: Boolean(process.env.RESEND_API_KEY),
+    odesilatel,
+    notifikace: process.env.RESEND_TO_EMAIL ?? "",
+    odesilatelNaVlastniDomene: adresa.toLowerCase().endsWith(`@${domena.toLowerCase()}`),
+  };
+}
+
+// Zkušební e-mail z administrace. Na rozdíl od ostatních cest chybu
+// nepolyká — právě kvůli ní se to tlačítko mačká.
+export async function posliZkusebni(to: string): Promise<{ ok: boolean; chyba?: string }> {
+  const apiKey = process.env.RESEND_API_KEY;
+  const from = process.env.RESEND_FROM_EMAIL;
+  if (!apiKey) return { ok: false, chyba: "Ve Vercelu chybí RESEND_API_KEY." };
+  if (!from) return { ok: false, chyba: "Ve Vercelu chybí RESEND_FROM_EMAIL." };
+
+  const obsah = {
+    nadpis: "Zkušební e-mail",
+    odstavce: [
+      "Tohle je zkušební zpráva z administrace Aurory.",
+      "Když ti dorazila, odesílání funguje a takhle uvidí potvrzení i zákaznice.",
+    ],
+    radky: [{ popisek: "Odesílatel:", hodnota: from }],
+    "zavěr": ["Tenhle e-mail nikam dál nechodí, posílá se jen na adresu, kterou jsi zadala."],
+  };
+
+  try {
+    const resend = new Resend(apiKey);
+    const { error } = await resend.emails.send({
+      from,
+      to,
+      subject: "Zkušební e-mail z Aurory",
+      text: [obsah.nadpis, "", ...obsah.odstavce].join("\n"),
+      html: sablona(obsah),
+    });
+    if (error) return { ok: false, chyba: error.message };
+    return { ok: true };
+  } catch (e) {
+    return { ok: false, chyba: e instanceof Error ? e.message : "Odeslání se nepovedlo." };
+  }
+}
+
 export function adresaKlientky(): string | null {
   return process.env.RESEND_TO_EMAIL || null;
 }

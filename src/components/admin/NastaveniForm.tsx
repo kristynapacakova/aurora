@@ -4,18 +4,47 @@ import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import type { Nastaveni } from "@/lib/db";
 import { czechAccountToIban } from "@/lib/platba";
+import type { StavOdesilani } from "@/lib/email";
 
 const inputCls =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30";
 const cardCls = "flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm";
 const labelCls = "flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted";
 
-export default function NastaveniForm({ initial }: { initial: Nastaveni }) {
+export default function NastaveniForm({
+  initial,
+  email,
+}: {
+  initial: Nastaveni;
+  email: StavOdesilani;
+}) {
   const router = useRouter();
   const [form, setForm] = useState<Nastaveni>(initial);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Zkušební e-mail
+  const [testEmail, setTestEmail] = useState(email.notifikace);
+  const [testStav, setTestStav] = useState<"idle" | "posilam" | "ok">("idle");
+  const [testChyba, setTestChyba] = useState<string | null>(null);
+
+  async function posliTest() {
+    setTestStav("posilam");
+    setTestChyba(null);
+    const res = await fetch("/api/admin/test-email", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: testEmail }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      setTestStav("ok");
+    } else {
+      setTestStav("idle");
+      setTestChyba(data.error ?? "Odeslání se nepovedlo.");
+    }
+  }
 
   function set<K extends keyof Nastaveni>(key: K, value: string) {
     setForm((f) => ({ ...f, [key]: value }));
@@ -136,6 +165,86 @@ export default function NastaveniForm({ initial }: { initial: Nastaveni }) {
           <p className="text-xs text-muted">
             Až bude zbývat 30 dní nebo míň, zobrazí se upozornění na Overview a u ikony Nastavení.
           </p>
+        </div>
+
+        {/* Odesílání e-mailů — do Vercelu z administrace nevidíme, tak si
+            aspoň řekneme, co k nám z proměnných dorazilo. Klíč se schválně
+            jen potvrzuje, nikdy nevypisuje. */}
+        <div className={cardCls}>
+          <div>
+            <p className="text-xs uppercase tracking-[0.25em] text-accent">Odesílání e-mailů</p>
+            <p className="mt-2 text-xs text-muted">
+              Potvrzení objednávek a kódy poukazů chodí přes Resend. Nastavuje se ve Vercelu
+              (Settings → Environment Variables); po změně je potřeba web znovu nasadit.
+            </p>
+          </div>
+
+          <ul className="flex flex-col gap-2 text-sm">
+            <li className="flex flex-wrap items-baseline gap-2">
+              <span className={email.klic ? "text-ink" : "text-accent-d"}>
+                {email.klic ? "✓" : "✕"}
+              </span>
+              <span className="text-muted">RESEND_API_KEY</span>
+              <span className="text-ink">{email.klic ? "nastaveno" : "chybí"}</span>
+            </li>
+            <li className="flex flex-wrap items-baseline gap-2">
+              <span className={email.odesilatel ? "text-ink" : "text-accent-d"}>
+                {email.odesilatel ? "✓" : "✕"}
+              </span>
+              <span className="text-muted">RESEND_FROM_EMAIL</span>
+              <span className="text-ink">{email.odesilatel || "chybí"}</span>
+            </li>
+            <li className="flex flex-wrap items-baseline gap-2">
+              <span className={email.notifikace ? "text-ink" : "text-accent-d"}>
+                {email.notifikace ? "✓" : "✕"}
+              </span>
+              <span className="text-muted">RESEND_TO_EMAIL</span>
+              <span className="text-ink">{email.notifikace || "chybí"}</span>
+            </li>
+          </ul>
+
+          {email.odesilatel && !email.odesilatelNaVlastniDomene && (
+            <p className="rounded-xl bg-sand/60 p-3 text-xs leading-relaxed text-accent-d">
+              Odesílatel není na doméně aurorayoga.cz. Resend umí posílat jen z ověřené domény,
+              takže zákaznicím nic nedorazí. Nastav třeba{" "}
+              <span className="text-ink">Aurora jóga &lt;ahoj@aurorayoga.cz&gt;</span> — ta schránka
+              nemusí existovat, stačí ověřená doména. Odpovědi chodí na adresu z RESEND_TO_EMAIL.
+            </p>
+          )}
+
+          <div className="flex flex-col gap-2">
+            <label className={labelCls}>
+              Poslat zkušební e-mail na
+              <div className="flex flex-wrap gap-2">
+                <input
+                  value={testEmail}
+                  onChange={(e) => {
+                    setTestEmail(e.target.value);
+                    setTestStav("idle");
+                    setTestChyba(null);
+                  }}
+                  placeholder="tvuj@email.cz"
+                  className={`${inputCls} max-w-xs`}
+                />
+                <button
+                  type="button"
+                  onClick={posliTest}
+                  disabled={testStav === "posilam" || !testEmail.trim()}
+                  className="rounded-full border border-line px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent disabled:opacity-40"
+                >
+                  {testStav === "posilam" ? "Posílám…" : "Poslat"}
+                </button>
+              </div>
+            </label>
+            <p className="text-xs text-muted">
+              Vyzkoušej i jinou adresu, než je ta pro notifikace — teprve tím se pozná, jestli pošta
+              projde i zákaznicím.
+            </p>
+            {testStav === "ok" && (
+              <p className="text-xs text-ink">Odesláno. Když nedorazí, mrkni i do spamu.</p>
+            )}
+            {testChyba && <p className="text-xs text-accent-d">{testChyba}</p>}
+          </div>
         </div>
 
         <div className={cardCls}>
