@@ -1,5 +1,6 @@
 import { Resend } from "resend";
 import { SITE_URL, CONTACT } from "./config";
+import { LOGO_EMAIL_BASE64, LOGO_CID } from "./logoEmail";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Odchozí e-maily.
@@ -16,7 +17,20 @@ import { SITE_URL, CONTACT } from "./config";
 // Bez toho projdou jen e-maily na vlastní adresu.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type Priloha = { filename: string; content: string };
+export type Priloha = {
+  filename: string;
+  content: string;
+  // Vyplněné content_id znamená obrázek vložený do těla zprávy (cid:),
+  // ne přílohu na stažení.
+  content_id?: string;
+};
+
+// Logo jako vložená příloha — přidává se ke každému e-mailu pro zákaznici.
+const LOGO_PRILOHA: Priloha = {
+  filename: "aurora-logo.png",
+  content: LOGO_EMAIL_BASE64,
+  content_id: LOGO_CID,
+};
 
 export function emailConfigured(): boolean {
   return Boolean(process.env.RESEND_API_KEY && process.env.RESEND_FROM_EMAIL);
@@ -71,6 +85,7 @@ export async function posliZkusebni(to: string): Promise<{ ok: boolean; chyba?: 
       subject: "Zkušební e-mail z Aurory",
       text: [obsah.nadpis, "", ...obsah.odstavce].join("\n"),
       html: sablona(obsah),
+      attachments: [LOGO_PRILOHA],
     });
     if (error) return { ok: false, chyba: error.message };
     return { ok: true };
@@ -192,7 +207,7 @@ export function sablona(o: {
       <!-- Logo -->
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="max-width:560px;width:100%;">
         <tr><td align="center" style="padding-bottom:22px;">
-          <img src="${SITE_URL}/logo.png" alt="Aurora jóga" width="104" height="82"
+          <img src="cid:${LOGO_CID}" alt="Aurora jóga" width="104" height="82"
                style="display:block;border:0;outline:none;width:104px;height:auto;" />
         </td></tr>
       </table>
@@ -263,6 +278,6 @@ export async function posliZakaznici(o: {
     text,
     html: sablona(o),
     replyTo: adresaKlientky() ?? undefined,
-    attachments: o.attachments,
+    attachments: [LOGO_PRILOHA, ...(o.attachments ?? [])],
   });
 }
