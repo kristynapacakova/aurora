@@ -10,7 +10,9 @@ import {
 } from "@/lib/formGuard";
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 import { rozpadSPoukazem, formatKc } from "@/lib/castky";
-import { posliKlientce, posliZakaznici, type Radek } from "@/lib/email";
+import { posliKlientce, posliZakaznici, vetaProOdpoved, type Radek } from "@/lib/email";
+import { generatePlatebniQr } from "@/lib/platba";
+import { qrPriloha } from "@/lib/qrPriloha";
 import { overitPoukaz, POUKAZ_HLASKY } from "@/lib/poukaz";
 import { cerpatPoukaz } from "@/lib/db";
 
@@ -166,34 +168,46 @@ export async function POST(request: Request) {
   await posliKlientce({
     subject:
       typ === "objednavka"
-        ? `Závazná objednávka (${zpusobPlatby === "zaloha" ? "záloha" : "zaplaceno"}): ${pobyt?.nadpis ?? "pobyt"}`
-        : `Nový dotaz: ${pobyt?.nadpis ?? "pobyt"}`,
+        ? `🌿 Závazná objednávka (${zpusobPlatby === "zaloha" ? "záloha" : "zaplaceno"}): ${pobyt?.nadpis ?? "pobyt"}`
+        : `💬 Nový dotaz: ${pobyt?.nadpis ?? "pobyt"}`,
     replyTo: email,
-    radky: [
+    nadpis: typ === "objednavka" ? "Závazná objednávka" : "Nový dotaz",
+    odstavce: [
       typ === "objednavka"
         ? zpusobPlatby === "zaloha"
-          ? "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu zálohy."
-          : "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu celé částky."
-        : "Nezávazný dotaz.",
-      ``,
-      `Pobyt: ${pobyt?.nadpis ?? "—"}`,
-      ...[...poukazRadky, ...platbaRadky].map((r) => `${r.popisek} ${r.hodnota}`),
-      `Jméno: ${jmeno}`,
-      `E-mail: ${email}`,
-      `Telefon: ${telefon || "—"}`,
-      ``,
-      `Zpráva:`,
-      zprava || "—",
+          ? "Zákaznice potvrdila, že uhradila zálohu."
+          : "Zákaznice potvrdila, že uhradila celou částku."
+        : "Přišel nezávazný dotaz z detailu pobytu.",
     ],
+    radky: [
+      { popisek: "Pobyt:", hodnota: pobyt?.nadpis ?? "—" },
+      ...poukazRadky,
+      ...platbaRadky,
+      { popisek: "Jméno:", hodnota: jmeno },
+      { popisek: "E-mail:", hodnota: email },
+      { popisek: "Telefon:", hodnota: telefon || "—" },
+    ],
+    zprava: zprava || undefined,
+    "zavěr": [vetaProOdpoved()],
   });
 
   // Potvrzení posíláme jen u objednávky — u dotazu se klientka ozve sama
   // a automatická odpověď by působila odosobněně.
   if (typ === "objednavka") {
     const zbyvaZaplatit = castka > 0;
+    // QR kód posíláme i do potvrzení — zákaznice stránku zavře a pak nemá
+    // platbu odkud dodělat. Takhle ho má po ruce v poště.
+    const qr =
+      zbyvaZaplatit && pobyt?.cislo_uctu
+        ? await generatePlatebniQr({
+            cisloUctu: pobyt.cislo_uctu,
+            castka,
+            variabilniSymbol: pobyt.variabilni_symbol,
+          })
+        : null;
     await posliZakaznici({
       to: email,
-      subject: `Potvrzení objednávky — ${pobyt?.nadpis ?? "pobyt"}`,
+      subject: `🌿 Potvrzení objednávky — ${pobyt?.nadpis ?? "pobyt"}`,
       nadpis: "Máme tvou objednávku",
       odstavce: [
         `Milá ${jmeno}, děkujeme za objednávku pobytu ${pobyt?.nadpis ?? ""}.`.trim(),
@@ -215,12 +229,20 @@ export async function POST(request: Request) {
           : []),
       ],
       zavěr: [
+        ...(qr
+          ? [
+              zpusobPlatby === "zaloha"
+                ? "V příloze je QR kód na zálohu — kdyby se ti platbu nepovedlo odeslat hned, můžeš ho použít i později."
+                : "V příloze je QR kód pro platbu — kdyby se ti ji nepovedlo odeslat hned, můžeš ho použít i později.",
+            ]
+          : []),
         ...(zpusobPlatby === "zaloha"
           ? ["Doplatek pošleš na stejný účet nejpozději 14 dnů před začátkem pobytu."]
           : []),
         ...(pobyt?.platebni_pokyny ? [pobyt.platebni_pokyny] : []),
-        "Kdyby cokoliv, stačí na tenhle e-mail odpovědět.",
+        vetaProOdpoved(),
       ],
+      attachments: qrPriloha(qr, "qr-platba.png"),
     });
   }
 

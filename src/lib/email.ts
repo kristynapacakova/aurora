@@ -39,7 +39,7 @@ export function stavOdesilani(domena: string): StavOdesilani {
   const adresa = odesilatel.match(/<([^>]+)>/)?.[1] ?? odesilatel;
   return {
     klic: Boolean(process.env.RESEND_API_KEY),
-    odesilatel,
+    odesilatel: odesilatel ? odesilatelSJmenem(odesilatel) : "",
     notifikace: process.env.RESEND_TO_EMAIL ?? "",
     odesilatelNaVlastniDomene: adresa.toLowerCase().endsWith(`@${domena.toLowerCase()}`),
   };
@@ -66,9 +66,10 @@ export async function posliZkusebni(to: string): Promise<{ ok: boolean; chyba?: 
   try {
     const resend = new Resend(apiKey);
     const { error } = await resend.emails.send({
-      from,
+      from: odesilatelSJmenem(from),
       to,
-      subject: "Zkušební e-mail z Aurory",
+      replyTo: adresaKlientky() ?? undefined,
+      subject: "✨ Zkušební e-mail z Aurory",
       text: [obsah.nadpis, "", ...obsah.odstavce].join("\n"),
       html: sablona(obsah),
     });
@@ -81,6 +82,25 @@ export async function posliZkusebni(to: string): Promise<{ ok: boolean; chyba?: 
 
 export function adresaKlientky(): string | null {
   return process.env.RESEND_TO_EMAIL || null;
+}
+
+// Odesílací adresa je jen technická (schránka na doméně nemusí existovat),
+// takže „stačí odpovědět" smí e-mail tvrdit jen tehdy, když je nastavená
+// adresa pro odpovědi. Jinak radši rovnou napíšeme, kam psát.
+export function vetaProOdpoved(): string {
+  const kam = adresaKlientky();
+  return kam
+    ? "Kdyby cokoliv, stačí na tenhle e-mail odpovědět."
+    : `Kdyby cokoliv, napiš nám na ${CONTACT.email}.`;
+}
+
+// Jméno odesílatele — bez něj ukazuje pošta jen část adresy před zavináčem
+// („kontakt"), což vypadá jako od cizího. Když si někdo do proměnné napíše
+// vlastní jméno ve tvaru „Jméno <adresa>", nechá se mu.
+export const JMENO_ODESILATELE = "Aurora jóga";
+
+function odesilatelSJmenem(from: string): string {
+  return from.includes("<") ? from : `${JMENO_ODESILATELE} <${from}>`;
 }
 
 async function odeslat(options: {
@@ -98,7 +118,7 @@ async function odeslat(options: {
   try {
     const resend = new Resend(apiKey);
     await resend.emails.send({
-      from,
+      from: odesilatelSJmenem(from),
       to: options.to,
       replyTo: options.replyTo,
       subject: options.subject,
@@ -113,21 +133,21 @@ async function odeslat(options: {
   }
 }
 
-// Notifikace klientce — prostý text, čte ji jen ona.
-export async function posliKlientce(options: {
-  subject: string;
-  radky: string[];
-  replyTo?: string;
-  attachments?: Priloha[];
-}): Promise<boolean> {
+// Notifikace klientce — stejná šablona jako pro zákaznice, ať to vypadá
+// jednotně. replyTo míří na návštěvnici, takže se dá odpovědět rovnou
+// z došlé pošty.
+export async function posliKlientce(
+  o: ObsahEmailu & { subject: string; replyTo?: string; attachments?: Priloha[] }
+): Promise<boolean> {
   const to = adresaKlientky();
   if (!to) return false;
   return odeslat({
     to,
-    subject: options.subject,
-    text: options.radky.join("\n"),
-    replyTo: options.replyTo,
-    attachments: options.attachments,
+    subject: o.subject,
+    text: textovaVerze(o),
+    html: sablona(o),
+    replyTo: o.replyTo,
+    attachments: o.attachments,
   });
 }
 
@@ -156,14 +176,18 @@ const PISMO_NADPIS = "Georgia, 'Times New Roman', Times, serif";
 const PISMO_TEXT =
   "-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif";
 
-// Exportovaná schválně — jde o čistou funkci, takže se dá vyrenderovat
-// do souboru a šablona se zkontroluje očima, aniž by se něco odesílalo.
-export function sablona(o: {
+export type ObsahEmailu = {
   nadpis: string;
   odstavce: string[];
   radky?: Radek[];
+  // Text od návštěvnice — vykresluje se zvlášť, s zachovanými řádky.
+  zprava?: string;
   zavěr?: string[];
-}): string {
+};
+
+// Exportovaná schválně — jde o čistou funkci, takže se dá vyrenderovat
+// do souboru a šablona se zkontroluje očima, aniž by se něco odesílalo.
+export function sablona(o: ObsahEmailu): string {
   const odstavce = o.odstavce
     .map(
       (t) =>
@@ -216,6 +240,13 @@ export function sablona(o: {
               : ""
           }
           ${
+            o.zprava
+              ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:18px 0 6px;"><tr><td style="padding:2px 0 2px 16px;border-left:3px solid #FBE9DE;">
+                   <p style="margin:0;font-family:${PISMO_TEXT};font-size:14px;line-height:1.7;color:#6B5347;white-space:pre-wrap;">${escapeHtml(o.zprava)}</p>
+                 </td></tr></table>`
+              : ""
+          }
+          ${
             zavěr
               ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="padding-top:18px;border-top:1px solid #F2E4DC;">${zavěr}</td></tr></table>`
               : ""
@@ -239,33 +270,31 @@ export function sablona(o: {
 </body></html>`;
 }
 
-// Potvrzení zákaznici. Textová verze se skládá ze stejných dat, ať e-mail
-// dává smysl i v programu, který HTML nezobrazuje.
-export async function posliZakaznici(o: {
-  to: string;
-  subject: string;
-  nadpis: string;
-  odstavce: string[];
-  radky?: Radek[];
-  zavěr?: string[];
-  attachments?: Priloha[];
-}): Promise<boolean> {
-  const text = [
+// Textová verze ze stejných dat, ať e-mail dává smysl i v programu, který
+// HTML nezobrazuje.
+function textovaVerze(o: ObsahEmailu): string {
+  return [
     o.nadpis,
     "",
     ...o.odstavce,
     "",
     ...(o.radky ?? []).map((r) => `${r.popisek} ${r.hodnota}`),
+    ...(o.zprava ? ["", o.zprava] : []),
     "",
     ...(o.zavěr ?? []),
     "",
     "Aurora jóga",
   ].join("\n");
+}
 
+// Potvrzení zákaznici.
+export async function posliZakaznici(
+  o: ObsahEmailu & { to: string; subject: string; attachments?: Priloha[] }
+): Promise<boolean> {
   return odeslat({
     to: o.to,
     subject: o.subject,
-    text,
+    text: textovaVerze(o),
     html: sablona(o),
     replyTo: adresaKlientky() ?? undefined,
     attachments: o.attachments,

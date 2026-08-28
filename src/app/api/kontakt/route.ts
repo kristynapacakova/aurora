@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { posliKlientce, emailConfigured, adresaKlientky, vetaProOdpoved } from "@/lib/email";
 import {
   HONEYPOT_FIELD,
   isHoneypotTripped,
@@ -57,36 +57,32 @@ export async function POST(request: Request) {
     }
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.RESEND_TO_EMAIL;
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
-
-  if (!apiKey || !toEmail || !fromEmail) {
+  if (!emailConfigured() || !adresaKlientky()) {
     return NextResponse.json(
       { error: "Odesílání zpráv zatím není nastavené. Napiš prosím přímo na uvedený e-mail." },
       { status: 503 }
     );
   }
 
-  const resend = new Resend(apiKey);
-  const { error } = await resend.emails.send({
-    from: fromEmail,
-    to: toEmail,
+  // Tady se na rozdíl od ostatních formulářů výsledek hlídá — zpráva se nikam
+  // neukládá, takže když e-mail neodejde, je nenávratně pryč a návštěvnice se
+  // to musí dozvědět.
+  const odeslano = await posliKlientce({
+    subject: `💬 Zpráva z kontaktního formuláře: ${jmeno}`,
     replyTo: email,
-    subject: `Zpráva z kontaktního formuláře: ${jmeno}`,
-    text: [
-      `Nová zpráva z kontaktního formuláře na webu.`,
-      ``,
-      `Jméno: ${jmeno}`,
-      `E-mail: ${email}`,
-      `Telefon: ${telefon || "—"}`,
-      ``,
-      `Zpráva:`,
-      zprava,
-    ].join("\n"),
+    nadpis: "Zpráva z kontaktního formuláře",
+    odstavce: ["Někdo se ozval přes formulář na webu."],
+    radky: [
+      { popisek: "Jméno:", hodnota: jmeno },
+      { popisek: "E-mail:", hodnota: email },
+      { popisek: "Telefon:", hodnota: telefon || "—" },
+    ],
+    zprava,
+    "zavěr": [vetaProOdpoved()],
   });
 
-  if (error) {
+  if (!odeslano) {
+
     return NextResponse.json(
       { error: "Odeslání se nepovedlo. Zkus to prosím znovu, nebo napiš přímo na uvedený e-mail." },
       { status: 500 }

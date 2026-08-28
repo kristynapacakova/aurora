@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
-import { posliZakaznici } from "@/lib/email";
+import { posliZakaznici, vetaProOdpoved } from "@/lib/email";
 import {
   getDarkovyPoukazById,
   PLATNOST_POUKAZU_MESICU,
@@ -42,7 +42,7 @@ export async function PUT(request: Request) {
     if (poukaz) {
       await posliZakaznici({
         to: poukaz.email_kupujici,
-        subject: `Tvůj dárkový poukaz ${poukaz.kod}`,
+        subject: `✨ Tvůj dárkový poukaz ${poukaz.kod}`,
         nadpis: "Poukaz je připravený",
         odstavce: [
           `Milá ${poukaz.jmeno_kupujici}, platbu máme, díky!`,
@@ -64,7 +64,7 @@ export async function PUT(request: Request) {
         ],
         zavěr: [
           `Poukaz jde vyčerpat i po částech — co se nevyužije, zůstane na příště. Platnost je ${PLATNOST_POUKAZU_MESICU} měsíců.`,
-          "Kdyby cokoliv, stačí na tenhle e-mail odpovědět.",
+          vetaProOdpoved(),
         ],
       });
     }

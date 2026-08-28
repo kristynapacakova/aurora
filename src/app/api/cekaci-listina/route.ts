@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
+import { posliKlientce, vetaProOdpoved } from "@/lib/email";
 import { createCekaciListina, getPobyt, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import {
   HONEYPOT_FIELD,
@@ -61,30 +61,20 @@ export async function POST(request: Request) {
     }
   }
 
-  const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.RESEND_TO_EMAIL;
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
-
-  if (apiKey && toEmail && fromEmail) {
-    const resend = new Resend(apiKey);
-    await resend.emails.send({
-      from: fromEmail,
-      to: toEmail,
-      replyTo: email,
-      subject: `Čekací listina: ${pobyt?.nadpis ?? "pobyt"}`,
-      text: [
-        `Nový zájem o čekací listinu.`,
-        ``,
-        `Pobyt: ${pobyt?.nadpis ?? "—"}`,
-        `Jméno: ${jmeno}`,
-        `E-mail: ${email}`,
-        `Telefon: ${telefon || "—"}`,
-        ``,
-        `Zpráva:`,
-        zprava || "—",
-      ].join("\n"),
-    });
-  }
+  await posliKlientce({
+    subject: `⏳ Čekací listina: ${pobyt?.nadpis ?? "pobyt"}`,
+    replyTo: email,
+    nadpis: "Nový zájem o čekací listinu",
+    odstavce: ["Pobyt je vyprodaný a někdo se hlásí, kdyby se uvolnilo místo."],
+    radky: [
+      { popisek: "Pobyt:", hodnota: pobyt?.nadpis ?? "—" },
+      { popisek: "Jméno:", hodnota: jmeno },
+      { popisek: "E-mail:", hodnota: email },
+      { popisek: "Telefon:", hodnota: telefon || "—" },
+    ],
+    zprava: zprava || undefined,
+    "zavěr": [vetaProOdpoved()],
+  });
 
   return NextResponse.json({ ok: true });
 }

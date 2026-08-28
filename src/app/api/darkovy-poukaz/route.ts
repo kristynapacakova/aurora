@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createDarkovyPoukaz, getNastaveni, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
 import { parseAmount, formatKc } from "@/lib/castky";
-import { posliKlientce, posliZakaznici } from "@/lib/email";
+import { posliKlientce, posliZakaznici, vetaProOdpoved } from "@/lib/email";
 import { qrPriloha } from "@/lib/qrPriloha";
 import {
   HONEYPOT_FIELD,
@@ -104,24 +104,22 @@ export async function POST(request: Request) {
   });
 
   await posliKlientce({
-    subject: `Nový dárkový poukaz: ${poukaz.kod} (${poukaz.hodnota})`,
+    subject: `🎁 Nový dárkový poukaz: ${poukaz.kod} (${poukaz.hodnota})`,
     replyTo: email_kupujici,
+    nadpis: "Nový dárkový poukaz",
+    odstavce: ["Poukaz je vystavený a čeká na platbu."],
     radky: [
-      `Nový zájem o dárkový poukaz — čeká na platbu.`,
-      ``,
-      `Kód: ${poukaz.kod}`,
-      `Hodnota: ${poukaz.hodnota}`,
-      `Variabilní symbol: ${poukaz.variabilni_symbol}`,
-      ``,
-      `Kupující: ${jmeno_kupujici}`,
-      `E-mail: ${email_kupujici}`,
-      `Telefon: ${telefon_kupujici || "—"}`,
-      ``,
-      `Obdarovaná: ${jmeno_obdarovane || "—"}`,
-      `Vzkaz: ${vzkaz || "—"}`,
-      ``,
-      `Až platbu uvidíš na účtu, označ poukaz v administraci jako zaplacený —`,
-      `kupující tím automaticky dostane e-mail s kódem.`,
+      { popisek: "Kód:", hodnota: poukaz.kod },
+      { popisek: "Hodnota:", hodnota: poukaz.hodnota },
+      { popisek: "Variabilní symbol:", hodnota: poukaz.variabilni_symbol },
+      { popisek: "Kupující:", hodnota: jmeno_kupujici },
+      { popisek: "E-mail:", hodnota: email_kupujici },
+      { popisek: "Telefon:", hodnota: telefon_kupujici || "—" },
+      { popisek: "Obdarovaná:", hodnota: jmeno_obdarovane || "—" },
+    ],
+    zprava: vzkaz || undefined,
+    "zavěr": [
+      "Až platbu uvidíš na účtu, označ poukaz v administraci jako zaplacený — kupující tím automaticky dostane e-mail s kódem a poukazu se rozeběhne platnost.",
     ],
   });
 
@@ -130,7 +128,7 @@ export async function POST(request: Request) {
   // (data:) většina poštovních programů zahodí.
   await posliZakaznici({
     to: email_kupujici,
-    subject: `Dárkový poukaz — platební údaje (${poukaz.hodnota})`,
+    subject: `🎁 Dárkový poukaz — platební údaje (${poukaz.hodnota})`,
     nadpis: "Děkujeme za objednávku poukazu",
     odstavce: [
       `Milá ${jmeno_kupujici}, poukaz pro tebe máme připravený. Zbývá ho uhradit.`,
@@ -143,7 +141,7 @@ export async function POST(request: Request) {
     ],
     zavěr: [
       "V příloze je QR kód pro platbu.",
-      "Kdyby cokoliv, stačí na tenhle e-mail odpovědět.",
+      vetaProOdpoved(),
     ],
     attachments: qrPriloha(qrDataUrl, `qr-poukaz-${poukaz.kod}.png`),
   });
