@@ -33,6 +33,11 @@ const FAQ_ITEMS = [
       "Pobyty se konají na klidných místech v přírodě a kombinují jógu, dech, odpočinek i společný čas. Přesný program a termíny najdeš na stránce Pobyty pro ženy.",
   },
   {
+    otazka: "Jak uplatním dárkový poukaz?",
+    odpoved:
+      "Kód poukazu zadáš přímo v objednávce pobytu a částka se ti hned odečte — zbytek doplatíš převodem. Poukaz jde vyčerpat i po částech, co se nevyužije, zůstane na příště. Chceš ho uplatnit na společnou lekci? Napiš mi a domluvíme se.",
+  },
+  {
     otazka: "Jak funguje platba za pobyt?",
     odpoved:
       "V objednávce si vybereš, jestli chceš zaplatit celou částku najednou, nebo jen zálohu — její výši uvidíš rovnou u pobytu. K vybrané variantě se ti zobrazí platební údaje i QR kód. Jakmile platbu uhradíš, je tvoje místo na pobytu závazně rezervované. Pokud jsi platila zálohu, doplatek se hradí 14 dnů před začátkem pobytu.",

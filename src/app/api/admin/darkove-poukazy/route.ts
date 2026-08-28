@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
+import { posliZakaznici } from "@/lib/email";
 import {
+  getDarkovyPoukazById,
+  PLATNOST_POUKAZU_MESICU,
   updateDarkovyPoukazStav,
   deleteDarkovyPoukaz,
   cerpatPoukaz,
@@ -30,6 +33,43 @@ export async function PUT(request: Request) {
   };
   if (!id) return NextResponse.json({ error: "Chybí id." }, { status: 400 });
   await updateDarkovyPoukazStav(id, { zaplaceno, vyuzito });
+
+  // Označení platby je okamžik, kdy poukaz začne platit — kupující proto
+  // teprve teď dostane kód. Případné selhání e-mailu nesmí shodit uložení,
+  // proto je odeslání až po něm a chyby si polyká modul e-mailů.
+  if (zaplaceno === true) {
+    const poukaz = await getDarkovyPoukazById(id);
+    if (poukaz) {
+      await posliZakaznici({
+        to: poukaz.email_kupujici,
+        subject: `Tvůj dárkový poukaz ${poukaz.kod}`,
+        nadpis: "Poukaz je připravený",
+        odstavce: [
+          `Milá ${poukaz.jmeno_kupujici}, platbu máme, díky!`,
+          poukaz.jmeno_obdarovane
+            ? `Tady je kód poukazu pro ${poukaz.jmeno_obdarovane} — stačí ho zadat v objednávce pobytu.`
+            : "Tady je kód poukazu — stačí ho zadat v objednávce pobytu.",
+        ],
+        radky: [
+          { popisek: "Kód poukazu:", hodnota: poukaz.kod },
+          { popisek: "Hodnota:", hodnota: poukaz.hodnota },
+          ...(poukaz.plati_do
+            ? [
+                {
+                  popisek: "Platí do:",
+                  hodnota: new Date(poukaz.plati_do).toLocaleDateString("cs-CZ"),
+                },
+              ]
+            : []),
+        ],
+        zavěr: [
+          `Poukaz jde vyčerpat i po částech — co se nevyužije, zůstane na příště. Platnost je ${PLATNOST_POUKAZU_MESICU} měsíců.`,
+          "Kdyby cokoliv, stačí na tenhle e-mail odpovědět.",
+        ],
+      });
+    }
+  }
+
   return NextResponse.json({ ok: true });
 }
 

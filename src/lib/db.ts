@@ -636,6 +636,12 @@ export async function getDarkovePoukazy(): Promise<DarkovyPoukaz[]> {
 // Platnost poukazu se počítá od zaplacení, ne od objednání.
 export const PLATNOST_POUKAZU_MESICU = 6;
 
+export async function getDarkovyPoukazById(id: number): Promise<DarkovyPoukaz | null> {
+  if (!dbConfigured()) return null;
+  const rows = await query<DarkovyPoukaz>(`SELECT * FROM darkove_poukazy WHERE id = $1`, [id]);
+  return rows[0] ?? null;
+}
+
 export async function getDarkovyPoukazByKod(kod: string): Promise<DarkovyPoukaz | null> {
   if (!dbConfigured()) return null;
   // Bez ohledu na velikost písmen a okolní mezery — kód se opisuje z papíru

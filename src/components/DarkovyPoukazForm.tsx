@@ -95,8 +95,11 @@ export default function DarkovyPoukazForm() {
           </div>
         </div>
 
-        <p className="text-sm text-ink">
-          Kód poukazu: <strong className="font-medium">{vysledek.kod}</strong>
+        {/* Kód schválně jen pro přehled — použitelný bude až po zaplacení,
+            do té doby by ho zadání v objednávce stejně odmítlo. */}
+        <p className="text-sm text-muted">
+          Kód poukazu <strong className="font-medium text-ink">{vysledek.kod}</strong> aktivujeme,
+          jakmile platbu uvidíme na účtu — pošleme ti ho pak e-mailem i s platností.
         </p>
       </div>
     );

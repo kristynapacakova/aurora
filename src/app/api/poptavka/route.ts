@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { Resend } from "resend";
 import { createPoptavka, getPobyt, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import {
   HONEYPOT_FIELD,
@@ -11,6 +10,7 @@ import {
 } from "@/lib/formGuard";
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 import { rozpadSPoukazem, formatKc } from "@/lib/castky";
+import { posliKlientce, posliZakaznici, type Radek } from "@/lib/email";
 import { overitPoukaz, POUKAZ_HLASKY } from "@/lib/poukaz";
 import { cerpatPoukaz } from "@/lib/db";
 
@@ -143,47 +143,84 @@ export async function POST(request: Request) {
     }
   }
 
-  // 2) Poslat e-mail klientce (pokud je Resend nastaven)
-  const apiKey = process.env.RESEND_API_KEY;
-  const toEmail = process.env.RESEND_TO_EMAIL;
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
+  // 2) E-maily — klientce notifikace, zákaznici potvrzení. Ani jedno nesmí
+  // shodit objednávku, proto se chyby uvnitř posílání polykají.
+  const platbaRadky: Radek[] =
+    typ === "objednavka" && castka > 0
+      ? zpusobPlatby === "zaloha"
+        ? [
+            { popisek: `Záloha ${rozpad.procento} %:`, hodnota: formatKc(castka) },
+            {
+              popisek: "Doplatek 14 dnů před pobytem:",
+              hodnota: formatKc(rozpad.doplatek ?? 0),
+            },
+          ]
+        : [{ popisek: "K úhradě:", hodnota: formatKc(castka) }]
+      : [];
 
-  if (apiKey && toEmail && fromEmail) {
-    const resend = new Resend(apiKey);
-    const subject =
+  const poukazRadky: Radek[] =
+    rozpad.sleva > 0
+      ? [{ popisek: "Dárkový poukaz:", hodnota: `− ${formatKc(rozpad.sleva)}` }]
+      : [];
+
+  await posliKlientce({
+    subject:
       typ === "objednavka"
         ? `Závazná objednávka (${zpusobPlatby === "zaloha" ? "záloha" : "zaplaceno"}): ${pobyt?.nadpis ?? "pobyt"}`
-        : `Nový dotaz: ${pobyt?.nadpis ?? "pobyt"}`;
-    const platbaRadky =
-      typ === "objednavka" && castka > 0
+        : `Nový dotaz: ${pobyt?.nadpis ?? "pobyt"}`,
+    replyTo: email,
+    radky: [
+      typ === "objednavka"
         ? zpusobPlatby === "zaloha"
-          ? [
-              `Platba: záloha ${rozpad.procento} % — ${formatKc(castka)}`,
-              `Doplatek: ${formatKc(rozpad.doplatek ?? 0)} (14 dnů před pobytem)`,
-            ]
-          : [`Platba: celá částka — ${formatKc(castka)}`]
-        : [];
-    await resend.emails.send({
-      from: fromEmail,
-      to: toEmail,
-      replyTo: email,
-      subject,
-      text: [
-        typ === "objednavka"
-          ? zpusobPlatby === "zaloha"
-            ? "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu zálohy."
-            : "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu celé částky."
-          : "Nezávazný dotaz.",
-        ``,
-        `Pobyt: ${pobyt?.nadpis ?? "—"}`,
+          ? "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu zálohy."
+          : "ZÁVAZNÁ OBJEDNÁVKA — zákaznice potvrdila platbu celé částky."
+        : "Nezávazný dotaz.",
+      ``,
+      `Pobyt: ${pobyt?.nadpis ?? "—"}`,
+      ...[...poukazRadky, ...platbaRadky].map((r) => `${r.popisek} ${r.hodnota}`),
+      `Jméno: ${jmeno}`,
+      `E-mail: ${email}`,
+      `Telefon: ${telefon || "—"}`,
+      ``,
+      `Zpráva:`,
+      zprava || "—",
+    ],
+  });
+
+  // Potvrzení posíláme jen u objednávky — u dotazu se klientka ozve sama
+  // a automatická odpověď by působila odosobněně.
+  if (typ === "objednavka") {
+    const zbyvaZaplatit = castka > 0;
+    await posliZakaznici({
+      to: email,
+      subject: `Potvrzení objednávky — ${pobyt?.nadpis ?? "pobyt"}`,
+      nadpis: "Máme tvou objednávku",
+      odstavce: [
+        `Milá ${jmeno}, děkujeme za objednávku pobytu ${pobyt?.nadpis ?? ""}.`.trim(),
+        zbyvaZaplatit
+          ? "Jakmile platbu uvidíme na účtu, ozveme se ti s potvrzením a máš místo závazně rezervované."
+          : "Pobyt máš pokrytý dárkovým poukazem, nic už posílat nemusíš. Brzy se ti ozveme s potvrzením.",
+      ],
+      radky: [
+        ...(pobyt?.termin ? [{ popisek: "Termín:", hodnota: pobyt.termin }] : []),
+        ...(pobyt?.misto ? [{ popisek: "Místo:", hodnota: pobyt.misto }] : []),
+        ...(pobyt?.cena ? [{ popisek: "Cena pobytu:", hodnota: pobyt.cena }] : []),
+        ...poukazRadky,
         ...platbaRadky,
-        `Jméno: ${jmeno}`,
-        `E-mail: ${email}`,
-        `Telefon: ${telefon || "—"}`,
-        ``,
-        `Zpráva:`,
-        zprava || "—",
-      ].join("\n"),
+        ...(zbyvaZaplatit && pobyt?.cislo_uctu
+          ? [{ popisek: "Číslo účtu:", hodnota: pobyt.cislo_uctu }]
+          : []),
+        ...(zbyvaZaplatit && pobyt?.variabilni_symbol
+          ? [{ popisek: "Variabilní symbol:", hodnota: pobyt.variabilni_symbol }]
+          : []),
+      ],
+      zavěr: [
+        ...(zpusobPlatby === "zaloha"
+          ? ["Doplatek pošleš na stejný účet nejpozději 14 dnů před začátkem pobytu."]
+          : []),
+        ...(pobyt?.platebni_pokyny ? [pobyt.platebni_pokyny] : []),
+        "Kdyby cokoliv, stačí na tenhle e-mail odpovědět.",
+      ],
     });
   }
 

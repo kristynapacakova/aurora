@@ -99,7 +99,10 @@ export default async function ObchodniPodminkyPage() {
                 pobytu. Zbývající doplatek je splatný nejpozději 14 dnů před
                 začátkem pobytu. Stejným způsobem funguje i
                 nákup dárkového poukazu — poukaz je platný po přijetí platby na
-                účet poskytovatele. V souladu s § 1837 písm. j) občanského
+                účet poskytovatele. Poukaz lze čerpat i po částech, nevyčerpaný
+                zůstatek zůstává na poukazu. Platnost poukazu je 6 měsíců od
+                přijetí platby; po jejím uplynutí poukaz zaniká a nevyčerpaný
+                zůstatek se nevrací. Poukaz nelze směnit za hotovost. V souladu s § 1837 písm. j) občanského
                 zákoníku se na smlouvu o poskytnutí ubytování, dopravy, stravování
                 nebo využití volného času poskytovaného v určeném termínu
                 nevztahuje právo spotřebitele na odstoupení od smlouvy do 14 dnů.
