@@ -66,7 +66,8 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Tenhle poukaz už není v nabídce." }, { status: 400 });
   }
   const hodnotaKc = Math.round(Number(body.hodnota_kc) || 0);
-  if (!nabidka.castky.some((c) => c.hodnota_kc === hodnotaKc)) {
+  const zvolenaCastka = nabidka.castky.find((c) => c.hodnota_kc === hodnotaKc);
+  if (!zvolenaCastka) {
     return NextResponse.json(
       { error: "Vyber prosím jednu z nabízených hodnot poukazu." },
       { status: 400 }
@@ -92,8 +93,9 @@ export async function POST(request: Request) {
     // Text ceny sjednotíme, ať v administraci nejsou „1500Kc" i „1 500 Kč".
     hodnota: formatKc(hodnotaKc),
     hodnota_kc: hodnotaKc,
-    // Grafiku bere poukaz z nastavení — je jedna pro všechny.
-    fotka: nabidka.fotka,
+    // Grafika té konkrétní částky; společná se použije, jen když u částky
+    // vlastní není. Jinak by zákaznici dorazil obrázek s cizí hodnotou.
+    fotka: zvolenaCastka.fotka || nabidka.fotka,
     platba_ohlasena: true,
     jmeno_kupujici,
     email_kupujici,

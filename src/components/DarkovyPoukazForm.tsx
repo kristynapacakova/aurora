@@ -16,19 +16,24 @@ export default function DarkovyPoukazForm({
   nabidkaId,
   nadpis,
   castky,
+  hodnotaKc,
+  onZmenaCastky,
   qrKody,
   cisloUctu,
 }: {
   nabidkaId: number;
   nadpis: string;
   castky: PoukazCastka[];
+  // Vybranou částku drží nadřazená sekce — mění se podle ní i grafika
+  // vedle formuláře.
+  hodnotaKc: number;
+  onZmenaCastky: (hodnota: number) => void;
   // QR kód pro každou nabízenou částku. Generuje se na serveru, ať se do
   // prohlížeče nemusí posílat celá knihovna na QR kódy.
   qrKody: Record<number, string | null>;
   cisloUctu: string;
 }) {
   const [mode, setMode] = useState<Mode>("closed");
-  const [hodnotaKc, setHodnotaKc] = useState(castky[0]?.hodnota_kc ?? 0);
   const [jmenoKupujici, setJmenoKupujici] = useState("");
   const [emailKupujici, setEmailKupujici] = useState("");
   const [telefonKupujici, setTelefonKupujici] = useState("");
@@ -162,7 +167,7 @@ export default function DarkovyPoukazForm({
                 <button
                   key={`${c.popisek}-${c.hodnota_kc}`}
                   type="button"
-                  onClick={() => setHodnotaKc(c.hodnota_kc)}
+                  onClick={() => onZmenaCastky(c.hodnota_kc)}
                   className={`rounded-full px-5 py-2.5 text-sm transition-colors ${
                     hodnotaKc === c.hodnota_kc
                       ? "bg-gradient-aurora text-ink"

@@ -159,6 +159,9 @@ export type Nastaveni = {
 export type PoukazCastka = {
   popisek: string;
   hodnota_kc: number;
+  // Grafika s touhle částkou. Když chybí, použije se společná grafika
+  // poukazu — jinak by zákaznici dorazil obrázek s cizí hodnotou.
+  fotka?: string;
 };
 
 // Poukaz vystavený na web k prodeji — nadpis, text, grafika a částky,

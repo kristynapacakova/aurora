@@ -41,6 +41,24 @@ export default function PoukazNabidkaForm({ initial }: { initial: PoukazNabidka 
     setCastky((c) => c.map((castka, i) => (i === index ? { ...castka, ...zmena } : castka)));
   }
 
+  // Nahrání grafiky k jedné částce. Každá hodnota má mít vlastní obrázek,
+  // jinak by zákaznici dorazil poukaz s cizí částkou.
+  async function nahratFotkuCastky(index: number, soubor: File) {
+    setUploading(true);
+    setError(null);
+    try {
+      const zmenseny = await resizeImageFile(soubor);
+      const blob = await upload(cestaProFotku(zmenseny.name), zmenseny, {
+        access: "public",
+        handleUploadUrl: "/api/admin/upload",
+      });
+      nastavCastku(index, { fotka: blob.url });
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Nahrání grafiky se nepovedlo.");
+    }
+    setUploading(false);
+  }
+
   async function nahratFotku(e: ChangeEvent<HTMLInputElement>) {
     const soubor = e.target.files?.[0];
     e.target.value = "";
@@ -141,36 +159,70 @@ export default function PoukazNabidkaForm({ initial }: { initial: PoukazNabidka 
                 <p className="text-xs uppercase tracking-[0.25em] text-accent">Nabídka částek *</p>
                 <p className="mt-2 text-xs text-muted">
                   Popisek je nepovinný — hodí se u částky jako „na 1 lekci“. Hodnota musí být mezi
-                  100 a 100 000 Kč.
+                  100 a 100 000 Kč. Ke každé částce nahraj grafiku s tou správnou hodnotou; kde
+                  chybí, použije se společná grafika níž.
                 </p>
               </div>
 
               {castky.map((castka, i) => (
-                <div key={i} className="flex flex-wrap items-center gap-2">
-                  <input
-                    value={castka.hodnota_kc || ""}
-                    onChange={(e) =>
-                      nastavCastku(i, {
-                        hodnota_kc: Number(e.target.value.replace(/[^0-9]/g, "")) || 0,
-                      })
-                    }
-                    inputMode="numeric"
-                    placeholder="Kč"
-                    className={`${inputCls} w-28`}
-                  />
-                  <input
-                    value={castka.popisek}
-                    onChange={(e) => nastavCastku(i, { popisek: e.target.value })}
-                    placeholder="Popisek, např. na 1 lekci (nepovinné)"
-                    className={`${inputCls} min-w-[13rem] flex-1`}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setCastky((c) => c.filter((_, j) => j !== i))}
-                    className="text-xs uppercase tracking-[0.15em] text-accent-d hover:underline"
-                  >
-                    Odebrat
-                  </button>
+                <div key={i} className="flex flex-col gap-2 rounded-xl border border-line p-3">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <input
+                      value={castka.hodnota_kc || ""}
+                      onChange={(e) =>
+                        nastavCastku(i, {
+                          hodnota_kc: Number(e.target.value.replace(/[^0-9]/g, "")) || 0,
+                        })
+                      }
+                      inputMode="numeric"
+                      placeholder="Kč"
+                      className={`${inputCls} w-28`}
+                    />
+                    <input
+                      value={castka.popisek}
+                      onChange={(e) => nastavCastku(i, { popisek: e.target.value })}
+                      placeholder="Popisek, např. na 1 lekci (nepovinné)"
+                      className={`${inputCls} min-w-[13rem] flex-1`}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setCastky((c) => c.filter((_, j) => j !== i))}
+                      className="text-xs uppercase tracking-[0.15em] text-accent-d hover:underline"
+                    >
+                      Odebrat
+                    </button>
+                  </div>
+
+                  <div className="flex flex-wrap items-center gap-3">
+                    {castka.fotka && (
+                      <div className="relative h-14 w-20 shrink-0 overflow-hidden rounded-lg">
+                        <Image src={castka.fotka} alt="" fill className="object-cover" sizes="80px" />
+                      </div>
+                    )}
+                    <label className="flex w-fit cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.15em] text-accent-d hover:underline">
+                      {castka.fotka ? "Změnit grafiku" : "+ Grafika pro tuhle částku"}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        disabled={uploading}
+                        onChange={(e) => {
+                          const soubor = e.target.files?.[0];
+                          e.target.value = "";
+                          if (soubor) nahratFotkuCastky(i, soubor);
+                        }}
+                        className="hidden"
+                      />
+                    </label>
+                    {castka.fotka && (
+                      <button
+                        type="button"
+                        onClick={() => nastavCastku(i, { fotka: "" })}
+                        className="text-xs uppercase tracking-[0.15em] text-muted hover:text-ink"
+                      >
+                        Odebrat grafiku
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
 
@@ -188,8 +240,8 @@ export default function PoukazNabidkaForm({ initial }: { initial: PoukazNabidka 
               <div>
                 <p className="text-xs uppercase tracking-[0.25em] text-accent">Grafika poukazu</p>
                 <p className="mt-2 text-xs text-muted">
-                  Ukáže se na webu i v e-mailu s kódem. Bez ní se na webu zobrazí krémový podklad
-                  s nápisem Aurora.
+                  Záloha pro částky, u kterých vlastní grafika není. Ukáže se na webu i v e-mailu
+                  s kódem; bez ní se na webu zobrazí krémový podklad s nápisem Aurora.
                 </p>
               </div>
               {fotka && (

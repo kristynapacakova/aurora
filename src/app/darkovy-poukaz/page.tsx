@@ -1,12 +1,10 @@
-import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
-import DarkovyPoukazForm from "@/components/DarkovyPoukazForm";
+import PoukazSekce from "@/components/PoukazSekce";
 import { getNastaveni, getPoukazyNabidka } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { generatePlatebniQr } from "@/lib/platba";
-import { IconSparkle } from "@/components/BrandIcons";
 
 // Poukazy se plní z administrace, takže stránka nesmí zůstat viset na verzi
 // vygenerované při nasazení — stejná minutová cache jako u pobytů.
@@ -53,76 +51,13 @@ export default async function DarkovyPoukazPage() {
             <div className="flex flex-col gap-28">
               {poukazy.map((poukaz, i) => (
                 <FadeUp key={poukaz.id} delay={0.05}>
-                  {/* Stejné rozložení jako sekce na úvodní stránce: grafika
-                      na jedné straně, text a objednávka vedle ní. */}
-                  <section
-                    className={`flex flex-col items-center gap-10 md:items-start md:gap-16 ${
-                      i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
-                    }`}
-                  >
-                    {/* Výšku určuje grafika, ne rám — pevný poměr by kolem
-                        návrhu nechával prázdné pruhy, nebo by ho ořízl. */}
-                    {poukaz.fotka && (
-                      <div className="w-full md:w-[52%]">
-                        <Image
-                          src={poukaz.fotka}
-                          alt={poukaz.nadpis}
-                          width={1400}
-                          height={900}
-                          className="h-auto w-full rounded-2xl shadow-[0_20px_50px_-24px_rgba(140,95,71,0.45)]"
-                          sizes="(max-width: 768px) 100vw, 52vw"
-                          priority={i === 0}
-                        />
-                      </div>
-                    )}
-
-                    <div className="flex-1">
-                      <div className="mb-3 flex items-center gap-3">
-                        <IconSparkle size={12} />
-                        <p className="text-xs uppercase tracking-[0.3em] text-accent">
-                          Dárkový poukaz
-                        </p>
-                      </div>
-
-                      {i === 0 ? (
-                        <h1 className="font-allura text-4xl text-ink sm:text-5xl">
-                          {nbsp(poukaz.nadpis)}
-                        </h1>
-                      ) : (
-                        <h2 className="font-allura text-4xl text-ink sm:text-5xl">
-                          {nbsp(poukaz.nadpis)}
-                        </h2>
-                      )}
-
-                      {poukaz.popis && (
-                        <div className="mt-5 flex flex-col gap-3">
-                          {poukaz.popis.split(/\n\s*\n/).map((odstavec, j) =>
-                            // Odstavec uvozený hvězdičkou je poznámka pod
-                            // čarou — vysází se drobněji a odsazeně.
-                            odstavec.trimStart().startsWith("*") ? (
-                              <p key={j} className="mt-1 text-xs leading-relaxed text-muted/80">
-                                {nbsp(odstavec.trimStart())}
-                              </p>
-                            ) : (
-                              <p key={j} className="text-sm leading-relaxed text-muted">
-                                {nbsp(odstavec)}
-                              </p>
-                            )
-                          )}
-                        </div>
-                      )}
-
-                      <div className="mt-8">
-                        <DarkovyPoukazForm
-                          nabidkaId={poukaz.id}
-                          nadpis={poukaz.nadpis}
-                          castky={poukaz.castky}
-                          qrKody={qrKody}
-                          cisloUctu={cislo_uctu_darky}
-                        />
-                      </div>
-                    </div>
-                  </section>
+                  <PoukazSekce
+                    poukaz={poukaz}
+                    qrKody={qrKody}
+                    cisloUctu={cislo_uctu_darky}
+                    prvni={i === 0}
+                    obraceno={i % 2 === 1}
+                  />
                 </FadeUp>
               ))}
             </div>

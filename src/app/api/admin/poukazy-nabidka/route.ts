@@ -42,6 +42,7 @@ function parseFields(body: Body) {
       .map((c) => ({
         popisek: String(c?.popisek ?? "").trim().slice(0, 60),
         hodnota_kc: Math.round(Number(c?.hodnota_kc) || 0),
+        fotka: String(c?.fotka ?? "").trim(),
       }))
       .filter((c) => c.hodnota_kc >= 100 && c.hodnota_kc <= 100000),
     zverejneno: body.zverejneno !== false,
