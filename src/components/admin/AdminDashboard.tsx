@@ -11,6 +11,14 @@ import { formatKc } from "@/lib/castky";
 import { upload } from "@vercel/blob/client";
 import { resizeImageFile } from "@/lib/imageResize";
 
+// Cesta v úložišti musí být unikátní, ať se stejně pojmenované soubory
+// nepřepisují. Schválně mimo komponentu — volání Date.now() přímo v jejím
+// těle hlídá lint jako nečistou funkci.
+function cestaProFotku(jmenoSouboru: string): string {
+  const bezpecne = jmenoSouboru.replace(/[^a-zA-Z0-9._-]/g, "_");
+  return `poukazy/${Date.now()}-${bezpecne}`;
+}
+
 type EditorTab = "pobyty" | "clanky" | "lekce";
 type Section =
   | "overview"
@@ -190,8 +198,7 @@ export default function AdminDashboard({
     setNahravamFotku(true);
     try {
       const zmenseny = await resizeImageFile(soubor);
-      const bezpecneJmeno = zmenseny.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-      const blob = await upload(`poukazy/${Date.now()}-${bezpecneJmeno}`, zmenseny, {
+      const blob = await upload(cestaProFotku(zmenseny.name), zmenseny, {
         access: "public",
         handleUploadUrl: "/api/admin/upload",
       });
