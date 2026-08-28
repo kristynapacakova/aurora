@@ -148,28 +148,28 @@ export type Nastaveni = {
   uscreen_plans: string;
   domena_expiruje: string;
   cislo_uctu_darky: string;
-  // Dárkový poukaz — jeden pro celý web, liší se jen zvolenou částkou.
-  poukaz_nadpis: string;
-  poukaz_popis: string;
-  poukaz_fotka: string;
-  // Nabízené částky. Popisek je nepovinný („na 1 lekci"); když chybí,
-  // ukáže se jen částka.
-  poukaz_castky: PoukazCastka[];
 };
 
+// Jedna nabízená částka u poukazu. Popisek je nepovinný („na 1 lekci");
+// když chybí, ukáže se jen částka.
 export type PoukazCastka = {
   popisek: string;
   hodnota_kc: number;
 };
 
-// Výchozí nabídka, dokud si klientka částky nenastaví.
-export const VYCHOZI_POUKAZ_CASTKY: PoukazCastka[] = [
-  { popisek: "", hodnota_kc: 500 },
-  { popisek: "", hodnota_kc: 1000 },
-  { popisek: "", hodnota_kc: 1500 },
-  { popisek: "", hodnota_kc: 3000 },
-  { popisek: "", hodnota_kc: 5000 },
-];
+// Poukaz vystavený na web k prodeji — nadpis, text, grafika a částky,
+// ze kterých si zákaznice vybírá.
+// Pozor na rozdíl: DarkovyPoukaz je konkrétní zakoupený poukaz s kódem,
+// tohle je nabídka, ze které vzniká.
+export type PoukazNabidka = {
+  id: number;
+  nadpis: string;
+  popis: string;
+  fotka: string;
+  castky: PoukazCastka[];
+  zverejneno: boolean;
+  created_at: string;
+};
 
 function connectionString() {
   return (
@@ -296,6 +296,17 @@ async function ensureSchema() {
      WHERE hodnota_kc = 0;
     UPDATE darkove_poukazy SET zustatek_kc = hodnota_kc
      WHERE zustatek_kc = 0 AND vyuzito = FALSE;
+
+    -- Poukazy vystavené na web k prodeji.
+    CREATE TABLE IF NOT EXISTS poukazy_nabidka (
+      id SERIAL PRIMARY KEY,
+      nadpis TEXT NOT NULL,
+      popis TEXT NOT NULL DEFAULT '',
+      fotka TEXT NOT NULL DEFAULT '',
+      castky JSONB NOT NULL DEFAULT '[]',
+      zverejneno BOOLEAN NOT NULL DEFAULT TRUE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
 
     -- Historie čerpání: kdy, na co a kolik se z poukazu odečetlo.
     CREATE TABLE IF NOT EXISTS poukazy_cerpani (
@@ -667,6 +678,47 @@ export async function getDarkovePoukazy(): Promise<DarkovyPoukaz[]> {
 // Platnost poukazu se počítá od zaplacení, ne od objednání.
 export const PLATNOST_POUKAZU_MESICU = 6;
 
+// ── Poukazy vystavené na web ────────────────────────────────────────────────
+
+export async function getPoukazyNabidka(onlyPublished = true): Promise<PoukazNabidka[]> {
+  if (!dbConfigured()) return [];
+  return query<PoukazNabidka>(
+    `SELECT * FROM poukazy_nabidka ${onlyPublished ? "WHERE zverejneno = TRUE" : ""}
+     ORDER BY created_at ASC`
+  );
+}
+
+export async function getPoukazNabidka(id: number): Promise<PoukazNabidka | null> {
+  if (!dbConfigured()) return null;
+  const rows = await query<PoukazNabidka>(`SELECT * FROM poukazy_nabidka WHERE id = $1`, [id]);
+  return rows[0] ?? null;
+}
+
+export async function createPoukazNabidka(
+  p: Omit<PoukazNabidka, "id" | "created_at">
+): Promise<PoukazNabidka> {
+  const rows = await query<PoukazNabidka>(
+    `INSERT INTO poukazy_nabidka (nadpis, popis, fotka, castky, zverejneno)
+     VALUES ($1, $2, $3, $4, $5) RETURNING *`,
+    [p.nadpis, p.popis, p.fotka, JSON.stringify(p.castky), p.zverejneno]
+  );
+  return rows[0];
+}
+
+export async function updatePoukazNabidka(
+  id: number,
+  p: Omit<PoukazNabidka, "id" | "created_at">
+): Promise<void> {
+  await query(
+    `UPDATE poukazy_nabidka SET nadpis=$1, popis=$2, fotka=$3, castky=$4, zverejneno=$5 WHERE id=$6`,
+    [p.nadpis, p.popis, p.fotka, JSON.stringify(p.castky), p.zverejneno, id]
+  );
+}
+
+export async function deletePoukazNabidka(id: number): Promise<void> {
+  await query(`DELETE FROM poukazy_nabidka WHERE id = $1`, [id]);
+}
+
 export async function getDarkovyPoukazById(id: number): Promise<DarkovyPoukaz | null> {
   if (!dbConfigured()) return null;
   const rows = await query<DarkovyPoukaz>(`SELECT * FROM darkove_poukazy WHERE id = $1`, [id]);
@@ -795,11 +847,6 @@ const NASTAVENI_DEFAULTS: Nastaveni = {
   uscreen_plans: "https://aurora.uscreen.io/plans",
   domena_expiruje: "",
   cislo_uctu_darky: "",
-  poukaz_nadpis: "Dárkový poukaz Aurora",
-  poukaz_popis:
-    "Daruj chvíli jen pro ni. Poukaz platí 6 měsíců, uplatní se na pobyty i na lekce naživo a jde vyčerpat i po částech.",
-  poukaz_fotka: "",
-  poukaz_castky: VYCHOZI_POUKAZ_CASTKY,
 };
 
 type NastaveniRow = Nastaveni & { admin_password_hash: string | null };
@@ -850,22 +897,13 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
     uscreen_plans: row.uscreen_plans || NASTAVENI_DEFAULTS.uscreen_plans,
     domena_expiruje: row.domena_expiruje || NASTAVENI_DEFAULTS.domena_expiruje,
     cislo_uctu_darky: row.cislo_uctu_darky || NASTAVENI_DEFAULTS.cislo_uctu_darky,
-    poukaz_nadpis: row.poukaz_nadpis || NASTAVENI_DEFAULTS.poukaz_nadpis,
-    poukaz_popis: row.poukaz_popis || NASTAVENI_DEFAULTS.poukaz_popis,
-    poukaz_fotka: row.poukaz_fotka ?? "",
-    // Prázdný seznam znamená „ještě nenastaveno", ne „žádné částky" — jinak
-    // by stránka s poukazem zůstala bez čeho vybírat.
-    poukaz_castky:
-      Array.isArray(row.poukaz_castky) && row.poukaz_castky.length > 0
-        ? row.poukaz_castky
-        : NASTAVENI_DEFAULTS.poukaz_castky,
   };
 });
 
 export async function updateNastaveni(fields: Nastaveni): Promise<void> {
   await ensureNastaveniRow();
   await query(
-    `UPDATE nastaveni SET kontakt_email=$1, telefon=$2, instagram_handle=$3, instagram_url=$4, facebook_handle=$5, facebook_url=$6, cena_lekce=$7, cena_mesicni=$8, cena_rocni=$9, uscreen_home=$10, uscreen_signup=$11, uscreen_login=$12, uscreen_plans=$13, domena_expiruje=$14, cislo_uctu_darky=$15, poukaz_nadpis=$16, poukaz_popis=$17, poukaz_fotka=$18, poukaz_castky=$19 WHERE id = 1`,
+    `UPDATE nastaveni SET kontakt_email=$1, telefon=$2, instagram_handle=$3, instagram_url=$4, facebook_handle=$5, facebook_url=$6, cena_lekce=$7, cena_mesicni=$8, cena_rocni=$9, uscreen_home=$10, uscreen_signup=$11, uscreen_login=$12, uscreen_plans=$13, domena_expiruje=$14, cislo_uctu_darky=$15 WHERE id = 1`,
     [
       fields.kontakt_email,
       fields.telefon,
@@ -882,10 +920,6 @@ export async function updateNastaveni(fields: Nastaveni): Promise<void> {
       fields.uscreen_plans,
       fields.domena_expiruje,
       fields.cislo_uctu_darky,
-      fields.poukaz_nadpis,
-      fields.poukaz_popis,
-      fields.poukaz_fotka,
-      JSON.stringify(fields.poukaz_castky ?? []),
     ]
   );
 }

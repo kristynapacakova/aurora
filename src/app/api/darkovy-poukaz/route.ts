@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createDarkovyPoukaz, getNastaveni, createNewsletterSignup, dbConfigured } from "@/lib/db";
+import { createDarkovyPoukaz, getNastaveni, getPoukazNabidka, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
 import { formatKc } from "@/lib/castky";
 import { posliKlientce, posliZakaznici, vetaProOdpoved } from "@/lib/email";
@@ -27,6 +27,7 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json()) as {
+    nabidka_id?: number;
     hodnota_kc?: number;
     jmeno_kupujici?: string;
     email_kupujici?: string;
@@ -56,9 +57,15 @@ export async function POST(request: Request) {
 
   const nastaveni = await getNastaveni();
 
-  // Částka musí být jedna z nabízených — jinak by šlo poslat cokoliv.
+  // Částka musí odpovídat tomu, co je u daného poukazu vystavené — jinak by
+  // šlo poslat cokoliv.
+  const nabidka =
+    typeof body.nabidka_id === "number" ? await getPoukazNabidka(body.nabidka_id) : null;
+  if (!nabidka || !nabidka.zverejneno) {
+    return NextResponse.json({ error: "Tenhle poukaz už není v nabídce." }, { status: 400 });
+  }
   const hodnotaKc = Math.round(Number(body.hodnota_kc) || 0);
-  if (!nastaveni.poukaz_castky.some((c) => c.hodnota_kc === hodnotaKc)) {
+  if (!nabidka.castky.some((c) => c.hodnota_kc === hodnotaKc)) {
     return NextResponse.json(
       { error: "Vyber prosím jednu z nabízených hodnot poukazu." },
       { status: 400 }
@@ -76,7 +83,7 @@ export async function POST(request: Request) {
     hodnota: formatKc(hodnotaKc),
     hodnota_kc: hodnotaKc,
     // Grafiku bere poukaz z nastavení — je jedna pro všechny.
-    fotka: nastaveni.poukaz_fotka,
+    fotka: nabidka.fotka,
     jmeno_kupujici,
     email_kupujici,
     telefon_kupujici,

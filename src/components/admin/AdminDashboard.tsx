@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
@@ -31,7 +31,15 @@ type Section =
   | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
 type PendingDelete = {
-  kind: "pobyty" | "clanky" | "lekce" | "poptavky" | "newsletter" | "cekaci-listina" | "darkove-poukazy";
+  kind:
+    | "pobyty"
+    | "clanky"
+    | "lekce"
+    | "poptavky"
+    | "newsletter"
+    | "cekaci-listina"
+    | "darkove-poukazy"
+    | "poukazy-nabidka";
   id: number;
   label: string;
 };
@@ -152,6 +160,7 @@ export default function AdminDashboard({
   cekaciListina,
   darkovePoukazy,
   poukazyCerpani,
+  poukazyNabidka,
   nastaveni,
   email,
 }: {
@@ -164,6 +173,7 @@ export default function AdminDashboard({
   cekaciListina: CekaciListina[];
   darkovePoukazy: DarkovyPoukaz[];
   poukazyCerpani: PoukazCerpani[];
+  poukazyNabidka: PoukazNabidka[];
   nastaveni: Nastaveni;
   email: StavOdesilani;
 }) {
@@ -1541,22 +1551,104 @@ export default function AdminDashboard({
           {/* ── Dárkové poukazy ── */}
           {section === "darkove-poukazy" && (
             <section>
-              <div className="mb-6 flex flex-wrap justify-end gap-3">
+              {/* Poukazy vystavené na web — z nich si zákaznice vybírá. */}
+              <div className="mb-10">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <p className="font-serif text-xl text-ink">Poukazy na webu</p>
+                    <p className="mt-1 text-xs text-muted">
+                      Co si návštěvnice můžou koupit na stránce s dárkovými poukazy.
+                    </p>
+                  </div>
+                  <Link
+                    href="/admin/poukaz/novy"
+                    className="rounded-full bg-gradient-aurora px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90"
+                  >
+                    + Přidat poukaz
+                  </Link>
+                </div>
+
+                {poukazyNabidka.length === 0 ? (
+                  <p className="rounded-2xl border border-line bg-white p-5 text-sm text-muted">
+                    Zatím tu žádný poukaz není, takže se na webu nedá nic koupit. Přidej první
+                    tlačítkem nahoře.
+                  </p>
+                ) : (
+                  <ul className="flex flex-col gap-3">
+                    {poukazyNabidka.map((n) => (
+                      <li
+                        key={n.id}
+                        className="flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-white p-4 shadow-sm"
+                      >
+                        <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-sand">
+                          {n.fotka ? (
+                            <Image src={n.fotka} alt={n.nadpis} fill className="object-cover" sizes="96px" />
+                          ) : (
+                            <span className="flex h-full w-full items-center justify-center font-allura text-xl text-accent/60">
+                              Aurora
+                            </span>
+                          )}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+                            {n.nadpis}
+                            {!n.zverejneno && (
+                              <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
+                                Skryté
+                              </span>
+                            )}
+                          </p>
+                          <p className="mt-1 text-xs text-muted">
+                            {n.castky.map((c) => formatKc(c.hodnota_kc)).join(" · ") || "žádné částky"}
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 gap-2">
+                          <Link
+                            href={`/admin/poukaz/${n.id}`}
+                            className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                          >
+                            Upravit
+                          </Link>
+                          <button
+                            disabled={busy}
+                            onClick={() =>
+                              setPendingDelete({ kind: "poukazy-nabidka", id: n.id, label: n.nadpis })
+                            }
+                            className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                          >
+                            Smazat
+                          </button>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <p className="font-serif text-xl text-ink">Prodané poukazy</p>
+                  <p className="mt-1 text-xs text-muted">
+                    Konkrétní kódy, jejich zůstatek a platnost.
+                  </p>
+                </div>
                 <button
                   onClick={() => {
                     setNovyPoukazOtevren(!novyPoukazOtevren);
                     setNovyPoukazChyba(null);
                   }}
-                  className="rounded-full bg-gradient-aurora px-5 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90"
+                  className="rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
                 >
-                  {novyPoukazOtevren ? "Zavřít" : "+ Nový poukaz"}
+                  {novyPoukazOtevren ? "Zavřít" : "Vystavit ručně"}
                 </button>
               </div>
 
               {novyPoukazOtevren && (
                 <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
                   <div>
-                    <p className="text-xs uppercase tracking-[0.25em] text-accent">Nový poukaz</p>
+                    <p className="text-xs uppercase tracking-[0.25em] text-accent">
+                      Vystavit poukaz ručně
+                    </p>
                     <p className="mt-2 text-xs text-muted">
                       Pro poukazy, které neprošly webem — hotovost, dárek, výhra. Kód se vygeneruje
                       sám a poukaz se objeví v seznamu níž.
@@ -1587,66 +1679,13 @@ export default function AdminDashboard({
                       />
                     </label>
                     <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                      Kdo poukaz kupuje
+                      Komu poukaz patří
                       <input
                         value={novyPoukaz.jmeno_kupujici}
                         onChange={(e) => setNovyPoukaz({ ...novyPoukaz, jmeno_kupujici: e.target.value })}
                         className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
                       />
                     </label>
-                    <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                      Pro koho je
-                      <input
-                        value={novyPoukaz.jmeno_obdarovane}
-                        onChange={(e) => setNovyPoukaz({ ...novyPoukaz, jmeno_obdarovane: e.target.value })}
-                        className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                      />
-                    </label>
-                  </div>
-
-                  <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
-                    Vzkaz
-                    <textarea
-                      value={novyPoukaz.vzkaz}
-                      onChange={(e) => setNovyPoukaz({ ...novyPoukaz, vzkaz: e.target.value })}
-                      rows={2}
-                      className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
-                    />
-                  </label>
-
-                  {/* Grafika poukazu — ukáže se přímo v e-mailu s kódem. */}
-                  <div className="flex flex-wrap items-center gap-4">
-                    {novyPoukaz.fotka ? (
-                      <div className="relative h-24 w-36 overflow-hidden rounded-xl">
-                        <Image src={novyPoukaz.fotka} alt="Grafika poukazu" fill className="object-cover" sizes="144px" />
-                        <button
-                          type="button"
-                          onClick={() => setNovyPoukaz({ ...novyPoukaz, fotka: "" })}
-                          className="absolute right-1.5 top-1.5 rounded-full bg-ink/70 px-2 py-0.5 text-xs text-cream"
-                          aria-label="Odebrat fotku"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ) : (
-                      <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent">
-                        {nahravamFotku ? "Nahrávám…" : "+ Grafika poukazu"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          disabled={nahravamFotku}
-                          onChange={async (e) => {
-                            const soubor = e.target.files?.[0];
-                            e.target.value = "";
-                            if (!soubor) return;
-                            const url = await nahratFotkuPoukazu(soubor);
-                            if (url) setNovyPoukaz((n) => ({ ...n, fotka: url }));
-                          }}
-                          className="hidden"
-                        />
-                      </label>
-                    )}
-                    <p className="text-xs text-muted">Nepovinné — ukáže se v e-mailu s kódem.</p>
                   </div>
 
                   <label className="flex items-center gap-3 text-sm text-ink">
@@ -1664,7 +1703,7 @@ export default function AdminDashboard({
                   <div>
                     <button
                       onClick={zalozitPoukaz}
-                      disabled={busy || nahravamFotku}
+                      disabled={busy}
                       className="rounded-full bg-gradient-aurora px-8 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90 disabled:opacity-50"
                     >
                       {busy ? "Vystavuji…" : "Vystavit poukaz"}

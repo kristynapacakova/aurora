@@ -15,7 +15,13 @@ type Vysledek = {
   qrDataUrl: string | null;
 };
 
-export default function DarkovyPoukazForm({ castky }: { castky: PoukazCastka[] }) {
+export default function DarkovyPoukazForm({
+  nabidkaId,
+  castky,
+}: {
+  nabidkaId: number;
+  castky: PoukazCastka[];
+}) {
   const [hodnotaKc, setHodnotaKc] = useState(castky[0]?.hodnota_kc ?? 0);
   const [jmenoKupujici, setJmenoKupujici] = useState("");
   const [emailKupujici, setEmailKupujici] = useState("");
@@ -39,6 +45,7 @@ export default function DarkovyPoukazForm({ castky }: { castky: PoukazCastka[] }
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
+        nabidka_id: nabidkaId,
         hodnota_kc: hodnotaKc,
         jmeno_kupujici: jmenoKupujici,
         email_kupujici: emailKupujici,

@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import DarkovyPoukazForm from "@/components/DarkovyPoukazForm";
-import { getNastaveni } from "@/lib/db";
+import { getNastaveni, getPoukazyNabidka } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "@/components/BrandIcons";
 
@@ -13,9 +13,12 @@ export const metadata = {
 };
 
 export default async function DarkovyPoukazPage() {
-  const { cislo_uctu_darky, poukaz_nadpis, poukaz_popis, poukaz_fotka, poukaz_castky } =
-    await getNastaveni();
-  const dostupne = Boolean(cislo_uctu_darky) && poukaz_castky.length > 0;
+  const [{ cislo_uctu_darky }, poukazy] = await Promise.all([
+    getNastaveni(),
+    getPoukazyNabidka(true),
+  ]);
+  // Bez čísla účtu není kam platit, bez vystaveného poukazu není co koupit.
+  const dostupne = Boolean(cislo_uctu_darky) && poukazy.length > 0;
 
   return (
     <>
@@ -29,35 +32,56 @@ export default async function DarkovyPoukazPage() {
               <IconSparkle size={12} />
             </div>
             <h1 className="font-allura text-4xl text-ink sm:text-5xl">
-              {nbsp(poukaz_nadpis || "Daruj chvíli jen pro ni")}
+              {nbsp("Daruj chvíli jen pro ni")}
             </h1>
-            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">{nbsp(poukaz_popis)}</p>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
+              {nbsp("Kód poukazu pošleme e-mailem, jakmile platbu přijmeme.")}
+            </p>
           </FadeUp>
 
           <FadeUp delay={0.1}>
-            {/* Fotka poukazu — nastavuje se v administraci. */}
-            {poukaz_fotka && (
-              <div className="relative mx-auto mt-8 aspect-[3/2] w-full max-w-md overflow-hidden rounded-3xl">
-                <Image
-                  src={poukaz_fotka}
-                  alt={poukaz_nadpis || "Dárkový poukaz"}
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 100vw, 448px"
-                  priority
-                />
-              </div>
-            )}
+            {dostupne ? (
+              <div className="mt-12 flex flex-col gap-16">
+                {poukazy.map((poukaz) => (
+                  <div key={poukaz.id}>
+                    <div className="relative mx-auto aspect-[3/2] w-full max-w-md overflow-hidden rounded-3xl">
+                      {poukaz.fotka ? (
+                        <Image
+                          src={poukaz.fotka}
+                          alt={poukaz.nadpis}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 100vw, 448px"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-sand">
+                          <span className="font-allura text-4xl text-accent/60">Aurora</span>
+                        </div>
+                      )}
+                    </div>
 
-            <div className="mt-10 text-left">
-              {dostupne ? (
-                <DarkovyPoukazForm castky={poukaz_castky} />
-              ) : (
+                    <h2 className="mt-6 font-serif text-2xl text-ink sm:text-3xl">
+                      {nbsp(poukaz.nadpis)}
+                    </h2>
+                    {poukaz.popis && (
+                      <p className="mx-auto mt-3 max-w-md whitespace-pre-line text-sm leading-relaxed text-muted">
+                        {nbsp(poukaz.popis)}
+                      </p>
+                    )}
+
+                    <div className="mt-8 text-left">
+                      <DarkovyPoukazForm nabidkaId={poukaz.id} castky={poukaz.castky} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-10 text-left">
                 <p className="rounded-2xl bg-white/70 p-6 text-center text-sm text-muted ring-1 ring-line">
                   {nbsp("Dárkové poukazy se právě chystají. Sleduj nás na Instagramu, ať ti spuštění neuteče. 🌿")}
                 </p>
-              )}
-            </div>
+              </div>
+            )}
           </FadeUp>
         </div>
       </main>
