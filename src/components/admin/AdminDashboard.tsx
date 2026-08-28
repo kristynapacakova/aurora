@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 import { formatKc } from "@/lib/castky";
 
@@ -140,6 +140,7 @@ export default function AdminDashboard({
   newsletter,
   cekaciListina,
   darkovePoukazy,
+  poukazyCerpani,
   nastaveni,
 }: {
   configured: boolean;
@@ -150,6 +151,7 @@ export default function AdminDashboard({
   newsletter: NewsletterSignup[];
   cekaciListina: CekaciListina[];
   darkovePoukazy: DarkovyPoukaz[];
+  poukazyCerpani: PoukazCerpani[];
   nastaveni: Nastaveni;
 }) {
   const router = useRouter();
@@ -158,6 +160,22 @@ export default function AdminDashboard({
   const [busy, setBusy] = useState(false);
   const [pendingDelete, setPendingDelete] = useState<PendingDelete | null>(null);
   const [poptavkaFilter, setPoptavkaFilter] = useState<PoptavkaFilter>("vse");
+  // Ruční odečet z poukazu — pole se drží zvlášť pro každý poukaz, ať se
+  // rozepsaná částka neztratí při rozkliknutí jiného.
+  const [castkaOdectu, setCastkaOdectu] = useState<Record<number, string>>({});
+  const [popisOdectu, setPopisOdectu] = useState<Record<number, string>>({});
+  const [chybaOdectu, setChybaOdectu] = useState<Record<number, string>>({});
+  const [otevrenaHistorie, setOtevrenaHistorie] = useState<number | null>(null);
+
+  const cerpaniPoukazu = (poukazId: number) =>
+    poukazyCerpani.filter((c) => c.poukaz_id === poukazId);
+
+  // Poukaz platí celý poslední den, proto se porovnává jen datum.
+  function jePoukazPropadly(p: DarkovyPoukaz): boolean {
+    if (!p.plati_do) return false;
+    const dnes = new Date();
+    return new Date(p.plati_do) < new Date(dnes.getFullYear(), dnes.getMonth(), dnes.getDate());
+  }
   const [vybranePobyty, setVybranePobyty] = useState<Set<number>>(new Set());
   const [vybraneClanky, setVybraneClanky] = useState<Set<number>>(new Set());
 
@@ -453,11 +471,13 @@ export default function AdminDashboard({
   }
 
   function exportDarkovePoukazyCsv() {
-    const hlavicky = ["Datum", "Kód", "Hodnota", "VS", "Kupující", "E-mail", "Telefon", "Obdarovaná", "Vzkaz", "Zaplaceno", "Využito"];
+    const hlavicky = ["Datum", "Kód", "Hodnota", "Zůstatek (Kč)", "Platí do", "VS", "Kupující", "E-mail", "Telefon", "Obdarovaná", "Vzkaz", "Zaplaceno", "Vyčerpáno"];
     const radky = darkovePoukazy.map((p) => [
       new Date(p.created_at).toLocaleString("cs-CZ"),
       p.kod,
       p.hodnota,
+      String(p.zustatek_kc),
+      p.plati_do ? new Date(p.plati_do).toLocaleDateString("cs-CZ") : "",
       p.variabilni_symbol,
       p.jmeno_kupujici,
       p.email_kupujici,
@@ -485,6 +505,43 @@ export default function AdminDashboard({
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: q.id, precteno: !q.precteno }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function odecistZPoukazu(p: DarkovyPoukaz) {
+    const castka = Math.round(Number((castkaOdectu[p.id] ?? "").replace(/\s/g, "")));
+    if (!castka || castka <= 0) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/darkove-poukazy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        id: p.id,
+        castka_kc: castka,
+        popis: (popisOdectu[p.id] ?? "").trim(),
+      }),
+    });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setChybaOdectu({ ...chybaOdectu, [p.id]: data.error ?? "Odečet se nepovedl." });
+      setBusy(false);
+      return;
+    }
+    setCastkaOdectu({ ...castkaOdectu, [p.id]: "" });
+    setPopisOdectu({ ...popisOdectu, [p.id]: "" });
+    setChybaOdectu({ ...chybaOdectu, [p.id]: "" });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function vratitCerpaniPoukazu(cerpaniId: number) {
+    setBusy(true);
+    await fetch("/api/admin/darkove-poukazy", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ cerpani_id: cerpaniId }),
     });
     setBusy(false);
     router.refresh();
@@ -1432,12 +1489,36 @@ export default function AdminDashboard({
                               </span>
                               {p.vyuzito && (
                                 <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-muted">
-                                  Využito
+                                  Vyčerpáno
+                                </span>
+                              )}
+                              {jePoukazPropadly(p) && (
+                                <span className="rounded-full bg-line px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
+                                  Propadlý
                                 </span>
                               )}
                             </p>
                             <p className="mt-1 text-xs text-muted">
                               {new Date(p.created_at).toLocaleString("cs-CZ")} · VS: {p.variabilni_symbol}
+                            </p>
+                            {/* Zůstatek a platnost — to hlavní, co klientka
+                                potřebuje vidět, když se někdo ozve s kódem. */}
+                            <p className="mt-2 text-sm text-ink">
+                              Zůstatek:{" "}
+                              <strong className="font-medium">{formatKc(p.zustatek_kc)}</strong>
+                              {p.hodnota_kc > 0 && p.zustatek_kc !== p.hodnota_kc && (
+                                <span className="text-muted"> z {formatKc(p.hodnota_kc)}</span>
+                              )}
+                              {p.plati_do && (
+                                <span className="text-muted">
+                                  {" · "}platí do {new Date(p.plati_do).toLocaleDateString("cs-CZ")}
+                                </span>
+                              )}
+                              {!p.zaplaceno && (
+                                <span className="text-muted">
+                                  {" · "}platnost se rozeběhne po označení platby
+                                </span>
+                              )}
                             </p>
                             <p className="mt-2 text-sm text-ink">
                               Kupující: {p.jmeno_kupujici} ·{" "}
@@ -1457,6 +1538,80 @@ export default function AdminDashboard({
                               <p className="mt-1 text-sm text-muted">Pro: {p.jmeno_obdarovane}</p>
                             )}
                             {p.vzkaz && <p className="mt-2 text-sm text-muted">{p.vzkaz}</p>}
+
+                            {/* Historie čerpání — kdy a na co poukaz šel. */}
+                            {cerpaniPoukazu(p.id).length > 0 && (
+                              <div className="mt-3">
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setOtevrenaHistorie(otevrenaHistorie === p.id ? null : p.id)
+                                  }
+                                  className="text-xs uppercase tracking-[0.15em] text-accent-d hover:underline"
+                                >
+                                  {otevrenaHistorie === p.id ? "Skrýt čerpání" : `Čerpání (${cerpaniPoukazu(p.id).length})`}
+                                </button>
+                                {otevrenaHistorie === p.id && (
+                                  <ul className="mt-2 flex flex-col gap-1.5 border-l border-line pl-3">
+                                    {cerpaniPoukazu(p.id).map((c) => (
+                                      <li key={c.id} className="flex flex-wrap items-baseline gap-2 text-xs">
+                                        <span className="text-muted">
+                                          {new Date(c.created_at).toLocaleDateString("cs-CZ")}
+                                        </span>
+                                        <span className="text-ink">{formatKc(c.castka_kc)}</span>
+                                        <span className="text-muted">{c.popis || "—"}</span>
+                                        <button
+                                          type="button"
+                                          disabled={busy}
+                                          onClick={() => vratitCerpaniPoukazu(c.id)}
+                                          className="text-accent-d hover:underline"
+                                        >
+                                          vrátit
+                                        </button>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            )}
+
+                            {/* Ruční odečet — pro to, co se neplatí přes web
+                                (živá lekce a podobně). */}
+                            {p.zaplaceno && p.zustatek_kc > 0 && (
+                              <div className="mt-3 flex flex-wrap items-center gap-2">
+                                <input
+                                  value={castkaOdectu[p.id] ?? ""}
+                                  onChange={(e) =>
+                                    setCastkaOdectu({
+                                      ...castkaOdectu,
+                                      [p.id]: e.target.value.replace(/[^0-9]/g, ""),
+                                    })
+                                  }
+                                  inputMode="numeric"
+                                  placeholder="Odečíst Kč"
+                                  className="w-28 rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                                />
+                                <input
+                                  value={popisOdectu[p.id] ?? ""}
+                                  onChange={(e) =>
+                                    setPopisOdectu({ ...popisOdectu, [p.id]: e.target.value })
+                                  }
+                                  placeholder="Za co (např. lekce 4. 9.)"
+                                  className="min-w-[12rem] flex-1 rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                                />
+                                <button
+                                  type="button"
+                                  disabled={busy || !(castkaOdectu[p.id] ?? "").trim()}
+                                  onClick={() => odecistZPoukazu(p)}
+                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent disabled:opacity-40"
+                                >
+                                  Odečíst
+                                </button>
+                                {chybaOdectu[p.id] && (
+                                  <p className="w-full text-xs text-accent-d">{chybaOdectu[p.id]}</p>
+                                )}
+                              </div>
+                            )}
                           </div>
                           <div className="flex shrink-0 flex-col items-end gap-2">
                             <button

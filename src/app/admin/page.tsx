@@ -6,6 +6,7 @@ import {
   getNewsletterSignups,
   getCekaciListina,
   getDarkovePoukazy,
+  getPoukazyCerpani,
   getNastaveni,
   dbConfigured,
 } from "@/lib/db";
@@ -15,7 +16,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const configured = dbConfigured();
-  const [pobyty, clanky, lekce, poptavky, newsletter, cekaciListina, darkovePoukazy] = configured
+  const [pobyty, clanky, lekce, poptavky, newsletter, cekaciListina, darkovePoukazy, poukazyCerpani] = configured
     ? await Promise.all([
         getPobyty(false),
         getClanky(false),
@@ -24,8 +25,9 @@ export default async function AdminPage() {
         getNewsletterSignups(),
         getCekaciListina(),
         getDarkovePoukazy(),
+        getPoukazyCerpani(),
       ])
-    : [[], [], [], [], [], [], []];
+    : [[], [], [], [], [], [], [], []];
   const nastaveni = await getNastaveni();
 
   return (
@@ -38,6 +40,7 @@ export default async function AdminPage() {
       newsletter={newsletter}
       cekaciListina={cekaciListina}
       darkovePoukazy={darkovePoukazy}
+      poukazyCerpani={poukazyCerpani}
       nastaveni={nastaveni}
     />
   );
