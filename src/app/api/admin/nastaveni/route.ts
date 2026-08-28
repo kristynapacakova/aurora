@@ -31,6 +31,17 @@ export async function PUT(request: Request) {
     uscreen_plans: (body.uscreen_plans ?? "").trim(),
     domena_expiruje: (body.domena_expiruje ?? "").trim(),
     cislo_uctu_darky: (body.cislo_uctu_darky ?? "").trim(),
+    poukaz_nadpis: (body.poukaz_nadpis ?? "").trim(),
+    poukaz_popis: (body.poukaz_popis ?? "").trim(),
+    poukaz_fotka: (body.poukaz_fotka ?? "").trim(),
+    // Částky procházejí kontrolou tady, ne až u nákupu — jinak by šlo
+    // vystavit poukaz na hodnotu, kterou pak formulář odmítne.
+    poukaz_castky: (Array.isArray(body.poukaz_castky) ? body.poukaz_castky : [])
+      .map((c) => ({
+        popisek: String(c?.popisek ?? "").trim().slice(0, 60),
+        hodnota_kc: Math.round(Number(c?.hodnota_kc) || 0),
+      }))
+      .filter((c) => c.hodnota_kc >= 100 && c.hodnota_kc <= 100000),
   };
 
   if (fields.cislo_uctu_darky && !czechAccountToIban(fields.cislo_uctu_darky)) {

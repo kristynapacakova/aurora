@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
@@ -12,8 +13,9 @@ export const metadata = {
 };
 
 export default async function DarkovyPoukazPage() {
-  const { cislo_uctu_darky } = await getNastaveni();
-  const dostupne = Boolean(cislo_uctu_darky);
+  const { cislo_uctu_darky, poukaz_nadpis, poukaz_popis, poukaz_fotka, poukaz_castky } =
+    await getNastaveni();
+  const dostupne = Boolean(cislo_uctu_darky) && poukaz_castky.length > 0;
 
   return (
     <>
@@ -27,17 +29,29 @@ export default async function DarkovyPoukazPage() {
               <IconSparkle size={12} />
             </div>
             <h1 className="font-allura text-4xl text-ink sm:text-5xl">
-              {nbsp("Daruj chvíli jen pro ni")}
+              {nbsp(poukaz_nadpis || "Daruj chvíli jen pro ni")}
             </h1>
-            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">
-              {nbsp("Vyber hodnotu a my se postaráme o zbytek. Kód poukazu pošleme e-mailem, jakmile platbu přijmeme. Platí 6 měsíců a uplatní se na pobyty přímo v objednávce a na společné lekce naživo — klidně i na několikrát, co se nevyužije, zůstává na příště. Na online členství ho použít nelze, to má vlastní platbu.")}
-            </p>
+            <p className="mx-auto mt-4 max-w-md text-sm leading-relaxed text-muted">{nbsp(poukaz_popis)}</p>
           </FadeUp>
 
           <FadeUp delay={0.1}>
+            {/* Fotka poukazu — nastavuje se v administraci. */}
+            {poukaz_fotka && (
+              <div className="relative mx-auto mt-8 aspect-[3/2] w-full max-w-md overflow-hidden rounded-3xl">
+                <Image
+                  src={poukaz_fotka}
+                  alt={poukaz_nadpis || "Dárkový poukaz"}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 640px) 100vw, 448px"
+                  priority
+                />
+              </div>
+            )}
+
             <div className="mt-10 text-left">
               {dostupne ? (
-                <DarkovyPoukazForm />
+                <DarkovyPoukazForm castky={poukaz_castky} />
               ) : (
                 <p className="rounded-2xl bg-white/70 p-6 text-center text-sm text-muted ring-1 ring-line">
                   {nbsp("Dárkové poukazy se právě chystají. Sleduj nás na Instagramu, ať ti spuštění neuteče. 🌿")}

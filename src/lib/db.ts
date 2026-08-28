@@ -148,7 +148,28 @@ export type Nastaveni = {
   uscreen_plans: string;
   domena_expiruje: string;
   cislo_uctu_darky: string;
+  // Dárkový poukaz — jeden pro celý web, liší se jen zvolenou částkou.
+  poukaz_nadpis: string;
+  poukaz_popis: string;
+  poukaz_fotka: string;
+  // Nabízené částky. Popisek je nepovinný („na 1 lekci"); když chybí,
+  // ukáže se jen částka.
+  poukaz_castky: PoukazCastka[];
 };
+
+export type PoukazCastka = {
+  popisek: string;
+  hodnota_kc: number;
+};
+
+// Výchozí nabídka, dokud si klientka částky nenastaví.
+export const VYCHOZI_POUKAZ_CASTKY: PoukazCastka[] = [
+  { popisek: "", hodnota_kc: 500 },
+  { popisek: "", hodnota_kc: 1000 },
+  { popisek: "", hodnota_kc: 1500 },
+  { popisek: "", hodnota_kc: 3000 },
+  { popisek: "", hodnota_kc: 5000 },
+];
 
 function connectionString() {
   return (
@@ -307,6 +328,10 @@ async function ensureSchema() {
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS telefon TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS facebook_handle TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS facebook_url TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_nadpis TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_popis TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_fotka TEXT NOT NULL DEFAULT '';
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_castky JSONB NOT NULL DEFAULT '[]';
   `);
   schemaReady = true;
 }
@@ -770,6 +795,11 @@ const NASTAVENI_DEFAULTS: Nastaveni = {
   uscreen_plans: "https://aurora.uscreen.io/plans",
   domena_expiruje: "",
   cislo_uctu_darky: "",
+  poukaz_nadpis: "Dárkový poukaz Aurora",
+  poukaz_popis:
+    "Daruj chvíli jen pro ni. Poukaz platí 6 měsíců, uplatní se na pobyty i na lekce naživo a jde vyčerpat i po částech.",
+  poukaz_fotka: "",
+  poukaz_castky: VYCHOZI_POUKAZ_CASTKY,
 };
 
 type NastaveniRow = Nastaveni & { admin_password_hash: string | null };
@@ -820,13 +850,22 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
     uscreen_plans: row.uscreen_plans || NASTAVENI_DEFAULTS.uscreen_plans,
     domena_expiruje: row.domena_expiruje || NASTAVENI_DEFAULTS.domena_expiruje,
     cislo_uctu_darky: row.cislo_uctu_darky || NASTAVENI_DEFAULTS.cislo_uctu_darky,
+    poukaz_nadpis: row.poukaz_nadpis || NASTAVENI_DEFAULTS.poukaz_nadpis,
+    poukaz_popis: row.poukaz_popis || NASTAVENI_DEFAULTS.poukaz_popis,
+    poukaz_fotka: row.poukaz_fotka ?? "",
+    // Prázdný seznam znamená „ještě nenastaveno", ne „žádné částky" — jinak
+    // by stránka s poukazem zůstala bez čeho vybírat.
+    poukaz_castky:
+      Array.isArray(row.poukaz_castky) && row.poukaz_castky.length > 0
+        ? row.poukaz_castky
+        : NASTAVENI_DEFAULTS.poukaz_castky,
   };
 });
 
 export async function updateNastaveni(fields: Nastaveni): Promise<void> {
   await ensureNastaveniRow();
   await query(
-    `UPDATE nastaveni SET kontakt_email=$1, telefon=$2, instagram_handle=$3, instagram_url=$4, facebook_handle=$5, facebook_url=$6, cena_lekce=$7, cena_mesicni=$8, cena_rocni=$9, uscreen_home=$10, uscreen_signup=$11, uscreen_login=$12, uscreen_plans=$13, domena_expiruje=$14, cislo_uctu_darky=$15 WHERE id = 1`,
+    `UPDATE nastaveni SET kontakt_email=$1, telefon=$2, instagram_handle=$3, instagram_url=$4, facebook_handle=$5, facebook_url=$6, cena_lekce=$7, cena_mesicni=$8, cena_rocni=$9, uscreen_home=$10, uscreen_signup=$11, uscreen_login=$12, uscreen_plans=$13, domena_expiruje=$14, cislo_uctu_darky=$15, poukaz_nadpis=$16, poukaz_popis=$17, poukaz_fotka=$18, poukaz_castky=$19 WHERE id = 1`,
     [
       fields.kontakt_email,
       fields.telefon,
@@ -843,6 +882,10 @@ export async function updateNastaveni(fields: Nastaveni): Promise<void> {
       fields.uscreen_plans,
       fields.domena_expiruje,
       fields.cislo_uctu_darky,
+      fields.poukaz_nadpis,
+      fields.poukaz_popis,
+      fields.poukaz_fotka,
+      JSON.stringify(fields.poukaz_castky ?? []),
     ]
   );
 }

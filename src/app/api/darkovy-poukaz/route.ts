@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createDarkovyPoukaz, getNastaveni, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
-import { parseAmount, formatKc } from "@/lib/castky";
+import { formatKc } from "@/lib/castky";
 import { posliKlientce, posliZakaznici, vetaProOdpoved } from "@/lib/email";
 import { qrPriloha } from "@/lib/qrPriloha";
 import {
@@ -27,12 +27,10 @@ export async function POST(request: Request) {
   }
 
   const body = (await request.json()) as {
-    hodnota?: string;
+    hodnota_kc?: number;
     jmeno_kupujici?: string;
     email_kupujici?: string;
     telefon_kupujici?: string;
-    jmeno_obdarovane?: string;
-    vzkaz?: string;
     [HONEYPOT_FIELD]?: string;
     [FORM_LOADED_FIELD]?: number;
     [NEWSLETTER_FIELD]?: boolean;
@@ -45,31 +43,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Příliš mnoho pokusů. Zkus to prosím za chvíli." }, { status: 429 });
   }
 
-  const hodnota = clamp((body.hodnota ?? "").trim(), 100);
   const jmeno_kupujici = clamp((body.jmeno_kupujici ?? "").trim(), 200);
   const email_kupujici = clamp((body.email_kupujici ?? "").trim(), 200);
   const telefon_kupujici = clamp((body.telefon_kupujici ?? "").trim(), 50);
-  const jmeno_obdarovane = clamp((body.jmeno_obdarovane ?? "").trim(), 200);
-  const vzkaz = clamp((body.vzkaz ?? "").trim(), 2000);
 
-  if (!hodnota || !jmeno_kupujici || !email_kupujici) {
-    return NextResponse.json({ error: "Vyplňte prosím hodnotu, jméno a e-mail." }, { status: 400 });
+  if (!jmeno_kupujici || !email_kupujici) {
+    return NextResponse.json({ error: "Vyplňte prosím jméno a e-mail." }, { status: 400 });
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email_kupujici)) {
     return NextResponse.json({ error: "E-mail nemá platný tvar." }, { status: 400 });
   }
 
-  // Hodnota musí být číslo — poukaz se čerpá po částech, takže se z ní počítá.
-  // Vlastní částku píše kupující volně, proto tahle kontrola.
-  const hodnotaKc = Math.round(parseAmount(hodnota) ?? 0);
-  if (hodnotaKc < 100 || hodnotaKc > 100000) {
+  const nastaveni = await getNastaveni();
+
+  // Částka musí být jedna z nabízených — jinak by šlo poslat cokoliv.
+  const hodnotaKc = Math.round(Number(body.hodnota_kc) || 0);
+  if (!nastaveni.poukaz_castky.some((c) => c.hodnota_kc === hodnotaKc)) {
     return NextResponse.json(
-      { error: "Zadej prosím hodnotu poukazu v korunách, mezi 100 a 100 000 Kč." },
+      { error: "Vyber prosím jednu z nabízených hodnot poukazu." },
       { status: 400 }
     );
   }
-
-  const nastaveni = await getNastaveni();
   if (!nastaveni.cislo_uctu_darky) {
     return NextResponse.json(
       { error: "Dárkové poukazy zatím nejsou dostupné. Zkus to prosím později." },
@@ -81,11 +75,13 @@ export async function POST(request: Request) {
     // Text ceny sjednotíme, ať v administraci nejsou „1500Kc" i „1 500 Kč".
     hodnota: formatKc(hodnotaKc),
     hodnota_kc: hodnotaKc,
+    // Grafiku bere poukaz z nastavení — je jedna pro všechny.
+    fotka: nastaveni.poukaz_fotka,
     jmeno_kupujici,
     email_kupujici,
     telefon_kupujici,
-    jmeno_obdarovane,
-    vzkaz,
+    jmeno_obdarovane: "",
+    vzkaz: "",
   });
 
   // Do newsletteru jen se zaškrtnutým souhlasem.
@@ -115,9 +111,7 @@ export async function POST(request: Request) {
       { popisek: "Kupující:", hodnota: jmeno_kupujici },
       { popisek: "E-mail:", hodnota: email_kupujici },
       { popisek: "Telefon:", hodnota: telefon_kupujici || "—" },
-      { popisek: "Obdarovaná:", hodnota: jmeno_obdarovane || "—" },
     ],
-    zprava: vzkaz || undefined,
     "zavěr": [
       "Až platbu uvidíš na účtu, označ poukaz v administraci jako zaplacený — kupující tím automaticky dostane e-mail s kódem a poukazu se rozeběhne platnost.",
     ],
