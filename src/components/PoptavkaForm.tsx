@@ -8,6 +8,20 @@ import { formatKc, type ZpusobPlatby } from "@/lib/castky";
 
 type Mode = "closed" | "objednavka" | "dotaz" | "cekaci";
 
+// Odpověď z /api/poukaz/overit — částky i QR kódy počítá server.
+type UplatnenyPoukaz = {
+  kod: string;
+  zustatek: number;
+  platiDo: string | null;
+  sleva: number;
+  poSleve: number;
+  zaloha: number | null;
+  doplatek: number | null;
+  zalohaProcento: number;
+  qrCela: string | null;
+  qrZaloha: string | null;
+};
+
 export default function PoptavkaForm({
   pobytId,
   pobytNadpis,
@@ -54,20 +68,72 @@ export default function PoptavkaForm({
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Dárkový poukaz — kód se ověřuje na serveru, odtud přijdou i přepočítané
+  // částky a nové QR kódy.
+  const [poukazKod, setPoukazKod] = useState("");
+  const [poukazOveruji, setPoukazOveruji] = useState(false);
+  const [poukazChyba, setPoukazChyba] = useState<string | null>(null);
+  const [poukaz, setPoukaz] = useState<UplatnenyPoukaz | null>(null);
+
   useEffect(() => {
     if (mode !== "closed") setFormLoadedAt(Date.now());
   }, [mode]);
 
   const hasPaymentInfo = Boolean(cisloUctu);
+  // S uplatněným poukazem se počítá z toho, co po slevě zbylo.
+  const zalohaAkt = poukaz ? poukaz.zaloha : (zaloha ?? null);
+  const doplatekAkt = poukaz ? poukaz.doplatek : (doplatek ?? null);
+  const celkemAkt = poukaz ? poukaz.poSleve : (castkaCelkem ?? null);
+  const procentoAkt = poukaz ? poukaz.zalohaProcento : (zalohaProcento ?? 0);
+
   // Zálohu nabízíme jen tehdy, když ji administrace umí spočítat z ceny.
-  const lzeZaloha = Boolean(zaloha && zalohaProcento);
+  const lzeZaloha = Boolean(zalohaAkt && procentoAkt);
   const platiZalohu = lzeZaloha && zpusobPlatby === "zaloha";
-  const aktualniQr = platiZalohu ? qrZalohaDataUrl : qrDataUrl;
-  const aktualniCastka = platiZalohu ? zaloha : castkaCelkem;
+  // Poukaz pokryl celou cenu — není co posílat.
+  const jeZaplacenoPoukazem = Boolean(poukaz && poukaz.poSleve <= 0);
+  const aktualniQr = poukaz
+    ? (platiZalohu ? poukaz.qrZaloha : poukaz.qrCela) ?? undefined
+    : platiZalohu
+      ? qrZalohaDataUrl
+      : qrDataUrl;
+  const aktualniCastka = platiZalohu ? zalohaAkt : celkemAkt;
 
   function reset() {
     setMode("closed");
     setError(null);
+  }
+
+  async function uplatnitPoukaz() {
+    const kod = poukazKod.trim();
+    if (!kod) return;
+    setPoukazOveruji(true);
+    setPoukazChyba(null);
+    try {
+      const res = await fetch("/api/poukaz/overit", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kod, pobyt_id: pobytId }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.ok) {
+        setPoukaz(data as UplatnenyPoukaz);
+        // Když poukaz pokryje celou cenu, volba zálohy ztrácí smysl.
+        if (data.poSleve <= 0 || !data.zaloha) setZpusobPlatby("cela");
+      } else {
+        setPoukaz(null);
+        setPoukazChyba(data.error ?? "Poukaz se nepodařilo ověřit.");
+      }
+    } catch {
+      setPoukaz(null);
+      setPoukazChyba("Poukaz se nepodařilo ověřit. Zkus to prosím znovu.");
+    }
+    setPoukazOveruji(false);
+  }
+
+  function zrusitPoukaz() {
+    setPoukaz(null);
+    setPoukazKod("");
+    setPoukazChyba(null);
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -99,6 +165,7 @@ export default function PoptavkaForm({
               typ: mode === "objednavka" ? "objednavka" : "dotaz",
               zaplaceno: mode === "objednavka" ? potvrzenoPlatba : false,
               zpusob_platby: mode === "objednavka" ? (platiZalohu ? "zaloha" : "cela") : "",
+              poukaz_kod: mode === "objednavka" && poukaz ? poukaz.kod : "",
               jmeno,
               email,
               telefon,
@@ -190,7 +257,68 @@ export default function PoptavkaForm({
           {cena && (
             <p className="text-sm text-ink">
               Cena: <strong className="font-medium">{cena}</strong>
+              {poukaz && (
+                <>
+                  {" "}
+                  <span className="text-muted">
+                    − poukaz {formatKc(poukaz.sleva)} ={" "}
+                    <strong className="font-medium text-ink">{formatKc(poukaz.poSleve)}</strong>
+                  </span>
+                </>
+              )}
             </p>
+          )}
+
+          {/* Dárkový poukaz — kód ověřuje server, ten taky přepočítá částky
+              i QR kód, ať si slevu nejde v prohlížeči přepsat. */}
+          {hasPaymentInfo && (
+            poukaz ? (
+              <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-accent bg-sand/50 p-3 text-sm">
+                <span className="text-ink">
+                  Poukaz <strong className="font-medium">{poukaz.kod}</strong> uplatněn —{" "}
+                  {formatKc(poukaz.sleva)}
+                  {poukaz.zustatek - poukaz.sleva > 0 && (
+                    <span className="block text-muted">
+                      Na poukazu ti zůstane {formatKc(poukaz.zustatek - poukaz.sleva)}.
+                    </span>
+                  )}
+                </span>
+                <button
+                  type="button"
+                  onClick={zrusitPoukaz}
+                  className="text-xs uppercase tracking-[0.2em] text-muted hover:text-ink"
+                >
+                  Odebrat
+                </button>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <label className="text-sm text-ink" htmlFor="poukaz-kod">
+                  Máš dárkový poukaz?
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  <input
+                    id="poukaz-kod"
+                    value={poukazKod}
+                    onChange={(e) => {
+                      setPoukazKod(e.target.value);
+                      setPoukazChyba(null);
+                    }}
+                    placeholder="Kód poukazu, např. AUR-1A2B3C4D"
+                    className={`${inputCls} sm:flex-1`}
+                  />
+                  <button
+                    type="button"
+                    onClick={uplatnitPoukaz}
+                    disabled={poukazOveruji || !poukazKod.trim()}
+                    className="rounded-full border border-ink/30 px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:border-accent hover:text-accent disabled:opacity-40"
+                  >
+                    {poukazOveruji ? "Ověřuji…" : "Uplatnit"}
+                  </button>
+                </div>
+                {poukazChyba && <p className="text-sm text-accent-d">{poukazChyba}</p>}
+              </div>
+            )
           )}
 
           {/* Volba platby — buď celá částka hned, nebo záloha a doplatek
@@ -213,8 +341,8 @@ export default function PoptavkaForm({
                 />
                 <span className="text-ink">
                   Celou částku najednou
-                  {castkaCelkem != null && (
-                    <span className="block text-muted">{formatKc(castkaCelkem)}</span>
+                  {celkemAkt != null && (
+                    <span className="block text-muted">{formatKc(celkemAkt)}</span>
                   )}
                 </span>
               </label>
@@ -232,11 +360,11 @@ export default function PoptavkaForm({
                   className="mt-0.5 h-4 w-4 shrink-0 accent-[#F28D76]"
                 />
                 <span className="text-ink">
-                  Zálohu {zalohaProcento} % teď, zbytek před pobytem
-                  <span className="block text-muted">Záloha {formatKc(zaloha ?? 0)}</span>
-                  {doplatek != null && (
+                  Zálohu {procentoAkt} % teď, zbytek před pobytem
+                  <span className="block text-muted">Záloha {formatKc(zalohaAkt ?? 0)}</span>
+                  {doplatekAkt != null && (
                     <span className="block text-muted">
-                      Doplatek {formatKc(doplatek)} 14 dnů před pobytem
+                      Doplatek {formatKc(doplatekAkt)} 14 dnů před pobytem
                     </span>
                   )}
                 </span>
@@ -244,7 +372,16 @@ export default function PoptavkaForm({
             </fieldset>
           )}
 
-          {hasPaymentInfo && (
+          {hasPaymentInfo && jeZaplacenoPoukazem && (
+            <div className="rounded-xl bg-sand/60 p-4 text-sm">
+              <p className="font-medium text-ink">Pobyt máš pokrytý poukazem</p>
+              <p className="mt-1 text-muted">
+                Nic už neposílej — poukaz pokryje celou cenu. Stačí odeslat objednávku.
+              </p>
+            </div>
+          )}
+
+          {hasPaymentInfo && !jeZaplacenoPoukazem && (
             <div className="flex flex-col gap-3 rounded-xl bg-sand/60 p-4 sm:flex-row sm:items-start">
               {aktualniQr && (
                 <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg bg-white">
@@ -275,9 +412,9 @@ export default function PoptavkaForm({
                     </>
                   )}
                 </p>
-                {platiZalohu && doplatek != null && (
+                {platiZalohu && doplatekAkt != null && (
                   <p className="mt-2 text-muted">
-                    Doplatek <span className="text-ink">{formatKc(doplatek)}</span> pošleš na stejný účet
+                    Doplatek <span className="text-ink">{formatKc(doplatekAkt)}</span> pošleš na stejný účet
                     nejpozději 14 dnů před začátkem pobytu.
                   </p>
                 )}
@@ -321,7 +458,7 @@ export default function PoptavkaForm({
         className={inputCls}
       />
 
-      {mode === "objednavka" && hasPaymentInfo && (
+      {mode === "objednavka" && hasPaymentInfo && !jeZaplacenoPoukazem && (
         <label className="flex items-start gap-2.5 text-sm text-ink">
           <input
             type="checkbox"

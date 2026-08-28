@@ -10,7 +10,9 @@ import {
   checkFormRateLimit,
 } from "@/lib/formGuard";
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
-import { rozpadPlatby, formatKc } from "@/lib/platba";
+import { rozpadSPoukazem, formatKc } from "@/lib/castky";
+import { overitPoukaz, POUKAZ_HLASKY } from "@/lib/poukaz";
+import { cerpatPoukaz } from "@/lib/db";
 
 // Veřejný formulář u pobytu — buď závazná objednávka (po potvrzení platby),
 // nebo prostý dotaz. Uloží se do databáze (zobrazí se v administraci) a
@@ -22,6 +24,7 @@ export async function POST(request: Request) {
     typ?: "dotaz" | "objednavka";
     zaplaceno?: boolean;
     zpusob_platby?: string;
+    poukaz_kod?: string;
     jmeno?: string;
     email?: string;
     telefon?: string;
@@ -62,35 +65,73 @@ export async function POST(request: Request) {
   const pobyt = pobytId ? await getPobyt(pobytId) : null;
   const vyzadujePlatbu = Boolean(pobyt?.cislo_uctu);
 
-  if (typ === "objednavka" && vyzadujePlatbu && !zaplaceno) {
+  // Poukaz ověřujeme znovu tady, i když ho formulář ověřoval už při zadání —
+  // mezitím se mohl vyčerpat a hlavně si prohlížeč mohl slevu přepsat.
+  const poukazKod = clamp((body.poukaz_kod ?? "").trim(), 40);
+  const poukaz = typ === "objednavka" && poukazKod ? await overitPoukaz(poukazKod) : null;
+  if (poukaz && !poukaz.ok) {
+    return NextResponse.json({ error: POUKAZ_HLASKY[poukaz.duvod] }, { status: 400 });
+  }
+
+  // Částky počítáme z pobytu v databázi, ne z toho, co pošle prohlížeč —
+  // z formuláře bereme jen volbu „celá částka / záloha" a kód poukazu.
+  const rozpad = rozpadSPoukazem({
+    cena: pobyt?.cena,
+    zalohaProcento: pobyt?.zaloha_procento,
+    zustatekPoukazu: poukaz?.ok ? poukaz.zustatek : 0,
+  });
+  const chceZalohu = body.zpusob_platby === "zaloha" && rozpad.zaloha !== null;
+  const zpusobPlatby: "" | "cela" | "zaloha" =
+    typ !== "objednavka" ? "" : chceZalohu ? "zaloha" : "cela";
+  const castka =
+    typ !== "objednavka" ? 0 : chceZalohu ? (rozpad.zaloha ?? 0) : rozpad.poSleve;
+
+  // Potvrzení platby chceme jen tehdy, když je vůbec co posílat — poukaz
+  // může pokrýt celou cenu.
+  if (typ === "objednavka" && vyzadujePlatbu && castka > 0 && !zaplaceno) {
     return NextResponse.json(
       { error: "Potvrď prosím, že jsi platbu provedla." },
       { status: 400 }
     );
   }
 
-  // Částku počítáme z pobytu v databázi, ne z toho, co pošle prohlížeč —
-  // z formuláře bereme jen volbu „celá částka / záloha".
-  const rozpad = rozpadPlatby({ cena: pobyt?.cena, zalohaProcento: pobyt?.zaloha_procento });
-  const chceZalohu = body.zpusob_platby === "zaloha" && rozpad.zaloha !== null;
-  const zpusobPlatby: "" | "cela" | "zaloha" =
-    typ !== "objednavka" ? "" : chceZalohu ? "zaloha" : "cela";
-  const castka =
-    typ !== "objednavka" ? 0 : chceZalohu ? (rozpad.zaloha ?? 0) : Math.round(rozpad.celkem ?? 0);
-
   // 1) Uložit do databáze (administrace → Poptávky)
+  let poptavkaId: number | null = null;
   if (dbConfigured()) {
-    await createPoptavka({
+    poptavkaId = await createPoptavka({
       pobyt_id: pobytId,
       typ,
       zaplaceno,
       zpusob_platby: zpusobPlatby,
       castka,
+      poukaz_kod: poukaz?.ok ? poukaz.poukaz.kod : "",
+      poukaz_sleva: rozpad.sleva,
       jmeno,
       email,
       telefon,
       zprava,
     });
+
+    // Odečet z poukazu je až po uložení objednávky, ať je čerpání na co
+    // navázat. Když mezitím poukaz někdo vyčerpal, odečet neprojde —
+    // objednávka zůstane a klientka to uvidí v administraci.
+    if (poukaz?.ok && rozpad.sleva > 0) {
+      const zbyva = await cerpatPoukaz({
+        poukaz_id: poukaz.poukaz.id,
+        castka_kc: rozpad.sleva,
+        popis: `Objednávka pobytu: ${pobyt?.nadpis ?? "—"}`,
+        poptavka_id: poptavkaId,
+      });
+      if (zbyva === null) {
+        return NextResponse.json(
+          {
+            error:
+              "Poukaz se mezitím vyčerpal. Objednávku jsme uložili — ozveme se ti a doladíme platbu.",
+          },
+          { status: 409 }
+        );
+      }
+    }
 
     // Do newsletteru jen se zaškrtnutým souhlasem.
     if (wantsNewsletter(body)) {

@@ -49,6 +49,43 @@ export function rozpadPlatby({
   return { celkem, procento, zaloha, doplatek: Math.round(celkem - zaloha) };
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Cena pobytu po uplatnění dárkového poukazu.
+// Poukaz se odečítá z celé ceny a teprve ze zbytku se počítá případná
+// záloha — jinak by nebylo jasné, jestli se sleva vztahuje na zálohu,
+// nebo na doplatek.
+// ─────────────────────────────────────────────────────────────────────────────
+export type RozpadSPoukazem = RozpadPlatby & {
+  sleva: number;
+  // Kolik zbývá zaplatit po odečtení poukazu.
+  poSleve: number;
+};
+
+export function rozpadSPoukazem({
+  cena,
+  zalohaProcento,
+  zustatekPoukazu,
+}: {
+  cena?: string;
+  zalohaProcento?: number;
+  zustatekPoukazu?: number;
+}): RozpadSPoukazem {
+  const zaklad = rozpadPlatby({ cena, zalohaProcento });
+  const celkem = zaklad.celkem ?? 0;
+  const sleva = Math.min(Math.max(zustatekPoukazu ?? 0, 0), Math.round(celkem));
+  const poSleve = Math.round(celkem) - sleva;
+
+  if (sleva <= 0) {
+    return { ...zaklad, sleva: 0, poSleve: Math.round(celkem) };
+  }
+  // Zálohu má smysl nabízet jen z toho, co po poukazu zbylo.
+  if (zaklad.procento <= 0 || poSleve <= 0) {
+    return { ...zaklad, zaloha: null, doplatek: null, sleva, poSleve };
+  }
+  const zaloha = Math.round((poSleve * zaklad.procento) / 100);
+  return { ...zaklad, zaloha, doplatek: poSleve - zaloha, sleva, poSleve };
+}
+
 // Vlastní formátování místo Intl — server (Node) a prohlížeč se u mezery
 // v tisících liší a React by hlásil nesoulad při hydrataci.
 export function formatKc(castka: number): string {
