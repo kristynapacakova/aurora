@@ -136,7 +136,7 @@ export default function DarkovyPoukazForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="flex flex-col gap-4 rounded-2xl bg-white/70 p-6 ring-1 ring-line"
+      className="flex w-full flex-col gap-4 rounded-2xl bg-white/70 p-6 text-left ring-1 ring-line"
     >
       <p className="text-xs uppercase tracking-[0.25em] text-accent">
         {mode === "darovat" ? "Dárkový poukaz" : "Dotaz"} — {nadpis}
