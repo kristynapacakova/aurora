@@ -68,6 +68,9 @@ export type Poptavka = {
   // Kolik podle své volby poslala (v Kč). Počítá se na serveru z ceny pobytu,
   // ne z toho, co pošle prohlížeč.
   castka: number;
+  // Uplatněný dárkový poukaz a sleva, kterou přinesl (v Kč).
+  poukaz_kod: string;
+  poukaz_sleva: number;
   precteno: boolean;
   jmeno: string;
   email: string;
@@ -97,6 +100,13 @@ export type DarkovyPoukaz = {
   id: number;
   kod: string;
   hodnota: string;
+  // Hodnota v korunách. Sloupec hodnota zůstává jako text kvůli tomu, co si
+  // kupující vybrala („1000 Kč"), ale počítá se s tímhle číslem.
+  hodnota_kc: number;
+  // Kolik z poukazu ještě zbývá — poukaz jde čerpat po částech.
+  zustatek_kc: number;
+  // Platnost běží od zaplacení, ne od objednání; do té doby je null.
+  plati_do: string | null;
   variabilni_symbol: string;
   jmeno_kupujici: string;
   email_kupujici: string;
@@ -105,6 +115,17 @@ export type DarkovyPoukaz = {
   vzkaz: string;
   zaplaceno: boolean;
   vyuzito: boolean;
+  created_at: string;
+};
+
+// Jedno čerpání poukazu — objednávka pobytu na webu, nebo ruční odečet
+// v administraci (živá lekce a podobně).
+export type PoukazCerpani = {
+  id: number;
+  poukaz_id: number;
+  poptavka_id: number | null;
+  popis: string;
+  castka_kc: number;
   created_at: string;
 };
 
@@ -207,6 +228,8 @@ async function ensureSchema() {
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS precteno BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS zpusob_platby TEXT NOT NULL DEFAULT '';
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS castka INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS poukaz_kod TEXT NOT NULL DEFAULT '';
+    ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS poukaz_sleva INTEGER NOT NULL DEFAULT 0;
 
     CREATE TABLE IF NOT EXISTS newsletter (
       id SERIAL PRIMARY KEY,
@@ -238,6 +261,27 @@ async function ensureSchema() {
       vyuzito BOOLEAN NOT NULL DEFAULT FALSE,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
+    ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS hodnota_kc INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS zustatek_kc INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS plati_do DATE;
+    -- Poukazy vystavené dřív mají hodnotu jen v textu („1000 Kč"); číslo z ní
+    -- vytáhneme jednou, ať se s nimi počítá stejně jako s novými.
+    UPDATE darkove_poukazy
+       SET hodnota_kc = COALESCE(NULLIF(regexp_replace(hodnota, '[^0-9]', '', 'g'), '')::INTEGER, 0)
+     WHERE hodnota_kc = 0;
+    UPDATE darkove_poukazy SET zustatek_kc = hodnota_kc
+     WHERE zustatek_kc = 0 AND vyuzito = FALSE;
+
+    -- Historie čerpání: kdy, na co a kolik se z poukazu odečetlo.
+    CREATE TABLE IF NOT EXISTS poukazy_cerpani (
+      id SERIAL PRIMARY KEY,
+      poukaz_id INTEGER NOT NULL REFERENCES darkove_poukazy(id) ON DELETE CASCADE,
+      poptavka_id INTEGER,
+      popis TEXT NOT NULL DEFAULT '',
+      castka_kc INTEGER NOT NULL,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS poukazy_cerpani_poukaz_idx ON poukazy_cerpani (poukaz_id);
 
     CREATE TABLE IF NOT EXISTS nastaveni (
       id INTEGER PRIMARY KEY DEFAULT 1,
@@ -453,16 +497,31 @@ export async function createPoptavka(p: {
   zaplaceno: boolean;
   zpusob_platby: "" | "cela" | "zaloha";
   castka: number;
+  poukaz_kod?: string;
+  poukaz_sleva?: number;
   jmeno: string;
   email: string;
   telefon: string;
   zprava: string;
-}): Promise<void> {
-  await query(
-    `INSERT INTO poptavky (pobyt_id, typ, zaplaceno, zpusob_platby, castka, jmeno, email, telefon, zprava)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-    [p.pobyt_id, p.typ, p.zaplaceno, p.zpusob_platby, p.castka, p.jmeno, p.email, p.telefon, p.zprava]
+}): Promise<number> {
+  const rows = await query<{ id: number }>(
+    `INSERT INTO poptavky (pobyt_id, typ, zaplaceno, zpusob_platby, castka, poukaz_kod, poukaz_sleva, jmeno, email, telefon, zprava)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING id`,
+    [
+      p.pobyt_id,
+      p.typ,
+      p.zaplaceno,
+      p.zpusob_platby,
+      p.castka,
+      p.poukaz_kod ?? "",
+      p.poukaz_sleva ?? 0,
+      p.jmeno,
+      p.email,
+      p.telefon,
+      p.zprava,
+    ]
   );
+  return rows[0].id;
 }
 
 export async function getPoptavky(): Promise<Poptavka[]> {
@@ -541,6 +600,7 @@ function generateVariabilniSymbol(): string {
 
 export async function createDarkovyPoukaz(p: {
   hodnota: string;
+  hodnota_kc: number;
   jmeno_kupujici: string;
   email_kupujici: string;
   telefon_kupujici: string;
@@ -549,11 +609,12 @@ export async function createDarkovyPoukaz(p: {
 }): Promise<DarkovyPoukaz> {
   for (let attempt = 0; attempt < 5; attempt++) {
     const rows = await query<DarkovyPoukaz>(
-      `INSERT INTO darkove_poukazy (kod, hodnota, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8) ON CONFLICT (kod) DO NOTHING RETURNING *`,
+      `INSERT INTO darkove_poukazy (kod, hodnota, hodnota_kc, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (kod) DO NOTHING RETURNING *`,
       [
         generateVoucherCode(),
         p.hodnota,
+        p.hodnota_kc,
         generateVariabilniSymbol(),
         p.jmeno_kupujici,
         p.email_kupujici,
@@ -572,16 +633,100 @@ export async function getDarkovePoukazy(): Promise<DarkovyPoukaz[]> {
   return query<DarkovyPoukaz>(`SELECT * FROM darkove_poukazy ORDER BY created_at DESC`);
 }
 
+// Platnost poukazu se počítá od zaplacení, ne od objednání.
+export const PLATNOST_POUKAZU_MESICU = 6;
+
+export async function getDarkovyPoukazByKod(kod: string): Promise<DarkovyPoukaz | null> {
+  if (!dbConfigured()) return null;
+  // Bez ohledu na velikost písmen a okolní mezery — kód se opisuje z papíru
+  // nebo kopíruje z e-mailu i s mezerou navíc.
+  const rows = await query<DarkovyPoukaz>(
+    `SELECT * FROM darkove_poukazy WHERE UPPER(kod) = UPPER($1)`,
+    [kod.trim()]
+  );
+  return rows[0] ?? null;
+}
+
 export async function updateDarkovyPoukazStav(
   id: number,
   fields: { zaplaceno?: boolean; vyuzito?: boolean }
 ): Promise<void> {
-  if (fields.zaplaceno !== undefined) {
-    await query(`UPDATE darkove_poukazy SET zaplaceno = $1 WHERE id = $2`, [fields.zaplaceno, id]);
+  if (fields.zaplaceno === true) {
+    // Zaplacení poukaz teprve aktivuje: rozeběhne se platnost a naplní se
+    // zůstatek. COALESCE a CASE hlídají, ať se u znovu označeného poukazu
+    // nepřepíše už načaté čerpání ani dřív nastavená platnost.
+    await query(
+      `UPDATE darkove_poukazy
+          SET zaplaceno = TRUE,
+              plati_do = COALESCE(plati_do, (CURRENT_DATE + ($2 || ' months')::INTERVAL)::DATE),
+              zustatek_kc = CASE
+                WHEN vyuzito = FALSE AND zustatek_kc = 0 THEN hodnota_kc
+                ELSE zustatek_kc
+              END
+        WHERE id = $1`,
+      [id, String(PLATNOST_POUKAZU_MESICU)]
+    );
+  } else if (fields.zaplaceno === false) {
+    await query(`UPDATE darkove_poukazy SET zaplaceno = FALSE WHERE id = $1`, [id]);
   }
   if (fields.vyuzito !== undefined) {
     await query(`UPDATE darkove_poukazy SET vyuzito = $1 WHERE id = $2`, [fields.vyuzito, id]);
   }
+}
+
+// Odečte z poukazu částku a zapíše čerpání. Podmínky jsou schválně přímo
+// v UPDATE — dvě objednávky odeslané ve stejnou chvíli se tak nemůžou opřít
+// o stejný zůstatek. Vrací nový zůstatek, nebo null, když odečíst nešlo
+// (nezaplacený, propadlý, nebo už tolik nezbývá).
+export async function cerpatPoukaz(p: {
+  poukaz_id: number;
+  castka_kc: number;
+  popis: string;
+  poptavka_id?: number | null;
+}): Promise<number | null> {
+  if (p.castka_kc <= 0) return null;
+  const rows = await query<{ zustatek_kc: number }>(
+    `UPDATE darkove_poukazy
+        SET zustatek_kc = zustatek_kc - $2,
+            vyuzito = (zustatek_kc - $2) <= 0
+      WHERE id = $1
+        AND zaplaceno = TRUE
+        AND zustatek_kc >= $2
+        AND (plati_do IS NULL OR plati_do >= CURRENT_DATE)
+      RETURNING zustatek_kc`,
+    [p.poukaz_id, p.castka_kc]
+  );
+  if (!rows[0]) return null;
+
+  await query(
+    `INSERT INTO poukazy_cerpani (poukaz_id, poptavka_id, popis, castka_kc)
+     VALUES ($1, $2, $3, $4)`,
+    [p.poukaz_id, p.poptavka_id ?? null, p.popis, p.castka_kc]
+  );
+  return rows[0].zustatek_kc;
+}
+
+// Vrácení odečtu zpět na poukaz — když se objednávka zrušila nebo klientka
+// odečetla omylem. LEAST hlídá, ať zůstatek nepřeroste původní hodnotu.
+export async function vratitCerpani(cerpaniId: number): Promise<void> {
+  const rows = await query<PoukazCerpani>(
+    `DELETE FROM poukazy_cerpani WHERE id = $1 RETURNING *`,
+    [cerpaniId]
+  );
+  const cerpani = rows[0];
+  if (!cerpani) return;
+  await query(
+    `UPDATE darkove_poukazy
+        SET zustatek_kc = LEAST(hodnota_kc, zustatek_kc + $2),
+            vyuzito = FALSE
+      WHERE id = $1`,
+    [cerpani.poukaz_id, cerpani.castka_kc]
+  );
+}
+
+export async function getPoukazyCerpani(): Promise<PoukazCerpani[]> {
+  if (!dbConfigured()) return [];
+  return query<PoukazCerpani>(`SELECT * FROM poukazy_cerpani ORDER BY created_at DESC`);
 }
 
 export async function deleteDarkovyPoukaz(id: number): Promise<void> {

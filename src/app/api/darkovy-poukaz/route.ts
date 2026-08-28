@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createDarkovyPoukaz, getNastaveni, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
+import { parseAmount, formatKc } from "@/lib/castky";
 import {
   HONEYPOT_FIELD,
   isHoneypotTripped,
@@ -57,6 +58,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "E-mail nemá platný tvar." }, { status: 400 });
   }
 
+  // Hodnota musí být číslo — poukaz se čerpá po částech, takže se z ní počítá.
+  // Vlastní částku píše kupující volně, proto tahle kontrola.
+  const hodnotaKc = Math.round(parseAmount(hodnota) ?? 0);
+  if (hodnotaKc < 100 || hodnotaKc > 100000) {
+    return NextResponse.json(
+      { error: "Zadej prosím hodnotu poukazu v korunách, mezi 100 a 100 000 Kč." },
+      { status: 400 }
+    );
+  }
+
   const nastaveni = await getNastaveni();
   if (!nastaveni.cislo_uctu_darky) {
     return NextResponse.json(
@@ -66,7 +77,9 @@ export async function POST(request: Request) {
   }
 
   const poukaz = await createDarkovyPoukaz({
-    hodnota,
+    // Text ceny sjednotíme, ať v administraci nejsou „1500Kc" i „1 500 Kč".
+    hodnota: formatKc(hodnotaKc),
+    hodnota_kc: hodnotaKc,
     jmeno_kupujici,
     email_kupujici,
     telefon_kupujici,
@@ -85,7 +98,7 @@ export async function POST(request: Request) {
 
   const qrDataUrl = await generatePlatebniQr({
     cisloUctu: nastaveni.cislo_uctu_darky,
-    cena: hodnota,
+    castka: hodnotaKc,
     variabilniSymbol: poukaz.variabilni_symbol,
   });
 
@@ -99,12 +112,12 @@ export async function POST(request: Request) {
       from: fromEmail,
       to: toEmail,
       replyTo: email_kupujici,
-      subject: `Nový dárkový poukaz: ${poukaz.kod} (${hodnota})`,
+      subject: `Nový dárkový poukaz: ${poukaz.kod} (${poukaz.hodnota})`,
       text: [
         `Nový zájem o dárkový poukaz — čeká na platbu.`,
         ``,
         `Kód: ${poukaz.kod}`,
-        `Hodnota: ${hodnota}`,
+        `Hodnota: ${poukaz.hodnota}`,
         `Variabilní symbol: ${poukaz.variabilni_symbol}`,
         ``,
         `Kupující: ${jmeno_kupujici}`,
