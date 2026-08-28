@@ -4,8 +4,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, EmailSablonaRadek, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
+import EmailSablony from "./EmailSablony";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
 import { upload } from "@vercel/blob/client";
@@ -28,6 +29,7 @@ type Section =
   | "cekaci-listina"
   | "darkove-poukazy"
   | "statistiky"
+  | "emaily"
   | "nastaveni";
 type PoptavkaFilter = "vse" | "nezaplacene" | "objednavky" | "dotazy";
 type PendingDelete = {
@@ -147,6 +149,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
   { key: "darkove-poukazy", label: "Dárkové poukazy", icon: IconGift },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
+  { key: "emaily", label: "E-maily", icon: IconMail },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
 ];
 
@@ -161,6 +164,7 @@ export default function AdminDashboard({
   darkovePoukazy,
   poukazyCerpani,
   poukazyNabidka,
+  emailSablony,
   nastaveni,
   email,
 }: {
@@ -174,6 +178,7 @@ export default function AdminDashboard({
   darkovePoukazy: DarkovyPoukaz[];
   poukazyCerpani: PoukazCerpani[];
   poukazyNabidka: PoukazNabidka[];
+  emailSablony: EmailSablonaRadek[];
   nastaveni: Nastaveni;
   email: StavOdesilani;
 }) {
@@ -990,6 +995,12 @@ export default function AdminDashboard({
           )}
 
           {/* ── Nastavení ── */}
+          {section === "emaily" && (
+            <section>
+              <EmailSablony ulozene={emailSablony} />
+            </section>
+          )}
+
           {section === "nastaveni" && (
             <div className="max-w-3xl">
               <NastaveniForm initial={nastaveni} email={email} />

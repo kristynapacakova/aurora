@@ -8,6 +8,7 @@ import {
   getDarkovePoukazy,
   getPoukazyCerpani,
   getPoukazyNabidka,
+  getEmailSablony,
   getNastaveni,
   dbConfigured,
 } from "@/lib/db";
@@ -19,7 +20,7 @@ export const dynamic = "force-dynamic";
 
 export default async function AdminPage() {
   const configured = dbConfigured();
-  const [pobyty, clanky, lekce, poptavky, newsletter, cekaciListina, darkovePoukazy, poukazyCerpani, poukazyNabidka] = configured
+  const [pobyty, clanky, lekce, poptavky, newsletter, cekaciListina, darkovePoukazy, poukazyCerpani, poukazyNabidka, emailSablony] = configured
     ? await Promise.all([
         getPobyty(false),
         getClanky(false),
@@ -30,8 +31,9 @@ export default async function AdminPage() {
         getDarkovePoukazy(),
         getPoukazyCerpani(),
         getPoukazyNabidka(false),
+        getEmailSablony(),
       ])
-    : [[], [], [], [], [], [], [], [], []];
+    : [[], [], [], [], [], [], [], [], [], []];
   const nastaveni = await getNastaveni();
   // Doména bez protokolu a bez www — proti ní se porovnává adresa odesílatele.
   const domena = SITE_URL.replace(/^https?:\/\//, "").replace(/^www\./, "");
@@ -49,6 +51,7 @@ export default async function AdminPage() {
       darkovePoukazy={darkovePoukazy}
       poukazyCerpani={poukazyCerpani}
       poukazyNabidka={poukazyNabidka}
+      emailSablony={emailSablony}
       nastaveni={nastaveni}
       email={email}
     />

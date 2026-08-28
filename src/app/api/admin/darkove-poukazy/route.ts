@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
-import { posliZakaznici, vetaProOdpoved } from "@/lib/email";
+import { posliZakaznici } from "@/lib/email";
+import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { formatKc } from "@/lib/castky";
 import {
   createDarkovyPoukaz,
   updateDarkovyPoukazFotka,
   updateDarkovyPoukazHodnota,
   getDarkovyPoukazById,
-  PLATNOST_POUKAZU_MESICU,
   updateDarkovyPoukazStav,
   deleteDarkovyPoukaz,
   cerpatPoukaz,
@@ -33,16 +33,18 @@ function noDb() {
 async function posliKodPoukazu(id: number): Promise<void> {
   const poukaz = await getDarkovyPoukazById(id);
   if (!poukaz) return;
+  const sablona = await nactiSablonu("poukaz-kod", {
+    jmeno: poukaz.jmeno_kupujici,
+    kod: poukaz.kod,
+    castka: poukaz.hodnota,
+    plati_do: poukaz.plati_do ? new Date(poukaz.plati_do).toLocaleDateString("cs-CZ") : "",
+  });
+
   await posliZakaznici({
     to: poukaz.email_kupujici,
-    subject: `✨ Tvůj dárkový poukaz ${poukaz.kod}`,
+    subject: sablona.predmet,
     nadpis: "Poukaz je připravený",
-    odstavce: [
-      `Ahoj ${poukaz.jmeno_kupujici}, platbu máme, díky!`,
-      poukaz.jmeno_obdarovane
-        ? `Tady je kód poukazu pro ${poukaz.jmeno_obdarovane} — stačí ho zadat v objednávce pobytu.`
-        : "Tady je kód poukazu — stačí ho zadat v objednávce pobytu.",
-    ],
+    odstavce: sablona.odstavce,
     obrazek: poukaz.fotka || undefined,
     radky: [
       { popisek: "Kód poukazu:", hodnota: poukaz.kod },
@@ -56,10 +58,7 @@ async function posliKodPoukazu(id: number): Promise<void> {
           ]
         : []),
     ],
-    zavěr: [
-      `Poukaz jde vyčerpat i po částech — co se nevyužije, zůstane na příště. Platnost je ${PLATNOST_POUKAZU_MESICU} měsíců.`,
-      vetaProOdpoved(),
-    ],
+    zavěr: sablona.zaver,
   });
 }
 

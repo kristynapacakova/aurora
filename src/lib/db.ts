@@ -316,6 +316,15 @@ async function ensureSchema() {
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
 
+    -- Upravené texty automatických e-mailů. Co tu není, bere se z kódu.
+    CREATE TABLE IF NOT EXISTS email_sablony (
+      klic TEXT PRIMARY KEY,
+      predmet TEXT NOT NULL DEFAULT '',
+      odstavce TEXT NOT NULL DEFAULT '',
+      zaver TEXT NOT NULL DEFAULT '',
+      upraveno TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
+
     -- Historie čerpání: kdy, na co a kolik se z poukazu odečetlo.
     CREATE TABLE IF NOT EXISTS poukazy_cerpani (
       id SERIAL PRIMARY KEY,
@@ -852,6 +861,47 @@ export async function updateDarkovyPoukazFotka(id: number, fotka: string): Promi
 
 export async function deleteDarkovyPoukaz(id: number): Promise<void> {
   await query(`DELETE FROM darkove_poukazy WHERE id = $1`, [id]);
+}
+
+// ── Šablony e-mailů ─────────────────────────────────────────────────────────
+
+export type EmailSablonaRadek = {
+  klic: string;
+  predmet: string;
+  odstavce: string;
+  zaver: string;
+};
+
+export async function getEmailSablony(): Promise<EmailSablonaRadek[]> {
+  if (!dbConfigured()) return [];
+  return query<EmailSablonaRadek>(`SELECT klic, predmet, odstavce, zaver FROM email_sablony`);
+}
+
+export async function getEmailSablona(klic: string): Promise<EmailSablonaRadek | null> {
+  if (!dbConfigured()) return null;
+  const rows = await query<EmailSablonaRadek>(
+    `SELECT klic, predmet, odstavce, zaver FROM email_sablony WHERE klic = $1`,
+    [klic]
+  );
+  return rows[0] ?? null;
+}
+
+export async function ulozitEmailSablonu(s: EmailSablonaRadek): Promise<void> {
+  await query(
+    `INSERT INTO email_sablony (klic, predmet, odstavce, zaver, upraveno)
+     VALUES ($1, $2, $3, $4, NOW())
+     ON CONFLICT (klic) DO UPDATE
+        SET predmet = EXCLUDED.predmet,
+            odstavce = EXCLUDED.odstavce,
+            zaver = EXCLUDED.zaver,
+            upraveno = NOW()`,
+    [s.klic, s.predmet, s.odstavce, s.zaver]
+  );
+}
+
+// Vrácení k původnímu znění — smazaný řádek znamená „ber text z kódu".
+export async function smazatEmailSablonu(klic: string): Promise<void> {
+  await query(`DELETE FROM email_sablony WHERE klic = $1`, [klic]);
 }
 
 // ── Nastavení ───────────────────────────────────────────────────────────────

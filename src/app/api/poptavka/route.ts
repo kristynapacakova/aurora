@@ -11,6 +11,7 @@ import {
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 import { rozpadSPoukazem, formatKc } from "@/lib/castky";
 import { posliKlientce, posliZakaznici, vetaProOdpoved, type Radek } from "@/lib/email";
+import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { generatePlatebniQr } from "@/lib/platba";
 import { qrPriloha } from "@/lib/qrPriloha";
 import { overitPoukaz, POUKAZ_HLASKY } from "@/lib/poukaz";
@@ -205,16 +206,23 @@ export async function POST(request: Request) {
             variabilniSymbol: pobyt.variabilni_symbol,
           })
         : null;
+    // Text bere z šablony, kterou jde upravit v administraci.
+    const sablona = await nactiSablonu("objednavka-pobytu", {
+      jmeno,
+      pobyt: pobyt?.nadpis ?? "",
+      castka: castka > 0 ? formatKc(castka) : "",
+    });
+
     await posliZakaznici({
       to: email,
-      subject: `🌿 Potvrzení objednávky — ${pobyt?.nadpis ?? "pobyt"}`,
+      subject: sablona.predmet,
       nadpis: "Máme tvou objednávku",
-      odstavce: [
-        `Milá ${jmeno}, děkujeme za objednávku pobytu ${pobyt?.nadpis ?? ""}.`.trim(),
-        zbyvaZaplatit
-          ? "Jakmile platbu uvidíme na účtu, ozveme se ti s potvrzením a máš místo závazně rezervované."
-          : "Pobyt máš pokrytý dárkovým poukazem, nic už posílat nemusíš. Brzy se ti ozveme s potvrzením.",
-      ],
+      odstavce: zbyvaZaplatit
+        ? sablona.odstavce
+        : [
+            sablona.odstavce[0] ?? "",
+            "Pobyt máš pokrytý dárkovým poukazem, nic už posílat nemusíš. Brzy se ti ozveme s potvrzením.",
+          ].filter(Boolean),
       radky: [
         ...(pobyt?.termin ? [{ popisek: "Termín:", hodnota: pobyt.termin }] : []),
         ...(pobyt?.misto ? [{ popisek: "Místo:", hodnota: pobyt.misto }] : []),
@@ -240,7 +248,7 @@ export async function POST(request: Request) {
           ? ["Doplatek pošleš na stejný účet nejpozději 14 dnů před začátkem pobytu."]
           : []),
         ...(pobyt?.platebni_pokyny ? [pobyt.platebni_pokyny] : []),
-        vetaProOdpoved(),
+        ...sablona.zaver,
       ],
       attachments: qrPriloha(qr, "qr-platba.png"),
     });

@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { createDarkovyPoukaz, getNastaveni, getPoukazNabidka, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
 import { formatKc } from "@/lib/castky";
-import { posliKlientce, posliZakaznici, vetaProOdpoved } from "@/lib/email";
+import { posliKlientce, posliZakaznici } from "@/lib/email";
+import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { qrPriloha } from "@/lib/qrPriloha";
 import {
   HONEYPOT_FIELD,
@@ -142,23 +143,22 @@ export async function POST(request: Request) {
   // Kupující dostane platební údaje hned; kód poukazu až po zaplacení.
   // QR kód jde jako příloha, protože obrázky vložené přímo do e-mailu
   // (data:) většina poštovních programů zahodí.
+  const sablona = await nactiSablonu("poukaz-platba", {
+    jmeno: jmeno_kupujici,
+    castka: poukaz.hodnota,
+  });
+
   await posliZakaznici({
     to: email_kupujici,
-    subject: `🎁 Dárkový poukaz — platební údaje (${poukaz.hodnota})`,
+    subject: sablona.predmet,
     nadpis: "Děkujeme za objednávku poukazu",
-    odstavce: [
-      `Ahoj ${jmeno_kupujici}, poukaz máme připravený. Zbývá ho uhradit.`,
-      "Jakmile platbu uvidíme na účtu, pošleme ti e-mailem kód poukazu.",
-    ],
+    odstavce: sablona.odstavce,
     radky: [
       { popisek: "Hodnota:", hodnota: poukaz.hodnota },
       { popisek: "Číslo účtu:", hodnota: nastaveni.cislo_uctu_darky },
       { popisek: "Variabilní symbol:", hodnota: poukaz.variabilni_symbol },
     ],
-    zavěr: [
-      "V příloze je QR kód pro platbu.",
-      vetaProOdpoved(),
-    ],
+    zavěr: sablona.zaver,
     attachments: qrPriloha(qrDataUrl, `qr-poukaz-${poukaz.kod}.png`),
   });
 
