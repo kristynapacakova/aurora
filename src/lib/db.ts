@@ -825,6 +825,24 @@ export async function getPoukazyCerpani(): Promise<PoukazCerpani[]> {
   return query<PoukazCerpani>(`SELECT * FROM poukazy_cerpani ORDER BY created_at DESC`);
 }
 
+// Oprava hodnoty poukazu — když se to, co dorazilo na účet, rozejde s tím,
+// co zákaznice v objednávce zaklikla. Jde to jen do potvrzení platby: potom
+// už se z poukazu čerpá a přepsat hodnotu by rozbilo zůstatek.
+export async function updateDarkovyPoukazHodnota(
+  id: number,
+  hodnota: string,
+  hodnotaKc: number
+): Promise<boolean> {
+  const rows = await query<{ id: number }>(
+    `UPDATE darkove_poukazy
+        SET hodnota = $2, hodnota_kc = $3, zustatek_kc = $3
+      WHERE id = $1 AND zaplaceno = FALSE
+      RETURNING id`,
+    [id, hodnota, hodnotaKc]
+  );
+  return rows.length > 0;
+}
+
 export async function updateDarkovyPoukazFotka(id: number, fotka: string): Promise<void> {
   await query(`UPDATE darkove_poukazy SET fotka = $1 WHERE id = $2`, [fotka, id]);
 }

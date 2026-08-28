@@ -5,6 +5,7 @@ import { formatKc } from "@/lib/castky";
 import {
   createDarkovyPoukaz,
   updateDarkovyPoukazFotka,
+  updateDarkovyPoukazHodnota,
   getDarkovyPoukazById,
   PLATNOST_POUKAZU_MESICU,
   updateDarkovyPoukazStav,
@@ -165,14 +166,33 @@ export async function PATCH(request: Request) {
   if (!(await isAdminRequest(request))) return unauthorized();
   if (!dbConfigured()) return noDb();
 
-  const { cerpani_id, id, fotka } = (await request.json()) as {
+  const { cerpani_id, id, fotka, hodnota_kc } = (await request.json()) as {
     cerpani_id?: number;
     id?: number;
     fotka?: string;
+    hodnota_kc?: number;
   };
 
   if (typeof fotka === "string" && id) {
     await updateDarkovyPoukazFotka(id, fotka.trim());
+    return NextResponse.json({ ok: true });
+  }
+
+  if (typeof hodnota_kc === "number" && id) {
+    const castka = Math.round(hodnota_kc);
+    if (castka < 100 || castka > 100000) {
+      return NextResponse.json(
+        { error: "Hodnota musí být mezi 100 a 100 000 Kč." },
+        { status: 400 }
+      );
+    }
+    const zmeneno = await updateDarkovyPoukazHodnota(id, formatKc(castka), castka);
+    if (!zmeneno) {
+      return NextResponse.json(
+        { error: "Hodnotu jde změnit jen u poukazu, který ještě není zaplacený." },
+        { status: 400 }
+      );
+    }
     return NextResponse.json({ ok: true });
   }
 

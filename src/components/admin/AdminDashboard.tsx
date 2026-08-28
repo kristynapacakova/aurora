@@ -188,6 +188,7 @@ export default function AdminDashboard({
   const [castkaOdectu, setCastkaOdectu] = useState<Record<number, string>>({});
   const [popisOdectu, setPopisOdectu] = useState<Record<number, string>>({});
   const [chybaOdectu, setChybaOdectu] = useState<Record<number, string>>({});
+  const [novaHodnota, setNovaHodnota] = useState<Record<number, string>>({});
   const [otevrenaHistorie, setOtevrenaHistorie] = useState<number | null>(null);
   // Vystavení poukazu z administrace — hotovost, dárek, výhra v soutěži.
   const [novyPoukazOtevren, setNovyPoukazOtevren] = useState(false);
@@ -253,6 +254,27 @@ export default function AdminDashboard({
   }
 
   // Doplnění grafiky k poukazu, který si někdo koupil přes web.
+  // Oprava hodnoty, když se platba na účtu rozejde s tím, co zákaznice
+  // v objednávce zaklikla.
+  async function zmenitHodnotuPoukazu(poukazId: number) {
+    const castka = Math.round(Number((novaHodnota[poukazId] ?? "").replace(/\s/g, "")));
+    if (!castka) return;
+    setBusy(true);
+    const res = await fetch("/api/admin/darkove-poukazy", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: poukazId, hodnota_kc: castka }),
+    });
+    setBusy(false);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      setChybaOdectu({ ...chybaOdectu, [poukazId]: data.error ?? "Změna se nepovedla." });
+      return;
+    }
+    setNovaHodnota({ ...novaHodnota, [poukazId]: "" });
+    router.refresh();
+  }
+
   async function doplnitFotkuPoukazu(poukazId: number, soubor: File) {
     const url = await nahratFotkuPoukazu(soubor);
     if (!url) return;
@@ -1837,6 +1859,37 @@ export default function AdminDashboard({
                                     ))}
                                   </ul>
                                 )}
+                              </div>
+                            )}
+
+                            {/* Dokud poukaz není zaplacený, jde hodnotu
+                                opravit — platba na účtu se může rozejít
+                                s tím, co zákaznice zaklikla. */}
+                            {!p.zaplaceno && (
+                              <div className="mt-3 flex flex-wrap items-center gap-2">
+                                <span className="text-xs uppercase tracking-[0.15em] text-muted">
+                                  Opravit hodnotu
+                                </span>
+                                <input
+                                  value={novaHodnota[p.id] ?? ""}
+                                  onChange={(e) =>
+                                    setNovaHodnota({
+                                      ...novaHodnota,
+                                      [p.id]: e.target.value.replace(/[^0-9]/g, ""),
+                                    })
+                                  }
+                                  inputMode="numeric"
+                                  placeholder={String(p.hodnota_kc)}
+                                  className="w-28 rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                                />
+                                <button
+                                  type="button"
+                                  disabled={busy || !(novaHodnota[p.id] ?? "").trim()}
+                                  onClick={() => zmenitHodnotuPoukazu(p.id)}
+                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent disabled:opacity-40"
+                                >
+                                  Uložit
+                                </button>
                               </div>
                             )}
 
