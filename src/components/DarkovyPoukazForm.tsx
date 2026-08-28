@@ -139,7 +139,7 @@ export default function DarkovyPoukazForm({
       className="flex w-full flex-col gap-4 rounded-2xl bg-white/70 p-6 text-left ring-1 ring-line"
     >
       <p className="text-xs uppercase tracking-[0.25em] text-accent">
-        {mode === "darovat" ? "Dárkový poukaz" : "Dotaz"} — {nadpis}
+        {mode === "darovat" ? "Objednávka poukazu" : "Dotaz k poukazu"}
       </p>
 
       <input
