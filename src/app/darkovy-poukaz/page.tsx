@@ -7,6 +7,10 @@ import { getNastaveni, getPoukazyNabidka } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle } from "@/components/BrandIcons";
 
+// Poukazy se plní z administrace, takže stránka nesmí zůstat viset na verzi
+// vygenerované při nasazení — stejná minutová cache jako u pobytů.
+export const revalidate = 60;
+
 export const metadata = {
   title: "Dárkový poukaz | AURORA jóga",
   description: "Daruj někomu blízkému chvíli klidu — dárkový poukaz na jógu s Aurorou.",
