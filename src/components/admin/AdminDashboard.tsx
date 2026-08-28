@@ -8,6 +8,8 @@ import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, D
 import NastaveniForm from "./NastaveniForm";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
+import { upload } from "@vercel/blob/client";
+import { resizeImageFile } from "@/lib/imageResize";
 
 type EditorTab = "pobyty" | "clanky" | "lekce";
 type Section =
@@ -169,6 +171,83 @@ export default function AdminDashboard({
   const [popisOdectu, setPopisOdectu] = useState<Record<number, string>>({});
   const [chybaOdectu, setChybaOdectu] = useState<Record<number, string>>({});
   const [otevrenaHistorie, setOtevrenaHistorie] = useState<number | null>(null);
+  // Vystavení poukazu z administrace — hotovost, dárek, výhra v soutěži.
+  const [novyPoukazOtevren, setNovyPoukazOtevren] = useState(false);
+  const [novyPoukaz, setNovyPoukaz] = useState({
+    hodnota: "",
+    jmeno_kupujici: "",
+    email_kupujici: "",
+    telefon_kupujici: "",
+    jmeno_obdarovane: "",
+    vzkaz: "",
+    fotka: "",
+    zaplaceno: true,
+  });
+  const [novyPoukazChyba, setNovyPoukazChyba] = useState<string | null>(null);
+  const [nahravamFotku, setNahravamFotku] = useState(false);
+
+  async function nahratFotkuPoukazu(soubor: File): Promise<string | null> {
+    setNahravamFotku(true);
+    try {
+      const zmenseny = await resizeImageFile(soubor);
+      const bezpecneJmeno = zmenseny.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+      const blob = await upload(`poukazy/${Date.now()}-${bezpecneJmeno}`, zmenseny, {
+        access: "public",
+        handleUploadUrl: "/api/admin/upload",
+      });
+      return blob.url;
+    } catch {
+      return null;
+    } finally {
+      setNahravamFotku(false);
+    }
+  }
+
+  async function zalozitPoukaz() {
+    setNovyPoukazChyba(null);
+    setBusy(true);
+    const res = await fetch("/api/admin/darkove-poukazy", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        akce: "zalozit",
+        ...novyPoukaz,
+        hodnota_kc: Number(novyPoukaz.hodnota.replace(/\s/g, "")) || 0,
+      }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setBusy(false);
+    if (!res.ok) {
+      setNovyPoukazChyba(data.error ?? "Poukaz se nepodařilo vystavit.");
+      return;
+    }
+    setNovyPoukazOtevren(false);
+    setNovyPoukaz({
+      hodnota: "",
+      jmeno_kupujici: "",
+      email_kupujici: "",
+      telefon_kupujici: "",
+      jmeno_obdarovane: "",
+      vzkaz: "",
+      fotka: "",
+      zaplaceno: true,
+    });
+    router.refresh();
+  }
+
+  // Doplnění grafiky k poukazu, který si někdo koupil přes web.
+  async function doplnitFotkuPoukazu(poukazId: number, soubor: File) {
+    const url = await nahratFotkuPoukazu(soubor);
+    if (!url) return;
+    setBusy(true);
+    await fetch("/api/admin/darkove-poukazy", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: poukazId, fotka: url }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
 
   const cerpaniPoukazu = (poukazId: number) =>
     poukazyCerpani.filter((c) => c.poukaz_id === poukazId);
@@ -1455,10 +1534,142 @@ export default function AdminDashboard({
           {/* ── Dárkové poukazy ── */}
           {section === "darkove-poukazy" && (
             <section>
+              <div className="mb-6 flex flex-wrap justify-end gap-3">
+                <button
+                  onClick={() => {
+                    setNovyPoukazOtevren(!novyPoukazOtevren);
+                    setNovyPoukazChyba(null);
+                  }}
+                  className="rounded-full bg-gradient-aurora px-5 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90"
+                >
+                  {novyPoukazOtevren ? "Zavřít" : "+ Nový poukaz"}
+                </button>
+              </div>
+
+              {novyPoukazOtevren && (
+                <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
+                  <div>
+                    <p className="text-xs uppercase tracking-[0.25em] text-accent">Nový poukaz</p>
+                    <p className="mt-2 text-xs text-muted">
+                      Pro poukazy, které neprošly webem — hotovost, dárek, výhra. Kód se vygeneruje
+                      sám a poukaz se objeví v seznamu níž.
+                    </p>
+                  </div>
+
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                    <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                      Hodnota v Kč *
+                      <input
+                        value={novyPoukaz.hodnota}
+                        onChange={(e) =>
+                          setNovyPoukaz({ ...novyPoukaz, hodnota: e.target.value.replace(/[^0-9]/g, "") })
+                        }
+                        inputMode="numeric"
+                        placeholder="Např. 2000"
+                        className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                      E-mail, kam poslat kód *
+                      <input
+                        value={novyPoukaz.email_kupujici}
+                        onChange={(e) => setNovyPoukaz({ ...novyPoukaz, email_kupujici: e.target.value })}
+                        type="email"
+                        placeholder="jana@email.cz"
+                        className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                      Kdo poukaz kupuje
+                      <input
+                        value={novyPoukaz.jmeno_kupujici}
+                        onChange={(e) => setNovyPoukaz({ ...novyPoukaz, jmeno_kupujici: e.target.value })}
+                        className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                      Pro koho je
+                      <input
+                        value={novyPoukaz.jmeno_obdarovane}
+                        onChange={(e) => setNovyPoukaz({ ...novyPoukaz, jmeno_obdarovane: e.target.value })}
+                        className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
+                      />
+                    </label>
+                  </div>
+
+                  <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                    Vzkaz
+                    <textarea
+                      value={novyPoukaz.vzkaz}
+                      onChange={(e) => setNovyPoukaz({ ...novyPoukaz, vzkaz: e.target.value })}
+                      rows={2}
+                      className="w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-accent"
+                    />
+                  </label>
+
+                  {/* Grafika poukazu — ukáže se přímo v e-mailu s kódem. */}
+                  <div className="flex flex-wrap items-center gap-4">
+                    {novyPoukaz.fotka ? (
+                      <div className="relative h-24 w-36 overflow-hidden rounded-xl">
+                        <Image src={novyPoukaz.fotka} alt="Grafika poukazu" fill className="object-cover" sizes="144px" />
+                        <button
+                          type="button"
+                          onClick={() => setNovyPoukaz({ ...novyPoukaz, fotka: "" })}
+                          className="absolute right-1.5 top-1.5 rounded-full bg-ink/70 px-2 py-0.5 text-xs text-cream"
+                          aria-label="Odebrat fotku"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="flex w-fit cursor-pointer items-center gap-2 rounded-full border border-line px-5 py-2.5 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent">
+                        {nahravamFotku ? "Nahrávám…" : "+ Grafika poukazu"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          disabled={nahravamFotku}
+                          onChange={async (e) => {
+                            const soubor = e.target.files?.[0];
+                            e.target.value = "";
+                            if (!soubor) return;
+                            const url = await nahratFotkuPoukazu(soubor);
+                            if (url) setNovyPoukaz((n) => ({ ...n, fotka: url }));
+                          }}
+                          className="hidden"
+                        />
+                      </label>
+                    )}
+                    <p className="text-xs text-muted">Nepovinné — ukáže se v e-mailu s kódem.</p>
+                  </div>
+
+                  <label className="flex items-center gap-3 text-sm text-ink">
+                    <input
+                      type="checkbox"
+                      checked={novyPoukaz.zaplaceno}
+                      onChange={(e) => setNovyPoukaz({ ...novyPoukaz, zaplaceno: e.target.checked })}
+                      className="h-4 w-4 accent-[#F28D76]"
+                    />
+                    Poukaz je zaplacený — rovnou začne platit a kód odejde e-mailem
+                  </label>
+
+                  {novyPoukazChyba && <p className="text-sm text-accent-d">{novyPoukazChyba}</p>}
+
+                  <div>
+                    <button
+                      onClick={zalozitPoukaz}
+                      disabled={busy || nahravamFotku}
+                      className="rounded-full bg-gradient-aurora px-8 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90 disabled:opacity-50"
+                    >
+                      {busy ? "Vystavuji…" : "Vystavit poukaz"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {darkovePoukazy.length === 0 ? (
                 <p className="text-sm text-muted">
                   Zatím žádné dárkové poukazy. Objeví se tady, jakmile si někdo koupí poukaz na
-                  webu.
+                  webu — nebo jakmile nějaký vystavíš tlačítkem nahoře.
                 </p>
               ) : (
                 <>
@@ -1577,6 +1788,36 @@ export default function AdminDashboard({
                                 )}
                               </div>
                             )}
+
+                            {/* Grafika poukazu — u koupených přes web ji jde
+                                doplnit až tady. Do e-mailu s kódem se přiloží
+                                při odeslání, takže má smysl doplnit ji dřív,
+                                než poukaz označíš jako zaplacený. */}
+                            <div className="mt-3 flex flex-wrap items-center gap-3">
+                              {p.fotka ? (
+                                <div className="relative h-16 w-24 overflow-hidden rounded-lg">
+                                  <Image src={p.fotka} alt="Grafika poukazu" fill className="object-cover" sizes="96px" />
+                                </div>
+                              ) : null}
+                              <label className="flex w-fit cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.15em] text-accent-d hover:underline">
+                                {nahravamFotku
+                                  ? "Nahrávám…"
+                                  : p.fotka
+                                    ? "Změnit grafiku"
+                                    : "+ Přidat grafiku"}
+                                <input
+                                  type="file"
+                                  accept="image/*"
+                                  disabled={busy || nahravamFotku}
+                                  onChange={(e) => {
+                                    const soubor = e.target.files?.[0];
+                                    e.target.value = "";
+                                    if (soubor) doplnitFotkuPoukazu(p.id, soubor);
+                                  }}
+                                  className="hidden"
+                                />
+                              </label>
+                            </div>
 
                             {/* Ruční odečet — pro to, co se neplatí přes web
                                 (živá lekce a podobně). */}

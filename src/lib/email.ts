@@ -182,6 +182,9 @@ export type ObsahEmailu = {
   radky?: Radek[];
   // Text od návštěvnice — vykresluje se zvlášť, s zachovanými řádky.
   zprava?: string;
+  // Obrázek na celou šířku karty (grafika dárkového poukazu). Adresa musí
+  // být veřejně dostupná — obrázky si poštovní program stahuje sám.
+  obrazek?: string;
   zavěr?: string[];
 };
 
@@ -232,6 +235,14 @@ export function sablona(o: ObsahEmailu): string {
           <p style="margin:0 0 8px;font-family:${PISMO_TEXT};font-size:10px;letter-spacing:3.5px;text-transform:uppercase;color:#F28D76;">Aurora jóga</p>
           <h1 style="margin:0 0 22px;font-family:${PISMO_NADPIS};font-size:27px;font-weight:400;line-height:1.25;color:#8C5F47;">${escapeHtml(o.nadpis)}</h1>
           ${odstavce}
+          ${
+            o.obrazek
+              ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:20px 0 4px;"><tr><td>
+                   <img src="${escapeHtml(o.obrazek)}" alt="Dárkový poukaz" width="492"
+                        style="display:block;border:0;outline:none;width:100%;max-width:492px;height:auto;border-radius:14px;" />
+                 </td></tr></table>`
+              : ""
+          }
           ${
             radky
               ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:22px 0 6px;background:#FBE9DE;border-radius:14px;"><tr><td style="padding:18px 20px;">

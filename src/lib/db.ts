@@ -107,6 +107,9 @@ export type DarkovyPoukaz = {
   zustatek_kc: number;
   // Platnost běží od zaplacení, ne od objednání; do té doby je null.
   plati_do: string | null;
+  // Grafika poukazu — ukáže se v e-mailu s kódem. Prázdné = e-mail bude
+  // jen textový, což je v pořádku.
+  fotka: string;
   variabilni_symbol: string;
   jmeno_kupujici: string;
   email_kupujici: string;
@@ -264,6 +267,7 @@ async function ensureSchema() {
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS hodnota_kc INTEGER NOT NULL DEFAULT 0;
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS zustatek_kc INTEGER NOT NULL DEFAULT 0;
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS plati_do DATE;
+    ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS fotka TEXT NOT NULL DEFAULT '';
     -- Poukazy vystavené dřív mají hodnotu jen v textu („1000 Kč"); číslo z ní
     -- vytáhneme jednou, ať se s nimi počítá stejně jako s novými.
     UPDATE darkove_poukazy
@@ -601,6 +605,7 @@ function generateVariabilniSymbol(): string {
 export async function createDarkovyPoukaz(p: {
   hodnota: string;
   hodnota_kc: number;
+  fotka?: string;
   jmeno_kupujici: string;
   email_kupujici: string;
   telefon_kupujici: string;
@@ -609,8 +614,8 @@ export async function createDarkovyPoukaz(p: {
 }): Promise<DarkovyPoukaz> {
   for (let attempt = 0; attempt < 5; attempt++) {
     const rows = await query<DarkovyPoukaz>(
-      `INSERT INTO darkove_poukazy (kod, hodnota, hodnota_kc, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) ON CONFLICT (kod) DO NOTHING RETURNING *`,
+      `INSERT INTO darkove_poukazy (kod, hodnota, hodnota_kc, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz, fotka)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ON CONFLICT (kod) DO NOTHING RETURNING *`,
       [
         generateVoucherCode(),
         p.hodnota,
@@ -621,6 +626,7 @@ export async function createDarkovyPoukaz(p: {
         p.telefon_kupujici,
         p.jmeno_obdarovane,
         p.vzkaz,
+        p.fotka ?? "",
       ]
     );
     if (rows[0]) return rows[0];
@@ -733,6 +739,10 @@ export async function vratitCerpani(cerpaniId: number): Promise<void> {
 export async function getPoukazyCerpani(): Promise<PoukazCerpani[]> {
   if (!dbConfigured()) return [];
   return query<PoukazCerpani>(`SELECT * FROM poukazy_cerpani ORDER BY created_at DESC`);
+}
+
+export async function updateDarkovyPoukazFotka(id: number, fotka: string): Promise<void> {
+  await query(`UPDATE darkove_poukazy SET fotka = $1 WHERE id = $2`, [fotka, id]);
 }
 
 export async function deleteDarkovyPoukaz(id: number): Promise<void> {
