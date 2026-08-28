@@ -5,6 +5,7 @@ import FadeUp from "@/components/FadeUp";
 import DarkovyPoukazForm from "@/components/DarkovyPoukazForm";
 import { getNastaveni, getPoukazyNabidka } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
+import { generatePlatebniQr } from "@/lib/platba";
 import { IconSparkle } from "@/components/BrandIcons";
 
 // Poukazy se plní z administrace, takže stránka nesmí zůstat viset na verzi
@@ -23,6 +24,19 @@ export default async function DarkovyPoukazPage() {
   ]);
   // Bez čísla účtu není kam platit, bez vystaveného poukazu není co koupit.
   const dostupne = Boolean(cislo_uctu_darky) && poukazy.length > 0;
+
+  // QR kód pro každou nabízenou částku připravíme tady — knihovna na QR kódy
+  // je velká a nemá smysl ji posílat do prohlížeče každé návštěvnici.
+  // Variabilní symbol vzniká až se samotným poukazem, takže v QR není;
+  // platba se páruje podle jména v poznámce.
+  const vsechnyCastky = [...new Set(poukazy.flatMap((p) => p.castky.map((c) => c.hodnota_kc)))];
+  const qrDvojice = await Promise.all(
+    vsechnyCastky.map(async (castka) => [
+      castka,
+      dostupne ? await generatePlatebniQr({ cisloUctu: cislo_uctu_darky, castka }) : null,
+    ] as const)
+  );
+  const qrKody = Object.fromEntries(qrDvojice);
 
   return (
     <>
@@ -99,7 +113,13 @@ export default async function DarkovyPoukazPage() {
                   {/* Formulář zabírá celou šířku pod grafikou — je to nejdelší
                       část a vedle textu by se mačkal. */}
                   <div className="mx-auto mt-10 max-w-2xl">
-                    <DarkovyPoukazForm nabidkaId={poukaz.id} castky={poukaz.castky} />
+                    <DarkovyPoukazForm
+                      nabidkaId={poukaz.id}
+                      nadpis={poukaz.nadpis}
+                      castky={poukaz.castky}
+                      qrKody={qrKody}
+                      cisloUctu={cislo_uctu_darky}
+                    />
                   </div>
                 </FadeUp>
               ))}

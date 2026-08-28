@@ -32,6 +32,7 @@ export async function POST(request: Request) {
     jmeno_kupujici?: string;
     email_kupujici?: string;
     telefon_kupujici?: string;
+    platba_potvrzena?: boolean;
     [HONEYPOT_FIELD]?: string;
     [FORM_LOADED_FIELD]?: number;
     [NEWSLETTER_FIELD]?: boolean;
@@ -78,12 +79,22 @@ export async function POST(request: Request) {
     );
   }
 
+  // Zákaznice platí ještě před odesláním formuláře (QR má rovnou u sebe),
+  // takže objednávka bez potvrzení platby by klientku jen mátla.
+  if (body.platba_potvrzena !== true) {
+    return NextResponse.json(
+      { error: "Potvrď prosím, že jsi platbu odeslala." },
+      { status: 400 }
+    );
+  }
+
   const poukaz = await createDarkovyPoukaz({
     // Text ceny sjednotíme, ať v administraci nejsou „1500Kc" i „1 500 Kč".
     hodnota: formatKc(hodnotaKc),
     hodnota_kc: hodnotaKc,
     // Grafiku bere poukaz z nastavení — je jedna pro všechny.
     fotka: nabidka.fotka,
+    platba_ohlasena: true,
     jmeno_kupujici,
     email_kupujici,
     telefon_kupujici,
@@ -110,7 +121,9 @@ export async function POST(request: Request) {
     subject: `🎁 Nový dárkový poukaz: ${poukaz.kod} (${poukaz.hodnota})`,
     replyTo: email_kupujici,
     nadpis: "Nový dárkový poukaz",
-    odstavce: ["Poukaz je vystavený a čeká na platbu."],
+    odstavce: [
+      "Zákaznice objednala poukaz a potvrdila, že platbu odeslala. Až ji uvidíš na účtu, označ poukaz v administraci jako zaplacený — tím jí odejde e-mail s kódem.",
+    ],
     radky: [
       { popisek: "Kód:", hodnota: poukaz.kod },
       { popisek: "Hodnota:", hodnota: poukaz.hodnota },

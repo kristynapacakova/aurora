@@ -647,6 +647,7 @@ export async function createDarkovyPoukaz(p: {
   hodnota: string;
   hodnota_kc: number;
   fotka?: string;
+  platba_ohlasena?: boolean;
   jmeno_kupujici: string;
   email_kupujici: string;
   telefon_kupujici: string;
@@ -655,8 +656,8 @@ export async function createDarkovyPoukaz(p: {
 }): Promise<DarkovyPoukaz> {
   for (let attempt = 0; attempt < 5; attempt++) {
     const rows = await query<DarkovyPoukaz>(
-      `INSERT INTO darkove_poukazy (kod, hodnota, hodnota_kc, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz, fotka)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) ON CONFLICT (kod) DO NOTHING RETURNING *`,
+      `INSERT INTO darkove_poukazy (kod, hodnota, hodnota_kc, variabilni_symbol, jmeno_kupujici, email_kupujici, telefon_kupujici, jmeno_obdarovane, vzkaz, fotka, platba_ohlasena)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) ON CONFLICT (kod) DO NOTHING RETURNING *`,
       [
         generateVoucherCode(),
         p.hodnota,
@@ -668,6 +669,7 @@ export async function createDarkovyPoukaz(p: {
         p.jmeno_obdarovane,
         p.vzkaz,
         p.fotka ?? "",
+        p.platba_ohlasena ?? false,
       ]
     );
     if (rows[0]) return rows[0];
@@ -821,18 +823,6 @@ export async function vratitCerpani(cerpaniId: number): Promise<void> {
 export async function getPoukazyCerpani(): Promise<PoukazCerpani[]> {
   if (!dbConfigured()) return [];
   return query<PoukazCerpani>(`SELECT * FROM poukazy_cerpani ORDER BY created_at DESC`);
-}
-
-// Ohlášení platby zákaznicí. Hledá se podle kódu, protože ten má
-// v prohlížeči po objednávce k dispozici — id nikoliv.
-export async function ohlasitPlatbuPoukazu(kod: string): Promise<boolean> {
-  const rows = await query<{ id: number }>(
-    `UPDATE darkove_poukazy SET platba_ohlasena = TRUE
-      WHERE UPPER(kod) = UPPER($1) AND zaplaceno = FALSE
-      RETURNING id`,
-    [kod.trim()]
-  );
-  return rows.length > 0;
 }
 
 export async function updateDarkovyPoukazFotka(id: number, fotka: string): Promise<void> {
