@@ -5,7 +5,6 @@ import FadeUp from "@/components/FadeUp";
 import DarkovyPoukazForm from "@/components/DarkovyPoukazForm";
 import { getNastaveni, getPoukazyNabidka } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
-import { formatKc } from "@/lib/castky";
 import { generatePlatebniQr } from "@/lib/platba";
 import { IconSparkle } from "@/components/BrandIcons";
 
@@ -97,27 +96,20 @@ export default async function DarkovyPoukazPage() {
 
                       {poukaz.popis && (
                         <div className="mt-5 flex flex-col gap-3">
-                          {poukaz.popis.split(/\n\s*\n/).map((odstavec, j) => (
-                            <p key={j} className="text-sm leading-relaxed text-muted">
-                              {nbsp(odstavec)}
-                            </p>
-                          ))}
+                          {poukaz.popis.split(/\n\s*\n/).map((odstavec, j) =>
+                            // Odstavec uvozený hvězdičkou je poznámka pod
+                            // čarou — vysází se drobněji a odsazeně.
+                            odstavec.trimStart().startsWith("*") ? (
+                              <p key={j} className="mt-1 text-xs leading-relaxed text-muted/80">
+                                {nbsp(odstavec.trimStart())}
+                              </p>
+                            ) : (
+                              <p key={j} className="text-sm leading-relaxed text-muted">
+                                {nbsp(odstavec)}
+                              </p>
+                            )
+                          )}
                         </div>
-                      )}
-
-                      {poukaz.castky.length > 0 && (
-                        <p className="mt-6 text-sm text-ink">
-                          Hodnoty:{" "}
-                          <span className="text-muted">
-                            {poukaz.castky
-                              .map((c) =>
-                                c.popisek
-                                  ? `${c.popisek} — ${formatKc(c.hodnota_kc)}`
-                                  : formatKc(c.hodnota_kc)
-                              )
-                              .join(" · ")}
-                          </span>
-                        </p>
                       )}
 
                       <div className="mt-8">
