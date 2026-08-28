@@ -5,6 +5,7 @@ import FadeUp from "@/components/FadeUp";
 import DarkovyPoukazForm from "@/components/DarkovyPoukazForm";
 import { getNastaveni, getPoukazyNabidka } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
+import { formatKc } from "@/lib/castky";
 import { generatePlatebniQr } from "@/lib/platba";
 import { IconSparkle } from "@/components/BrandIcons";
 
@@ -42,71 +43,92 @@ export default async function DarkovyPoukazPage() {
     <>
       <Navbar />
       <main className="min-h-screen bg-cream px-6 pb-24 pt-32 sm:pt-36">
-        <div className="mx-auto max-w-3xl">
-          <FadeUp>
-            <div className="mb-10 flex items-center justify-center gap-3">
-              <IconSparkle size={12} />
-              <p className="text-xs uppercase tracking-[0.3em] text-accent">Dárkový poukaz</p>
-              <IconSparkle size={12} />
-            </div>
-          </FadeUp>
-
+        <div className="mx-auto max-w-6xl">
           {!dostupne ? (
-            <FadeUp delay={0.1}>
-              <p className="mx-auto mt-8 rounded-2xl bg-white/70 p-6 text-center text-sm text-muted ring-1 ring-line">
+            <FadeUp>
+              <p className="mx-auto max-w-xl rounded-2xl bg-white/70 p-6 text-center text-sm text-muted ring-1 ring-line">
                 {nbsp("Dárkové poukazy se právě chystají. Sleduj nás na Instagramu, ať ti spuštění neuteče. 🌿")}
               </p>
             </FadeUp>
           ) : (
-            <div className="flex flex-col gap-24">
+            <div className="flex flex-col gap-28">
               {poukazy.map((poukaz, i) => (
                 <FadeUp key={poukaz.id} delay={0.05}>
-                  <section className="text-center">
-                    {/* Grafika je to, co poukaz prodává, takže je hrdinou
-                        stránky. Výška se řídí obrázkem — pevný rám by kolem
-                        návrhu nechával prázdné pruhy. */}
+                  {/* Stejné rozložení jako sekce na úvodní stránce: grafika
+                      na jedné straně, text a objednávka vedle ní. */}
+                  <section
+                    className={`flex flex-col items-center gap-10 md:items-start md:gap-16 ${
+                      i % 2 === 0 ? "md:flex-row" : "md:flex-row-reverse"
+                    }`}
+                  >
+                    {/* Výšku určuje grafika, ne rám — pevný poměr by kolem
+                        návrhu nechával prázdné pruhy, nebo by ho ořízl. */}
                     {poukaz.fotka && (
-                      <Image
-                        src={poukaz.fotka}
-                        alt={poukaz.nadpis}
-                        width={1400}
-                        height={900}
-                        className="mx-auto h-auto w-full rounded-3xl shadow-[0_18px_50px_-20px_rgba(140,95,71,0.35)]"
-                        sizes="(max-width: 768px) 100vw, 768px"
-                        priority={i === 0}
-                      />
-                    )}
-
-                    {i === 0 ? (
-                      <h1 className="mt-10 font-allura text-4xl text-ink sm:text-5xl">
-                        {nbsp(poukaz.nadpis)}
-                      </h1>
-                    ) : (
-                      <h2 className="mt-10 font-allura text-4xl text-ink sm:text-5xl">
-                        {nbsp(poukaz.nadpis)}
-                      </h2>
-                    )}
-
-                    {poukaz.popis && (
-                      <div className="mx-auto mt-5 flex max-w-xl flex-col gap-3">
-                        {poukaz.popis.split(/\n\s*\n/).map((odstavec, j) => (
-                          <p key={j} className="text-sm leading-relaxed text-muted sm:text-base">
-                            {nbsp(odstavec)}
-                          </p>
-                        ))}
+                      <div className="w-full md:w-[52%]">
+                        <Image
+                          src={poukaz.fotka}
+                          alt={poukaz.nadpis}
+                          width={1400}
+                          height={900}
+                          className="h-auto w-full rounded-2xl shadow-[0_20px_50px_-24px_rgba(140,95,71,0.45)]"
+                          sizes="(max-width: 768px) 100vw, 52vw"
+                          priority={i === 0}
+                        />
                       </div>
                     )}
 
-                    {/* Tlačítka i rozbalený formulář drží v jednom sloupci
-                        pod textem — stejný postup jako u objednávky pobytu. */}
-                    <div className="mt-9 flex flex-col items-center">
-                      <DarkovyPoukazForm
-                        nabidkaId={poukaz.id}
-                        nadpis={poukaz.nadpis}
-                        castky={poukaz.castky}
-                        qrKody={qrKody}
-                        cisloUctu={cislo_uctu_darky}
-                      />
+                    <div className="flex-1">
+                      <div className="mb-3 flex items-center gap-3">
+                        <IconSparkle size={12} />
+                        <p className="text-xs uppercase tracking-[0.3em] text-accent">
+                          Dárkový poukaz
+                        </p>
+                      </div>
+
+                      {i === 0 ? (
+                        <h1 className="font-allura text-4xl text-ink sm:text-5xl">
+                          {nbsp(poukaz.nadpis)}
+                        </h1>
+                      ) : (
+                        <h2 className="font-allura text-4xl text-ink sm:text-5xl">
+                          {nbsp(poukaz.nadpis)}
+                        </h2>
+                      )}
+
+                      {poukaz.popis && (
+                        <div className="mt-5 flex flex-col gap-3">
+                          {poukaz.popis.split(/\n\s*\n/).map((odstavec, j) => (
+                            <p key={j} className="text-sm leading-relaxed text-muted">
+                              {nbsp(odstavec)}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+
+                      {poukaz.castky.length > 0 && (
+                        <p className="mt-6 text-sm text-ink">
+                          Hodnoty:{" "}
+                          <span className="text-muted">
+                            {poukaz.castky
+                              .map((c) =>
+                                c.popisek
+                                  ? `${c.popisek} — ${formatKc(c.hodnota_kc)}`
+                                  : formatKc(c.hodnota_kc)
+                              )
+                              .join(" · ")}
+                          </span>
+                        </p>
+                      )}
+
+                      <div className="mt-8">
+                        <DarkovyPoukazForm
+                          nabidkaId={poukaz.id}
+                          nadpis={poukaz.nadpis}
+                          castky={poukaz.castky}
+                          qrKody={qrKody}
+                          cisloUctu={cislo_uctu_darky}
+                        />
+                      </div>
                     </div>
                   </section>
                 </FadeUp>
