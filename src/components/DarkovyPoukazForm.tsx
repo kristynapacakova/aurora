@@ -200,11 +200,14 @@ export default function DarkovyPoukazForm({
                 Částka k úhradě: <span className="text-ink">{vybranaHodnota}</span>
                 <br />
                 Číslo účtu: <span className="text-ink">{cisloUctu}</span>
+                <br />
+                Poznámka pro příjemce: <span className="text-ink">tvoje jméno a příjmení</span>
               </p>
               {/* Variabilní symbol vzniká až s poukazem, takže platbu
                   spárujeme podle jména v poznámce. */}
               <p className="mt-2 text-muted">
-                Do poznámky pro příjemce napiš prosím své jméno — díky tomu platbu poznáme.
+                Do poznámky pro příjemce napiš prosím své jméno a příjmení — díky tomu platbu
+                poznáme. Platební údaje ti přijdou i e-mailem.
               </p>
             </div>
           </div>

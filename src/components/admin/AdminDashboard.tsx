@@ -197,6 +197,8 @@ export default function AdminDashboard({
   const [otevrenaHistorie, setOtevrenaHistorie] = useState<number | null>(null);
   // Hláška po ručním odeslání e-mailu s kódem.
   const [stavKodu, setStavKodu] = useState<Record<number, string>>({});
+  // Totéž u objednávek — výsledek odeslané výzvy k doplatku.
+  const [stavPoptavky, setStavPoptavky] = useState<Record<number, string>>({});
   // Vystavení poukazu z administrace — hotovost, dárek, výhra v soutěži.
   const [novyPoukazOtevren, setNovyPoukazOtevren] = useState(false);
   const [novyPoukaz, setNovyPoukaz] = useState({
@@ -633,6 +635,36 @@ export default function AdminDashboard({
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ id: q.id, precteno: !q.precteno }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  // Potvrzení platby u objednávky pobytu — odejde tím i e-mail zákaznici,
+  // že platbu vidíš a místo má jisté.
+  async function togglePoptavkaZaplaceno(q: Poptavka) {
+    setBusy(true);
+    await fetch("/api/admin/poptavky", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: q.id, zaplaceno: !q.zaplaceno }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function poslatDoplatek(q: Poptavka) {
+    setBusy(true);
+    setStavPoptavky({ ...stavPoptavky, [q.id]: "Odesílám…" });
+    const res = await fetch("/api/admin/poptavky", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: q.id, akce: "poslat-doplatek" }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setStavPoptavky({
+      ...stavPoptavky,
+      [q.id]: res.ok && data.ok ? "Výzva odeslána." : (data.error ?? "Odeslání se nepovedlo."),
     });
     setBusy(false);
     router.refresh();
@@ -1485,6 +1517,31 @@ export default function AdminDashboard({
                               >
                                 {q.precteno ? "Označit jako nové" : "Označit jako přečtené"}
                               </button>
+                              {/* Potvrzení platby — zákaznici tím odejde
+                                  e-mail, že peníze dorazily. */}
+                              {q.typ === "objednavka" && (
+                                <button
+                                  disabled={busy}
+                                  onClick={() => togglePoptavkaZaplaceno(q)}
+                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                >
+                                  {q.zaplaceno ? "Označit nezaplaceno" : "Označit zaplaceno"}
+                                </button>
+                              )}
+                              {q.typ === "objednavka" && q.zpusob_platby === "zaloha" && (
+                                <button
+                                  disabled={busy}
+                                  onClick={() => poslatDoplatek(q)}
+                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                >
+                                  Poslat výzvu k doplatku
+                                </button>
+                              )}
+                              {stavPoptavky[q.id] && (
+                                <p className="max-w-[12rem] text-right text-xs text-muted">
+                                  {stavPoptavky[q.id]}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </li>

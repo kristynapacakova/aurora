@@ -210,12 +210,16 @@ export async function POST(request: Request) {
             cisloUctu: pobyt.cislo_uctu,
             castka,
             variabilniSymbol: pobyt.variabilni_symbol,
+            // Jméno se v bance předvyplní do zprávy pro příjemce — podle něj
+            // se platba páruje, když se variabilní symbol cestou ztratí.
+            zpravaProPrijemce: jmeno,
           })
         : null;
     // Text bere z šablony, kterou jde upravit v administraci.
     const sablona = await nactiSablonu("objednavka-pobytu", {
       jmeno,
       pobyt: pobyt?.nadpis ?? "",
+      termin: pobyt?.termin ?? "",
       castka: castka > 0 ? formatKc(castka) : "",
     });
 
@@ -234,28 +238,39 @@ export async function POST(request: Request) {
         ...(pobyt?.misto ? [{ popisek: "Místo:", hodnota: pobyt.misto }] : []),
         ...(pobyt?.cena ? [{ popisek: "Cena pobytu:", hodnota: pobyt.cena }] : []),
         ...poukazRadky,
-        ...platbaRadky,
-        ...(zbyvaZaplatit && pobyt?.cislo_uctu
-          ? [{ popisek: "Číslo účtu:", hodnota: pobyt.cislo_uctu }]
-          : []),
-        ...(zbyvaZaplatit && pobyt?.variabilni_symbol
-          ? [{ popisek: "Variabilní symbol:", hodnota: pobyt.variabilni_symbol }]
-          : []),
       ],
-      zavěr: [
-        ...(qr
-          ? [
-              zpusobPlatby === "zaloha"
-                ? "V příloze je QR kód na zálohu — kdyby se ti platbu nepovedlo odeslat hned, můžeš ho použít i později."
-                : "V příloze je QR kód pro platbu — kdyby se ti ji nepovedlo odeslat hned, můžeš ho použít i později.",
-            ]
-          : []),
-        ...(zpusobPlatby === "zaloha"
-          ? ["Doplatek pošleš na stejný účet nejpozději 14 dnů před začátkem pobytu."]
-          : []),
-        ...(pobyt?.platebni_pokyny ? [pobyt.platebni_pokyny] : []),
-        ...sablona.zaver,
-      ],
+      // Platební údaje pohromadě dole — kdyby se platba nepovedla odeslat
+      // napoprvé, zákaznice je má v poště a nemusí se vracet na web.
+      platba: zbyvaZaplatit
+        ? {
+            nadpis: "Platební údaje",
+            radky: [
+              ...platbaRadky,
+              ...(pobyt?.cislo_uctu
+                ? [{ popisek: "Číslo účtu:", hodnota: pobyt.cislo_uctu }]
+                : []),
+              ...(pobyt?.variabilni_symbol
+                ? [{ popisek: "Variabilní symbol:", hodnota: pobyt.variabilni_symbol }]
+                : []),
+              { popisek: "Poznámka pro příjemce:", hodnota: jmeno },
+            ],
+            poznamka: [
+              "Do poznámky pro příjemce prosím napiš svoje jméno a příjmení — podle toho platbu poznám.",
+              ...(qr
+                ? [
+                    zpusobPlatby === "zaloha"
+                      ? "V příloze je QR kód na zálohu, můžeš ho použít i později."
+                      : "V příloze je QR kód pro platbu, můžeš ho použít i později.",
+                  ]
+                : []),
+              ...(zpusobPlatby === "zaloha"
+                ? ["Doplatek pošleš na stejný účet nejpozději 14 dnů před začátkem pobytu."]
+                : []),
+              ...(pobyt?.platebni_pokyny ? [pobyt.platebni_pokyny] : []),
+            ],
+          }
+        : undefined,
+      zavěr: sablona.zaver,
       attachments: qrPriloha(qr, "qr-platba.png"),
     });
 

@@ -118,6 +118,9 @@ export async function POST(request: Request) {
     cisloUctu: nastaveni.cislo_uctu_darky,
     castka: hodnotaKc,
     variabilniSymbol: poukaz.variabilni_symbol,
+    // Jméno se v bance předvyplní do zprávy pro příjemce, ať jde platba
+    // spárovat i bez variabilního symbolu.
+    zpravaProPrijemce: jmeno_kupujici,
   });
 
   await posliKlientce({
@@ -153,11 +156,19 @@ export async function POST(request: Request) {
     subject: sablona.predmet,
     nadpis: "Děkujeme za objednávku poukazu",
     odstavce: sablona.odstavce,
-    radky: [
-      { popisek: "Hodnota:", hodnota: poukaz.hodnota },
-      { popisek: "Číslo účtu:", hodnota: nastaveni.cislo_uctu_darky },
-      { popisek: "Variabilní symbol:", hodnota: poukaz.variabilni_symbol },
-    ],
+    radky: [{ popisek: "Hodnota poukazu:", hodnota: poukaz.hodnota }],
+    platba: {
+      nadpis: "Platební údaje",
+      radky: [
+        { popisek: "K úhradě:", hodnota: poukaz.hodnota },
+        { popisek: "Číslo účtu:", hodnota: nastaveni.cislo_uctu_darky },
+        { popisek: "Variabilní symbol:", hodnota: poukaz.variabilni_symbol },
+        { popisek: "Poznámka pro příjemce:", hodnota: jmeno_kupujici },
+      ],
+      poznamka: [
+        "Do poznámky pro příjemce prosím napiš svoje jméno a příjmení — podle toho platbu poznám.",
+      ],
+    },
     zavěr: sablona.zaver,
     attachments: qrPriloha(qrDataUrl, `qr-poukaz-${poukaz.kod}.png`),
   });

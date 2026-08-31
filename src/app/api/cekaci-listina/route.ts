@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
-import { posliKlientce, vetaProOdpoved } from "@/lib/email";
+import { posliKlientce, posliZakaznici, vetaProOdpoved } from "@/lib/email";
+import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { createCekaciListina, getPobyt, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import {
   HONEYPOT_FIELD,
@@ -74,6 +75,26 @@ export async function POST(request: Request) {
     ],
     zprava: zprava || undefined,
     "zavěr": [vetaProOdpoved()],
+  });
+
+  // Potvrzení zájemkyni — bez něj neví, jestli se přihlášení vůbec uložilo.
+  const sablona = await nactiSablonu("cekaci-listina", {
+    jmeno,
+    pobyt: pobyt?.nadpis ?? "",
+    termin: pobyt?.termin ?? "",
+  });
+
+  await posliZakaznici({
+    to: email,
+    subject: sablona.predmet,
+    nadpis: "Jsi na čekací listině",
+    odstavce: sablona.odstavce,
+    radky: [
+      { popisek: "Pobyt:", hodnota: pobyt?.nadpis ?? "—" },
+      ...(pobyt?.termin ? [{ popisek: "Termín:", hodnota: pobyt.termin }] : []),
+      ...(pobyt?.misto ? [{ popisek: "Místo:", hodnota: pobyt.misto }] : []),
+    ],
+    zavěr: sablona.zaver,
   });
 
   return NextResponse.json({ ok: true });

@@ -38,20 +38,36 @@ export function czechAccountToIban(accountNumber: string): string | null {
   return `CZ${checkDigits}${bban}`;
 }
 
+// Zpráva pro příjemce ve formátu SPD: bez diakritiky (banky ji různě
+// komolí), bez hvězdičky (odděluje pole) a nejvýš 60 znaků.
+export function ocistitZpravuProPrijemce(text: string): string {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^A-Za-z0-9 .,\-/]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 60);
+}
+
 function buildSpdString({
   iban,
   amount,
   vs,
+  zprava,
 }: {
   iban: string;
   amount?: number | null;
   vs?: string;
+  zprava?: string;
 }): string {
   const parts = ["SPD*1.0", `ACC:${iban}`];
   if (amount) parts.push(`AM:${amount.toFixed(2)}`);
   parts.push("CC:CZK");
   const vsDigits = (vs ?? "").replace(/\D/g, "").slice(0, 10);
   if (vsDigits) parts.push(`X-VS:${vsDigits}`);
+  const msg = ocistitZpravuProPrijemce(zprava ?? "");
+  if (msg) parts.push(`MSG:${msg}`);
   return parts.join("*");
 }
 
@@ -62,19 +78,28 @@ export async function generatePlatebniQr({
   cena,
   castka,
   variabilniSymbol,
+  zpravaProPrijemce,
 }: {
   cisloUctu: string;
   cena?: string;
   // Konkrétní částka (třeba záloha) má přednost před vyčítáním z textu ceny.
   castka?: number | null;
   variabilniSymbol?: string;
+  // Poznámka, která se v bance předvyplní — jméno a příjmení plátce, aby šla
+  // platba spárovat i tehdy, když se variabilní symbol cestou ztratí.
+  zpravaProPrijemce?: string;
 }): Promise<string | null> {
   if (!cisloUctu) return null;
   const iban = czechAccountToIban(cisloUctu);
   if (!iban) return null;
 
   const amount = castka ?? (cena ? parseAmount(cena) : null);
-  const spd = buildSpdString({ iban, amount, vs: variabilniSymbol });
+  const spd = buildSpdString({
+    iban,
+    amount,
+    vs: variabilniSymbol,
+    zprava: zpravaProPrijemce,
+  });
 
   return QRCode.toDataURL(spd, { margin: 1, width: 300 });
 }

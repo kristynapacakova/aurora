@@ -616,6 +616,32 @@ export async function updatePoptavkaPrecteno(id: number, precteno: boolean): Pro
   await query(`UPDATE poptavky SET precteno = $1 WHERE id = $2`, [precteno, id]);
 }
 
+export async function getPoptavka(id: number): Promise<Poptavka | null> {
+  if (!dbConfigured()) return null;
+  const rows = await query<Poptavka>(
+    `SELECT poptavky.*, pobyty.nadpis AS pobyt_nadpis
+     FROM poptavky LEFT JOIN pobyty ON pobyty.id = poptavky.pobyt_id
+     WHERE poptavky.id = $1`,
+    [id]
+  );
+  return rows[0] ?? null;
+}
+
+// Potvrzení platby klientkou. Vrací true, jen když se stav opravdu změnil —
+// e-mail „platba dorazila" tak nemůže odejít dvakrát po dvojkliku.
+export async function updatePoptavkaZaplaceno(
+  id: number,
+  zaplaceno: boolean
+): Promise<boolean> {
+  const rows = await query<{ id: number }>(
+    `UPDATE poptavky SET zaplaceno = $2
+     WHERE id = $1 AND zaplaceno IS DISTINCT FROM $2
+     RETURNING id`,
+    [id, zaplaceno]
+  );
+  return rows.length > 0;
+}
+
 // ── Newsletter ──────────────────────────────────────────────────────────────
 
 export async function createNewsletterSignup(email: string): Promise<boolean> {

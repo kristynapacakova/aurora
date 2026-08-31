@@ -207,6 +207,10 @@ export type ObsahEmailu = {
   // Obrázek na celou šířku karty (grafika dárkového poukazu). Adresa musí
   // být veřejně dostupná — obrázky si poštovní program stahuje sám.
   obrazek?: string;
+  // Shrnutí platebních údajů dole pod e-mailem. Schválně zvlášť od `radky`:
+  // když se platba nepovede odeslat napoprvé, má je zákaznice pohromadě
+  // a nemusí je lovit mezi termínem a místem.
+  platba?: { nadpis: string; radky: Radek[]; poznamka?: string[] };
   zavěr?: string[];
 };
 
@@ -236,6 +240,29 @@ export function sablona(o: ObsahEmailu): string {
         `<p style="margin:0 0 10px;font-family:${PISMO_TEXT};font-size:13px;line-height:1.7;color:#8A7263;">${escapeHtml(t)}</p>`
     )
     .join("");
+
+  // Platební údaje mají vlastní rámeček s nadpisem, ať jsou v e-mailu
+  // na první pohled k nalezení.
+  const platba = o.platba
+    ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="margin:24px 0 6px;border:1px solid #F2E4DC;border-radius:14px;"><tr><td style="padding:18px 20px;">
+         <p style="margin:0 0 12px;font-family:${PISMO_TEXT};font-size:10px;letter-spacing:2.5px;text-transform:uppercase;color:#F28D76;">${escapeHtml(o.platba.nadpis)}</p>
+         <table role="presentation" cellpadding="0" cellspacing="0" border="0">${o.platba.radky
+           .map(
+             (r) =>
+               `<tr>
+                  <td style="padding:5px 14px 5px 0;font-family:${PISMO_TEXT};font-size:14px;line-height:1.5;color:#6B5347;">${escapeHtml(r.popisek)}</td>
+                  <td style="padding:5px 0;font-family:${PISMO_TEXT};font-size:14px;line-height:1.5;color:#8C5F47;font-weight:600;">${escapeHtml(r.hodnota)}</td>
+                </tr>`
+           )
+           .join("")}</table>
+         ${(o.platba.poznamka ?? [])
+           .map(
+             (t) =>
+               `<p style="margin:12px 0 0;font-family:${PISMO_TEXT};font-size:13px;line-height:1.6;color:#8A7263;">${escapeHtml(t)}</p>`
+           )
+           .join("")}
+       </td></tr></table>`
+    : "";
 
   return `<!doctype html>
 <html lang="cs"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"></head>
@@ -279,6 +306,7 @@ export function sablona(o: ObsahEmailu): string {
                  </td></tr></table>`
               : ""
           }
+          ${platba}
           ${
             zavěr
               ? `<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"><tr><td style="padding-top:18px;border-top:1px solid #F2E4DC;">${zavěr}</td></tr></table>`
@@ -313,6 +341,14 @@ function textovaVerze(o: ObsahEmailu): string {
     "",
     ...(o.radky ?? []).map((r) => `${r.popisek} ${r.hodnota}`),
     ...(o.zprava ? ["", o.zprava] : []),
+    ...(o.platba
+      ? [
+          "",
+          o.platba.nadpis.toUpperCase(),
+          ...o.platba.radky.map((r) => `${r.popisek} ${r.hodnota}`),
+          ...(o.platba.poznamka ?? []),
+        ]
+      : []),
     "",
     ...(o.zavěr ?? []),
     "",

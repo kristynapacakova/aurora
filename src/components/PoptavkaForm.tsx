@@ -411,6 +411,12 @@ export default function PoptavkaForm({
                       Variabilní symbol: <span className="text-ink">{variabilniSymbol}</span>
                     </>
                   )}
+                  <br />
+                  Poznámka pro příjemce: <span className="text-ink">tvoje jméno a příjmení</span>
+                </p>
+                <p className="mt-2 text-muted">
+                  Platební údaje ti přijdou i e-mailem — kdyby se platba nepovedla odeslat hned,
+                  máš je pak po ruce.
                 </p>
                 {platiZalohu && doplatekAkt != null && (
                   <p className="mt-2 text-muted">

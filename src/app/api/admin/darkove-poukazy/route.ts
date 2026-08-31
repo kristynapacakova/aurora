@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
 import { posliZakaznici, oznamNeodeslano } from "@/lib/email";
 import { nactiSablonu } from "@/lib/emailSablonyServer";
+import { prilohaZUrl } from "@/lib/qrPriloha";
 import { formatKc } from "@/lib/castky";
 import {
   createDarkovyPoukaz,
@@ -60,6 +61,9 @@ async function posliKodPoukazu(id: number): Promise<void> {
         : []),
     ],
     zavěr: sablona.zaver,
+    // Grafika té konkrétní hodnoty jde i jako soubor — vložený obrázek si
+    // pošta často nestáhne a poukaz se stejně hodí vytisknout či přeposlat.
+    attachments: await prilohaZUrl(poukaz.fotka, `darkovy-poukaz-${poukaz.kod}`),
   });
 
   // Bez kódu je poukaz zákaznici k ničemu, proto se selhání zaznamená
