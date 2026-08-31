@@ -62,7 +62,10 @@ function Sablona({
   }
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
+    <div
+      id={`sablona-${popis.klic}`}
+      className="flex scroll-mt-4 flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm"
+    >
       <div>
         <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
           {popis.nazev}
@@ -166,6 +169,20 @@ export default function EmailSablony({ ulozene }: { ulozene: EmailSablonaRadek[]
           tobě, tady nejsou — ty se needitují.
         </p>
       </div>
+
+      {/* Stejná lišta jako v nastavení — ať je hned vidět, které e-maily
+          tu jsou, a dá se mezi nimi přeskakovat. */}
+      <nav className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-2xl bg-cream/95 py-3 backdrop-blur">
+        {SABLONY.map((popis) => (
+          <a
+            key={popis.klic}
+            href={`#sablona-${popis.klic}`}
+            className="rounded-full border border-line bg-white px-4 py-2 text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:border-accent hover:text-accent"
+          >
+            {popis.kratky}
+          </a>
+        ))}
+      </nav>
 
       {SABLONY.map((popis) => (
         <Sablona

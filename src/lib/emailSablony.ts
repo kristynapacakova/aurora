@@ -25,6 +25,8 @@ export type SablonaText = {
 export type SablonaPopis = SablonaText & {
   klic: SablonaKlic;
   nazev: string;
+  // Krátký popisek do menu — plné názvy jsou na tlačítka moc dlouhé.
+  kratky: string;
   kdyChodi: string;
   znacky: { znacka: string; popis: string }[];
 };
@@ -33,6 +35,7 @@ export const SABLONY: SablonaPopis[] = [
   {
     klic: "objednavka-pobytu",
     nazev: "Potvrzení objednávky pobytu",
+    kratky: "Objednávka pobytu",
     kdyChodi: "Hned po odeslání závazné objednávky pobytu.",
     predmet: "🌿 Potvrzení objednávky — {pobyt}",
     odstavce: [
@@ -49,6 +52,7 @@ export const SABLONY: SablonaPopis[] = [
   {
     klic: "poukaz-platba",
     nazev: "Dárkový poukaz — platební údaje",
+    kratky: "Poukaz — platba",
     kdyChodi: "Hned po objednání poukazu, ještě před zaplacením.",
     predmet: "🎁 Dárkový poukaz — platební údaje ({castka})",
     odstavce: [
@@ -67,6 +71,7 @@ export const SABLONY: SablonaPopis[] = [
   {
     klic: "poukaz-kod",
     nazev: "Dárkový poukaz — kód po zaplacení",
+    kratky: "Poukaz — kód",
     kdyChodi: "Ve chvíli, kdy poukaz označíš v administraci jako zaplacený.",
     predmet: "✨ Tvůj dárkový poukaz {kod}",
     odstavce: [
