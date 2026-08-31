@@ -1,5 +1,11 @@
 import { NextResponse } from "next/server";
-import { createPoptavka, getPobyt, createNewsletterSignup, dbConfigured } from "@/lib/db";
+import {
+  createPoptavka,
+  getPobyt,
+  createNewsletterSignup,
+  oznacitPoptavkaEmail,
+  dbConfigured,
+} from "@/lib/db";
 import {
   HONEYPOT_FIELD,
   isHoneypotTripped,
@@ -10,7 +16,7 @@ import {
 } from "@/lib/formGuard";
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 import { rozpadSPoukazem, formatKc } from "@/lib/castky";
-import { posliKlientce, posliZakaznici, vetaProOdpoved, type Radek } from "@/lib/email";
+import { posliKlientce, posliZakaznici, vetaProOdpoved, oznamNeodeslano, type Radek } from "@/lib/email";
 import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { generatePlatebniQr } from "@/lib/platba";
 import { qrPriloha } from "@/lib/qrPriloha";
@@ -213,7 +219,7 @@ export async function POST(request: Request) {
       castka: castka > 0 ? formatKc(castka) : "",
     });
 
-    await posliZakaznici({
+    const odeslano = await posliZakaznici({
       to: email,
       subject: sablona.predmet,
       nadpis: "Máme tvou objednávku",
@@ -252,6 +258,21 @@ export async function POST(request: Request) {
       ],
       attachments: qrPriloha(qr, "qr-platba.png"),
     });
+
+    // Když potvrzení nedorazí, zákaznice neví, že objednávku máme —
+    // proto se to zapíše k objednávce a přijde upozornění.
+    if (!odeslano && poptavkaId) {
+      await oznacitPoptavkaEmail(poptavkaId, true);
+      await oznamNeodeslano({
+        komu: email,
+        co: "Potvrzení objednávky pobytu",
+        detail: [
+          `Pobyt: ${pobyt?.nadpis ?? "—"}`,
+          `Jméno: ${jmeno}`,
+          `Telefon: ${telefon || "—"}`,
+        ],
+      });
+    }
   }
 
   return NextResponse.json({ ok: true });

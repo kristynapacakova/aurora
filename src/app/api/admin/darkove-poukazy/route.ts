@@ -1,12 +1,13 @@
 import { NextResponse } from "next/server";
 import { isAdminRequest } from "@/lib/adminAuth";
-import { posliZakaznici } from "@/lib/email";
+import { posliZakaznici, oznamNeodeslano } from "@/lib/email";
 import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { formatKc } from "@/lib/castky";
 import {
   createDarkovyPoukaz,
   updateDarkovyPoukazFotka,
   updateDarkovyPoukazHodnota,
+  oznacitPoukazEmail,
   getDarkovyPoukazById,
   updateDarkovyPoukazStav,
   deleteDarkovyPoukaz,
@@ -40,7 +41,7 @@ async function posliKodPoukazu(id: number): Promise<void> {
     plati_do: poukaz.plati_do ? new Date(poukaz.plati_do).toLocaleDateString("cs-CZ") : "",
   });
 
-  await posliZakaznici({
+  const odeslano = await posliZakaznici({
     to: poukaz.email_kupujici,
     subject: sablona.predmet,
     nadpis: "Poukaz je připravený",
@@ -60,6 +61,22 @@ async function posliKodPoukazu(id: number): Promise<void> {
     ],
     zavěr: sablona.zaver,
   });
+
+  // Bez kódu je poukaz zákaznici k ničemu, proto se selhání zaznamená
+  // a klientce přijde upozornění. Povedené odeslání značku zase smaže,
+  // takže tlačítko „Poslat kód znovu" ji umí uklidit.
+  await oznacitPoukazEmail(poukaz.id, !odeslano);
+  if (!odeslano) {
+    await oznamNeodeslano({
+      komu: poukaz.email_kupujici,
+      co: "Dárkový poukaz — kód",
+      detail: [
+        `Kód: ${poukaz.kod}`,
+        `Hodnota: ${poukaz.hodnota}`,
+        `Kupující: ${poukaz.jmeno_kupujici}`,
+      ],
+    });
+  }
 }
 
 export async function PUT(request: Request) {
@@ -165,15 +182,30 @@ export async function PATCH(request: Request) {
   if (!(await isAdminRequest(request))) return unauthorized();
   if (!dbConfigured()) return noDb();
 
-  const { cerpani_id, id, fotka, hodnota_kc } = (await request.json()) as {
+  const { cerpani_id, id, fotka, hodnota_kc, akce } = (await request.json()) as {
     cerpani_id?: number;
     id?: number;
     fotka?: string;
     hodnota_kc?: number;
+    akce?: string;
   };
 
   if (typeof fotka === "string" && id) {
     await updateDarkovyPoukazFotka(id, fotka.trim());
+    return NextResponse.json({ ok: true });
+  }
+
+  // Opětovné odeslání kódu — po opravě adresy nebo když e-mail poprvé
+  // neprošel. Jde jen u zaplaceného poukazu, dřív kód neexistuje.
+  if (akce === "poslat-kod" && id) {
+    const poukaz = await getDarkovyPoukazById(id);
+    if (!poukaz?.zaplaceno) {
+      return NextResponse.json(
+        { error: "Kód jde poslat až u zaplaceného poukazu." },
+        { status: 400 }
+      );
+    }
+    await posliKodPoukazu(id);
     return NextResponse.json({ ok: true });
   }
 

@@ -151,6 +151,28 @@ export async function posliKlientce(
   });
 }
 
+// Upozornění klientce, že e-mail zákaznici neodešel. Když je příčinou
+// vyčerpaný limit, nedojde nejspíš ani tohle — u překlepu v adrese nebo plné
+// schránky na druhé straně ale ano, a to jsou častější případy.
+export async function oznamNeodeslano(o: {
+  komu: string;
+  co: string;
+  detail: string[];
+}): Promise<void> {
+  await posliKlientce({
+    subject: `⚠️ Nepodařilo se odeslat e-mail: ${o.co}`,
+    nadpis: "E-mail zákaznici neodešel",
+    odstavce: [
+      `E-mail „${o.co}" se nepodařilo doručit na ${o.komu}.`,
+      "Objednávka je v pořádku uložená v administraci a je označená štítkem „E-mail neodešel“. Ozvi se prosím zákaznici ručně.",
+    ],
+    radky: o.detail.map((d) => {
+      const [popisek, ...zbytek] = d.split(":");
+      return { popisek: `${popisek}:`, hodnota: zbytek.join(":").trim() };
+    }),
+  });
+}
+
 // ── Šablona pro zákaznice ────────────────────────────────────────────────────
 
 export type Radek = { popisek: string; hodnota: string };

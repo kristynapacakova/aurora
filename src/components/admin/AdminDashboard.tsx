@@ -195,6 +195,8 @@ export default function AdminDashboard({
   const [chybaOdectu, setChybaOdectu] = useState<Record<number, string>>({});
   const [novaHodnota, setNovaHodnota] = useState<Record<number, string>>({});
   const [otevrenaHistorie, setOtevrenaHistorie] = useState<number | null>(null);
+  // Hláška po ručním odeslání e-mailu s kódem.
+  const [stavKodu, setStavKodu] = useState<Record<number, string>>({});
   // Vystavení poukazu z administrace — hotovost, dárek, výhra v soutěži.
   const [novyPoukazOtevren, setNovyPoukazOtevren] = useState(false);
   const [novyPoukaz, setNovyPoukaz] = useState({
@@ -668,6 +670,25 @@ export default function AdminDashboard({
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ cerpani_id: cerpaniId }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  // Když e-mail s kódem zákaznici nedorazí, jde ho odsud poslat znovu —
+  // třeba po opravě překlepu v adrese.
+  async function poslatKodZnovu(p: DarkovyPoukaz) {
+    setBusy(true);
+    setStavKodu({ ...stavKodu, [p.id]: "Odesílám…" });
+    const res = await fetch("/api/admin/darkove-poukazy", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: p.id, akce: "poslat-kod" }),
+    });
+    const data = await res.json().catch(() => ({}));
+    setStavKodu({
+      ...stavKodu,
+      [p.id]: res.ok && data.ok ? "Kód odeslán." : (data.error ?? "Odeslání se nepovedlo."),
     });
     setBusy(false);
     router.refresh();
@@ -1417,6 +1438,11 @@ export default function AdminDashboard({
                                     Dotaz
                                   </span>
                                 )}
+                                {q.email_selhal && (
+                                  <span className="rounded-full bg-accent-d/15 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
+                                    E-mail neodešel
+                                  </span>
+                                )}
                               </p>
                               <p className="mt-1 text-xs text-muted">
                                 {new Date(q.created_at).toLocaleString("cs-CZ")}
@@ -1795,6 +1821,11 @@ export default function AdminDashboard({
                                   Propadlý
                                 </span>
                               )}
+                              {p.email_selhal && (
+                                <span className="rounded-full bg-accent-d/15 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
+                                  E-mail neodešel
+                                </span>
+                              )}
                             </p>
                             <p className="mt-1 text-xs text-muted">
                               {new Date(p.created_at).toLocaleString("cs-CZ")} · VS: {p.variabilni_symbol}
@@ -1994,6 +2025,24 @@ export default function AdminDashboard({
                             >
                               {p.vyuzito ? "Zrušit využití" : "Označit využito"}
                             </button>
+                            {/* E-mail s kódem chodí automaticky při označení
+                                platby — tohle je pro případ, že nedorazil. */}
+                            {p.zaplaceno && (
+                              <>
+                                <button
+                                  disabled={busy}
+                                  onClick={() => poslatKodZnovu(p)}
+                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                >
+                                  Poslat kód znovu
+                                </button>
+                                {stavKodu[p.id] && (
+                                  <p className="max-w-[12rem] text-right text-xs text-muted">
+                                    {stavKodu[p.id]}
+                                  </p>
+                                )}
+                              </>
+                            )}
                           </div>
                         </div>
                       </li>

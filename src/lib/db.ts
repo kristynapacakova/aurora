@@ -71,6 +71,9 @@ export type Poptavka = {
   // Uplatněný dárkový poukaz a sleva, kterou přinesl (v Kč).
   poukaz_kod: string;
   poukaz_sleva: number;
+  // Potvrzení zákaznici se nepodařilo odeslat (vyčerpaný limit u Resendu,
+  // neplatná adresa…). Objednávka platí dál, jen o ní zákaznice neví.
+  email_selhal: boolean;
   precteno: boolean;
   jmeno: string;
   email: string;
@@ -117,6 +120,9 @@ export type DarkovyPoukaz = {
   jmeno_obdarovane: string;
   vzkaz: string;
   zaplaceno: boolean;
+  // E-mail kupujícímu se nepodařilo odeslat — poukaz platí, ale kód nebo
+  // platební údaje k němu nedorazily.
+  email_selhal: boolean;
   // Zákaznice po objednávce potvrdila, že platbu odeslala. Není to potvrzení
   // platby — to zůstává na klientce, až ji uvidí na účtu — ale klientka díky
   // tomu ví, na co se dívat.
@@ -261,6 +267,7 @@ async function ensureSchema() {
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS castka INTEGER NOT NULL DEFAULT 0;
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS poukaz_kod TEXT NOT NULL DEFAULT '';
     ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS poukaz_sleva INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE poptavky ADD COLUMN IF NOT EXISTS email_selhal BOOLEAN NOT NULL DEFAULT FALSE;
 
     CREATE TABLE IF NOT EXISTS newsletter (
       id SERIAL PRIMARY KEY,
@@ -297,6 +304,7 @@ async function ensureSchema() {
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS plati_do DATE;
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS fotka TEXT NOT NULL DEFAULT '';
     ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS platba_ohlasena BOOLEAN NOT NULL DEFAULT FALSE;
+    ALTER TABLE darkove_poukazy ADD COLUMN IF NOT EXISTS email_selhal BOOLEAN NOT NULL DEFAULT FALSE;
     -- Poukazy vystavené dřív mají hodnotu jen v textu („1000 Kč"); číslo z ní
     -- vytáhneme jednou, ať se s nimi počítá stejně jako s novými.
     UPDATE darkove_poukazy
@@ -579,6 +587,16 @@ export async function createPoptavka(p: {
     ]
   );
   return rows[0].id;
+}
+
+// Značka „e-mail neodešel". Nastavuje se po neúspěšném odeslání a maže se,
+// jakmile se povede poslat znovu.
+export async function oznacitPoptavkaEmail(id: number, selhal: boolean): Promise<void> {
+  await query(`UPDATE poptavky SET email_selhal = $2 WHERE id = $1`, [id, selhal]);
+}
+
+export async function oznacitPoukazEmail(id: number, selhal: boolean): Promise<void> {
+  await query(`UPDATE darkove_poukazy SET email_selhal = $2 WHERE id = $1`, [id, selhal]);
 }
 
 export async function getPoptavky(): Promise<Poptavka[]> {

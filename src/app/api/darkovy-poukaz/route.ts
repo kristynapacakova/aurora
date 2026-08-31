@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { createDarkovyPoukaz, getNastaveni, getPoukazNabidka, createNewsletterSignup, dbConfigured } from "@/lib/db";
+import { createDarkovyPoukaz, getNastaveni, getPoukazNabidka, oznacitPoukazEmail, createNewsletterSignup, dbConfigured } from "@/lib/db";
 import { generatePlatebniQr } from "@/lib/platba";
 import { formatKc } from "@/lib/castky";
-import { posliKlientce, posliZakaznici } from "@/lib/email";
+import { posliKlientce, posliZakaznici, oznamNeodeslano } from "@/lib/email";
 import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { qrPriloha } from "@/lib/qrPriloha";
 import {
@@ -148,7 +148,7 @@ export async function POST(request: Request) {
     castka: poukaz.hodnota,
   });
 
-  await posliZakaznici({
+  const odeslano = await posliZakaznici({
     to: email_kupujici,
     subject: sablona.predmet,
     nadpis: "Děkujeme za objednávku poukazu",
@@ -161,6 +161,19 @@ export async function POST(request: Request) {
     zavěr: sablona.zaver,
     attachments: qrPriloha(qrDataUrl, `qr-poukaz-${poukaz.kod}.png`),
   });
+
+  if (!odeslano) {
+    await oznacitPoukazEmail(poukaz.id, true);
+    await oznamNeodeslano({
+      komu: email_kupujici,
+      co: "Dárkový poukaz — platební údaje",
+      detail: [
+        `Kód: ${poukaz.kod}`,
+        `Hodnota: ${poukaz.hodnota}`,
+        `Variabilní symbol: ${poukaz.variabilni_symbol}`,
+      ],
+    });
+  }
 
   return NextResponse.json({
     ok: true,
