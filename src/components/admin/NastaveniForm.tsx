@@ -77,8 +77,30 @@ export default function NastaveniForm({
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Nastavení je dlouhé a není z něj poznat, co všechno obsahuje.
+          Odkazy skáčou na jednotlivé karty; scroll-mt drží nadpis pod
+          lepící se lištou. */}
+      <nav className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-2xl bg-cream/95 py-3 backdrop-blur">
+        {[
+          ["nastaveni-kontakt", "Kontakt"],
+          ["nastaveni-cenik", "Ceník"],
+          ["nastaveni-uscreen", "Uscreen odkazy"],
+          ["nastaveni-domena", "Doména"],
+          ["nastaveni-odesilani", "Odesílání e-mailů"],
+          ["nastaveni-poukazy", "Dárkové poukazy"],
+          ["nastaveni-heslo", "Heslo"],
+        ].map(([id, popisek]) => (
+          <a
+            key={id}
+            href={`#${id}`}
+            className="rounded-full border border-line bg-white px-4 py-2 text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:border-accent hover:text-accent"
+          >
+            {popisek}
+          </a>
+        ))}
+      </nav>
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <div className={cardCls}>
+        <div id="nastaveni-kontakt" className={`${cardCls} scroll-mt-4`}>
           <p className="text-xs uppercase tracking-[0.25em] text-accent">Kontakt</p>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <label className={labelCls}>
@@ -111,7 +133,7 @@ export default function NastaveniForm({
           </p>
         </div>
 
-        <div className={cardCls}>
+        <div id="nastaveni-cenik" className={`${cardCls} scroll-mt-4`}>
           <p className="text-xs uppercase tracking-[0.25em] text-accent">Ceník</p>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <label className={labelCls}>
@@ -129,7 +151,7 @@ export default function NastaveniForm({
           </div>
         </div>
 
-        <div className={cardCls}>
+        <div id="nastaveni-uscreen" className={`${cardCls} scroll-mt-4`}>
           <p className="text-xs uppercase tracking-[0.25em] text-accent">Uscreen odkazy</p>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             <label className={labelCls}>
@@ -151,7 +173,7 @@ export default function NastaveniForm({
           </div>
         </div>
 
-        <div className={cardCls}>
+        <div id="nastaveni-domena" className={`${cardCls} scroll-mt-4`}>
           <p className="text-xs uppercase tracking-[0.25em] text-accent">Doména</p>
           <label className={labelCls}>
             Doména platí do
@@ -170,7 +192,7 @@ export default function NastaveniForm({
         {/* Odesílání e-mailů — do Vercelu z administrace nevidíme, tak si
             aspoň řekneme, co k nám z proměnných dorazilo. Klíč se schválně
             jen potvrzuje, nikdy nevypisuje. */}
-        <div className={cardCls}>
+        <div id="nastaveni-odesilani" className={`${cardCls} scroll-mt-4`}>
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-accent">Odesílání e-mailů</p>
             <p className="mt-2 text-xs text-muted">
@@ -247,7 +269,7 @@ export default function NastaveniForm({
           </div>
         </div>
 
-        <div className={cardCls}>
+        <div id="nastaveni-poukazy" className={`${cardCls} scroll-mt-4`}>
           <div>
             <p className="text-xs uppercase tracking-[0.25em] text-accent">Dárkové poukazy</p>
             <p className="mt-2 text-xs text-muted">
@@ -329,7 +351,7 @@ function ZmenaHesla() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className={cardCls}>
+    <form onSubmit={handleSubmit} id="nastaveni-heslo" className={`${cardCls} scroll-mt-4`}>
       <p className="text-xs uppercase tracking-[0.25em] text-accent">Změnit heslo do administrace</p>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
         <label className={labelCls}>
