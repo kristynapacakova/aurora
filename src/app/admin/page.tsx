@@ -10,6 +10,7 @@ import {
   getPoukazyNabidka,
   getEmailSablony,
   getNastaveni,
+  getObsazenostPobytu,
   dbConfigured,
 } from "@/lib/db";
 import AdminDashboard from "@/components/admin/AdminDashboard";
@@ -35,6 +36,8 @@ export default async function AdminPage() {
       ])
     : [[], [], [], [], [], [], [], [], [], []];
   const nastaveni = await getNastaveni();
+  // Kolik objednávek přišlo na který pobyt — z toho se počítá obsazenost.
+  const obsazenost = configured ? await getObsazenostPobytu() : {};
   // Doména bez protokolu a bez www — proti ní se porovnává adresa odesílatele.
   const domena = SITE_URL.replace(/^https?:\/\//, "").replace(/^www\./, "");
   const email = stavOdesilani(domena);
@@ -54,6 +57,7 @@ export default async function AdminPage() {
       emailSablony={emailSablony}
       nastaveni={nastaveni}
       email={email}
+      obsazenost={obsazenost}
     />
   );
 }

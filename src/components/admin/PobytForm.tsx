@@ -10,9 +10,18 @@ import type { Pobyt } from "@/lib/db";
 import { nbsp } from "@/lib/typo";
 import { czechAccountToIban } from "@/lib/platba";
 import { rozpadPlatby, formatKc } from "@/lib/castky";
+import { stavMist } from "@/lib/kapacita";
 import { resizeImageFile } from "@/lib/imageResize";
 
-export default function PobytForm({ initial }: { initial: Pobyt | null }) {
+export default function PobytForm({
+  initial,
+  objednavky = 0,
+}: {
+  initial: Pobyt | null;
+  // Kolik objednávek na pobyt už přišlo z webu — do kapacity se počítají
+  // spolu s místy obsazenými mimo web.
+  objednavky?: number;
+}) {
   const router = useRouter();
   const [nadpis, setNadpis] = useState(initial?.nadpis ?? "");
   const [misto, setMisto] = useState(initial?.misto ?? "");
@@ -26,6 +35,13 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   // Prázdný řetězec = zálohu nenabízíme (v databázi 0).
   const [zalohaProcento, setZalohaProcento] = useState(
     initial?.zaloha_procento ? String(initial.zaloha_procento) : ""
+  );
+  // Prázdné pole = počet míst se nehlídá (v databázi 0).
+  const [kapacita, setKapacita] = useState(
+    initial?.kapacita ? String(initial.kapacita) : ""
+  );
+  const [obsazenoRucne, setObsazenoRucne] = useState(
+    initial?.obsazeno_rucne ? String(initial.obsazeno_rucne) : ""
   );
   const [zverejneno, setZverejneno] = useState(initial?.zverejneno ?? true);
   const [vyprodano, setVyprodano] = useState(initial?.vyprodano ?? false);
@@ -44,6 +60,13 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
   // Procento je vyplněné, ale z ceny nejde vyčíst číslo — pak zálohu nabídnout
   // neumíme a je fér to klientce rovnou říct.
   const zalohaBezCeny = Number(zalohaProcento) > 0 && rozpad.zaloha === null;
+
+  const mista = stavMist({
+    kapacita: Number(kapacita) || 0,
+    obsazenoRucne: Number(obsazenoRucne) || 0,
+    objednavky,
+    vyprodano: false,
+  });
 
   // Živý náhled QR kódu — přegeneruje se při každé změně účtu/ceny/VS/zálohy.
   useEffect(() => {
@@ -129,6 +152,8 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
       variabilni_symbol: variabilniSymbol,
       platebni_pokyny: platebniPokyny,
       zaloha_procento: Number(zalohaProcento) || 0,
+      kapacita: Number(kapacita) || 0,
+      obsazeno_rucne: Number(obsazenoRucne) || 0,
       zverejneno,
       vyprodano,
       pripravuje_se: pripravujeSe,
@@ -317,6 +342,46 @@ export default function PobytForm({ initial }: { initial: Pobyt | null }) {
                 <p className="text-xs text-accent-d">
                   Z ceny nejde vyčíst částka, takže zálohu spočítat neumíme — zákaznici se nabídne jen platba
                   celé částky. Napiš cenu třeba jako „4 900 Kč“.
+                </p>
+              )}
+
+              {/* Počet míst — jakmile dojdou, pobyt se na webu sám označí
+                  jako vyprodaný a formulář nabídne čekací listinu. */}
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                  Kapacita (počet míst)
+                  <input
+                    value={kapacita}
+                    onChange={(e) => setKapacita(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                    inputMode="numeric"
+                    className={inputCls}
+                    placeholder="Např. 12 — nech prázdné, když místa nehlídáš"
+                  />
+                </label>
+                <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
+                  Obsazeno mimo web
+                  <input
+                    value={obsazenoRucne}
+                    onChange={(e) => setObsazenoRucne(e.target.value.replace(/\D/g, "").slice(0, 3))}
+                    inputMode="numeric"
+                    className={inputCls}
+                    placeholder="Domluvy po telefonu apod."
+                  />
+                </label>
+              </div>
+              {mista.sledujeSe && (
+                <p className="text-xs text-muted">
+                  Obsazeno <span className="text-ink">{mista.obsazeno}</span> z{" "}
+                  <span className="text-ink">{mista.kapacita}</span> míst
+                  {objednavky > 0 && ` (z toho ${objednavky} objednávek z webu)`} —{" "}
+                  {mista.volno > 0 ? (
+                    <>
+                      volno <span className="text-ink">{mista.volno}</span>. Jakmile místa dojdou,
+                      pobyt se na webu označí jako vyprodaný sám.
+                    </>
+                  ) : (
+                    <>na webu se pobyt ukazuje jako vyprodaný a nabízí čekací listinu.</>
+                  )}
                 </p>
               )}
 

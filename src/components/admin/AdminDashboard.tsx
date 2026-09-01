@@ -9,6 +9,7 @@ import NastaveniForm from "./NastaveniForm";
 import EmailSablony from "./EmailSablony";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
+import { stavMist } from "@/lib/kapacita";
 import { upload } from "@vercel/blob/client";
 import { resizeImageFile } from "@/lib/imageResize";
 
@@ -167,6 +168,7 @@ export default function AdminDashboard({
   emailSablony,
   nastaveni,
   email,
+  obsazenost,
 }: {
   configured: boolean;
   pobyty: Pobyt[];
@@ -181,8 +183,20 @@ export default function AdminDashboard({
   emailSablony: EmailSablonaRadek[];
   nastaveni: Nastaveni;
   email: StavOdesilani;
+  // Počet objednávek na každý pobyt — z toho se skládá obsazenost.
+  obsazenost: Record<number, number>;
 }) {
   const router = useRouter();
+
+  // Volná místa u pobytu. Pobyt se vyprodá sám, jakmile dojdou, i bez
+  // ručního přepnutí.
+  const mistaPobytu = (p: Pobyt) =>
+    stavMist({
+      kapacita: p.kapacita,
+      obsazenoRucne: p.obsazeno_rucne,
+      objednavky: obsazenost[p.id] ?? 0,
+      vyprodano: p.vyprodano,
+    });
   const [section, setSection] = useState<Section>("overview");
   const [editorTab, setEditorTab] = useState<EditorTab>("pobyty");
   const [busy, setBusy] = useState(false);
@@ -1151,7 +1165,7 @@ export default function AdminDashboard({
                                     Skrytý
                                   </span>
                                 )}
-                                {p.vyprodano && (
+                                {mistaPobytu(p).vyprodano && (
                                   <span className="shrink-0 rounded-full bg-accent/20 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
                                     Vyprodáno
                                   </span>
@@ -1163,7 +1177,17 @@ export default function AdminDashboard({
                                 )}
                               </p>
                               <p className="mt-1 truncate text-xs text-muted">
-                                {[p.misto, p.termin, p.cena].filter(Boolean).join(" · ")}
+                                {[
+                                  p.misto,
+                                  p.termin,
+                                  p.cena,
+                                  // Obsazenost jen u pobytů, kde se místa hlídají.
+                                  mistaPobytu(p).sledujeSe
+                                    ? `obsazeno ${mistaPobytu(p).obsazeno}/${mistaPobytu(p).kapacita}`
+                                    : "",
+                                ]
+                                  .filter(Boolean)
+                                  .join(" · ")}
                               </p>
                             </div>
                           </div>

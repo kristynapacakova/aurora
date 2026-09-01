@@ -23,6 +23,11 @@ export type Pobyt = {
   // Kolik procent z ceny tvoří záloha. 0 = zálohu nenabízíme a pobyt se platí
   // jen celý najednou.
   zaloha_procento: number;
+  // Kolik lidí se na pobyt vejde. 0 = počet nehlídáme a pobyt se nevyprodá sám.
+  kapacita: number;
+  // Místa obsazená mimo web — domluva po telefonu, kamarádky, sama klientka.
+  // Připočítávají se k objednávkám z webu.
+  obsazeno_rucne: number;
   zverejneno: boolean;
   vyprodano: boolean;
   pripravuje_se: boolean;
@@ -230,6 +235,8 @@ async function ensureSchema() {
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS vyprodano BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS pripravuje_se BOOLEAN NOT NULL DEFAULT FALSE;
     ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS zaloha_procento INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS kapacita INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE pobyty ADD COLUMN IF NOT EXISTS obsazeno_rucne INTEGER NOT NULL DEFAULT 0;
 
     CREATE TABLE IF NOT EXISTS clanky (
       id SERIAL PRIMARY KEY,
@@ -395,8 +402,8 @@ export async function getPobyt(id: number): Promise<Pobyt | null> {
 
 export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<Pobyt> {
   const rows = await query<Pobyt>(
-    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zaloha_procento, zverejneno, vyprodano, pripravuje_se)
-     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING *`,
+    `INSERT INTO pobyty (nadpis, misto, termin, popis, cena, fotky, cislo_uctu, variabilni_symbol, platebni_pokyny, zaloha_procento, kapacita, obsazeno_rucne, zverejneno, vyprodano, pripravuje_se)
+     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15) RETURNING *`,
     [
       p.nadpis,
       p.misto,
@@ -408,6 +415,8 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
       p.variabilni_symbol,
       p.platebni_pokyny,
       p.zaloha_procento,
+      p.kapacita,
+      p.obsazeno_rucne,
       p.zverejneno,
       p.vyprodano,
       p.pripravuje_se,
@@ -418,7 +427,7 @@ export async function createPobyt(p: Omit<Pobyt, "id" | "created_at">): Promise<
 
 export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at">): Promise<void> {
   await query(
-    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zaloha_procento=$10, zverejneno=$11, vyprodano=$12, pripravuje_se=$13 WHERE id=$14`,
+    `UPDATE pobyty SET nadpis=$1, misto=$2, termin=$3, popis=$4, cena=$5, fotky=$6, cislo_uctu=$7, variabilni_symbol=$8, platebni_pokyny=$9, zaloha_procento=$10, kapacita=$11, obsazeno_rucne=$12, zverejneno=$13, vyprodano=$14, pripravuje_se=$15 WHERE id=$16`,
     [
       p.nadpis,
       p.misto,
@@ -430,6 +439,8 @@ export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at"
       p.variabilni_symbol,
       p.platebni_pokyny,
       p.zaloha_procento,
+      p.kapacita,
+      p.obsazeno_rucne,
       p.zverejneno,
       p.vyprodano,
       p.pripravuje_se,
@@ -440,6 +451,33 @@ export async function updatePobyt(id: number, p: Omit<Pobyt, "id" | "created_at"
 
 export async function deletePobyt(id: number): Promise<void> {
   await query(`DELETE FROM pobyty WHERE id = $1`, [id]);
+}
+
+// ── Obsazenost pobytů ───────────────────────────────────────────────────────
+// Místo zabírá každá objednávka z webu, ať už je platba potvrzená, nebo ne —
+// zákaznice u ní odklikla, že platí, takže místo drží. Když z toho sejde,
+// klientka objednávku v administraci smaže a místo se uvolní.
+
+export async function getObsazenostPobytu(): Promise<Record<number, number>> {
+  if (!dbConfigured()) return {};
+  const rows = await query<{ pobyt_id: number; pocet: string }>(
+    `SELECT pobyt_id, COUNT(*) AS pocet
+       FROM poptavky
+      WHERE typ = 'objednavka' AND pobyt_id IS NOT NULL
+      GROUP BY pobyt_id`
+  );
+  const mapa: Record<number, number> = {};
+  for (const r of rows) mapa[r.pobyt_id] = Number(r.pocet);
+  return mapa;
+}
+
+export async function getObsazenost(pobytId: number): Promise<number> {
+  if (!dbConfigured()) return 0;
+  const rows = await query<{ pocet: string }>(
+    `SELECT COUNT(*) AS pocet FROM poptavky WHERE typ = 'objednavka' AND pobyt_id = $1`,
+    [pobytId]
+  );
+  return Number(rows[0]?.pocet ?? 0);
 }
 
 // ── Články ──────────────────────────────────────────────────────────────────

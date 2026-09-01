@@ -5,7 +5,8 @@ import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import PobytGallery from "@/components/PobytGallery";
 import { IconSparkle } from "@/components/BrandIcons";
-import { getPobyty } from "@/lib/db";
+import { getPobyty, getObsazenostPobytu } from "@/lib/db";
+import { stavMist, popisVolnychMist } from "@/lib/kapacita";
 import { nbsp } from "@/lib/typo";
 
 export const revalidate = 60;
@@ -26,7 +27,7 @@ function excerpt(text: string, max = 700): string {
 }
 
 export default async function PobytyPage() {
-  const pobyty = await getPobyty(true);
+  const [pobyty, obsazenost] = await Promise.all([getPobyty(true), getObsazenostPobytu()]);
 
   return (
     <>
@@ -56,6 +57,12 @@ export default async function PobytyPage() {
           ) : (
             <div className="flex flex-col gap-16 sm:gap-20">
               {pobyty.map((p, i) => {
+                const mista = stavMist({
+                  kapacita: p.kapacita,
+                  obsazenoRucne: p.obsazeno_rucne,
+                  objednavky: obsazenost[p.id] ?? 0,
+                  vyprodano: p.vyprodano,
+                });
                 return (
                   <FadeUp key={p.id}>
                     {i > 0 && (
@@ -84,7 +91,7 @@ export default async function PobytyPage() {
                       <div className="flex flex-1 flex-col">
                         <h2 className="flex flex-wrap items-center gap-3 font-serif text-3xl text-ink sm:text-4xl">
                           {nbsp(p.nadpis)}
-                          {p.vyprodano && (
+                          {mista.vyprodano && (
                             <span className="rounded-full bg-line px-3 py-1 text-xs uppercase tracking-[0.15em] text-muted">
                               Vyprodáno
                             </span>
@@ -100,6 +107,10 @@ export default async function PobytyPage() {
                           {p.termin && <span>📅 {p.termin}</span>}
                           {p.misto && <span>📍 {p.misto}</span>}
                           {p.cena && <span>🏷️ {p.cena}</span>}
+                          {/* Kolik míst zbývá — jen když se kapacita hlídá. */}
+                          {mista.sledujeSe && !mista.vyprodano && !p.pripravuje_se && (
+                            <span>👥 {popisVolnychMist(mista.volno)}</span>
+                          )}
                         </div>
 
                         {p.popis && (

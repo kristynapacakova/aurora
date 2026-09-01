@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import {
   createPoptavka,
   getPobyt,
+  getObsazenost,
   createNewsletterSignup,
   oznacitPoptavkaEmail,
   dbConfigured,
@@ -16,6 +17,7 @@ import {
 } from "@/lib/formGuard";
 import { NEWSLETTER_FIELD, wantsNewsletter } from "@/lib/newsletterOptIn";
 import { rozpadSPoukazem, formatKc } from "@/lib/castky";
+import { stavMist } from "@/lib/kapacita";
 import { posliKlientce, posliZakaznici, vetaProOdpoved, oznamNeodeslano, type Radek } from "@/lib/email";
 import { nactiSablonu } from "@/lib/emailSablonyServer";
 import { generatePlatebniQr } from "@/lib/platba";
@@ -73,6 +75,28 @@ export async function POST(request: Request) {
   const pobytId = typeof body.pobyt_id === "number" ? body.pobyt_id : null;
   const pobyt = pobytId ? await getPobyt(pobytId) : null;
   const vyzadujePlatbu = Boolean(pobyt?.cislo_uctu);
+
+  // Volná místa ověřujeme i tady. Stránka pobytu se přegenerovává po minutě,
+  // takže se někdo může trefit do okna, kdy už poslední místo padlo — a bez
+  // téhle kontroly by objednávku poslal na pobyt, kam se nevejde.
+  if (typ === "objednavka" && pobyt && pobytId) {
+    const mista = stavMist({
+      kapacita: pobyt.kapacita,
+      obsazenoRucne: pobyt.obsazeno_rucne,
+      objednavky: await getObsazenost(pobytId),
+      vyprodano: pobyt.vyprodano,
+    });
+    if (mista.vyprodano) {
+      return NextResponse.json(
+        {
+          error:
+            "Poslední místo nám mezitím padlo. Přihlas se prosím na čekací listinu — ozveme se, jakmile se místo uvolní.",
+          vyprodano: true,
+        },
+        { status: 409 }
+      );
+    }
+  }
 
   // Poukaz ověřujeme znovu tady, i když ho formulář ověřoval už při zadání —
   // mezitím se mohl vyčerpat a hlavně si prohlížeč mohl slevu přepsat.

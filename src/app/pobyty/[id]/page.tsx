@@ -6,7 +6,8 @@ import Footer from "@/components/Footer";
 import FadeUp from "@/components/FadeUp";
 import PoptavkaForm from "@/components/PoptavkaForm";
 import PobytGallery from "@/components/PobytGallery";
-import { getPobyt } from "@/lib/db";
+import { getPobyt, getObsazenost } from "@/lib/db";
+import { stavMist, popisVolnychMist } from "@/lib/kapacita";
 import { nbsp } from "@/lib/typo";
 import { generatePlatebniQr, rozpadPlatby } from "@/lib/platba";
 
@@ -37,6 +38,13 @@ export default async function PobytDetailPage({
   // Dva QR kódy — na celou částku a na zálohu. Formulář mezi nimi jen
   // přepíná, aby se při změně volby nemuselo nic dogenerovávat.
   const rozpad = rozpadPlatby({ cena: pobyt.cena, zalohaProcento: pobyt.zaloha_procento });
+  // Volná místa — pobyt se vyprodá sám, jakmile dojdou.
+  const mista = stavMist({
+    kapacita: pobyt.kapacita,
+    obsazenoRucne: pobyt.obsazeno_rucne,
+    objednavky: await getObsazenost(pobyt.id),
+    vyprodano: pobyt.vyprodano,
+  });
   const [qrDataUrl, qrZalohaDataUrl] = await Promise.all([
     generatePlatebniQr({
       cisloUctu: pobyt.cislo_uctu,
@@ -80,7 +88,7 @@ export default async function PobytDetailPage({
               <div className="flex-1">
                 <h1 className="flex flex-wrap items-center gap-3 font-serif text-4xl text-ink sm:text-5xl">
                   {nbsp(pobyt.nadpis)}
-                  {pobyt.vyprodano && (
+                  {mista.vyprodano && (
                     <span className="rounded-full bg-line px-3 py-1 text-xs uppercase tracking-[0.15em] text-muted">
                       Vyprodáno
                     </span>
@@ -96,6 +104,11 @@ export default async function PobytDetailPage({
                   {pobyt.termin && <span>📅 {pobyt.termin}</span>}
                   {pobyt.misto && <span>📍 {pobyt.misto}</span>}
                   {pobyt.cena && <span>🏷️ {pobyt.cena}</span>}
+                  {/* Kolik míst zbývá — jen když se kapacita hlídá a pobyt
+                      ještě není zavřený. */}
+                  {mista.sledujeSe && !mista.vyprodano && !pobyt.pripravuje_se && (
+                    <span>👥 {popisVolnychMist(mista.volno)}</span>
+                  )}
                 </div>
 
                 {pobyt.popis && (
@@ -122,7 +135,7 @@ export default async function PobytDetailPage({
                     cisloUctu={pobyt.cislo_uctu}
                     variabilniSymbol={pobyt.variabilni_symbol}
                     platebniPokyny={pobyt.platebni_pokyny}
-                    vyprodano={pobyt.vyprodano}
+                    vyprodano={mista.vyprodano}
                     pripravujeSe={pobyt.pripravuje_se}
                   />
                 </div>

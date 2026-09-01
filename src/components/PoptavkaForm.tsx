@@ -180,6 +180,13 @@ export default function PoptavkaForm({
       setSent(true);
     } else {
       const data = await res.json().catch(() => ({}));
+      // Poslední místo padlo, zatímco měla zákaznice formulář otevřený.
+      // Přepneme ji rovnou na čekací listinu, ať nemusí nic hledat —
+      // vyplněné údaje zůstanou.
+      if (data.vyprodano) {
+        setMode("cekaci");
+        setPotvrzenoPlatba(false);
+      }
       setError(data.error ?? "Odeslání se nepovedlo, zkus to prosím znovu.");
       setSending(false);
     }

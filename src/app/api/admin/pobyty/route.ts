@@ -26,6 +26,8 @@ type Body = {
   variabilni_symbol?: string;
   platebni_pokyny?: string;
   zaloha_procento?: number;
+  kapacita?: number;
+  obsazeno_rucne?: number;
   zverejneno?: boolean;
   vyprodano?: boolean;
   pripravuje_se?: boolean;
@@ -45,6 +47,9 @@ function parseFields(body: Body) {
     // Procento držíme v rozsahu 0–99: 100 % by byla „záloha" ve výši celé
     // ceny, tedy druhé tlačítko, které dělá totéž co první.
     zaloha_procento: Math.min(99, Math.max(0, Math.round(Number(body.zaloha_procento) || 0))),
+    // Kapacita 0 = počet míst se nehlídá.
+    kapacita: Math.min(999, Math.max(0, Math.round(Number(body.kapacita) || 0))),
+    obsazeno_rucne: Math.min(999, Math.max(0, Math.round(Number(body.obsazeno_rucne) || 0))),
     zverejneno: body.zverejneno !== false,
     vyprodano: body.vyprodano === true,
     pripravuje_se: body.pripravuje_se === true,
