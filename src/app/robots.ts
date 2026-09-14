@@ -32,7 +32,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/api", "/studium", "/vstup"],
+        disallow: ["/admin", "/api", "/vstup"],
       },
       {
         userAgent: AI_TRAINING_BOTS,

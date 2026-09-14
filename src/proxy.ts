@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { STUDIO_COOKIE_NAME, verifySessionToken } from "@/lib/studioAuth";
 import { ADMIN_COOKIE_NAME, verifyAdminToken } from "@/lib/adminAuth";
 import { SITE_COOKIE_NAME, verifySiteToken } from "@/lib/siteAuth";
 
@@ -47,16 +46,6 @@ export async function proxy(request: NextRequest) {
   const siteUnlocked = await verifySiteToken(siteToken);
   if (!siteUnlocked) {
     return NextResponse.redirect(new URL("/vstup", request.url));
-  }
-
-  // ── Členská sekce (/studium) — vlastní kód navíc ──
-  if (pathname === "/studium" || pathname === "/studium/login") {
-    if (pathname === "/studium/login") return NextResponse.next();
-    const token = request.cookies.get(STUDIO_COOKIE_NAME)?.value;
-    const valid = await verifySessionToken(token);
-    if (!valid) {
-      return NextResponse.redirect(new URL("/studium/login", request.url));
-    }
   }
 
   return NextResponse.next();

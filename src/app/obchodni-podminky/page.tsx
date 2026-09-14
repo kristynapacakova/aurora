@@ -111,7 +111,32 @@ export default async function ObchodniPodminkyPage() {
                 nevztahuje právo spotřebitele na odstoupení od smlouvy do 14 dnů.
               </p>
               <p className="mt-3">
-                Stornopodmínky: <strong className="text-ink">[DOPLNIT — např. výše vratky v % ceny podle počtu dní před začátkem pobytu]</strong>.
+                <strong className="text-ink">Stornopodmínky.</strong> Zrušit
+                účast je možné kdykoliv, a to e-mailem na adresu uvedenou v
+                kontaktech; rozhodující je datum doručení e-mailu. Vrací se:
+              </p>
+              <ul className="mt-2 list-disc space-y-1 pl-5">
+                <li>
+                  více než <strong className="text-ink">30 dnů</strong> před
+                  začátkem pobytu — celá uhrazená částka snížená o zálohu,
+                  která propadá jako storno poplatek,
+                </li>
+                <li>
+                  <strong className="text-ink">30 až 15 dnů</strong> před
+                  začátkem pobytu — 50 % uhrazené částky,
+                </li>
+                <li>
+                  <strong className="text-ink">14 dnů a méně</strong> před
+                  začátkem pobytu — uhrazená částka se nevrací.
+                </li>
+              </ul>
+              <p className="mt-3">
+                Pokud za sebe zajistíte náhradnici, která pobyt uhradí, vrací se
+                vám celá zaplacená částka bez ohledu na termín zrušení. Zruší-li
+                pobyt poskytovatel, vrací se celá uhrazená částka do 14 dnů;
+                poskytovatel v takovém případě neodpovídá za náklady, které
+                zákaznici vznikly v souvislosti s pobytem jinde (doprava a
+                podobně).
               </p>
             </section>
 

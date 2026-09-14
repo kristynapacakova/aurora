@@ -11,7 +11,7 @@ type MenuItem = { label: string; href: string; external?: boolean };
 const SCROLL_HIDE_THRESHOLD = 80;
 
 export default function Navbar() {
-  const { uscreen_signup } = useSiteSettings();
+  const { uscreen_signup, uscreen_login } = useSiteSettings();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -96,6 +96,23 @@ export default function Navbar() {
                 </motion.div>
               ))}
             </nav>
+
+            {/* Přihlášení do online studia — pro ty, které už členství mají.
+                Míří rovnou do Uscreenu, vlastní přihlašování web nemá. */}
+            {uscreen_login && (
+              <motion.a
+                href={uscreen_login}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                initial={{ opacity: 0, y: 18 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: MENU_ITEMS.length * 0.055 + 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                className="mt-10 text-xs uppercase tracking-[0.2em] text-muted transition-colors duration-200 hover:text-accent-d"
+              >
+                Přihlásit do online studia
+              </motion.a>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
