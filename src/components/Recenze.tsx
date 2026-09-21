@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle, IconLeafBranch } from "./BrandIcons";
@@ -22,18 +22,11 @@ type Recenze = {
   triSlova?: string[];
 };
 
-// Rozdělí text podle hvězdiček a vybarví, co je mezi nimi. Stejné zvýraznění
-// vět jako v původních grafikách — nese to celý tón ohlasu.
-function zvyrazni(text: string): ReactNode[] {
-  return text.split(/(\*[^*]+\*)/g).map((cast, i) =>
-    cast.startsWith("*") && cast.endsWith("*") && cast.length > 2 ? (
-      <span key={i} className="text-accent-d">
-        {nbsp(cast.slice(1, -1))}
-      </span>
-    ) : (
-      <span key={i}>{nbsp(cast)}</span>
-    )
-  );
+// Hvězdičky v textech označují, co ženy v původních grafikách vypíchly.
+// Na webu se nevybarvují — ohlas je pak jednolitý a klidný — ale v datech
+// zůstávají, kdyby se k tomu někdy vracelo.
+function ocisti(text: string): string {
+  return text.replace(/\*/g, "");
 }
 
 const RECENZE: Recenze[] = [
@@ -106,15 +99,14 @@ export default function Recenze() {
 
   return (
     <section id="ohlasy" className="relative overflow-hidden bg-cream pt-14 pb-16 sm:pt-16 sm:pb-20">
-      {/* Jedna větvička u okraje — stejně decentně jako u rezervace. */}
       <IconLeafBranch
-        size={200}
+        size={180}
         className="pointer-events-none absolute -left-14 top-10 hidden text-accent/10 lg:block"
       />
 
       <div className="relative mx-auto max-w-3xl px-6">
         <FadeUp>
-          <div className="mb-10 text-center">
+          <div className="mb-8 text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
               <IconSparkle size={12} />
               <p className="text-xs uppercase tracking-[0.3em] text-accent">Ohlasy</p>
@@ -127,45 +119,36 @@ export default function Recenze() {
         </FadeUp>
 
         <FadeUp delay={0.1}>
-          <article className="rounded-[28px] bg-sand/60 px-6 py-10 sm:px-12 sm:py-12">
-            {/* Kroužek s uvozovkou — stejný motiv jako ikonky v rozvrhu. */}
-            <div className="mx-auto mb-7 flex h-11 w-11 items-center justify-center rounded-full bg-cream">
-              <span className="font-serif text-2xl leading-none text-accent" aria-hidden="true">
-                &ldquo;
-              </span>
-            </div>
-
-            {/* Text doleva — na celé ohlasy se to čte líp než na střed. */}
-            <div className="mx-auto flex max-w-xl flex-col gap-4">
+          <article className="rounded-[24px] bg-sand/60 px-6 py-8 sm:px-10 sm:py-9">
+            <div className="flex flex-col gap-3">
               {r.odstavce.map((odst, j) => (
-                <p key={j} className="text-sm leading-relaxed text-muted sm:text-[15px]">
-                  {zvyrazni(odst)}
+                <p key={j} className="text-sm leading-relaxed text-muted">
+                  {nbsp(ocisti(odst))}
                 </p>
               ))}
               {r.odrazky && (
-                <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-muted marker:text-accent sm:text-[15px]">
+                <ul className="flex list-disc flex-col gap-1 pl-5 text-sm leading-relaxed text-muted marker:text-accent">
                   {r.odrazky.map((o, j) => (
-                    <li key={j}>{zvyrazni(o)}</li>
+                    <li key={j}>{nbsp(ocisti(o))}</li>
                   ))}
                 </ul>
               )}
             </div>
 
-            <div className="mx-auto mt-9 max-w-xl border-t border-line pt-6 text-center">
+            <div className="mt-6 border-t border-line pt-5 text-center">
               {r.triSlova && (
-                <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-accent">
+                <p className="mb-1.5 text-[11px] uppercase tracking-[0.25em] text-accent">
                   {r.triSlova.join(" · ")}
                 </p>
               )}
-              <p className="font-serif text-2xl leading-tight text-ink">{r.jmeno}</p>
+              <p className="font-serif text-xl leading-tight text-ink">{r.jmeno}</p>
               <p className="mt-0.5 text-[11px] uppercase tracking-[0.25em] text-muted">
                 {r.misto}
               </p>
             </div>
           </article>
 
-          {/* Listování */}
-          <div className="mt-6 flex items-center justify-center gap-5">
+          <div className="mt-5 flex items-center justify-center gap-5">
             <button
               type="button"
               onClick={() => posun(-1)}
