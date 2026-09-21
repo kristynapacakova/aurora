@@ -1,19 +1,21 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import FadeUp from "./FadeUp";
 import { nbsp } from "@/lib/typo";
 import { IconSparkle, IconLeafBranch } from "./BrandIcons";
 
 // Ohlasy žen, které chodí na lekce. Texty jsou doslovné přepisy grafik, které
-// klientka dostala zpátky z dotazníku — nezkracují se ani tam, kde se něco
+// klientka dostala zpátky z dotazníku — nekrátí se ani tam, kde se něco
 // opakuje, protože to jsou jejich vlastní slova. Zvýrazněné věty jsou ty samé
 // jako v originálech; označují se hvězdičkami: *takhle*.
+//
+// Ohlasy se listují po jednom. Vedle sebe by nešly: každý je jinak dlouhý
+// a mřížka s kartami od dvou do deseti odstavců působí rozsypaně. Takhle má
+// každý ohlas stejnou šířku i střed, jako jednotlivé grafiky.
 type Recenze = {
   jmeno: string;
   misto: string;
-  // První odstavec je vidět vždycky, zbytek se rozbalí.
   odstavce: string[];
   odrazky?: string[];
   // Závěrečná trojice slov z dotazníku („Vůně, dynamika, relax").
@@ -96,26 +98,23 @@ const RECENZE: Recenze[] = [
 ];
 
 export default function Recenze() {
-  const [otevrena, setOtevrena] = useState<number | null>(null);
+  const [aktivni, setAktivni] = useState(0);
+  const r = RECENZE[aktivni];
+
+  const posun = (o: number) =>
+    setAktivni((i) => (i + o + RECENZE.length) % RECENZE.length);
 
   return (
-    <section
-      id="ohlasy"
-      className="relative overflow-hidden bg-gradient-to-b from-sand via-[#FDEEE6] to-cream pt-16 pb-20 sm:pt-20 sm:pb-24"
-    >
-      {/* Botanika v rozích — stejný motiv jako na grafikách od klientky */}
+    <section id="ohlasy" className="relative overflow-hidden bg-cream pt-14 pb-16 sm:pt-16 sm:pb-20">
+      {/* Jedna větvička u okraje — stejně decentně jako u rezervace. */}
       <IconLeafBranch
-        size={190}
-        className="pointer-events-none absolute -left-10 -top-6 hidden text-accent/15 sm:block"
-      />
-      <IconLeafBranch
-        size={190}
-        className="pointer-events-none absolute -right-10 bottom-4 hidden -scale-x-100 text-accent/15 sm:block"
+        size={200}
+        className="pointer-events-none absolute -left-14 top-10 hidden text-accent/10 lg:block"
       />
 
-      <div className="relative mx-auto max-w-5xl px-6">
+      <div className="relative mx-auto max-w-3xl px-6">
         <FadeUp>
-          <div className="mb-12 text-center">
+          <div className="mb-10 text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
               <IconSparkle size={12} />
               <p className="text-xs uppercase tracking-[0.3em] text-accent">Ohlasy</p>
@@ -127,94 +126,84 @@ export default function Recenze() {
           </div>
         </FadeUp>
 
-        <div className="grid items-start gap-6 md:grid-cols-2">
-          {RECENZE.map((r, i) => {
-            const jeOtevrena = otevrena === i;
-            const zbytek = r.odstavce.slice(1);
-            const maPokracovani = zbytek.length > 0 || Boolean(r.odrazky);
-            return (
-              <FadeUp key={`${r.jmeno}-${r.misto}`} delay={Math.min(i, 3) * 0.06}>
-                {/* Dvojitý rám jako na grafikách: broskvová deska a v ní
-                    světlý panel s tenkou linkou. */}
-                <article className="rounded-[30px] bg-gradient-to-b from-[#FBE3D5] to-[#F9D9CA] p-2.5 shadow-[0_18px_40px_-28px_rgba(140,95,71,0.55)]">
-                  <div className="rounded-[22px] bg-cream/85 px-6 py-8 text-center ring-1 ring-accent/20 sm:px-8">
-                    <p
-                      className="mb-1 font-serif text-5xl leading-none text-accent/60"
-                      aria-hidden="true"
-                    >
-                      &ldquo;
-                    </p>
+        <FadeUp delay={0.1}>
+          <article className="rounded-[28px] bg-sand/60 px-6 py-10 sm:px-12 sm:py-12">
+            {/* Kroužek s uvozovkou — stejný motiv jako ikonky v rozvrhu. */}
+            <div className="mx-auto mb-7 flex h-11 w-11 items-center justify-center rounded-full bg-cream">
+              <span className="font-serif text-2xl leading-none text-accent" aria-hidden="true">
+                &ldquo;
+              </span>
+            </div>
 
-                    <p className="text-sm leading-relaxed text-ink">
-                      {zvyrazni(r.odstavce[0])}
-                    </p>
+            {/* Text doleva — na celé ohlasy se to čte líp než na střed. */}
+            <div className="mx-auto flex max-w-xl flex-col gap-4">
+              {r.odstavce.map((odst, j) => (
+                <p key={j} className="text-sm leading-relaxed text-muted sm:text-[15px]">
+                  {zvyrazni(odst)}
+                </p>
+              ))}
+              {r.odrazky && (
+                <ul className="flex list-disc flex-col gap-1.5 pl-5 text-sm leading-relaxed text-muted marker:text-accent sm:text-[15px]">
+                  {r.odrazky.map((o, j) => (
+                    <li key={j}>{zvyrazni(o)}</li>
+                  ))}
+                </ul>
+              )}
+            </div>
 
-                    <AnimatePresence initial={false}>
-                      {jeOtevrena && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-                          className="overflow-hidden"
-                        >
-                          <div className="flex flex-col gap-3 pt-3">
-                            {zbytek.map((odst, j) => (
-                              <p key={j} className="text-sm leading-relaxed text-ink">
-                                {zvyrazni(odst)}
-                              </p>
-                            ))}
-                            {r.odrazky && (
-                              <ul className="mx-auto flex max-w-sm list-disc flex-col gap-1 pl-5 text-left text-sm leading-relaxed text-ink marker:text-accent">
-                                {r.odrazky.map((o, j) => (
-                                  <li key={j}>{zvyrazni(o)}</li>
-                                ))}
-                              </ul>
-                            )}
-                          </div>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+            <div className="mx-auto mt-9 max-w-xl border-t border-line pt-6 text-center">
+              {r.triSlova && (
+                <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-accent">
+                  {r.triSlova.join(" · ")}
+                </p>
+              )}
+              <p className="font-serif text-2xl leading-tight text-ink">{r.jmeno}</p>
+              <p className="mt-0.5 text-[11px] uppercase tracking-[0.25em] text-muted">
+                {r.misto}
+              </p>
+            </div>
+          </article>
 
-                    {/* Trojice slov uzavírá ohlas stejně jako na grafikách —
-                        proto sedí hned pod textem, ne až za tlačítkem. */}
-                    {r.triSlova && (
-                      <p className="mt-5 text-sm text-accent-d">
-                        {r.triSlova.join(", ")}
-                        <span className="ml-1.5 text-accent" aria-hidden="true">
-                          ♥
-                        </span>
-                      </p>
-                    )}
+          {/* Listování */}
+          <div className="mt-6 flex items-center justify-center gap-5">
+            <button
+              type="button"
+              onClick={() => posun(-1)}
+              aria-label="Předchozí ohlas"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-accent hover:text-accent"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
 
-                    {maPokracovani && (
-                      <button
-                        type="button"
-                        onClick={() => setOtevrena(jeOtevrena ? null : i)}
-                        className="mt-5 text-xs uppercase tracking-[0.18em] text-accent-d transition-colors hover:text-ink"
-                      >
-                        {jeOtevrena ? "Skrýt" : "Číst celé"}
-                      </button>
-                    )}
+            <div className="flex items-center gap-2.5">
+              {RECENZE.map((polozka, i) => (
+                <button
+                  key={`${polozka.jmeno}-${polozka.misto}`}
+                  type="button"
+                  onClick={() => setAktivni(i)}
+                  aria-label={`Ohlas ${i + 1} z ${RECENZE.length} — ${polozka.jmeno}`}
+                  aria-current={i === aktivni}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === aktivni ? "w-6 bg-accent" : "w-1.5 bg-line hover:bg-accent/50"
+                  }`}
+                />
+              ))}
+            </div>
 
-                    {/* Dělicí linka s větvičkou — stejný předěl nad jménem
-                        jako na grafikách. */}
-                    <div className="mt-6 flex items-center justify-center gap-3" aria-hidden="true">
-                      <span className="h-px w-12 bg-line" />
-                      <IconLeafBranch size={20} className="text-accent/70" />
-                      <span className="h-px w-12 bg-line" />
-                    </div>
-
-                    <p className="mt-4 font-serif text-2xl leading-tight text-ink">{r.jmeno}</p>
-                    <p className="mt-0.5 text-[11px] uppercase tracking-[0.25em] text-muted">
-                      {r.misto}
-                    </p>
-                  </div>
-                </article>
-              </FadeUp>
-            );
-          })}
-        </div>
+            <button
+              type="button"
+              onClick={() => posun(1)}
+              aria-label="Další ohlas"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-ink transition-colors hover:border-accent hover:text-accent"
+            >
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </FadeUp>
       </div>
     </section>
   );
