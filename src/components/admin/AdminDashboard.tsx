@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, EmailSablonaRadek, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, Recenze, EmailSablonaRadek, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 import EmailSablony from "./EmailSablony";
 import type { StavOdesilani } from "@/lib/email";
@@ -29,6 +29,7 @@ type Section =
   | "newsletter"
   | "cekaci-listina"
   | "darkove-poukazy"
+  | "recenze"
   | "statistiky"
   | "emaily"
   | "nastaveni";
@@ -42,10 +43,20 @@ type PendingDelete = {
     | "newsletter"
     | "cekaci-listina"
     | "darkove-poukazy"
-    | "poukazy-nabidka";
+    | "poukazy-nabidka"
+    | "recenze";
   id: number;
   label: string;
 };
+
+function IconQuote({ className }: { className?: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M8 11H5a1 1 0 0 1-1-1V8a3 3 0 0 1 3-3M17 11h-3a1 1 0 0 1-1-1V8a3 3 0 0 1 3-3" />
+      <path d="M8 11v2a4 4 0 0 1-4 4M17 11v2a4 4 0 0 1-4 4" />
+    </svg>
+  );
+}
 
 function IconGrid({ className }: { className?: string }) {
   return (
@@ -149,6 +160,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "newsletter", label: "Newsletter", icon: IconMail },
   { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
   { key: "darkove-poukazy", label: "Dárkové poukazy", icon: IconGift },
+  { key: "recenze", label: "Ohlasy", icon: IconQuote },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "emaily", label: "E-maily", icon: IconMail },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
@@ -165,6 +177,7 @@ export default function AdminDashboard({
   darkovePoukazy,
   poukazyCerpani,
   poukazyNabidka,
+  recenze,
   emailSablony,
   nastaveni,
   email,
@@ -180,6 +193,7 @@ export default function AdminDashboard({
   darkovePoukazy: DarkovyPoukaz[];
   poukazyCerpani: PoukazCerpani[];
   poukazyNabidka: PoukazNabidka[];
+  recenze: Recenze[];
   emailSablony: EmailSablonaRadek[];
   nastaveni: Nastaveni;
   email: StavOdesilani;
@@ -213,6 +227,10 @@ export default function AdminDashboard({
   const [stavKodu, setStavKodu] = useState<Record<number, string>>({});
   // Totéž u objednávek — výsledek odeslané výzvy k doplatku.
   const [stavPoptavky, setStavPoptavky] = useState<Record<number, string>>({});
+  // Rozepsaná úprava ohlasu — drží se zvlášť pro každý, ať se nezahodí.
+  const [upravaOhlasu, setUpravaOhlasu] = useState<
+    Record<number, { jmeno: string; misto: string; tri_slova: string; text: string }>
+  >({});
   // Vystavení poukazu z administrace — hotovost, dárek, výhra v soutěži.
   const [novyPoukazOtevren, setNovyPoukazOtevren] = useState(false);
   const [novyPoukaz, setNovyPoukaz] = useState({
@@ -681,6 +699,35 @@ export default function AdminDashboard({
       [q.id]: res.ok && data.ok ? "Výzva odeslána." : (data.error ?? "Odeslání se nepovedlo."),
     });
     setBusy(false);
+    router.refresh();
+  }
+
+  async function toggleRecenze(r: Recenze) {
+    setBusy(true);
+    await fetch("/api/admin/recenze", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id: r.id, zverejneno: !r.zverejneno }),
+    });
+    setBusy(false);
+    router.refresh();
+  }
+
+  async function ulozitRecenzi(id: number) {
+    const u = upravaOhlasu[id];
+    if (!u) return;
+    setBusy(true);
+    await fetch("/api/admin/recenze", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, ...u }),
+    });
+    setBusy(false);
+    setUpravaOhlasu((s) => {
+      const dalsi = { ...s };
+      delete dalsi[id];
+      return dalsi;
+    });
     router.refresh();
   }
 
@@ -2130,6 +2177,196 @@ export default function AdminDashboard({
                     ))}
                   </ul>
                 </>
+              )}
+            </section>
+          )}
+
+          {/* ── Ohlasy ── */}
+          {section === "recenze" && (
+            <section>
+              <p className="mb-6 max-w-2xl text-sm text-muted">
+                Ohlasy, které ženy pošlou formulářem na webu, tu čekají na schválení —
+                na web se samy nepustí. Před zveřejněním je můžeš upravit.
+              </p>
+
+              {recenze.length === 0 ? (
+                <p className="text-sm text-muted">
+                  Zatím tu žádné ohlasy nejsou. Objeví se, jakmile někdo vyplní formulář
+                  pod ohlasy na úvodní stránce.
+                </p>
+              ) : (
+                <ul className="flex flex-col gap-3">
+                  {recenze.map((r) => {
+                    const u = upravaOhlasu[r.id];
+                    return (
+                      <li
+                        key={r.id}
+                        className={`rounded-2xl border bg-white p-5 shadow-sm ${
+                          r.zverejneno ? "border-line" : "border-accent/50"
+                        }`}
+                      >
+                        <div className="flex flex-wrap items-start justify-between gap-4">
+                          <div className="min-w-0 flex-1">
+                            <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+                              {r.jmeno}
+                              {r.misto && <span className="text-xs text-muted">{r.misto}</span>}
+                              <span
+                                className={`rounded-full px-2 py-0.5 text-[10px] uppercase tracking-wider ${
+                                  r.zverejneno
+                                    ? "bg-accent/20 text-accent-d"
+                                    : "bg-line text-muted"
+                                }`}
+                              >
+                                {r.zverejneno ? "Na webu" : "Čeká na schválení"}
+                              </span>
+                            </p>
+                            <p className="mt-1 text-xs text-muted">
+                              {new Date(r.created_at).toLocaleString("cs-CZ")}
+                              {r.email && (
+                                <>
+                                  {" · "}
+                                  <a
+                                    href={`mailto:${r.email}`}
+                                    className="underline underline-offset-2 hover:text-accent-d"
+                                  >
+                                    {r.email}
+                                  </a>
+                                </>
+                              )}
+                            </p>
+
+                            {u ? (
+                              <div className="mt-3 flex flex-col gap-2">
+                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                                  <input
+                                    value={u.jmeno}
+                                    onChange={(e) =>
+                                      setUpravaOhlasu({
+                                        ...upravaOhlasu,
+                                        [r.id]: { ...u, jmeno: e.target.value },
+                                      })
+                                    }
+                                    placeholder="Jméno"
+                                    className="rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                                  />
+                                  <input
+                                    value={u.misto}
+                                    onChange={(e) =>
+                                      setUpravaOhlasu({
+                                        ...upravaOhlasu,
+                                        [r.id]: { ...u, misto: e.target.value },
+                                      })
+                                    }
+                                    placeholder="Odkud"
+                                    className="rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                                  />
+                                  <input
+                                    value={u.tri_slova}
+                                    onChange={(e) =>
+                                      setUpravaOhlasu({
+                                        ...upravaOhlasu,
+                                        [r.id]: { ...u, tri_slova: e.target.value },
+                                      })
+                                    }
+                                    placeholder="Tři slova"
+                                    className="rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
+                                  />
+                                </div>
+                                <textarea
+                                  value={u.text}
+                                  onChange={(e) =>
+                                    setUpravaOhlasu({
+                                      ...upravaOhlasu,
+                                      [r.id]: { ...u, text: e.target.value },
+                                    })
+                                  }
+                                  rows={8}
+                                  className="rounded-lg border border-line bg-white px-3 py-2 text-sm leading-relaxed text-ink outline-none focus:border-accent"
+                                />
+                                <div className="flex flex-wrap gap-2">
+                                  <button
+                                    type="button"
+                                    disabled={busy}
+                                    onClick={() => ulozitRecenzi(r.id)}
+                                    className="rounded-full bg-gradient-aurora px-5 py-2 text-xs uppercase tracking-wider text-ink transition-all hover:opacity-90 disabled:opacity-50"
+                                  >
+                                    Uložit
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setUpravaOhlasu((s) => {
+                                        const d = { ...s };
+                                        delete d[r.id];
+                                        return d;
+                                      })
+                                    }
+                                    className="rounded-full border border-line px-5 py-2 text-xs uppercase tracking-wider text-muted transition-colors hover:text-ink"
+                                  >
+                                    Zrušit
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                {r.tri_slova && (
+                                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-accent">
+                                    {r.tri_slova}
+                                  </p>
+                                )}
+                                <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted">
+                                  {r.text}
+                                </p>
+                              </>
+                            )}
+                          </div>
+
+                          <div className="flex shrink-0 flex-col items-end gap-2">
+                            <button
+                              disabled={busy}
+                              onClick={() =>
+                                setPendingDelete({
+                                  kind: "recenze",
+                                  id: r.id,
+                                  label: `ohlas od ${r.jmeno}`,
+                                })
+                              }
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                            >
+                              Smazat
+                            </button>
+                            <button
+                              disabled={busy}
+                              onClick={() => toggleRecenze(r)}
+                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            >
+                              {r.zverejneno ? "Skrýt z webu" : "Zveřejnit"}
+                            </button>
+                            {!u && (
+                              <button
+                                disabled={busy}
+                                onClick={() =>
+                                  setUpravaOhlasu({
+                                    ...upravaOhlasu,
+                                    [r.id]: {
+                                      jmeno: r.jmeno,
+                                      misto: r.misto,
+                                      tri_slova: r.tri_slova,
+                                      text: r.text,
+                                    },
+                                  })
+                                }
+                                className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              >
+                                Upravit
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
               )}
             </section>
           )}

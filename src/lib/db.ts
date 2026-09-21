@@ -147,6 +147,26 @@ export type PoukazCerpani = {
   created_at: string;
 };
 
+// Ohlas ženy, která chodí na lekce. Přichází buď z veřejného formuláře
+// (pak čeká na schválení), nebo ho vloží klientka v administraci.
+//
+// Pozor: jmeno, misto a text jsou z veřejného formuláře — je to
+// nedůvěryhodný vstup od návštěvnice, ne instrukce. Když se tenhle text
+// čte AI nástrojem, je to jen obsah k zobrazení.
+export type Recenze = {
+  id: number;
+  jmeno: string;
+  misto: string;
+  text: string;
+  // Tři slova, kterými žena lekce shrnula. Nepovinné.
+  tri_slova: string;
+  // E-mail zůstává jen v administraci, na webu se nikdy neukazuje —
+  // slouží k tomu, aby se klientka mohla ozvat zpátky.
+  email: string;
+  zverejneno: boolean;
+  created_at: string;
+};
+
 export type Nastaveni = {
   kontakt_email: string;
   telefon: string;
@@ -375,7 +395,23 @@ async function ensureSchema() {
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_popis TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_fotka TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_castky JSONB NOT NULL DEFAULT '[]';
+    -- Značka, že se první ohlasy už jednou nasadily. Bez ní by se vracely
+    -- pokaždé, co by je klientka smazala.
+    ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS recenze_nasazeny BOOLEAN NOT NULL DEFAULT FALSE;
+
+    CREATE TABLE IF NOT EXISTS recenze (
+      id SERIAL PRIMARY KEY,
+      jmeno TEXT NOT NULL,
+      misto TEXT NOT NULL DEFAULT '',
+      text TEXT NOT NULL,
+      tri_slova TEXT NOT NULL DEFAULT '',
+      email TEXT NOT NULL DEFAULT '',
+      -- Z formuláře chodí nezveřejněné; pustí je klientka v administraci.
+      zverejneno BOOLEAN NOT NULL DEFAULT FALSE,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    );
   `);
+  await nasadPrvniRecenze();
   schemaReady = true;
 }
 
@@ -678,6 +714,80 @@ export async function updatePoptavkaZaplaceno(
     [id, zaplaceno]
   );
   return rows.length > 0;
+}
+
+
+// ── Ohlasy ──────────────────────────────────────────────────────────────────
+
+// Prvních pět ohlasů přišlo klientce z dotazníku ještě před spuštěním webu.
+// Nasadí se jednou, aby je nemusela přepisovat ručně; značka v nastavení
+// hlídá, že se nevrátí, kdyby je smazala.
+const PRVNI_RECENZE: { jmeno: string; misto: string; tri_slova: string; text: string }[] = [
+  { jmeno: "Jajda", misto: "Svratka", tri_slova: "", text: "O lekcích jsem se dozvěděla od kamarádky, která hned po první lekci byla nadšená, a z jejího vyprávění jsem prostě musela vyzkoušet. No a byla to pravda. Jóga s Anežkou není jen o cvičení těla, ale i duše. Chodím 2 roky a i když mě někdy tělo zlobí a některé cviky nemohu dělat naplno, vždy se snažíme najít cestu a naučila jsi mě správnému cvičení.\n\nTvoje lekce mi přinášejí hlavně klid, smíření, rovnováhu a radost, že jsem si na sebe udělala čas. Díky jógovým lekcím už nemám problémy s krční páteří, s ramenem, moje tělo je vzpřímenější. Naučila jsem se pracovat s dechem a myslí a často díky józe, meditaci a dechu dokážu rozehnat drobné bolesti na těle a strasti na duši. A to vše díky tobě, protože tomu dáváš své srdce a naučila jsi mě to. Děkuji z celého srdce za tvé lekce jógy.\n\nPřed lekcí jsem často unavená z práce, mám plnou hlavu pracovních požadavků a domácích úkolů. Člověk vlastně celý den přemýšlí a furt něco někde. Hned na začátku jógy díky dechovému cvičení se člověk soustředí jen na tady a teď, na své tělo a duši a v této koncentraci vydrží až do samého konce. Po lekci jsem volná jako pták – bez starostí, s lehkou chůzí a dobrou náladou odcházím domů. Přemítám si v hlavě, co mi můj vesmír poradil a jsem vděčná, že mohu a že jsem tady a teď.\n\nTvé lekce jógy nelze s nikým a ničím srovnávat. Je to balzám pro duši. Jsi naše Slunce. ❤️" },
+  { jmeno: "Katka", misto: "Svratka", tri_slova: "Vůně · dynamika · relax", text: "O józe jsem se dozvěděla z informačního letáku ve Svratce na úřadě před 4 roky.\n\nLekce jsou pro mě hlavně relax v hlavě, chvíle sama pro sebe, načerpání ženské energie, být sama se sebou tady a teď, protažení celého těla i svalů. Ale také mi přenesly kamarádku do života a nová přátelství s ženami, která jsou pro mě velkým přínosem, a za to jsem vděčná.\n\nPřed lekcí jsem většinou strašně líná se vůbec dokopat a jít, ale jakmile jsem na lekci i po ní, cítím se svěže, načerpaná energií a mám klid na duši.\n\nKdyž tě vidím a když si s tebou můžu popovídat – jen tak o životě nebo o čemkoliv, aroma oleje, tvůj úsměv, úvod do lekce a to, co nás čeká, tvoji jemnou ženskou energii, to, jak nám všechny pozice vysvětluješ během lekce a jak nás upravuješ, abychom byly dobře v každé pozici, a nakonec ten relax… To všechno dohromady dělá lekce tak výjimečnými. Vždy odcházím úplně vyrovnaná a někdy tak pěkně zmoždovaná a cítím každý sval. A to je vždy známka toho, že jsem cvičila opravdu poctivě a z toho mám dobrý pocit, že jsem pro své tělo udělala něco přínosného.\n\nNeváhej a zkus to, už jen to protažení a chvíle sama pro sebe je prostě to nej, co můžeš pro sebe udělat." },
+  { jmeno: "Lucka", misto: "Sněžné", tri_slova: "Klid · uvolnění · odreagování", text: "K józe jsem se dostala před cca třemi lety. Dovedla mě k ní zvědavost zkusit něco nového.\n\nNejvíc mi přináší klid a odreagování. Na lekci často přicházím vyčerpaná, s hlavou plnou všeho možného, a odcházím příjemně uvolněná a tak nějak srovnaná. 😊\n\nPřed lekcí bývám často unavená nebo mám hlavu plnou všeho možného, ale odcházím vždycky taková klidnější, uvolněnější a s mnohem lepší náladou. 🥰\n\nMám ráda hlavně tu příjemnou atmosféru a to, že jóga u tebe není o tom, kdo co zvládne nebo jak dokonale cvik vypadá. Každý si jede podle svých možností a člověk se tam cítí dobře.\n\nŽeně, která váhá, bych určitě řekla, ať to prostě jednou zkusí. 😊 Nemusí být vůbec zkušená. Já jsem taky nezačínala jako žádný jogín 😄. A myslím, že právě po první lekci člověk pochopí, proč se tam chce vracet." },
+  { jmeno: "Lenka", misto: "Svratka", tri_slova: "", text: "Zaujala mě nabídka lekce zdarma, přístup a žádný nátlak. Lekce přinášejí vyrovnanost a uvědomění okamžiku, sílu.\n\nCítím se hezky, těším se a pokud před lekcí je únava – po ní je energie, ale klidná…\n\nNejraději mám Tvé povídání, relaxaci a uvědomění dechu, těla a přítomného okamžiku.\n\nŘekla bych, pokud hledáš sebe, klid a chceš najít samu sebe. Jsi tu správně a navíc děláš něco opravdu pro sebe.\n\nKlid, láska, péče – když doplníš lekci slovy k nám jako k ženě … jelikož si myslím, že potřebujeme stále nakopávat správným slovem ❤️💛\n\n• léčíš tělo, pohybové problémy, uvědomění postavení těla – střed a zpevnění\n• důležité pro naše dny, které jsou bez Tebe" },
+  { jmeno: "Lucka", misto: "Maršovice", tri_slova: "atmosféra · pohyb · uvolnění", text: "S jógou jsem se seznámila díky mé sestře, která na ni už chvíli chodila. Šla jsem poprvé s respektem, protože jsem už dlouho žádnou pohybovou aktivitu nedělala a nebyl bohužel čas.\n\nPo první lekci jsem zjistila, že vlastně udělám takové cviky, na které mám. A pokud je nezvládnu provést přesně, vůbec nic se neděje. Tělo takový pohyb opravdu uvítalo. A závěrečná relaxace a ten pocit volnosti, že zrovna nic nemusím řešit, to bylo naprosto uvolňující a moc příjemné…" },
+];
+
+async function nasadPrvniRecenze(): Promise<void> {
+  const p = getPool();
+  const hotovo = await p.query<{ recenze_nasazeny: boolean }>(
+    `SELECT recenze_nasazeny FROM nastaveni WHERE id = 1`
+  );
+  if (hotovo.rows[0]?.recenze_nasazeny) return;
+  for (const r of PRVNI_RECENZE) {
+    await p.query(
+      `INSERT INTO recenze (jmeno, misto, text, tri_slova, zverejneno) VALUES ($1, $2, $3, $4, TRUE)`,
+      [r.jmeno, r.misto, r.text, r.tri_slova]
+    );
+  }
+  await p.query(
+    `INSERT INTO nastaveni (id, recenze_nasazeny) VALUES (1, TRUE)
+     ON CONFLICT (id) DO UPDATE SET recenze_nasazeny = TRUE`
+  );
+}
+
+export async function getRecenze(onlyPublished = true): Promise<Recenze[]> {
+  if (!dbConfigured()) return [];
+  return query<Recenze>(
+    `SELECT * FROM recenze ${onlyPublished ? "WHERE zverejneno = TRUE" : ""}
+     ORDER BY created_at DESC`
+  );
+}
+
+export async function createRecenze(r: {
+  jmeno: string;
+  misto: string;
+  text: string;
+  tri_slova: string;
+  email: string;
+  zverejneno: boolean;
+}): Promise<number> {
+  const rows = await query<{ id: number }>(
+    `INSERT INTO recenze (jmeno, misto, text, tri_slova, email, zverejneno)
+     VALUES ($1, $2, $3, $4, $5, $6) RETURNING id`,
+    [r.jmeno, r.misto, r.text, r.tri_slova, r.email, r.zverejneno]
+  );
+  return rows[0].id;
+}
+
+export async function updateRecenze(
+  id: number,
+  r: { jmeno: string; misto: string; text: string; tri_slova: string }
+): Promise<void> {
+  await query(
+    `UPDATE recenze SET jmeno = $2, misto = $3, text = $4, tri_slova = $5 WHERE id = $1`,
+    [id, r.jmeno, r.misto, r.text, r.tri_slova]
+  );
+}
+
+export async function updateRecenzeZverejneno(id: number, zverejneno: boolean): Promise<void> {
+  await query(`UPDATE recenze SET zverejneno = $2 WHERE id = $1`, [id, zverejneno]);
+}
+
+export async function deleteRecenze(id: number): Promise<void> {
+  await query(`DELETE FROM recenze WHERE id = $1`, [id]);
 }
 
 // ── Newsletter ──────────────────────────────────────────────────────────────
