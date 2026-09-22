@@ -160,7 +160,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "newsletter", label: "Newsletter", icon: IconMail },
   { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
   { key: "darkove-poukazy", label: "Dárkové poukazy", icon: IconGift },
-  { key: "recenze", label: "Ohlasy", icon: IconQuote },
+  { key: "recenze", label: "Recenze", icon: IconQuote },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "emaily", label: "E-maily", icon: IconMail },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
@@ -227,7 +227,7 @@ export default function AdminDashboard({
   const [stavKodu, setStavKodu] = useState<Record<number, string>>({});
   // Totéž u objednávek — výsledek odeslané výzvy k doplatku.
   const [stavPoptavky, setStavPoptavky] = useState<Record<number, string>>({});
-  // Rozepsaná úprava ohlasu — drží se zvlášť pro každý, ať se nezahodí.
+  // Rozepsaná úprava recenze — drží se zvlášť pro každou, ať se nezahodí.
   const [upravaOhlasu, setUpravaOhlasu] = useState<
     Record<number, { jmeno: string; misto: string; tri_slova: string; text: string }>
   >({});
@@ -2181,18 +2181,18 @@ export default function AdminDashboard({
             </section>
           )}
 
-          {/* ── Ohlasy ── */}
+          {/* ── Recenze ── */}
           {section === "recenze" && (
             <section>
               <p className="mb-6 max-w-2xl text-sm text-muted">
-                Ohlasy, které ženy pošlou formulářem na webu, tu čekají na schválení —
+                Recenze, které ženy pošlou formulářem na webu, tu čekají na schválení —
                 na web se samy nepustí. Před zveřejněním je můžeš upravit.
               </p>
 
               {recenze.length === 0 ? (
                 <p className="text-sm text-muted">
-                  Zatím tu žádné ohlasy nejsou. Objeví se, jakmile někdo vyplní formulář
-                  pod ohlasy na úvodní stránce.
+                  Zatím tu žádné recenze nejsou. Objeví se, jakmile někdo vyplní formulář
+                  pod recenzemi na úvodní stránce.
                 </p>
               ) : (
                 <ul className="flex flex-col gap-3">
@@ -2328,7 +2328,7 @@ export default function AdminDashboard({
                                 setPendingDelete({
                                   kind: "recenze",
                                   id: r.id,
-                                  label: `ohlas od ${r.jmeno}`,
+                                  label: `recenze od ${r.jmeno}`,
                                 })
                               }
                               className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"

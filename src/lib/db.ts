@@ -147,7 +147,7 @@ export type PoukazCerpani = {
   created_at: string;
 };
 
-// Ohlas ženy, která chodí na lekce. Přichází buď z veřejného formuláře
+// Recenze ženy, která chodí na lekce. Přichází buď z veřejného formuláře
 // (pak čeká na schválení), nebo ho vloží klientka v administraci.
 //
 // Pozor: jmeno, misto a text jsou z veřejného formuláře — je to
@@ -395,7 +395,7 @@ async function ensureSchema() {
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_popis TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_fotka TEXT NOT NULL DEFAULT '';
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS poukaz_castky JSONB NOT NULL DEFAULT '[]';
-    -- Značka, že se první ohlasy už jednou nasadily. Bez ní by se vracely
+    -- Značka, že se první recenze už jednou nasadily. Bez ní by se vracely
     -- pokaždé, co by je klientka smazala.
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS recenze_nasazeny BOOLEAN NOT NULL DEFAULT FALSE;
 
@@ -717,9 +717,9 @@ export async function updatePoptavkaZaplaceno(
 }
 
 
-// ── Ohlasy ──────────────────────────────────────────────────────────────────
+// ── Recenze ──────────────────────────────────────────────────────────────────
 
-// Prvních pět ohlasů přišlo klientce z dotazníku ještě před spuštěním webu.
+// Prvních pět recenzí přišlo klientce z dotazníku ještě před spuštěním webu.
 // Nasadí se jednou, aby je nemusela přepisovat ručně; značka v nastavení
 // hlídá, že se nevrátí, kdyby je smazala.
 const PRVNI_RECENZE: { jmeno: string; misto: string; tri_slova: string; text: string }[] = [

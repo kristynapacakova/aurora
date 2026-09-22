@@ -10,8 +10,8 @@ import {
   checkFormRateLimit,
 } from "@/lib/formGuard";
 
-// Veřejný formulář pro ohlas od ženy, která chodí na lekce. Ohlas se uloží
-// jako nezveřejněný a na web ho pustí až klientka v administraci — na
+// Veřejný formulář pro recenzi od ženy, která chodí na lekce. Recenze se
+// uloží jako nezveřejněná a na web ji pustí až klientka v administraci — na
 // formulář bez schvalování by dřív nebo později přišel spam.
 export async function POST(request: Request) {
   const body = (await request.json()) as {
@@ -43,13 +43,13 @@ export async function POST(request: Request) {
 
   if (!jmeno || !text) {
     return NextResponse.json(
-      { error: "Vyplň prosím jméno a text ohlasu." },
+      { error: "Vyplň prosím jméno a text recenze." },
       { status: 400 }
     );
   }
   if (text.length < 40) {
     return NextResponse.json(
-      { error: "Napiš prosím pár vět, ať má ohlas co říct." },
+      { error: "Napiš prosím pár vět, ať má recenze co říct." },
       { status: 400 }
     );
   }
@@ -66,7 +66,7 @@ export async function POST(request: Request) {
 
   if (!dbConfigured()) {
     return NextResponse.json(
-      { error: "Ohlasy teď nejde přijímat. Zkus to prosím později." },
+      { error: "Recenze teď nejde přijímat. Zkus to prosím později." },
       { status: 503 }
     );
   }
@@ -74,11 +74,11 @@ export async function POST(request: Request) {
   await createRecenze({ jmeno, misto, text, tri_slova, email, zverejneno: false });
 
   await posliKlientce({
-    subject: `💬 Nový ohlas od ${jmeno}`,
+    subject: `💬 Nová recenze od ${jmeno}`,
     replyTo: email || undefined,
-    nadpis: "Nový ohlas čeká na schválení",
+    nadpis: "Nová recenze čeká na schválení",
     odstavce: [
-      "Někdo poslal ohlas přes formulář na webu. Na web se ukáže, až ho v administraci zveřejníš.",
+      "Někdo poslal recenzi přes formulář na webu. Na web se ukáže, až ji v administraci zveřejníš.",
     ],
     radky: [
       { popisek: "Jméno:", hodnota: jmeno },
@@ -88,7 +88,7 @@ export async function POST(request: Request) {
     ],
     zprava: text,
     "zavěr": [
-      "Ohlas najdeš v administraci v sekci Ohlasy. Můžeš ho před zveřejněním i upravit.",
+      "Recenzi najdeš v administraci v sekci Recenze. Můžeš ji před zveřejněním i upravit.",
       vetaProOdpoved(),
     ],
   });

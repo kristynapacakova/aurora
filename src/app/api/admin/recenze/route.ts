@@ -16,8 +16,8 @@ function noDb() {
   return NextResponse.json({ error: "Databáze není připojena." }, { status: 503 });
 }
 
-// Vlastní ohlas vložený rovnou z administrace — třeba když ho někdo pošle
-// zprávou na Instagramu. Vkládá se rovnou zveřejněný.
+// Vlastní recenze vložená rovnou z administrace — třeba když ji někdo pošle
+// zprávou na Instagramu. Vkládá se rovnou zveřejněná.
 export async function POST(request: Request) {
   if (!(await isAdminRequest(request))) return unauthorized();
   if (!dbConfigured()) return noDb();
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const jmeno = (b.jmeno ?? "").trim();
   const text = (b.text ?? "").trim();
   if (!jmeno || !text) {
-    return NextResponse.json({ error: "Vyplň jméno a text ohlasu." }, { status: 400 });
+    return NextResponse.json({ error: "Vyplň jméno a text recenze." }, { status: 400 });
   }
 
   const id = await createRecenze({
@@ -67,7 +67,7 @@ export async function PUT(request: Request) {
   const jmeno = (b.jmeno ?? "").trim();
   const text = (b.text ?? "").trim();
   if (!jmeno || !text) {
-    return NextResponse.json({ error: "Vyplň jméno a text ohlasu." }, { status: 400 });
+    return NextResponse.json({ error: "Vyplň jméno a text recenze." }, { status: 400 });
   }
   await updateRecenze(b.id, {
     jmeno,

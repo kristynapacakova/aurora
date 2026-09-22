@@ -72,6 +72,19 @@ export function IconLeafBranch({ size = 36, className = "text-accent" }: { size?
   );
 }
 
+/** Lotosový květ — předěl nad podpisem u recenzí */
+export function IconLotus({ size = 22, className = "text-accent" }: { size?: number; className?: string }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M12 20c-2.6-3.4-2.6-8.6 0-12 2.6 3.4 2.6 8.6 0 12z" />
+      <path d="M12 20c-4.4-1.5-7-5.4-6.6-9.3 3.7 1 6.2 4.6 6.6 9.3z" />
+      <path d="M12 20c4.4-1.5 7-5.4 6.6-9.3-3.7 1-6.2 4.6-6.6 9.3z" />
+      <path d="M12 20c-5-.2-9-3.2-9.8-6.8 3.8-.2 7.9 2.3 9.8 6.8z" />
+      <path d="M12 20c5-.2 9-3.2 9.8-6.8-3.8-.2-7.9 2.3-9.8 6.8z" />
+    </svg>
+  );
+}
+
 /** ~ Vlnková dekorativní linka — icon 4 */
 export function IconWave({ width = 200, height = 26, className = "text-muted" }: { width?: number; height?: number; className?: string }) {
   return (
