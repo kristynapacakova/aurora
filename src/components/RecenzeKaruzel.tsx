@@ -92,11 +92,10 @@ export default function RecenzeKaruzel({ recenze }: { recenze: Recenze[] }) {
                 </p>
               )}
               <p className="font-serif text-xl leading-tight text-ink">{r.jmeno}</p>
-              {r.misto && (
-                <p className="mt-0.5 text-[11px] uppercase tracking-[0.25em] text-muted">
-                  {r.misto}
-                </p>
-              )}
+              {/* Místo drobným písmem, ne verzálkami — jinak se v podpisu
+                  perou dvě prostrkané řádky kolem patkového jména. Stejný
+                  spád jako čas v rozvrhu lekcí. */}
+              {r.misto && <p className="mt-1 text-sm text-muted">{r.misto}</p>}
             </div>
           </article>
 
