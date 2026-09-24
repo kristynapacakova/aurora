@@ -1,18 +1,27 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// USCREEN ODKAZY — vyplňte zde vaše reálné URL adresy z Uscreen platformy
+// USCREEN ODKAZY
+//
+// Výchozí adresy online studia. Klientka je může přebít v administraci
+// (Nastavení → Uscreen odkazy) — co je vyplněné tam, má přednost.
+//
+// Teď studio běží na adrese od Uscreenu. Až se přejde na vlastní doménu
+// (studio.aurorayoga.cz, což je placená funkce), stačí přepsat tuhle
+// jednu konstantu.
 // ─────────────────────────────────────────────────────────────────────────────
+const USCREEN_DOMENA = "https://aurorasmembership-66e7.uscreen.io";
+
 export const USCREEN = {
-  // Hlavní stránka vašeho Uscreen kanálu
-  home: "https://aurora.uscreen.io",
+  // Hlavní stránka online studia
+  home: USCREEN_DOMENA,
 
   // Registrační stránka (nové členství)
-  signup: "https://aurora.uscreen.io/sign_up",
+  signup: `${USCREEN_DOMENA}/sign_up`,
 
-  // Přihlašovací stránka (stávající členové)
-  login: "https://aurora.uscreen.io/sign_in",
+  // Přihlašovací stránka (stávající členky)
+  login: `${USCREEN_DOMENA}/sign_in`,
 
-  // Stránka s ceníkem/plány přímo v Uscreen (volitelné)
-  plans: "https://aurora.uscreen.io/plans",
+  // Stránka s ceníkem/plány přímo v Uscreenu
+  plans: `${USCREEN_DOMENA}/plans`,
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
