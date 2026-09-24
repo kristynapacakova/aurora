@@ -229,7 +229,7 @@ export default function AdminDashboard({
   const [stavPoptavky, setStavPoptavky] = useState<Record<number, string>>({});
   // Rozepsaná úprava recenze — drží se zvlášť pro každou, ať se nezahodí.
   const [upravaOhlasu, setUpravaOhlasu] = useState<
-    Record<number, { jmeno: string; misto: string; tri_slova: string; text: string }>
+    Record<number, { jmeno: string; misto: string; text: string }>
   >({});
   // Vystavení poukazu z administrace — hotovost, dárek, výhra v soutěži.
   const [novyPoukazOtevren, setNovyPoukazOtevren] = useState(false);
@@ -2237,7 +2237,7 @@ export default function AdminDashboard({
 
                             {u ? (
                               <div className="mt-3 flex flex-col gap-2">
-                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                                   <input
                                     value={u.jmeno}
                                     onChange={(e) =>
@@ -2258,17 +2258,6 @@ export default function AdminDashboard({
                                       })
                                     }
                                     placeholder="Odkud"
-                                    className="rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
-                                  />
-                                  <input
-                                    value={u.tri_slova}
-                                    onChange={(e) =>
-                                      setUpravaOhlasu({
-                                        ...upravaOhlasu,
-                                        [r.id]: { ...u, tri_slova: e.target.value },
-                                      })
-                                    }
-                                    placeholder="Tři slova"
                                     className="rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-accent"
                                   />
                                 </div>
@@ -2309,11 +2298,6 @@ export default function AdminDashboard({
                               </div>
                             ) : (
                               <>
-                                {r.tri_slova && (
-                                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-accent">
-                                    {r.tri_slova}
-                                  </p>
-                                )}
                                 <p className="mt-2 whitespace-pre-line text-sm leading-relaxed text-muted">
                                   {r.text}
                                 </p>
@@ -2351,7 +2335,6 @@ export default function AdminDashboard({
                                     [r.id]: {
                                       jmeno: r.jmeno,
                                       misto: r.misto,
-                                      tri_slova: r.tri_slova,
                                       text: r.text,
                                     },
                                   })

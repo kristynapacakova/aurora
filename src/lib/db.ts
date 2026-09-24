@@ -158,7 +158,8 @@ export type Recenze = {
   jmeno: string;
   misto: string;
   text: string;
-  // Tři slova, kterými žena lekce shrnula. Nepovinné.
+  // Zbytek po dřívější verzi podpisu — na webu se už nikde neukazuje
+  // a formulář se na to neptá. Sloupec zůstává, aby se nemazala data.
   tri_slova: string;
   // E-mail zůstává jen v administraci, na webu se nikdy neukazuje —
   // slouží k tomu, aby se klientka mohla ozvat zpátky.

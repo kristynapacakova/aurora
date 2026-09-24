@@ -18,7 +18,6 @@ export async function POST(request: Request) {
     jmeno?: string;
     misto?: string;
     text?: string;
-    tri_slova?: string;
     email?: string;
     souhlas?: boolean;
     [HONEYPOT_FIELD]?: string;
@@ -38,7 +37,6 @@ export async function POST(request: Request) {
   const jmeno = clamp((body.jmeno ?? "").trim(), 80);
   const misto = clamp((body.misto ?? "").trim(), 80);
   const text = clamp((body.text ?? "").trim(), 4000);
-  const tri_slova = clamp((body.tri_slova ?? "").trim(), 80);
   const email = clamp((body.email ?? "").trim(), 200);
 
   if (!jmeno || !text) {
@@ -71,7 +69,7 @@ export async function POST(request: Request) {
     );
   }
 
-  await createRecenze({ jmeno, misto, text, tri_slova, email, zverejneno: false });
+  await createRecenze({ jmeno, misto, text, tri_slova: "", email, zverejneno: false });
 
   await posliKlientce({
     subject: `💬 Nová recenze od ${jmeno}`,
@@ -83,7 +81,6 @@ export async function POST(request: Request) {
     radky: [
       { popisek: "Jméno:", hodnota: jmeno },
       { popisek: "Odkud:", hodnota: misto || "—" },
-      { popisek: "Tři slova:", hodnota: tri_slova || "—" },
       { popisek: "E-mail:", hodnota: email || "—" },
     ],
     zprava: text,

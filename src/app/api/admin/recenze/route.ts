@@ -26,7 +26,6 @@ export async function POST(request: Request) {
     jmeno?: string;
     misto?: string;
     text?: string;
-    tri_slova?: string;
   };
   const jmeno = (b.jmeno ?? "").trim();
   const text = (b.text ?? "").trim();
@@ -38,7 +37,7 @@ export async function POST(request: Request) {
     jmeno,
     misto: (b.misto ?? "").trim(),
     text,
-    tri_slova: (b.tri_slova ?? "").trim(),
+    tri_slova: "",
     email: "",
     zverejneno: true,
   });
@@ -55,7 +54,6 @@ export async function PUT(request: Request) {
     jmeno?: string;
     misto?: string;
     text?: string;
-    tri_slova?: string;
   };
   if (!b.id) return NextResponse.json({ error: "Chybí id." }, { status: 400 });
 
@@ -73,7 +71,7 @@ export async function PUT(request: Request) {
     jmeno,
     misto: (b.misto ?? "").trim(),
     text,
-    tri_slova: (b.tri_slova ?? "").trim(),
+    tri_slova: "",
   });
   return NextResponse.json({ ok: true });
 }

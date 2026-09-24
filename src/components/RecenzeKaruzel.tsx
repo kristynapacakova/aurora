@@ -13,7 +13,6 @@ export default function RecenzeKaruzel({ recenze }: { recenze: Recenze[] }) {
   const [formOtevren, setFormOtevren] = useState(false);
   const [jmeno, setJmeno] = useState("");
   const [misto, setMisto] = useState("");
-  const [triSlova, setTriSlova] = useState("");
   const [text, setText] = useState("");
   const [email, setEmail] = useState("");
   const [souhlas, setSouhlas] = useState(false);
@@ -44,7 +43,6 @@ export default function RecenzeKaruzel({ recenze }: { recenze: Recenze[] }) {
         jmeno,
         misto,
         text,
-        tri_slova: triSlova,
         email,
         souhlas,
         [HONEYPOT_FIELD]: honeypot,
@@ -85,18 +83,11 @@ export default function RecenzeKaruzel({ recenze }: { recenze: Recenze[] }) {
               <span className="h-px w-14 bg-line" />
             </div>
 
-            <div className="mt-4 text-center">
-              {r.tri_slova && (
-                <p className="mb-1.5 text-[11px] uppercase tracking-[0.25em] text-accent">
-                  {r.tri_slova}
-                </p>
-              )}
-              <p className="font-serif text-xl leading-tight text-ink">{r.jmeno}</p>
-              {/* Místo drobným písmem, ne verzálkami — jinak se v podpisu
-                  perou dvě prostrkané řádky kolem patkového jména. Stejný
-                  spád jako čas v rozvrhu lekcí. */}
-              {r.misto && <p className="mt-1 text-sm text-muted">{r.misto}</p>}
-            </div>
+            {/* Podpis na jednom řádku a jedním písmem — nic víc tu nepotřebuje
+                vlastní styl. */}
+            <p className="mt-4 text-center font-serif text-xl leading-tight text-ink">
+              {r.misto ? `${r.jmeno}, ${r.misto}` : r.jmeno}
+            </p>
           </article>
 
           {recenze.length > 1 && (
@@ -199,13 +190,6 @@ export default function RecenzeKaruzel({ recenze }: { recenze: Recenze[] }) {
               rows={6}
               required
               placeholder="Co ti lekce přinášejí? Jak se cítíš před lekcí a po ní? Co bys řekla ženě, která váhá? *"
-              className={inputCls}
-            />
-
-            <input
-              value={triSlova}
-              onChange={(e) => setTriSlova(e.target.value)}
-              placeholder="Tři slova, kterými bys lekce shrnula"
               className={inputCls}
             />
 
