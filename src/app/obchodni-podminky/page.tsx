@@ -1,13 +1,22 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import PravniText from "@/components/PravniText";
 import { getNastaveni } from "@/lib/db";
+import { nactiPravniText } from "@/lib/pravniTextyServer";
 
 export const metadata = {
   title: "Obchodní podmínky | AURORA jóga",
 };
 
+// Text si klientka upravuje v administraci, takže se stránka musí občas
+// přegenerovat — jinak by zůstala taková, jaká byla při nasazení.
+export const revalidate = 60;
+
 export default async function ObchodniPodminkyPage() {
-  const { kontakt_email } = await getNastaveni();
+  const [{ kontakt_email }, stranka] = await Promise.all([
+    getNastaveni(),
+    nactiPravniText("obchodni-podminky"),
+  ]);
 
   return (
     <>
@@ -18,162 +27,15 @@ export default async function ObchodniPodminkyPage() {
             Právní informace
           </p>
           <h1 className="text-center font-serif text-4xl text-ink sm:text-5xl">
-            Obchodní podmínky
+            {stranka.nazev}
           </h1>
-          <p className="mt-4 text-center text-sm text-muted">
-            Platné od [DOPLNIT DATUM]
-          </p>
+          {stranka.platneOd && (
+            <p className="mt-4 text-center text-sm text-muted">
+              Platné od {stranka.platneOd}
+            </p>
+          )}
 
-          <div className="mt-12 flex flex-col gap-10 text-sm leading-relaxed text-muted">
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">1. Úvodní ustanovení</h2>
-              <p>
-                Tyto obchodní podmínky upravují vzájemná práva a povinnosti mezi
-                poskytovatelem a zákazníkem (spotřebitelem) vznikající v souvislosti
-                nebo na základě smlouvy o poskytování online jógového členství,
-                jednotlivých lekcí a pobytů uzavírané přes webové stránky
-                aurorayoga.cz.
-              </p>
-              <p className="mt-3">
-                Poskytovatel: <strong className="text-ink">[DOPLNIT jméno a příjmení / název firmy]</strong>
-                <br />
-                IČO: <strong className="text-ink">17650593</strong>
-                {" "}(DIČ: <strong className="text-ink">[DOPLNIT, je-li plátce DPH]</strong>)
-                <br />
-                Se sídlem: <strong className="text-ink">[DOPLNIT adresa]</strong>
-                <br />
-                Zapsaná: <strong className="text-ink">[DOPLNIT — např. v živnostenském rejstříku / obchodním rejstříku, spisová značka]</strong>
-                <br />
-                Kontaktní e-mail:{" "}
-                <a href={`mailto:${kontakt_email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  {kontakt_email}
-                </a>
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">2. Objednávka a uzavření smlouvy</h2>
-              <p>
-                Zákazník si vybere požadované členství, jednotlivou lekci nebo pobyt a
-                odešle objednávku prostřednictvím formuláře na webu nebo přes
-                platformu Uscreen. Smlouva mezi poskytovatelem a zákazníkem je
-                uzavřena okamžikem přijetí platby poskytovatelem.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">3. Cena a platební podmínky</h2>
-              <p>
-                Ceny členství, jednotlivých lekcí a pobytů jsou uvedeny na webu
-                včetně všech poplatků a jsou platné po celou dobu jejich zobrazení.
-                Platbu za online členství a jednotlivé lekce lze provést platební
-                kartou přímo přes platformu Uscreen. Platbu za pobyt nebo dárkový
-                poukaz lze provést bankovním převodem podle platebních údajů a
-                QR kódu uvedených v objednávce. U pobytů si zákazník
-                v objednávkovém formuláři volí mezi úhradou celé částky a úhradou
-                zálohy s pozdějším doplatkem.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">
-                4. Online členství a jednotlivé lekce
-              </h2>
-              <p>
-                Přístup k zakoupenému členství nebo jednotlivé lekci je zákazníkovi
-                zpřístupněn ihned po přijetí platby. Jelikož jde o poskytování
-                digitálního obsahu, zákazník bere odesláním objednávky a udělením
-                souhlasu s okamžitým zahájením plnění na vědomí, že tímto ztrácí
-                právo na odstoupení od smlouvy do 14 dnů podle § 1837 písm. l)
-                občanského zákoníku, jakmile je mu obsah zpřístupněn v plném rozsahu.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">5. Pobyty a dárkové poukazy</h2>
-              <p>
-                Cenu pobytu lze uhradit buď celou najednou, nebo formou zálohy,
-                jejíž výše je uvedena u konkrétního pobytu v objednávkovém
-                formuláři. Objednávka pobytu se stává závaznou okamžikem uhrazení
-                celé částky, případně zálohy, dle platebních údajů uvedených u
-                pobytu. Zbývající doplatek je splatný nejpozději 14 dnů před
-                začátkem pobytu. Stejným způsobem funguje i
-                nákup dárkového poukazu — poukaz je platný po přijetí platby na
-                účet poskytovatele. Dárkový poukaz lze uplatnit na pobyty a na
-                lekce vedené osobně; na online členství a jednotlivé online
-                lekce, které se hradí přes platformu Uscreen, jej uplatnit
-                nelze. Poukaz lze čerpat i po částech, nevyčerpaný
-                zůstatek zůstává na poukazu. Platnost poukazu je 6 měsíců od
-                přijetí platby; po jejím uplynutí poukaz zaniká a nevyčerpaný
-                zůstatek se nevrací. Poukaz nelze směnit za hotovost. V souladu s § 1837 písm. j) občanského
-                zákoníku se na smlouvu o poskytnutí ubytování, dopravy, stravování
-                nebo využití volného času poskytovaného v určeném termínu
-                nevztahuje právo spotřebitele na odstoupení od smlouvy do 14 dnů.
-              </p>
-              <p className="mt-3">
-                <strong className="text-ink">Stornopodmínky.</strong> Zrušit
-                účast je možné kdykoliv, a to e-mailem na adresu uvedenou v
-                kontaktech; rozhodující je datum doručení e-mailu. Vrací se:
-              </p>
-              <ul className="mt-2 list-disc space-y-1 pl-5">
-                <li>
-                  více než <strong className="text-ink">30 dnů</strong> před
-                  začátkem pobytu — celá uhrazená částka snížená o zálohu,
-                  která propadá jako storno poplatek,
-                </li>
-                <li>
-                  <strong className="text-ink">30 až 15 dnů</strong> před
-                  začátkem pobytu — 50 % uhrazené částky,
-                </li>
-                <li>
-                  <strong className="text-ink">14 dnů a méně</strong> před
-                  začátkem pobytu — uhrazená částka se nevrací.
-                </li>
-              </ul>
-              <p className="mt-3">
-                Pokud za sebe zajistíte náhradnici, která pobyt uhradí, vrací se
-                vám celá zaplacená částka bez ohledu na termín zrušení. Zruší-li
-                pobyt poskytovatel, vrací se celá uhrazená částka do 14 dnů;
-                poskytovatel v takovém případě neodpovídá za náklady, které
-                zákaznici vznikly v souvislosti s pobytem jinde (doprava a
-                podobně).
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">6. Reklamace</h2>
-              <p>
-                Případné reklamace zasílejte na e-mail{" "}
-                <a href={`mailto:${kontakt_email}`} className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  {kontakt_email}
-                </a>
-                . Reklamace bude vyřízena bez zbytečného odkladu, nejpozději do 30
-                dnů ode dne jejího uplatnění, pokud se strany nedohodnou na delší
-                lhůtě.
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">7. Ochrana osobních údajů</h2>
-              <p>
-                Zpracování osobních údajů zákazníků se řídí zásadami popsanými na
-                stránce{" "}
-                <a href="/ochrana-osobnich-udaju" className="text-ink underline underline-offset-4 hover:text-accent-d">
-                  Ochrana osobních údajů
-                </a>
-                .
-              </p>
-            </section>
-
-            <section>
-              <h2 className="mb-3 font-serif text-xl text-ink">8. Závěrečná ustanovení</h2>
-              <p>
-                Poskytovatel si vyhrazuje právo tyto obchodní podmínky v přiměřeném
-                rozsahu měnit. Vztahy těmito podmínkami neupravené se řídí
-                občanským zákoníkem a zákonem o ochraně spotřebitele.
-              </p>
-            </section>
-          </div>
+          <PravniText text={stranka.text} email={kontakt_email} />
         </div>
       </main>
       <Footer />

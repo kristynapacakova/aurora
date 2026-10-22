@@ -168,6 +168,13 @@ export type Recenze = {
   created_at: string;
 };
 
+// Uložené znění právní stránky. Co tu není, bere se z kódu (lib/pravniTexty).
+export type PravniTextRadek = {
+  klic: string;
+  platne_od: string;
+  text: string;
+};
+
 export type Nastaveni = {
   kontakt_email: string;
   telefon: string;
@@ -399,6 +406,13 @@ async function ensureSchema() {
     -- Značka, že se první recenze už jednou nasadily. Bez ní by se vracely
     -- pokaždé, co by je klientka smazala.
     ALTER TABLE nastaveni ADD COLUMN IF NOT EXISTS recenze_nasazeny BOOLEAN NOT NULL DEFAULT FALSE;
+
+    -- Obchodní podmínky a ochrana osobních údajů, jak si je klientka upraví.
+    CREATE TABLE IF NOT EXISTS pravni_texty (
+      klic TEXT PRIMARY KEY,
+      platne_od TEXT NOT NULL DEFAULT '',
+      text TEXT NOT NULL DEFAULT ''
+    );
 
     CREATE TABLE IF NOT EXISTS recenze (
       id SERIAL PRIMARY KEY,
@@ -717,6 +731,39 @@ export async function updatePoptavkaZaplaceno(
   return rows.length > 0;
 }
 
+
+// ── Právní texty ────────────────────────────────────────────────────────────
+
+export async function getPravniTexty(): Promise<PravniTextRadek[]> {
+  if (!dbConfigured()) return [];
+  return query<PravniTextRadek>(`SELECT * FROM pravni_texty`);
+}
+
+export async function getPravniText(klic: string): Promise<PravniTextRadek | null> {
+  if (!dbConfigured()) return null;
+  const rows = await query<PravniTextRadek>(
+    `SELECT * FROM pravni_texty WHERE klic = $1`,
+    [klic]
+  );
+  return rows[0] ?? null;
+}
+
+export async function ulozitPravniText(
+  klic: string,
+  platne_od: string,
+  text: string
+): Promise<void> {
+  await query(
+    `INSERT INTO pravni_texty (klic, platne_od, text) VALUES ($1, $2, $3)
+     ON CONFLICT (klic) DO UPDATE SET platne_od = $2, text = $3`,
+    [klic, platne_od, text]
+  );
+}
+
+// Smazáním se stránka vrátí k výchozímu znění z kódu.
+export async function smazatPravniText(klic: string): Promise<void> {
+  await query(`DELETE FROM pravni_texty WHERE klic = $1`, [klic]);
+}
 
 // ── Recenze ──────────────────────────────────────────────────────────────────
 

@@ -4,9 +4,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactElement } from "react";
-import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, Recenze, EmailSablonaRadek, Nastaveni } from "@/lib/db";
+import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, DarkovyPoukaz, PoukazCerpani, PoukazNabidka, Recenze, PravniTextRadek, EmailSablonaRadek, Nastaveni } from "@/lib/db";
 import NastaveniForm from "./NastaveniForm";
 import EmailSablony from "./EmailSablony";
+import PravniTexty from "./PravniTexty";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
 import { stavMist } from "@/lib/kapacita";
@@ -30,6 +31,7 @@ type Section =
   | "cekaci-listina"
   | "darkove-poukazy"
   | "recenze"
+  | "pravni-texty"
   | "statistiky"
   | "emaily"
   | "nastaveni";
@@ -48,6 +50,15 @@ type PendingDelete = {
   id: number;
   label: string;
 };
+
+function IconParagraf({ className }: { className?: string }) {
+  return (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M14 4H9.5a3.5 3.5 0 0 0 0 7H14" />
+      <path d="M14 4v16M18 4v16" />
+    </svg>
+  );
+}
 
 function IconQuote({ className }: { className?: string }) {
   return (
@@ -161,6 +172,7 @@ const NAV: { key: Section; label: string; icon: (p: { className?: string }) => R
   { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
   { key: "darkove-poukazy", label: "Dárkové poukazy", icon: IconGift },
   { key: "recenze", label: "Recenze", icon: IconQuote },
+  { key: "pravni-texty", label: "Právní texty", icon: IconParagraf },
   { key: "statistiky", label: "Statistiky", icon: IconChart },
   { key: "emaily", label: "E-maily", icon: IconMail },
   { key: "nastaveni", label: "Nastavení", icon: IconGear },
@@ -178,6 +190,7 @@ export default function AdminDashboard({
   poukazyCerpani,
   poukazyNabidka,
   recenze,
+  pravniTexty,
   emailSablony,
   nastaveni,
   email,
@@ -194,6 +207,7 @@ export default function AdminDashboard({
   poukazyCerpani: PoukazCerpani[];
   poukazyNabidka: PoukazNabidka[];
   recenze: Recenze[];
+  pravniTexty: PravniTextRadek[];
   emailSablony: EmailSablonaRadek[];
   nastaveni: Nastaveni;
   email: StavOdesilani;
@@ -2180,6 +2194,8 @@ export default function AdminDashboard({
               )}
             </section>
           )}
+
+          {section === "pravni-texty" && <PravniTexty ulozene={pravniTexty} />}
 
           {/* ── Recenze ── */}
           {section === "recenze" && (

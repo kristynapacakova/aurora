@@ -10,6 +10,7 @@ import {
   getPoukazyNabidka,
   getEmailSablony,
   getRecenze,
+  getPravniTexty,
   getNastaveni,
   getObsazenostPobytu,
   dbConfigured,
@@ -41,6 +42,7 @@ export default async function AdminPage() {
   const obsazenost = configured ? await getObsazenostPobytu() : {};
   // Včetně neschválených — klientka je tu má právě proto, aby je pustila dál.
   const recenze = configured ? await getRecenze(false) : [];
+  const pravniTexty = configured ? await getPravniTexty() : [];
   // Doména bez protokolu a bez www — proti ní se porovnává adresa odesílatele.
   const domena = SITE_URL.replace(/^https?:\/\//, "").replace(/^www\./, "");
   const email = stavOdesilani(domena);
@@ -61,6 +63,7 @@ export default async function AdminPage() {
       nastaveni={nastaveni}
       email={email}
       recenze={recenze}
+      pravniTexty={pravniTexty}
       obsazenost={obsazenost}
     />
   );
