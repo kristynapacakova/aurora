@@ -160,15 +160,6 @@ export default function PravniTexty({ ulozene }: { ulozene: PravniTextRadek[] })
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="max-w-2xl">
-        <p className="text-sm leading-relaxed text-muted">
-          Obchodní podmínky a ochrana osobních údajů. Text se dá přepsat celý,
-          včetně nadpisů — na web se změna propíše do minuty. Kdyby se něco
-          pokazilo, tlačítkem „Vrátit původní znění“ se stránka vrátí do
-          původního stavu.
-        </p>
-      </div>
-
       {/* Záložky stejné jako jinde v administraci. Karty se schovávají,
           ne odpojují — rozepsaný text přežije přepnutí stránky. */}
       <Zalozky

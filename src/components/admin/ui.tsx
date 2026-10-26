@@ -30,7 +30,9 @@ export function Zalozky({
             type="button"
             onClick={() => onChange(z.key)}
             aria-current={active ? "page" : undefined}
-            className={`relative px-4 py-3 text-xs uppercase tracking-[0.18em] transition-colors ${
+            // first:pl-0 — první záložka tak začíná na stejné svislici jako
+            // nadpis a karta pod ní; s odsazením působila celá lišta posunutě.
+            className={`relative px-4 py-3 text-xs uppercase tracking-[0.18em] transition-colors first:pl-0 ${
               active ? "text-ink" : "text-muted hover:text-ink"
             }`}
           >

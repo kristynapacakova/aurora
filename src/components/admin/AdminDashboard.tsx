@@ -218,7 +218,8 @@ const NAV: NavSkupina[] = [
         key: "recenze",
         icon: IconQuote,
         label: "Recenze",
-        popis: "Ohlasy žen. Nové počkají schované, dokud je nezveřejníš.",
+        popis:
+          "Ohlasy žen. Nové přijdou formulářem z webu a počkají schované, dokud je nezveřejníš — upravit je můžeš i předtím.",
       },
     ],
   },
@@ -275,13 +276,15 @@ const NAV: NavSkupina[] = [
         key: "emaily",
         icon: IconMail,
         label: "E-mailové šablony",
-        popis: "Texty automatických e-mailů, které ženám chodí po objednávce.",
+        popis:
+          "Texty automatických e-mailů, které ženám chodí po objednávce. Upravit jde předmět a odstavce — tabulka s údaji, QR kód a patička se skládají samy.",
       },
       {
         key: "pravni-texty",
         icon: IconParagraf,
         label: "Právní texty",
-        popis: "Obchodní podmínky a ochrana osobních údajů tak, jak je čtou návštěvnice.",
+        popis:
+          "Obchodní podmínky a ochrana osobních údajů tak, jak je čtou návštěvnice. Změna se na web propíše do minuty.",
       },
     ],
   },
@@ -2405,11 +2408,6 @@ export default function AdminDashboard({
           {/* ── Recenze ── */}
           {section === "recenze" && (
             <section>
-              <p className="mb-6 max-w-2xl text-sm text-muted">
-                Recenze, které ženy pošlou formulářem na webu, tu čekají na schválení —
-                na web se samy nepustí. Před zveřejněním je můžeš upravit.
-              </p>
-
               {recenze.length === 0 ? (
                 <p className="text-sm text-muted">
                   Zatím tu žádné recenze nejsou. Objeví se, jakmile někdo vyplní formulář

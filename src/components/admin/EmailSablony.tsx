@@ -65,7 +65,7 @@ function Sablona({
   return (
     <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
       <div>
-        <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
+        <p className="flex flex-wrap items-baseline gap-2 font-serif text-xl text-ink">
           {popis.nazev}
           {upraveno && (
             <span className="rounded-full bg-accent/20 px-2 py-0.5 text-[10px] uppercase tracking-wider text-accent-d">
@@ -161,15 +161,6 @@ export default function EmailSablony({ ulozene }: { ulozene: EmailSablonaRadek[]
 
   return (
     <div className="flex flex-col gap-6">
-      <div>
-        <p className="font-serif text-xl text-ink">Automatické e-maily</p>
-        <p className="mt-1 max-w-2xl text-xs leading-relaxed text-muted">
-          Tyhle e-maily odcházejí zákaznicím samy. Upravit jde předmět a texty; tabulka s údaji,
-          QR kód a patička se skládají samy z toho, co se opravdu stalo. Notifikace, které chodí
-          tobě, tady nejsou — ty se needitují.
-        </p>
-      </div>
-
       {/* Záložky místo řádku odkazů — stejně jako v nastavení. Karty se
           schovávají, ne odpojují, takže rozepsaný text přežije přepnutí. */}
       <Zalozky
