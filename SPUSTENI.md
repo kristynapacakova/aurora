@@ -96,9 +96,17 @@ e-maily ano).
    převzatý z webu, ať studio a web nemluví každý jinak.
 3. ~~Fotka v heru až pod menu.~~ **Hotovo** (26. 10.) — Uscreen na to nemá
    nastavení, řeší to CSS v bloku Custom HTML; podklad je
-   v `uscreen-hero-pres-menu.html`. Menu je průhledné, položky bílé, fotka
-   vytažená o jeho výšku nahoru a horní okraj jemně ztmavený kvůli
-   čitelnosti. Lepivost sedí na obalu menu, ne na menu samotném.
+   v `uscreen-hero-pres-menu.html`. Menu je průhledné, nelepí se (lepivost
+   sedí na jeho obalu, ne na něm samotném) a fotka je vytažená o jeho výšku
+   nahoru.
+
+   **Na barvu textu v menu se záměrně nesahá.** Obarvení položek na bílo
+   kvůli čitelnosti nad fotkou opakovaně rozbíjelo rozbalovací panel účtu,
+   kde bílý text na světlém pozadí mizel. Uscreen má hlavičku provázanou
+   s barevným schématem, takže zásah zvenčí se dřív nebo později někde
+   projeví. Místo toho je pod vycentrovanými položkami menu krémová skvrna
+   v odstínu scheme color, která se vytrácí do stran — logo vlevo tak má
+   pod sebou fotku a nebledne.
 4. **Nadpis a cena v heru.** Zbývá. Proti Yogitch tam pořád chybí to, co se
    přečte za tři vteřiny — co to je a kolik to stojí. Text připravený:
    nadpis „Rozsviť své vnitřní světlo“ (stejný jako na webu), podnadpis
