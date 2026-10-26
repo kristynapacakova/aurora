@@ -4,11 +4,12 @@
 // Výchozí adresy online studia. Klientka je může přebít v administraci
 // (Nastavení → Uscreen odkazy) — co je vyplněné tam, má přednost.
 //
-// Teď studio běží na adrese od Uscreenu. Až se přejde na vlastní doménu
-// (studio.aurorayoga.cz, což je placená funkce), stačí přepsat tuhle
-// jednu konstantu.
+// Studio běží na poddoméně od Uscreenu. Vlastní doména (studio.aurorayoga.cz)
+// je u Uscreenu zamčená až za tarifem Growth, který se kvůli samotné adrese
+// nevyplatí — kdyby se na něj někdy přešlo, stačí přepsat tuhle jednu
+// konstantu a propíše se to všude včetně výchozích hodnot v databázi.
 // ─────────────────────────────────────────────────────────────────────────────
-const USCREEN_DOMENA = "https://aurorasmembership-66e7.uscreen.io";
+const USCREEN_DOMENA = "https://aurorayoga.uscreen.io";
 
 export const USCREEN = {
   // Hlavní stránka online studia
