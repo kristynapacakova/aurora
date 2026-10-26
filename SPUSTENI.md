@@ -111,20 +111,20 @@ Body 2–4 jdou ladit i po spuštění.
   míří na hlavní stránku studia, aby na nich nikdo neskončil na chybové
   stránce. Po vytvoření plánů přetestovat a případně vrátit zpět.
 
-- **Nevyjasněné a blokující: vrací 404 i samotná hlavní stránka studia?**
-  Screenshot chybové stránky přišel ze Safari, které v adresním řádku
-  schovává cestu, takže z něj nejde poznat, která adresa ji vyhodila.
-  Pokud `aurorayoga.uscreen.io` bez cesty **funguje**, řešíme jen dvě cesty.
-  Pokud **nefunguje**, je mrtvé celé studio včetně `aurorayoga.cz/studio` a
-  dočasné řešení výš situaci zhoršuje (tři mrtvé odkazy místo dvou).
+- ~~Vrací 404 i samotná hlavní stránka studia?~~ **Nevrací** — hlavní
+  stránka `aurorayoga.uscreen.io` se načítá normálně (ověřeno 26. 10.).
+  Mrtvé jsou opravdu jen cesty `/sign_up` a `/plans`, takže přesměrování
+  obou polí na hlavní stránku je bezpečné.
 
-  **Teorie:** storefront není publikovaný. Stránky storefrontu (hlavní
-  stránka, registrace, ceník) do publikování neexistují, kdežto `/sign_in`
-  je systémová stránka platformy a funguje vždycky — což přesně odpovídá
-  tomu, co se zatím naměřilo. Zkontrolovat ve `Website` editoru tlačítko
-  **Publish** nebo režim „coming soon“.
+  Dřívější teorie, že není publikovaný storefront, se **nepotvrdila**.
+  Zbývá tedy ta druhá: obě cesty padají proto, že zatím nejsou vytvořené
+  žádné plány. Rozhodne se po napojení Stripe.
+- ~~Upozornění ohledně **Bundles** u nahraného videa.~~ **Vysvětleno** —
+  není to samostatný problém, ale stejná příčina jako mrtvé cesty výš.
+  Uscreen u každého videa chce ručně nastavit způsob přístupu (předplatné,
+  jednorázová platba, nebo bundle); nic se nedědí automaticky. Video bez
+  přiřazeného přístupu je nedostupné i pro platící členku, a přesně na to
+  to upozornění je. Přiřadit ho k předplatnému ale nejde, dokud žádné
+  předplatné neexistuje — a to neexistuje bez Stripe.
 
-  Ze zdejšího prostředí to ověřit nejde, uscreen.io není dostupné ani přes
-  DNS. Musí se proklikat v prohlížeči.
-- Upozornění ohledně **Bundles** u nahraného videa — vyřešené, nebo tam video
-  pořád visí nezveřejněné?
+  Vyřeší se samo v kroku 3 nahoře (nastavení plánů).
