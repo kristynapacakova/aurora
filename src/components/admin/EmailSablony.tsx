@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Zalozky } from "./ui";
 import { useRouter } from "next/navigation";
 import { SABLONY, type SablonaPopis } from "@/lib/emailSablony";
 import type { EmailSablonaRadek } from "@/lib/db";
@@ -62,10 +63,7 @@ function Sablona({
   }
 
   return (
-    <div
-      id={`sablona-${popis.klic}`}
-      className="flex scroll-mt-4 flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm"
-    >
+    <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
       <div>
         <p className="flex flex-wrap items-center gap-2 font-medium text-ink">
           {popis.nazev}
@@ -159,6 +157,8 @@ function Sablona({
 }
 
 export default function EmailSablony({ ulozene }: { ulozene: EmailSablonaRadek[] }) {
+  const [zalozka, setZalozka] = useState<string>(SABLONY[0].klic);
+
   return (
     <div className="flex flex-col gap-6">
       <div>
@@ -170,26 +170,19 @@ export default function EmailSablony({ ulozene }: { ulozene: EmailSablonaRadek[]
         </p>
       </div>
 
-      {/* Stejná lišta jako v nastavení — ať je hned vidět, které e-maily
-          tu jsou, a dá se mezi nimi přeskakovat. */}
-      <nav className="sticky top-0 z-10 flex flex-wrap gap-2 rounded-2xl bg-cream/95 py-3 backdrop-blur">
-        {SABLONY.map((popis) => (
-          <a
-            key={popis.klic}
-            href={`#sablona-${popis.klic}`}
-            className="rounded-full border border-line bg-white px-4 py-2 text-xs uppercase tracking-[0.15em] text-muted transition-colors hover:border-accent hover:text-accent"
-          >
-            {popis.kratky}
-          </a>
-        ))}
-      </nav>
+      {/* Záložky místo řádku odkazů — stejně jako v nastavení. Karty se
+          schovávají, ne odpojují, takže rozepsaný text přežije přepnutí. */}
+      <Zalozky
+        className="sticky top-0 z-10 bg-cream/95 backdrop-blur"
+        zalozky={SABLONY.map((p) => ({ key: p.klic, label: p.kratky }))}
+        aktivni={zalozka}
+        onChange={setZalozka}
+      />
 
       {SABLONY.map((popis) => (
-        <Sablona
-          key={popis.klic}
-          popis={popis}
-          ulozena={ulozene.find((u) => u.klic === popis.klic)}
-        />
+        <div key={popis.klic} className={zalozka === popis.klic ? "" : "hidden"}>
+          <Sablona popis={popis} ulozena={ulozene.find((u) => u.klic === popis.klic)} />
+        </div>
       ))}
     </div>
   );

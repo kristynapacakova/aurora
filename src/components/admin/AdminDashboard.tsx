@@ -9,6 +9,7 @@ import NastaveniForm from "./NastaveniForm";
 import EmailSablony from "./EmailSablony";
 import PravniTexty from "./PravniTexty";
 import { PRAVNI_TEXTY } from "@/lib/pravniTexty";
+import { Zalozky, tlacitko, tlacitkoNebezpeci } from "./ui";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
 import { stavMist } from "@/lib/kapacita";
@@ -1165,7 +1166,7 @@ export default function AdminDashboard({
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Horní lišta */}
         <header className="border-b border-line bg-cream">
-          <div className="flex flex-wrap items-start justify-between gap-4 px-8 py-5">
+          <div className="flex w-full max-w-[1180px] flex-wrap items-start justify-between gap-4 px-8 py-5">
             <div className="min-w-0">
               <h1 className="font-serif text-[26px] leading-tight text-ink">{aktivniPolozka.label}</h1>
               <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted">{aktivniPolozka.popis}</p>
@@ -1222,7 +1223,9 @@ export default function AdminDashboard({
           )}
         </header>
 
-        <div className="flex-1 px-8 py-8">
+        {/* Obsah se na širokém monitoru nenatahuje přes celou plochu —
+            dlouhé řádky a rozházené karty se čtou špatně. */}
+        <div className="w-full max-w-[1180px] flex-1 px-8 py-8">
           {!configured && (
             <div className="mb-8 rounded-2xl border border-accent/40 bg-white p-6 text-sm text-ink shadow-sm">
               <p className="font-medium">Úložiště zatím není připojené — čísla níže proto ukazují 0.</p>
@@ -1345,41 +1348,25 @@ export default function AdminDashboard({
             </div>
           )}
 
-          {/* ── Nastavení ── */}
+          {/* ── E-mailové šablony ── */}
           {section === "emaily" && (
             <section>
               <EmailSablony ulozene={emailSablony} />
             </section>
           )}
 
-          {section === "nastaveni" && (
-            <div className="max-w-3xl">
-              <NastaveniForm initial={nastaveni} email={email} />
-            </div>
-          )}
+          {/* ── Nastavení ── */}
+          {section === "nastaveni" && <NastaveniForm initial={nastaveni} email={email} />}
 
           {/* ── Editor ── */}
           {section === "editor" && (
             <div>
-              <div className="mb-8 flex gap-2 border-b border-line pb-px">
-                {editorTabs.map((t) => (
-                  <button
-                    key={t.key}
-                    onClick={() => setEditorTab(t.key)}
-                    className={`relative px-4 py-3 text-xs uppercase tracking-[0.2em] transition-colors ${
-                      editorTab === t.key ? "text-ink" : "text-muted hover:text-ink"
-                    }`}
-                  >
-                    {t.label}
-                    <span className={`ml-1.5 ${editorTab === t.key ? "text-accent" : "text-muted/70"}`}>
-                      {t.count}
-                    </span>
-                    {editorTab === t.key && (
-                      <span className="bg-gradient-aurora absolute inset-x-0 -bottom-px h-[2px] rounded-full" />
-                    )}
-                  </button>
-                ))}
-              </div>
+              <Zalozky
+                className="mb-8"
+                zalozky={editorTabs.map((t) => ({ key: t.key, label: t.label, count: t.count }))}
+                aktivni={editorTab}
+                onChange={(key) => setEditorTab(key as EditorTab)}
+              />
 
               {/* ── Pobyty ── */}
               {editorTab === "pobyty" && (
@@ -1479,41 +1466,41 @@ export default function AdminDashboard({
                             <button
                               disabled={busy}
                               onClick={() => togglePobyt(p)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {p.zverejneno ? "Skrýt" : "Zobrazit"}
                             </button>
                             <button
                               disabled={busy}
                               onClick={() => toggleVyprodano(p)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {p.vyprodano ? "Zrušit vyprodání" : "Označit vyprodáno"}
                             </button>
                             <button
                               disabled={busy}
                               onClick={() => togglePripravujeSe(p)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {p.pripravuje_se ? "Zrušit připravujeme" : "Označit připravujeme"}
                             </button>
                             <button
                               disabled={busy}
                               onClick={() => duplikovatPobyt(p)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               Duplikovat
                             </button>
                             <Link
                               href={`/admin/pobyt/${p.id}`}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               Upravit
                             </Link>
                             <button
                               disabled={busy}
                               onClick={() => setPendingDelete({ kind: "pobyty", id: p.id, label: p.nadpis })}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                              className={tlacitkoNebezpeci}
                             >
                               Smazat
                             </button>
@@ -1579,13 +1566,13 @@ export default function AdminDashboard({
                             <button
                               disabled={busy}
                               onClick={() => toggleLekce(l)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {l.zverejneno ? "Skrýt" : "Zobrazit"}
                             </button>
                             <Link
                               href={`/admin/lekce/${l.id}`}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               Upravit
                             </Link>
@@ -1598,7 +1585,7 @@ export default function AdminDashboard({
                                   label: `${l.den} — ${l.misto}`,
                                 })
                               }
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                              className={tlacitkoNebezpeci}
                             >
                               Smazat
                             </button>
@@ -1687,14 +1674,14 @@ export default function AdminDashboard({
                           <div className="flex shrink-0 gap-2">
                             <Link
                               href={`/admin/clanek/${c.id}`}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               Upravit
                             </Link>
                             <button
                               disabled={busy}
                               onClick={() => setPendingDelete({ kind: "clanky", id: c.id, label: c.nadpis })}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                              className={tlacitkoNebezpeci}
                             >
                               Smazat
                             </button>
@@ -1718,25 +1705,20 @@ export default function AdminDashboard({
                 </p>
               ) : (
                 <>
-                  <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-                    <div className="flex flex-wrap gap-2">
-                      {poptavkaFiltry.map((f) => (
-                        <button
-                          key={f.key}
-                          onClick={() => setPoptavkaFilter(f.key)}
-                          className={`rounded-full px-4 py-2 text-xs uppercase tracking-[0.2em] transition-colors ${
-                            poptavkaFilter === f.key
-                              ? "bg-gradient-aurora text-ink"
-                              : "border border-line text-muted hover:border-accent hover:text-accent"
-                          }`}
-                        >
-                          {f.label} ({f.count})
-                        </button>
-                      ))}
-                    </div>
+                  <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+                    <Zalozky
+                      className="flex-1"
+                      zalozky={poptavkaFiltry.map((f) => ({
+                        key: f.key,
+                        label: f.label,
+                        count: f.count,
+                      }))}
+                      aktivni={poptavkaFilter}
+                      onChange={(key) => setPoptavkaFilter(key as PoptavkaFilter)}
+                    />
                     <button
                       onClick={exportObjednavkyCsv}
-                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                      className={tlacitko}
                     >
                       Export do CSV
                     </button>
@@ -1814,14 +1796,14 @@ export default function AdminDashboard({
                               <button
                                 disabled={busy}
                                 onClick={() => setPendingDelete({ kind: "poptavky", id: q.id, label: `objednávka od ${q.jmeno}` })}
-                                className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                                className={tlacitkoNebezpeci}
                               >
                                 Smazat
                               </button>
                               <button
                                 disabled={busy}
                                 onClick={() => togglePoptavka(q)}
-                                className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                className={tlacitko}
                               >
                                 {q.precteno ? "Označit jako nové" : "Označit jako přečtené"}
                               </button>
@@ -1831,7 +1813,7 @@ export default function AdminDashboard({
                                 <button
                                   disabled={busy}
                                   onClick={() => togglePoptavkaZaplaceno(q)}
-                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                  className={tlacitko}
                                 >
                                   {q.zaplaceno ? "Označit nezaplaceno" : "Označit zaplaceno"}
                                 </button>
@@ -1840,7 +1822,7 @@ export default function AdminDashboard({
                                 <button
                                   disabled={busy}
                                   onClick={() => poslatDoplatek(q)}
-                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                  className={tlacitko}
                                 >
                                   Poslat výzvu k doplatku
                                 </button>
@@ -1874,7 +1856,7 @@ export default function AdminDashboard({
                   <div className="mb-6 flex justify-end">
                     <button
                       onClick={exportNewsletterCsv}
-                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                      className={tlacitko}
                     >
                       Export do CSV
                     </button>
@@ -1896,7 +1878,7 @@ export default function AdminDashboard({
                         <button
                           disabled={busy}
                           onClick={() => setPendingDelete({ kind: "newsletter", id: n.id, label: n.email })}
-                          className="shrink-0 rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                          className={`shrink-0 ${tlacitkoNebezpeci}`}
                         >
                           Smazat
                         </button>
@@ -1921,7 +1903,7 @@ export default function AdminDashboard({
                   <div className="mb-6 flex justify-end">
                     <button
                       onClick={exportCekaciListinaCsv}
-                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                      className={tlacitko}
                     >
                       Export do CSV
                     </button>
@@ -1959,7 +1941,7 @@ export default function AdminDashboard({
                           <button
                             disabled={busy}
                             onClick={() => setPendingDelete({ kind: "cekaci-listina", id: c.id, label: `${c.jmeno} (čekací listina)` })}
-                            className="shrink-0 rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                            className={`shrink-0 ${tlacitkoNebezpeci}`}
                           >
                             Smazat
                           </button>
@@ -2029,7 +2011,7 @@ export default function AdminDashboard({
                         <div className="flex shrink-0 gap-2">
                           <Link
                             href={`/admin/poukaz/${n.id}`}
-                            className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                            className={tlacitko}
                           >
                             Upravit
                           </Link>
@@ -2038,7 +2020,7 @@ export default function AdminDashboard({
                             onClick={() =>
                               setPendingDelete({ kind: "poukazy-nabidka", id: n.id, label: n.nadpis })
                             }
-                            className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                            className={tlacitkoNebezpeci}
                           >
                             Smazat
                           </button>
@@ -2146,7 +2128,7 @@ export default function AdminDashboard({
                   <div className="mb-6 flex justify-end">
                     <button
                       onClick={exportDarkovePoukazyCsv}
-                      className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-[0.2em] text-ink transition-colors hover:border-accent hover:text-accent"
+                      className={tlacitko}
                     >
                       Export do CSV
                     </button>
@@ -2372,21 +2354,21 @@ export default function AdminDashboard({
                             <button
                               disabled={busy}
                               onClick={() => setPendingDelete({ kind: "darkove-poukazy", id: p.id, label: p.kod })}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                              className={tlacitkoNebezpeci}
                             >
                               Smazat
                             </button>
                             <button
                               disabled={busy}
                               onClick={() => togglePoukazZaplaceno(p)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {p.zaplaceno ? "Označit nezaplaceno" : "Označit zaplaceno"}
                             </button>
                             <button
                               disabled={busy}
                               onClick={() => togglePoukazVyuzito(p)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {p.vyuzito ? "Zrušit využití" : "Označit využito"}
                             </button>
@@ -2397,7 +2379,7 @@ export default function AdminDashboard({
                                 <button
                                   disabled={busy}
                                   onClick={() => poslatKodZnovu(p)}
-                                  className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                  className={tlacitko}
                                 >
                                   Poslat kód znovu
                                 </button>
@@ -2554,14 +2536,14 @@ export default function AdminDashboard({
                                   label: `recenze od ${r.jmeno}`,
                                 })
                               }
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-accent-d transition-colors hover:border-accent-d hover:bg-accent-d/5"
+                              className={tlacitkoNebezpeci}
                             >
                               Smazat
                             </button>
                             <button
                               disabled={busy}
                               onClick={() => toggleRecenze(r)}
-                              className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                              className={tlacitko}
                             >
                               {r.zverejneno ? "Skrýt z webu" : "Zveřejnit"}
                             </button>
@@ -2578,7 +2560,7 @@ export default function AdminDashboard({
                                     },
                                   })
                                 }
-                                className="rounded-full border border-line px-4 py-2 text-xs uppercase tracking-wider text-ink transition-colors hover:border-accent hover:text-accent"
+                                className={tlacitko}
                               >
                                 Upravit
                               </button>

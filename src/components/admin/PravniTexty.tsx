@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PRAVNI_TEXTY, type PravniStranka } from "@/lib/pravniTexty";
 import type { PravniTextRadek } from "@/lib/db";
+import { Zalozky } from "./ui";
 
 const inputCls =
   "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30";
@@ -62,10 +63,7 @@ function Stranka({
   const doplnit = (text.match(/\[DOPLNIT/g) ?? []).length;
 
   return (
-    <div
-      id={`pravni-${popis.klic}`}
-      className="scroll-mt-4 rounded-2xl border border-line bg-white p-6 shadow-sm"
-    >
+    <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
       <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <h3 className="font-serif text-xl text-ink">{popis.nazev}</h3>
@@ -158,6 +156,8 @@ function Stranka({
 }
 
 export default function PravniTexty({ ulozene }: { ulozene: PravniTextRadek[] }) {
+  const [zalozka, setZalozka] = useState<string>(PRAVNI_TEXTY[0].klic);
+
   return (
     <section className="flex flex-col gap-6">
       <div className="max-w-2xl">
@@ -169,25 +169,19 @@ export default function PravniTexty({ ulozene }: { ulozene: PravniTextRadek[] })
         </p>
       </div>
 
-      {/* Kotvící menu — stejné jako u nastavení a e-mailových šablon. */}
-      <nav className="sticky top-0 z-10 -mx-1 flex flex-wrap gap-2 bg-cream/95 px-1 py-2 backdrop-blur">
-        {PRAVNI_TEXTY.map((popis) => (
-          <a
-            key={popis.klic}
-            href={`#pravni-${popis.klic}`}
-            className="rounded-full border border-line bg-white px-4 py-2 text-[11px] uppercase tracking-[0.18em] text-ink transition-colors hover:border-accent hover:text-accent-d"
-          >
-            {popis.kratky}
-          </a>
-        ))}
-      </nav>
+      {/* Záložky stejné jako jinde v administraci. Karty se schovávají,
+          ne odpojují — rozepsaný text přežije přepnutí stránky. */}
+      <Zalozky
+        className="sticky top-0 z-10 bg-cream/95 backdrop-blur"
+        zalozky={PRAVNI_TEXTY.map((p) => ({ key: p.klic, label: p.kratky }))}
+        aktivni={zalozka}
+        onChange={setZalozka}
+      />
 
       {PRAVNI_TEXTY.map((popis) => (
-        <Stranka
-          key={popis.klic}
-          popis={popis}
-          ulozena={ulozene.find((u) => u.klic === popis.klic)}
-        />
+        <div key={popis.klic} className={zalozka === popis.klic ? "" : "hidden"}>
+          <Stranka popis={popis} ulozena={ulozene.find((u) => u.klic === popis.klic)} />
+        </div>
       ))}
 
       <div className="rounded-2xl bg-sand/60 p-6 text-sm leading-relaxed text-muted">
