@@ -94,7 +94,7 @@ export default function NastaveniForm({
           vždycky jen to, co se právě vyplňuje. Karty se schovávají, ne
           odpojují — rozepsané hodnoty tím pádem přežijí přepnutí. */}
       <Zalozky
-        className="sticky top-0 z-10 bg-cream/95 backdrop-blur"
+        className="sticky top-0 z-10"
         zalozky={ZALOZKY}
         aktivni={zalozka}
         onChange={setZalozka}

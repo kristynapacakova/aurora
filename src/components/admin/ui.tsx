@@ -20,8 +20,13 @@ export function Zalozky({
   onChange: (key: string) => void;
   className?: string;
 }) {
+  // Záložky leží ve vlastním bílém bloku, aby nad kartou nevisely volně.
+  // Vybraná se značí broskvovou dlaždicí — stejně jako v levém sloupci
+  // navigace, ať má „tohle je vybrané" v celé administraci jeden tvar.
   return (
-    <div className={`flex flex-wrap items-end gap-1 border-b border-line ${className}`}>
+    <div
+      className={`flex w-fit max-w-full flex-wrap gap-1 rounded-2xl border border-line bg-white p-1.5 ${className}`}
+    >
       {zalozky.map((z) => {
         const active = z.key === aktivni;
         return (
@@ -30,18 +35,13 @@ export function Zalozky({
             type="button"
             onClick={() => onChange(z.key)}
             aria-current={active ? "page" : undefined}
-            // first:pl-0 — první záložka tak začíná na stejné svislici jako
-            // nadpis a karta pod ní; s odsazením působila celá lišta posunutě.
-            className={`relative px-4 py-3 text-xs uppercase tracking-[0.18em] transition-colors first:pl-0 ${
-              active ? "text-ink" : "text-muted hover:text-ink"
+            className={`rounded-xl px-4 py-2.5 text-xs uppercase tracking-[0.18em] transition-colors ${
+              active ? "bg-sand text-ink" : "text-muted hover:bg-sand/50 hover:text-ink"
             }`}
           >
             {z.label}
             {z.count !== undefined && (
-              <span className={`ml-1.5 ${active ? "text-accent" : "text-muted/70"}`}>{z.count}</span>
-            )}
-            {active && (
-              <span className="bg-gradient-aurora absolute inset-x-0 -bottom-px h-[2px] rounded-full" />
+              <span className={`ml-1.5 ${active ? "text-accent-d" : "text-muted/70"}`}>{z.count}</span>
             )}
           </button>
         );

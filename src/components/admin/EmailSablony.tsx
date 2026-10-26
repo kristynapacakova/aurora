@@ -164,7 +164,7 @@ export default function EmailSablony({ ulozene }: { ulozene: EmailSablonaRadek[]
       {/* Záložky místo řádku odkazů — stejně jako v nastavení. Karty se
           schovávají, ne odpojují, takže rozepsaný text přežije přepnutí. */}
       <Zalozky
-        className="sticky top-0 z-10 bg-cream/95 backdrop-blur"
+        className="sticky top-0 z-10"
         zalozky={SABLONY.map((p) => ({ key: p.klic, label: p.kratky }))}
         aktivni={zalozka}
         onChange={setZalozka}

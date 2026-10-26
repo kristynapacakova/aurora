@@ -1710,7 +1710,6 @@ export default function AdminDashboard({
                 <>
                   <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
                     <Zalozky
-                      className="flex-1"
                       zalozky={poptavkaFiltry.map((f) => ({
                         key: f.key,
                         label: f.label,

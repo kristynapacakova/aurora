@@ -163,7 +163,7 @@ export default function PravniTexty({ ulozene }: { ulozene: PravniTextRadek[] })
       {/* Záložky stejné jako jinde v administraci. Karty se schovávají,
           ne odpojují — rozepsaný text přežije přepnutí stránky. */}
       <Zalozky
-        className="sticky top-0 z-10 bg-cream/95 backdrop-blur"
+        className="sticky top-0 z-10"
         zalozky={PRAVNI_TEXTY.map((p) => ({ key: p.klic, label: p.kratky }))}
         aktivni={zalozka}
         onChange={setZalozka}
