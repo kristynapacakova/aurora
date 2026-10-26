@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { cache } from "react";
 import { randomBytes, randomInt } from "crypto";
 import { poradiDne } from "./dny";
+import { USCREEN } from "./config";
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Databáze (Vercel Postgres / Neon). Připojení se čte z env proměnných,
@@ -1159,10 +1160,13 @@ const NASTAVENI_DEFAULTS: Nastaveni = {
   cena_lekce: "120",
   cena_mesicni: "399",
   cena_rocni: "299",
-  uscreen_home: "https://aurora.uscreen.io",
-  uscreen_signup: "https://aurora.uscreen.io/sign_up",
-  uscreen_login: "https://aurora.uscreen.io/sign_in",
-  uscreen_plans: "https://aurora.uscreen.io/plans",
+  // Jeden zdroj pravdy je lib/config.ts. Dřív tu byly adresy opsané ručně
+  // a ukazovaly na cizí aurora.uscreen.io — když zůstala pole v administraci
+  // prázdná, odkazovaly tam Navbar i ceník.
+  uscreen_home: USCREEN.home,
+  uscreen_signup: USCREEN.signup,
+  uscreen_login: USCREEN.login,
+  uscreen_plans: USCREEN.plans,
   domena_expiruje: "",
   cislo_uctu_darky: "",
 };
