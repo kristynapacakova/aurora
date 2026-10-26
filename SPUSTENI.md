@@ -90,11 +90,26 @@ e-maily ano).
 1. ~~Jazyk na češtinu.~~ **Hotovo** (26. 10.) — ověřeno tím, že i chybové
    stránky studia chodí česky. Administrace Uscreenu zůstává anglicky, to
    přepnout nejde.
-2. Katalog viditelný i bez přihlášení.
-3. Náhledové obrázky u videí.
-4. Texty na hlavní stránce studia.
+2. ~~Sekce „O mně“ na hlavní stránce.~~ **Hotovo** (26. 10.) — dvousloupcová
+   sekce s textem a vloženým videem. Uscreen ji z hotových bloků poskládat
+   neumí, je to blok Custom HTML; podklad je v `uscreen-o-mne.html`. Text
+   převzatý z webu, ať studio a web nemluví každý jinak.
+3. ~~Fotka v heru až pod menu.~~ **Hotovo** (26. 10.) — Uscreen na to nemá
+   nastavení, řeší to CSS v bloku Custom HTML; podklad je
+   v `uscreen-hero-pres-menu.html`. Menu je průhledné, položky bílé, fotka
+   vytažená o jeho výšku nahoru a horní okraj jemně ztmavený kvůli
+   čitelnosti. Lepivost sedí na obalu menu, ne na menu samotném.
+4. **Nadpis a cena v heru.** Zbývá. Proti Yogitch tam pořád chybí to, co se
+   přečte za tři vteřiny — co to je a kolik to stojí. Text připravený:
+   nadpis „Rozsviť své vnitřní světlo“ (stejný jako na webu), podnadpis
+   „Online členství 399 Kč měsíčně“.
 
-Body 2–4 jdou ladit i po spuštění.
+   **Cenu doplnit až po nastavení měny**, jinak by žena viděla v heru koruny
+   a v pokladně dolary. Totéž platí pro slib zkušební doby.
+5. Katalog viditelný i bez přihlášení.
+6. Náhledové obrázky u videí.
+
+Body 5–6 jdou ladit i po spuštění.
 
 ---
 
