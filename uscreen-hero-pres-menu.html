@@ -45,6 +45,16 @@
     color: #ffffff !important;
   }
 
+  /* 2b) Výjimka: rozbalovací panel účtu má vlastní světlé pozadí, takže by
+         v něm bílý text zmizel. Pravidlo vrací tmavou barvu jen uvnitř
+         prvků s vlastním pozadím — položky v horní liště žádné nemají,
+         těm tedy bílá zůstává. */
+  header#website-header [class*="bg-"] a,
+  header#website-header [class*="bg-"] button,
+  header#website-header [class*="bg-"] svg {
+    color: #22140d !important;
+  }
+
   /* 3) Fotku vytáhnout nahoru pod menu.
         -5rem je přesně výška menu (h-20). Horní odsazení pak vrací obsah
         zpátky dolů, aby nadpis nezalezl pod položky menu.
