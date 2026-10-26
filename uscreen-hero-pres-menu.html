@@ -37,8 +37,12 @@
 
   /* 3) Fotku vytáhnout nahoru pod menu.
         -5rem je přesně výška menu (h-20). Horní odsazení pak vrací obsah
-        zpátky dolů, aby nadpis nezalezl pod položky menu. */
-  body > div[data-editor="section"]:first-of-type .pb-hero {
+        zpátky dolů, aby nadpis nezalezl pod položky menu.
+
+        Pozn.: míříme přímo na .pb-hero. Původně tu byl selektor přes
+        první div v těle stránky, jenže tím prvním divem je obal s admin
+        lištou — nemířil tedy nikam a fotka zůstala pod menu. */
+  .pb-hero {
     margin-top: -5rem;
     padding-top: 8rem;
   }
@@ -46,7 +50,7 @@
   /* 4) Jemné ztmavení horního okraje fotky.
         Bez něj se bílé menu ztrácí na obloze a ve světlé trávě. Leží nad
         fotkou, ale pod textem hera (ten má z-10). */
-  body > div[data-editor="section"]:first-of-type .pb-hero::before {
+  .pb-hero::before {
     content: "";
     position: absolute;
     top: 0;
