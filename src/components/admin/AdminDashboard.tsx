@@ -8,6 +8,7 @@ import type { Pobyt, Clanek, Lekce, Poptavka, NewsletterSignup, CekaciListina, D
 import NastaveniForm from "./NastaveniForm";
 import EmailSablony from "./EmailSablony";
 import PravniTexty from "./PravniTexty";
+import { PRAVNI_TEXTY } from "@/lib/pravniTexty";
 import type { StavOdesilani } from "@/lib/email";
 import { formatKc } from "@/lib/castky";
 import { stavMist } from "@/lib/kapacita";
@@ -164,19 +165,134 @@ function IconLogout({ className }: { className?: string }) {
   );
 }
 
-const NAV: { key: Section; label: string; icon: (p: { className?: string }) => ReactElement }[] = [
-  { key: "overview", label: "Overview", icon: IconGrid },
-  { key: "editor", label: "Editor", icon: IconEdit },
-  { key: "objednavky", label: "Objednávky", icon: IconInbox },
-  { key: "newsletter", label: "Newsletter", icon: IconMail },
-  { key: "cekaci-listina", label: "Čekací listina", icon: IconClock },
-  { key: "darkove-poukazy", label: "Dárkové poukazy", icon: IconGift },
-  { key: "recenze", label: "Recenze", icon: IconQuote },
-  { key: "pravni-texty", label: "Právní texty", icon: IconParagraf },
-  { key: "statistiky", label: "Statistiky", icon: IconChart },
-  { key: "emaily", label: "E-maily", icon: IconMail },
-  { key: "nastaveni", label: "Nastavení", icon: IconGear },
+// Navigace má dvě úrovně. V liště je pět pojmenovaných okruhů, vedle se
+// rozbalí jejich podsekce. Ikona nikdy nestojí sama — pod každou je název,
+// ať se nemusí hádat, co která znamená. Každá podsekce má i větu, která
+// nahoře vysvětlí, co na stránce je a co se s tím dá dělat.
+type NavPolozka = {
+  key: Section;
+  label: string;
+  popis: string;
+  icon: (p: { className?: string }) => ReactElement;
+};
+type NavSkupina = {
+  key: string;
+  label: string;
+  icon: (p: { className?: string }) => ReactElement;
+  polozky: NavPolozka[];
+};
+
+const NAV: NavSkupina[] = [
+  {
+    key: "prehled",
+    label: "Přehled",
+    icon: IconGrid,
+    polozky: [
+      {
+        key: "overview",
+        icon: IconGrid,
+        label: "Souhrn",
+        popis: "Co je na webu a co nového přišlo. Klikni na dlaždici a otevře se ti příslušná sekce.",
+      },
+      {
+        key: "statistiky",
+        icon: IconChart,
+        label: "Statistiky",
+        popis: "Objednávky, tržby a zájem o jednotlivé pobyty v číslech.",
+      },
+    ],
+  },
+  {
+    key: "obsah",
+    label: "Obsah webu",
+    icon: IconEdit,
+    polozky: [
+      {
+        key: "editor",
+        icon: IconEdit,
+        label: "Pobyty, lekce, blog",
+        popis: "Všechno, co je vidět na webu. Klikni na položku a otevře se k úpravě.",
+      },
+      {
+        key: "recenze",
+        icon: IconQuote,
+        label: "Recenze",
+        popis: "Ohlasy žen. Nové počkají schované, dokud je nezveřejníš.",
+      },
+    ],
+  },
+  {
+    key: "poptavky",
+    label: "Objednávky",
+    icon: IconInbox,
+    polozky: [
+      {
+        key: "objednavky",
+        icon: IconInbox,
+        label: "Objednávky a dotazy",
+        popis: "Vše, co přišlo z webu. Klikni na řádek pro detail a potvrzení platby.",
+      },
+      {
+        key: "cekaci-listina",
+        icon: IconClock,
+        label: "Čekací listina",
+        popis: "Ženy, na které se nedostalo místo. Až se místo uvolní, ozvi se jim odtud.",
+      },
+      {
+        key: "darkove-poukazy",
+        icon: IconGift,
+        label: "Dárkové poukazy",
+        popis: "Vydané poukazy, jejich zůstatek a platnost. Platnost se hlídá sama.",
+      },
+    ],
+  },
+  {
+    key: "kontakty",
+    label: "Kontakty",
+    icon: IconMail,
+    polozky: [
+      {
+        key: "newsletter",
+        icon: IconMail,
+        label: "Newsletter",
+        popis: "E-maily žen, které chtějí vědět o novinkách a nových pobytech.",
+      },
+    ],
+  },
+  {
+    key: "nastaveni",
+    label: "Nastavení",
+    icon: IconGear,
+    polozky: [
+      {
+        key: "nastaveni",
+        icon: IconGear,
+        label: "Údaje a odkazy",
+        popis: "Kontakty, číslo účtu, odkazy na online studio a sociální sítě.",
+      },
+      {
+        key: "emaily",
+        icon: IconMail,
+        label: "E-mailové šablony",
+        popis: "Texty automatických e-mailů, které ženám chodí po objednávce.",
+      },
+      {
+        key: "pravni-texty",
+        icon: IconParagraf,
+        label: "Právní texty",
+        popis: "Obchodní podmínky a ochrana osobních údajů tak, jak je čtou návštěvnice.",
+      },
+    ],
+  },
 ];
+
+function najdiSkupinu(sekce: Section): NavSkupina {
+  return NAV.find((s) => s.polozky.some((p) => p.key === sekce)) ?? NAV[0];
+}
+
+function najdiPolozku(sekce: Section): NavPolozka {
+  return najdiSkupinu(sekce).polozky.find((p) => p.key === sekce) ?? NAV[0].polozky[0];
+}
 
 export default function AdminDashboard({
   configured,
@@ -915,7 +1031,8 @@ export default function AdminDashboard({
   ];
 
   const nedavnaAktivita = poptavky.slice(0, 5);
-  const sectionTitle = NAV.find((n) => n.key === section)?.label ?? "";
+  const aktivniSkupina = najdiSkupinu(section);
+  const aktivniPolozka = najdiPolozku(section);
 
   const domenaDny = nastaveni.domena_expiruje
     ? Math.ceil(
@@ -925,31 +1042,80 @@ export default function AdminDashboard({
     : null;
   const domenaVyprsi = domenaDny !== null && domenaDny <= 30;
 
+  // Odznaky v navigaci: číslo znamená „tolik věcí tu na tebe čeká".
+  const nezverejneneRecenze = recenze.filter((r) => !r.zverejneno).length;
+  const nedoplnenaMista = PRAVNI_TEXTY.reduce((soucet, stranka) => {
+    const text = pravniTexty.find((u) => u.klic === stranka.klic)?.text ?? stranka.text;
+    return soucet + (text.match(/\[DOPLNIT/g) ?? []).length;
+  }, 0);
+
+  function odznak(key: Section): number {
+    if (key === "objednavky") return nepreceteno;
+    if (key === "recenze") return nezverejneneRecenze;
+    if (key === "pravni-texty") return nedoplnenaMista;
+    return 0;
+  }
+
+  // Tečka místo čísla tam, kde nejde o počet, ale o upozornění.
+  function tecka(key: Section): boolean {
+    return key === "nastaveni" && domenaVyprsi;
+  }
+
+  function odznakSkupiny(skupina: NavSkupina): number {
+    return skupina.polozky.reduce((soucet, p) => soucet + odznak(p.key), 0);
+  }
+
+  function teckaSkupiny(skupina: NavSkupina): boolean {
+    return skupina.polozky.some((p) => tecka(p.key));
+  }
+
+  const odznakTrida =
+    "flex h-4 min-w-[16px] items-center justify-center rounded-full bg-accent-d px-1 text-[9px] font-medium text-white";
+
   return (
     <div className="flex min-h-screen bg-cream">
-      {/* ── Postranní navigace ── */}
-      <aside className="flex w-20 shrink-0 flex-col items-center justify-between border-r border-line bg-white py-6">
-        <div className="flex flex-col items-center gap-8">
-          <button onClick={() => setSection("overview")} className="relative h-11 w-16" aria-label="Overview">
+      {/* ── Navigace, první úroveň: okruhy ── */}
+      <aside className="flex w-[92px] shrink-0 flex-col items-center justify-between border-r border-line bg-white py-5">
+        <div className="flex w-full flex-col items-center gap-6">
+          <button onClick={() => setSection("overview")} className="relative h-10 w-14" aria-label="Přehled">
             <Image src="/logo.png" alt="AURORA jóga" fill className="object-contain" priority />
           </button>
-          <nav className="flex flex-col gap-2">
-            {NAV.map((n) => {
-              const Icon = n.icon;
-              const active = section === n.key;
+          <nav className="flex w-full flex-col gap-1 px-2">
+            {NAV.map((s) => {
+              const Icon = s.icon;
+              const active = aktivniSkupina.key === s.key;
+              const pocet = odznakSkupiny(s);
               return (
                 <button
-                  key={n.key}
-                  onClick={() => setSection(n.key)}
-                  title={n.label}
-                  className={`relative flex h-11 w-11 items-center justify-center rounded-xl transition-colors ${
-                    active ? "bg-gradient-aurora text-ink" : "text-muted hover:bg-sand hover:text-ink"
-                  }`}
+                  key={s.key}
+                  onClick={() => setSection(s.polozky[0].key)}
+                  aria-current={active ? "page" : undefined}
+                  className="group flex flex-col items-center gap-1.5 rounded-xl py-2 transition-colors"
                 >
-                  <Icon />
-                  {n.key === "nastaveni" && domenaVyprsi && (
-                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-accent-d ring-2 ring-white" />
-                  )}
+                  <span
+                    className={`relative flex h-10 w-10 items-center justify-center rounded-xl transition-colors ${
+                      active
+                        ? "bg-gradient-aurora text-ink"
+                        : "text-muted group-hover:bg-sand group-hover:text-ink"
+                    }`}
+                  >
+                    <Icon />
+                    {pocet > 0 && (
+                      <span className={`${odznakTrida} absolute -right-1.5 -top-1 ring-2 ring-white`}>
+                        {pocet}
+                      </span>
+                    )}
+                    {pocet === 0 && teckaSkupiny(s) && (
+                      <span className="absolute -right-0.5 -top-0.5 h-2.5 w-2.5 rounded-full bg-accent-d ring-2 ring-white" />
+                    )}
+                  </span>
+                  <span
+                    className={`text-center text-[10px] leading-tight transition-colors ${
+                      active ? "font-medium text-ink" : "text-muted group-hover:text-ink"
+                    }`}
+                  >
+                    {s.label}
+                  </span>
                 </button>
               );
             })}
@@ -957,21 +1123,52 @@ export default function AdminDashboard({
         </div>
         <button
           onClick={logout}
-          title="Odhlásit"
-          className="flex h-11 w-11 items-center justify-center rounded-xl text-muted transition-colors hover:bg-sand hover:text-accent-d"
+          className="group flex flex-col items-center gap-1.5 rounded-xl py-2 text-muted transition-colors hover:text-accent-d"
         >
-          <IconLogout />
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl transition-colors group-hover:bg-sand">
+            <IconLogout />
+          </span>
+          <span className="text-[10px] leading-tight">Odhlásit</span>
         </button>
+      </aside>
+
+      {/* ── Navigace, druhá úroveň: podsekce otevřeného okruhu ── */}
+      <aside className="hidden w-56 shrink-0 flex-col border-r border-line bg-white px-3 py-6 lg:flex">
+        <p className="px-3 text-[10px] uppercase tracking-[0.25em] text-muted">{aktivniSkupina.label}</p>
+        <nav className="mt-3 flex flex-col gap-1">
+          {aktivniSkupina.polozky.map((p) => {
+            const Icon = p.icon;
+            const active = section === p.key;
+            const pocet = odznak(p.key);
+            return (
+              <button
+                key={p.key}
+                onClick={() => setSection(p.key)}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-left text-sm transition-colors ${
+                  active ? "bg-sand text-ink" : "text-muted hover:bg-sand/50 hover:text-ink"
+                }`}
+              >
+                <Icon className="h-4 w-4 shrink-0" />
+                <span className="min-w-0 flex-1 leading-tight">{p.label}</span>
+                {pocet > 0 && <span className={odznakTrida}>{pocet}</span>}
+                {pocet === 0 && tecka(p.key) && (
+                  <span className="h-2 w-2 shrink-0 rounded-full bg-accent-d" />
+                )}
+              </button>
+            );
+          })}
+        </nav>
       </aside>
 
       {/* ── Hlavní obsah ── */}
       <div className="flex min-w-0 flex-1 flex-col">
         {/* Horní lišta */}
         <header className="border-b border-line bg-cream">
-          <div className="flex items-center justify-between px-8 py-5">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.3em] text-accent">Administrace</p>
-              <h1 className="mt-1 font-serif text-2xl text-ink">{sectionTitle}</h1>
+          <div className="flex flex-wrap items-start justify-between gap-4 px-8 py-5">
+            <div className="min-w-0">
+              <h1 className="font-serif text-[26px] leading-tight text-ink">{aktivniPolozka.label}</h1>
+              <p className="mt-1.5 max-w-xl text-sm leading-relaxed text-muted">{aktivniPolozka.popis}</p>
             </div>
             <div className="flex items-center gap-4">
               <Link
@@ -997,6 +1194,32 @@ export default function AdminDashboard({
               </div>
             </div>
           </div>
+
+          {/* Na úzkém displeji se druhý sloupec schová — podsekce se sem
+              přesunou jako řádek, ať jsou pořád dosažitelné. */}
+          {aktivniSkupina.polozky.length > 1 && (
+            <nav className="flex flex-wrap gap-2 px-8 pb-4 lg:hidden">
+              {aktivniSkupina.polozky.map((p) => {
+                const active = section === p.key;
+                const pocet = odznak(p.key);
+                return (
+                  <button
+                    key={p.key}
+                    onClick={() => setSection(p.key)}
+                    aria-current={active ? "page" : undefined}
+                    className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition-colors ${
+                      active
+                        ? "border-accent bg-white text-ink"
+                        : "border-line bg-white/60 text-muted hover:text-ink"
+                    }`}
+                  >
+                    {p.label}
+                    {pocet > 0 && <span className={odznakTrida}>{pocet}</span>}
+                  </button>
+                );
+              })}
+            </nav>
+          )}
         </header>
 
         <div className="flex-1 px-8 py-8">
@@ -1035,7 +1258,7 @@ export default function AdminDashboard({
           {section === "overview" && (
             <div className="flex flex-col gap-8">
               {/* Sedm dlaždic — na xl se vejdou do jedné řady, níž se lámou po čtyřech. */}
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-7">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {stats.map((s) => (
                   <button
                     key={s.label}
