@@ -101,7 +101,7 @@ export default function PoukazNabidkaForm({ initial }: { initial: PoukazNabidka 
 
   const inputCls =
     "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30";
-  const cardCls = "flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm";
+  const cardCls = "flex flex-col gap-5 rounded-2xl border border-line bg-white p-6";
   const labelCls = "flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted";
 
   const platneCastky = castky.filter((c) => c.hodnota_kc > 0);

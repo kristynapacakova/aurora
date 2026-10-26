@@ -63,7 +63,7 @@ function Stranka({
   const doplnit = (text.match(/\[DOPLNIT/g) ?? []).length;
 
   return (
-    <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+    <div className="rounded-2xl border border-line bg-white p-6">
       <div className="mb-5 flex flex-wrap items-baseline justify-between gap-3">
         <div>
           <h3 className="font-serif text-xl text-ink">{popis.nazev}</h3>

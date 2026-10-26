@@ -84,7 +84,7 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
 
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-            <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6">
               <p className="text-xs uppercase tracking-[0.25em] text-accent">Obsah článku</p>
               <label className="flex flex-col gap-2 text-xs uppercase tracking-[0.2em] text-muted">
                 Nadpis *
@@ -104,7 +104,7 @@ export default function ClanekForm({ initial }: { initial: Clanek | null }) {
               </label>
             </div>
 
-            <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-4 rounded-2xl border border-line bg-white p-6">
               <p className="text-xs uppercase tracking-[0.25em] text-accent">Titulní fotka (nepovinné)</p>
               {titulniFoto && (
                 <div className="group relative aspect-[16/9] w-full max-w-xs overflow-hidden rounded-xl">

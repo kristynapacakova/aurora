@@ -176,7 +176,7 @@ export default function PobytForm({
 
   const inputCls =
     "w-full rounded-xl border border-line bg-white px-4 py-3 text-sm text-ink outline-none transition-colors focus:border-accent focus:ring-1 focus:ring-accent/30";
-  const cardCls = "flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm";
+  const cardCls = "flex flex-col gap-5 rounded-2xl border border-line bg-white p-6";
 
   return (
     <main className="min-h-screen bg-cream">
@@ -527,7 +527,7 @@ export default function PobytForm({
                     </div>
                   )}
 
-                  <span className="mt-6 inline-block w-fit cursor-default rounded-full bg-gradient-aurora px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90 shadow-sm">
+                  <span className="mt-6 inline-block w-fit cursor-default rounded-full bg-gradient-aurora px-7 py-3 text-xs uppercase tracking-[0.2em] text-ink opacity-90">
                     Zjistit více →
                   </span>
 

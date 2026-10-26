@@ -63,7 +63,7 @@ function Sablona({
   }
 
   return (
-    <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
+    <div className="flex flex-col gap-5 rounded-2xl border border-line bg-white p-6">
       <div>
         <p className="flex flex-wrap items-baseline gap-2 font-serif text-xl text-ink">
           {popis.nazev}

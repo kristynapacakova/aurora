@@ -1079,7 +1079,7 @@ export default function AdminDashboard({
   return (
     <div className="flex min-h-screen bg-cream">
       {/* ── Navigace, první úroveň: okruhy ── */}
-      <aside className="flex w-[92px] shrink-0 flex-col items-center justify-between border-r border-line bg-white py-5">
+      <aside className="flex w-[92px] shrink-0 flex-col items-center justify-between border-r border-line bg-cream py-5">
         <div className="flex w-full flex-col items-center gap-6">
           <button onClick={() => setSection("overview")} className="relative h-10 w-14" aria-label="Přehled">
             <Image src="/logo.png" alt="AURORA jóga" fill className="object-contain" priority />
@@ -1137,7 +1137,7 @@ export default function AdminDashboard({
       </aside>
 
       {/* ── Navigace, druhá úroveň: podsekce otevřeného okruhu ── */}
-      <aside className="hidden w-56 shrink-0 flex-col border-r border-line bg-white px-3 py-6 lg:flex">
+      <aside className="hidden w-56 shrink-0 flex-col border-r border-line bg-cream px-3 py-6 lg:flex">
         <p className="px-3 text-[10px] uppercase tracking-[0.25em] text-muted">{aktivniSkupina.label}</p>
         <nav className="mt-3 flex flex-col gap-1">
           {aktivniSkupina.polozky.map((p) => {
@@ -1230,7 +1230,7 @@ export default function AdminDashboard({
             dlouhé řádky a rozházené karty se čtou špatně. */}
         <div className="w-full max-w-[1180px] flex-1 px-8 py-8">
           {!configured && (
-            <div className="mb-8 rounded-2xl border border-accent/40 bg-white p-6 text-sm text-ink shadow-sm">
+            <div className="mb-8 rounded-2xl border border-accent/40 bg-white p-6 text-sm text-ink">
               <p className="font-medium">Úložiště zatím není připojené — čísla níže proto ukazují 0.</p>
               <p className="mt-2 text-muted">
                 Ve Vercelu otevři projekt → záložka <strong>Storage</strong> →{" "}
@@ -1242,7 +1242,7 @@ export default function AdminDashboard({
           )}
 
           {domenaVyprsi && domenaDny !== null && (
-            <div className="mb-8 rounded-2xl border border-accent-d/40 bg-white p-6 text-sm text-ink shadow-sm">
+            <div className="mb-8 rounded-2xl border border-accent-d/40 bg-white p-6 text-sm text-ink">
               <p className="font-medium text-accent-d">
                 {domenaDny < 0
                   ? `Doména vypršela před ${Math.abs(domenaDny)} dny.`
@@ -1272,7 +1272,7 @@ export default function AdminDashboard({
                       setSection(s.section);
                       if (s.editorTab) setEditorTab(s.editorTab);
                     }}
-                    className="rounded-2xl border border-line bg-white p-5 text-left shadow-sm transition-all hover:border-accent hover:shadow-md"
+                    className="rounded-2xl border border-line bg-white p-5 text-left transition-colors hover:border-accent"
                   >
                     <p className="text-xs uppercase tracking-[0.2em] text-muted">{s.label}</p>
                     <p className="mt-2 font-serif text-3xl text-ink">{s.value}</p>
@@ -1281,7 +1281,7 @@ export default function AdminDashboard({
                 ))}
               </div>
 
-              <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-line bg-white p-6">
                 <p className="mb-4 text-xs uppercase tracking-[0.25em] text-accent">Poslední aktivita</p>
                 {nedavnaAktivita.length === 0 ? (
                   <p className="text-sm text-muted">Zatím žádné objednávky ani dotazy.</p>
@@ -1313,7 +1313,7 @@ export default function AdminDashboard({
           {/* ── Statistiky ── */}
           {section === "statistiky" && (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-line bg-white p-6">
                 <p className="text-xs uppercase tracking-[0.25em] text-accent">Pobyty</p>
                 <div className="mt-4 flex flex-col gap-2 text-sm text-ink">
                   <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{pobyty.length}</span></div>
@@ -1321,7 +1321,7 @@ export default function AdminDashboard({
                   <div className="flex justify-between"><span className="text-muted">Skrytých</span><span>{pobyty.length - pobytyZverejnene}</span></div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-line bg-white p-6">
                 <p className="text-xs uppercase tracking-[0.25em] text-accent">Články</p>
                 <div className="mt-4 flex flex-col gap-2 text-sm text-ink">
                   <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{clanky.length}</span></div>
@@ -1329,7 +1329,7 @@ export default function AdminDashboard({
                   <div className="flex justify-between"><span className="text-muted">Skrytých</span><span>{clanky.length - clankyZverejnene}</span></div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-line bg-white p-6 shadow-sm">
+              <div className="rounded-2xl border border-line bg-white p-6">
                 <p className="text-xs uppercase tracking-[0.25em] text-accent">Lekce</p>
                 <div className="mt-4 flex flex-col gap-2 text-sm text-ink">
                   <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{lekce.length}</span></div>
@@ -1337,7 +1337,7 @@ export default function AdminDashboard({
                   <div className="flex justify-between"><span className="text-muted">Skrytých</span><span>{lekce.length - lekceZverejnene}</span></div>
                 </div>
               </div>
-              <div className="rounded-2xl border border-line bg-white p-6 shadow-sm sm:col-span-2">
+              <div className="rounded-2xl border border-line bg-white p-6 sm:col-span-2">
                 <p className="text-xs uppercase tracking-[0.25em] text-accent">Objednávky a dotazy</p>
                 <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-2 text-sm text-ink sm:grid-cols-3">
                   <div className="flex justify-between"><span className="text-muted">Celkem</span><span>{poptavky.length}</span></div>
@@ -1377,7 +1377,7 @@ export default function AdminDashboard({
                   <div className="mb-6 flex flex-wrap items-center gap-3">
                     <Link
                       href="/admin/pobyt/novy"
-                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90"
                     >
                       + Přidat pobyt
                     </Link>
@@ -1421,7 +1421,7 @@ export default function AdminDashboard({
                       {pobyty.map((p) => (
                         <li
                           key={p.id}
-                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 transition-colors hover:border-accent"
                         >
                           <div className="flex min-w-0 items-center gap-4">
                             <input
@@ -1521,7 +1521,7 @@ export default function AdminDashboard({
                   <div className="mb-6 flex flex-wrap items-center gap-3">
                     <Link
                       href="/admin/lekce/nova"
-                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90"
                     >
                       + Přidat lekci
                     </Link>
@@ -1530,7 +1530,7 @@ export default function AdminDashboard({
                     </p>
                   </div>
                   {lekce.length === 0 ? (
-                    <div className="rounded-2xl border border-line bg-white p-5 text-sm text-muted shadow-sm">
+                    <div className="rounded-2xl border border-line bg-white p-5 text-sm text-muted">
                       <p className="font-medium text-ink">
                         Zatím tu žádné lekce nejsou — na webu běží výchozí rozvrh.
                       </p>
@@ -1550,7 +1550,7 @@ export default function AdminDashboard({
                       {lekce.map((l) => (
                         <li
                           key={l.id}
-                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 transition-colors hover:border-accent"
                         >
                           <div className="min-w-0">
                             <p className="flex items-center gap-2 truncate font-serif text-lg text-ink">
@@ -1606,7 +1606,7 @@ export default function AdminDashboard({
                   <div className="mb-6 flex flex-wrap items-center gap-3">
                     <Link
                       href="/admin/clanek/novy"
-                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink shadow-sm transition-all hover:opacity-90 hover:shadow-md"
+                      className="bg-gradient-aurora inline-block rounded-full px-6 py-3 text-xs uppercase tracking-[0.2em] text-ink transition-all hover:opacity-90"
                     >
                       + Napsat článek
                     </Link>
@@ -1650,7 +1650,7 @@ export default function AdminDashboard({
                       {clanky.map((c) => (
                         <li
                           key={c.id}
-                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                          className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 transition-colors hover:border-accent"
                         >
                           <div className="flex min-w-0 items-center gap-4">
                             <input
@@ -1734,7 +1734,7 @@ export default function AdminDashboard({
                       {poptavkyFiltrovane.map((q) => (
                         <li
                           key={q.id}
-                          className={`rounded-2xl border bg-white p-5 shadow-sm transition-shadow hover:shadow-md ${
+                          className={`rounded-2xl border bg-white p-5 transition-colors hover:border-accent ${
                             q.precteno ? "border-line" : "border-accent/50"
                           }`}
                         >
@@ -1868,7 +1868,7 @@ export default function AdminDashboard({
                     {newsletter.map((n) => (
                       <li
                         key={n.id}
-                        className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                        className="flex items-center justify-between gap-4 rounded-2xl border border-line bg-white p-5 transition-colors hover:border-accent"
                       >
                         <div className="min-w-0">
                           <a href={`mailto:${n.email}`} className="text-sm text-ink underline underline-offset-2 hover:text-accent-d">
@@ -1915,7 +1915,7 @@ export default function AdminDashboard({
                     {cekaciListina.map((c) => (
                       <li
                         key={c.id}
-                        className="rounded-2xl border border-line bg-white p-5 shadow-sm transition-shadow hover:shadow-md"
+                        className="rounded-2xl border border-line bg-white p-5 transition-colors hover:border-accent"
                       >
                         <div className="flex items-start justify-between gap-4">
                           <div className="min-w-0">
@@ -1987,7 +1987,7 @@ export default function AdminDashboard({
                     {poukazyNabidka.map((n) => (
                       <li
                         key={n.id}
-                        className="flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-white p-4 shadow-sm"
+                        className="flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-white p-4"
                       >
                         <div className="relative h-16 w-24 shrink-0 overflow-hidden rounded-xl bg-sand">
                           {n.fotka ? (
@@ -2053,7 +2053,7 @@ export default function AdminDashboard({
               </div>
 
               {novyPoukazOtevren && (
-                <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-line bg-white p-6 shadow-sm">
+                <div className="mb-8 flex flex-col gap-5 rounded-2xl border border-line bg-white p-6">
                   <div>
                     <p className="text-xs uppercase tracking-[0.25em] text-accent">
                       Vystavit poukaz ručně
@@ -2140,7 +2140,7 @@ export default function AdminDashboard({
                     {darkovePoukazy.map((p) => (
                       <li
                         key={p.id}
-                        className={`rounded-2xl border bg-white p-5 shadow-sm transition-shadow hover:shadow-md ${
+                        className={`rounded-2xl border bg-white p-5 transition-colors hover:border-accent ${
                           p.zaplaceno ? "border-line" : "border-accent/50"
                         }`}
                       >
@@ -2420,7 +2420,7 @@ export default function AdminDashboard({
                     return (
                       <li
                         key={r.id}
-                        className={`rounded-2xl border bg-white p-5 shadow-sm ${
+                        className={`rounded-2xl border bg-white p-5 ${
                           r.zverejneno ? "border-line" : "border-accent/50"
                         }`}
                       >
