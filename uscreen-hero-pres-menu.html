@@ -22,7 +22,9 @@
         zůstane průhledné i nad bílým obsahem níž na stránce, což vypadá
         rozbitě. */
   header#website-header {
-    position: relative;
+    /* !important je tu nutné — bez něj si Uscreen prosadí svoje sticky
+       a menu se při rolování plazí přes obsah pod fotkou. */
+    position: relative !important;
     background: transparent !important;
     border-bottom: 0 !important;
     z-index: 50;
