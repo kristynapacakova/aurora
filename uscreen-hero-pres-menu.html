@@ -1,0 +1,60 @@
+<!-- ───────────────────────────────────────────────────────────────────────
+     AURORA — fotka v heru až pod menu (jako to má Yogitch)
+     Vloží se jako blok Custom HTML na hlavní stránku studia.
+
+     Blok nic nevykresluje, jen mění vzhled menu a úvodní sekce. V editoru
+     bude vidět jako prázdný přerušovaný rámeček — to je správně, projeví
+     se to až na živé stránce po „Save & apply“.
+
+     Postavené na třídách, které má Uscreen v kódu teď (říjen 2026):
+       header#website-header … sticky top-0 z-[100] bg-ds-main h-20 border-b
+       section.pb-hero        … úvodní sekce s fotkou na pozadí
+     Kdyby Uscreen šablonu přestavěl, přestane to působit — nic se tím ale
+     nerozbije, jen se menu vrátí do původní podoby.
+
+     Vrácení zpět: smazat tenhle blok.
+     ─────────────────────────────────────────────────────────────────── -->
+
+<style>
+  /* 1) Menu průhledné a bez spodní linky.
+        position: relative místo sticky — menu odjede nahoru spolu s fotkou.
+        Kdyby se mělo lepit i při rolování, smaž řádek s position; pak ale
+        zůstane průhledné i nad bílým obsahem níž na stránce, což vypadá
+        rozbitě. */
+  header#website-header {
+    position: relative;
+    background: transparent !important;
+    border-bottom: 0 !important;
+    z-index: 50;
+  }
+
+  /* 2) Text a ikony v menu bíle, ať jsou nad fotkou čitelné. */
+  header#website-header a,
+  header#website-header button,
+  header#website-header svg {
+    color: #ffffff !important;
+  }
+
+  /* 3) Fotku vytáhnout nahoru pod menu.
+        -5rem je přesně výška menu (h-20). Horní odsazení pak vrací obsah
+        zpátky dolů, aby nadpis nezalezl pod položky menu. */
+  body > div[data-editor="section"]:first-of-type .pb-hero {
+    margin-top: -5rem;
+    padding-top: 8rem;
+  }
+
+  /* 4) Jemné ztmavení horního okraje fotky.
+        Bez něj se bílé menu ztrácí na obloze a ve světlé trávě. Leží nad
+        fotkou, ale pod textem hera (ten má z-10). */
+  body > div[data-editor="section"]:first-of-type .pb-hero::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 14rem;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
+    z-index: 5;
+    pointer-events: none;
+  }
+</style>
