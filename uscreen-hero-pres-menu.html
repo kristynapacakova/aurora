@@ -30,6 +30,14 @@
     z-index: 50;
   }
 
+  /* 1b) Lepivost ve skutečnosti sedí na obalu menu, ne na menu samotném —
+         proto samotná hlavička na position nereagovala. Zápis :has(> …)
+         míří na ten div, který má hlavičku přímo v sobě; kdyby struktura
+         byla jiná, nenajde to nic a nic se nerozbije. */
+  div.sticky:has(> #website-header) {
+    position: relative !important;
+  }
+
   /* 2) Text a ikony v menu bíle, ať jsou nad fotkou čitelné. */
   header#website-header a,
   header#website-header button,
