@@ -7,77 +7,58 @@
      se to až na živé stránce po „Save & apply“.
 
      Postavené na třídách, které má Uscreen v kódu teď (říjen 2026):
-       header#website-header … sticky top-0 z-[100] bg-ds-main h-20 border-b
+       header#website-header … hlavička; lepivost sedí na jejím obalu
        section.pb-hero        … úvodní sekce s fotkou na pozadí
      Kdyby Uscreen šablonu přestavěl, přestane to působit — nic se tím ale
      nerozbije, jen se menu vrátí do původní podoby.
+
+     POZN. K BARVĚ TEXTU: dřívější verze obarvovala položky menu na bílo,
+     aby byly nad fotkou vidět. Vždycky se ale našel kousek, který tím
+     utrpěl — naposledy rozbalovací panel účtu, kde bílý text na světlém
+     pozadí zmizel úplně. Uscreen má hlavičku provázanou s barevným
+     schématem, takže zásah zvenčí se dřív nebo později někde projeví.
+     Proto se na barvu textu nesahá vůbec a místo toho se zesvětluje horní
+     okraj fotky. Menu si nechává svoji tmavou barvu a je čitelné všude.
 
      Vrácení zpět: smazat tenhle blok.
      ─────────────────────────────────────────────────────────────────── -->
 
 <style>
-  /* 1) Menu průhledné a bez spodní linky.
-        position: relative místo sticky — menu odjede nahoru spolu s fotkou.
-        Kdyby se mělo lepit i při rolování, smaž řádek s position; pak ale
-        zůstane průhledné i nad bílým obsahem níž na stránce, což vypadá
-        rozbitě. */
+  /* 1) Lepivost sedí na obalu menu, ne na menu samotném — proto samotná
+        hlavička na position nereagovala. Bez tohohle se menu při rolování
+        plazí přes obsah pod fotkou. */
+  div.sticky:has(> #website-header) {
+    position: relative !important;
+  }
+
+  /* 2) Menu průhledné a bez spodní linky. */
   header#website-header {
-    /* !important je tu nutné — bez něj si Uscreen prosadí svoje sticky
-       a menu se při rolování plazí přes obsah pod fotkou. */
     position: relative !important;
     background: transparent !important;
     border-bottom: 0 !important;
     z-index: 50;
   }
 
-  /* 1b) Lepivost ve skutečnosti sedí na obalu menu, ne na menu samotném —
-         proto samotná hlavička na position nereagovala. Zápis :has(> …)
-         míří na ten div, který má hlavičku přímo v sobě; kdyby struktura
-         byla jiná, nenajde to nic a nic se nerozbije. */
-  div.sticky:has(> #website-header) {
-    position: relative !important;
-  }
-
-  /* 2) Text a ikony v menu bíle, ať jsou nad fotkou čitelné. */
-  header#website-header a,
-  header#website-header button,
-  header#website-header svg {
-    color: #ffffff !important;
-  }
-
-  /* 2b) Výjimka: rozbalovací panel účtu má vlastní světlé pozadí, takže by
-         v něm bílý text zmizel. Pravidlo vrací tmavou barvu jen uvnitř
-         prvků s vlastním pozadím — položky v horní liště žádné nemají,
-         těm tedy bílá zůstává. */
-  header#website-header [class*="bg-"] a,
-  header#website-header [class*="bg-"] button,
-  header#website-header [class*="bg-"] svg {
-    color: #22140d !important;
-  }
-
   /* 3) Fotku vytáhnout nahoru pod menu.
         -5rem je přesně výška menu (h-20). Horní odsazení pak vrací obsah
-        zpátky dolů, aby nadpis nezalezl pod položky menu.
-
-        Pozn.: míříme přímo na .pb-hero. Původně tu byl selektor přes
-        první div v těle stránky, jenže tím prvním divem je obal s admin
-        lištou — nemířil tedy nikam a fotka zůstala pod menu. */
+        zpátky dolů, aby nadpis nezalezl pod položky menu. */
   .pb-hero {
     margin-top: -5rem;
     padding-top: 8rem;
   }
 
-  /* 4) Jemné ztmavení horního okraje fotky.
-        Bez něj se bílé menu ztrácí na obloze a ve světlé trávě. Leží nad
-        fotkou, ale pod textem hera (ten má z-10). */
+  /* 4) Krémový závoj přes horní okraj fotky, aby bylo tmavé menu čitelné.
+        Odstín je stejný jako scheme color v nastavení Brandingu (#FCF4F1),
+        takže na menu plynule navazuje. Leží nad fotkou, ale pod textem
+        hera (ten má z-10). */
   .pb-hero::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 14rem;
-    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0));
+    height: 11rem;
+    background: linear-gradient(to bottom, rgba(252, 244, 241, 0.94), rgba(252, 244, 241, 0));
     z-index: 5;
     pointer-events: none;
   }
