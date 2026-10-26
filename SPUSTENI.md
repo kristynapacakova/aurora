@@ -30,6 +30,10 @@ měla objevit.
    **299 Kč / měsíc při roční platbě**. Čísla ověřit v administraci Aurory
    → Nastavení → Ceník, web a Uscreen musí říkat totéž.
 4. Zkušební platba na skutečné kartě, ne jen v testovacím režimu.
+5. **Přetestovat adresy** `/sign_up` a `/plans` (viz Otevřené otázky níž) —
+   po vytvoření plánů by měly začít fungovat. Pokud ano, vrátit je
+   v administraci Aurory → Nastavení → Uscreen zpět z hlavní stránky
+   na `…/sign_up` a `…/plans`.
 
 **Pozor:** dokud tohle není hotové, nesmí studio dostat první platící členku.
 Web na Uscreen odkazuje už teď, ale je zatím za bránou `/vstup`.
@@ -96,8 +100,15 @@ Body 2–4 jdou ladit i po spuštění.
 
 ## Otevřené otázky
 
-- Vedou `aurorayoga.uscreen.io/sign_up`, `/sign_in` a `/plans` opravdu na
-  registraci, přihlášení a ceník? Jsou v kódu natvrdo a z vývojového
-  prostředí se na Uscreen nedá dostat. Stačí proklikat v prohlížeči.
+- **`/sign_up` a `/plans` nefungují, `/sign_in` funguje.** (Ověřeno
+  proklikáním, 26. 10.) Podezření: obě padají proto, že zatím nejsou
+  vytvořené žádné plány — není k čemu se registrovat ani co vypsat.
+  Přihlášení existuje nezávisle, proto jediné funguje. Je to domněnka;
+  rozhodne, jestli adresy vracejí tvrdou 404, nebo jen přesměrují na
+  hlavní stránku.
+
+  **Dočasné řešení:** obě pole v administraci Aurory → Nastavení → Uscreen
+  míří na hlavní stránku studia, aby na nich nikdo neskončil na chybové
+  stránce. Po vytvoření plánů přetestovat a případně vrátit zpět.
 - Upozornění ohledně **Bundles** u nahraného videa — vyřešené, nebo tam video
   pořád visí nezveřejněné?
