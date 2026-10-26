@@ -87,8 +87,8 @@ Pořadí záměrné: jazyk se musí přepnout dřív, než někdo začne ručně
 e-mailové šablony, protože ty se při změně jazyka **nepřekládají** (systémové
 e-maily ano).
 
-1. **Jazyk na češtinu:** `Website → Advanced → Settings → Website Language`
-   → Czech → `Save & Apply`. Administrace Uscreenu zůstane anglicky, to
+1. ~~Jazyk na češtinu.~~ **Hotovo** (26. 10.) — ověřeno tím, že i chybové
+   stránky studia chodí česky. Administrace Uscreenu zůstává anglicky, to
    přepnout nejde.
 2. Katalog viditelný i bez přihlášení.
 3. Náhledové obrázky u videí.
@@ -110,5 +110,21 @@ Body 2–4 jdou ladit i po spuštění.
   **Dočasné řešení:** obě pole v administraci Aurory → Nastavení → Uscreen
   míří na hlavní stránku studia, aby na nich nikdo neskončil na chybové
   stránce. Po vytvoření plánů přetestovat a případně vrátit zpět.
+
+- **Nevyjasněné a blokující: vrací 404 i samotná hlavní stránka studia?**
+  Screenshot chybové stránky přišel ze Safari, které v adresním řádku
+  schovává cestu, takže z něj nejde poznat, která adresa ji vyhodila.
+  Pokud `aurorayoga.uscreen.io` bez cesty **funguje**, řešíme jen dvě cesty.
+  Pokud **nefunguje**, je mrtvé celé studio včetně `aurorayoga.cz/studio` a
+  dočasné řešení výš situaci zhoršuje (tři mrtvé odkazy místo dvou).
+
+  **Teorie:** storefront není publikovaný. Stránky storefrontu (hlavní
+  stránka, registrace, ceník) do publikování neexistují, kdežto `/sign_in`
+  je systémová stránka platformy a funguje vždycky — což přesně odpovídá
+  tomu, co se zatím naměřilo. Zkontrolovat ve `Website` editoru tlačítko
+  **Publish** nebo režim „coming soon“.
+
+  Ze zdejšího prostředí to ověřit nejde, uscreen.io není dostupné ani přes
+  DNS. Musí se proklikat v prohlížeči.
 - Upozornění ohledně **Bundles** u nahraného videa — vyřešené, nebo tam video
   pořád visí nezveřejněné?
