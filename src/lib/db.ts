@@ -415,6 +415,21 @@ async function ensureSchema() {
       text TEXT NOT NULL DEFAULT ''
     );
 
+    -- Jednorázová oprava dat. Při prvním založení nastavení se do databáze
+    -- zapsala cizí adresa aurora.uscreen.io z tehdejších chybných výchozích
+    -- hodnot a od té doby přebíjela tu správnou z config.ts. Druhá skupina je
+    -- původní poddoména, kterou Uscreen po přejmenování už neobslouží.
+    -- Mažeme jen tyhle přesné hodnoty — co si klientka vyplnila sama,
+    -- zůstává nedotčené. Prázdné pole spadne na výchozí hodnotu z config.ts.
+    UPDATE nastaveni SET uscreen_home = ''
+      WHERE uscreen_home IN ('https://aurora.uscreen.io', 'https://aurorasmembership-66e7.uscreen.io');
+    UPDATE nastaveni SET uscreen_signup = ''
+      WHERE uscreen_signup IN ('https://aurora.uscreen.io/sign_up', 'https://aurorasmembership-66e7.uscreen.io/sign_up');
+    UPDATE nastaveni SET uscreen_login = ''
+      WHERE uscreen_login IN ('https://aurora.uscreen.io/sign_in', 'https://aurorasmembership-66e7.uscreen.io/sign_in');
+    UPDATE nastaveni SET uscreen_plans = ''
+      WHERE uscreen_plans IN ('https://aurora.uscreen.io/plans', 'https://aurorasmembership-66e7.uscreen.io/plans');
+
     CREATE TABLE IF NOT EXISTS recenze (
       id SERIAL PRIMARY KEY,
       jmeno TEXT NOT NULL,
@@ -1200,6 +1215,17 @@ async function ensureNastaveniRow(): Promise<NastaveniRow> {
   return inserted[0];
 }
 
+// Odkazy z administrace se vkládají rovnou do href. Adresa se ale přirozeně
+// píše bez „https://“ — a takovou by prohlížeč vzal jako cestu na našem webu
+// (aurorayoga.cz/aurorayoga.uscreen.io) a skončilo by to chybou 404. Schéma
+// proto doplníme za klientku; prázdné pole bere výchozí hodnotu z config.ts.
+function odkazSchematem(hodnota: string, vychozi: string): string {
+  const text = hodnota.trim();
+  if (!text) return vychozi;
+  if (/^https?:\/\//i.test(text)) return text;
+  return `https://${text.replace(/^\/+/, "")}`;
+}
+
 export const getNastaveni = cache(async (): Promise<Nastaveni> => {
   if (!dbConfigured()) return NASTAVENI_DEFAULTS;
   const row = await ensureNastaveniRow();
@@ -1207,16 +1233,16 @@ export const getNastaveni = cache(async (): Promise<Nastaveni> => {
     kontakt_email: row.kontakt_email || NASTAVENI_DEFAULTS.kontakt_email,
     telefon: row.telefon || NASTAVENI_DEFAULTS.telefon,
     instagram_handle: row.instagram_handle || NASTAVENI_DEFAULTS.instagram_handle,
-    instagram_url: row.instagram_url || NASTAVENI_DEFAULTS.instagram_url,
+    instagram_url: odkazSchematem(row.instagram_url, NASTAVENI_DEFAULTS.instagram_url),
     facebook_handle: row.facebook_handle || NASTAVENI_DEFAULTS.facebook_handle,
-    facebook_url: row.facebook_url || NASTAVENI_DEFAULTS.facebook_url,
+    facebook_url: odkazSchematem(row.facebook_url, NASTAVENI_DEFAULTS.facebook_url),
     cena_lekce: row.cena_lekce || NASTAVENI_DEFAULTS.cena_lekce,
     cena_mesicni: row.cena_mesicni || NASTAVENI_DEFAULTS.cena_mesicni,
     cena_rocni: row.cena_rocni || NASTAVENI_DEFAULTS.cena_rocni,
-    uscreen_home: row.uscreen_home || NASTAVENI_DEFAULTS.uscreen_home,
-    uscreen_signup: row.uscreen_signup || NASTAVENI_DEFAULTS.uscreen_signup,
-    uscreen_login: row.uscreen_login || NASTAVENI_DEFAULTS.uscreen_login,
-    uscreen_plans: row.uscreen_plans || NASTAVENI_DEFAULTS.uscreen_plans,
+    uscreen_home: odkazSchematem(row.uscreen_home, NASTAVENI_DEFAULTS.uscreen_home),
+    uscreen_signup: odkazSchematem(row.uscreen_signup, NASTAVENI_DEFAULTS.uscreen_signup),
+    uscreen_login: odkazSchematem(row.uscreen_login, NASTAVENI_DEFAULTS.uscreen_login),
+    uscreen_plans: odkazSchematem(row.uscreen_plans, NASTAVENI_DEFAULTS.uscreen_plans),
     domena_expiruje: row.domena_expiruje || NASTAVENI_DEFAULTS.domena_expiruje,
     cislo_uctu_darky: row.cislo_uctu_darky || NASTAVENI_DEFAULTS.cislo_uctu_darky,
   };
