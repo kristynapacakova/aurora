@@ -47,18 +47,26 @@
     padding-top: 8rem;
   }
 
-  /* 4) Krémový závoj přes horní okraj fotky, aby bylo tmavé menu čitelné.
-        Odstín je stejný jako scheme color v nastavení Brandingu (#FCF4F1),
-        takže na menu plynule navazuje. Leží nad fotkou, ale pod textem
-        hera (ten má z-10). */
+  /* 4) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
+        Odstín je stejný jako scheme color v nastavení Brandingu (#FCF4F1).
+        Leží nad fotkou, ale pod textem hera (ten má z-10).
+
+        Je to skvrna uprostřed, ne pruh přes celou šířku: logo vlevo je samo
+        světle broskvové a na krémovém podkladu bledlo. Do stran se závoj
+        vytrácí, takže logo i tlačítko účtu mají pod sebou fotku, zatímco
+        vycentrované položky menu podklad mají. */
   .pb-hero::before {
     content: "";
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
-    height: 11rem;
-    background: linear-gradient(to bottom, rgba(252, 244, 241, 0.94), rgba(252, 244, 241, 0));
+    height: 14rem;
+    background: radial-gradient(
+      ellipse 55% 11rem at 50% 0%,
+      rgba(252, 244, 241, 0.94) 0%,
+      rgba(252, 244, 241, 0) 100%
+    );
     z-index: 5;
     pointer-events: none;
   }
