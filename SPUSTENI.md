@@ -129,7 +129,17 @@ e-maily ano).
    nedá, ovládání tam chybí, i když třídy `button_border_radius` a
    `card_border_radius` v kódu existují. Kdyby ho Uscreen doplnil, dají se
    ta dvě pravidla smazat a nastavit nativně.
-7. Katalog viditelný i bez přihlášení.
+7. ~~Katalog viditelný i bez přihlášení.~~ **Hotovo** (28. 10.) — nebylo to
+   nastavením katalogu, ale tím, že video nepatřilo do žádné kategorie.
+
+   **Platí u každého dalšího videa:** katalog skládá obsah z kategorií, ne
+   z volně ležících videí. Video, které není v kategorii, se v katalogu
+   neukáže, i když má `Visibility: Published` a `Access: Gated` — což je
+   jinak správné nastavení (zamčený náhled, o členství si řekne až po
+   kliknutí).
+
+   Pozn.: volba `Free for all users`, tedy video volně přístupné i bez
+   přihlášení jako ochutnávka, je u Uscreenu až v tarifu Growth.
 8. Náhledové obrázky u videí.
 
 Body 6–8 jdou ladit i po spuštění.
