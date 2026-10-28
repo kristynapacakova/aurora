@@ -7,16 +7,22 @@
        https://www.youtube.com/watch?v=dQw4w9WgXcQ  →  dQw4w9WgXcQ
 
      Pozn.: sloupce se zalamují samy přes flex-wrap, bez media queries —
-     některé editory je při vkládání ořezávají. Barvy a rozměry jsou
-     nastavené přímo u prvků ze stejného důvodu.
+     některé editory je při vkládání ořezávají. Barvy jsou nastavené přímo
+     u prvků ze stejného důvodu.
+
+     Šířka a odsazení po stranách se ale schválně NEnastavují vlastní —
+     používají se třídy Uscreenu (px-6 md:px-16 a container mx-auto).
+     S vlastními hodnotami začínal text o 40 px jinde než sekce nad ním,
+     protože Uscreen dává svým sekcím po stranách 64 px. Takhle to sedí
+     samo i kdyby se šířka webu někdy změnila.
      ─────────────────────────────────────────────────────────────────── -->
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Allura&family=Poppins:wght@300;400&display=swap');
 </style>
 
-<div style="background:#FCF4F1;padding:72px 24px;">
-  <div style="max-width:1152px;margin:0 auto;display:flex;flex-wrap:wrap;gap:56px;align-items:center;">
+<div class="px-6 md:px-16" style="background:#FCF4F1;padding-top:72px;padding-bottom:72px;">
+  <div class="container mx-auto" style="display:flex;flex-wrap:wrap;gap:56px;align-items:center;">
 
     <!-- Text -->
     <div style="flex:1 1 300px;min-width:0;">
