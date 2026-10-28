@@ -100,6 +100,10 @@ e-maily ano).
    sedí na jeho obalu, ne na něm samotném) a fotka je vytažená o jeho výšku
    nahoru.
 
+   Ve stejném bloku je i strop šířky obsahu (1152 px, stejně jako web
+   Aurory) s výjimkou pro lištu menu, která zůstává přes celou šířku, a
+   zprůhledněné pozadí tlačítka účtu.
+
    **Na barvu textu v menu se záměrně nesahá.** Obarvení položek na bílo
    kvůli čitelnosti nad fotkou opakovaně rozbíjelo rozbalovací panel účtu,
    kde bílý text na světlém pozadí mizel. Uscreen má hlavičku provázanou
