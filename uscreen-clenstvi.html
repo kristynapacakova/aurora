@@ -11,12 +11,13 @@
      Šablonová sekce dává text doleva a tlačítko doprava a mezi nimi nechá
      všechno, co zbyde, a nedalo se to nastavit.
 
-     Karta schválně nemá vlastní šířku a bere si kontejner Uscreenu
+     Karta schválně nemá vlastní šířku a sedí UVNITŘ kontejneru Uscreenu
      (`container mx-auto`) — stejně jako sekce „O mně“ a Instagram. Hrany
-     tím lícují se sousedními sekcemi při jakékoliv šířce obsahu. Dřív tu
-     byl vlastní strop 820 px: text s tlačítkem byl sice blíž u sebe, ale
-     karta byla viditelně užší než mřížka fotek nad ní a působilo to jako
-     omyl.
+     tím lícují se sousedními sekcemi při jakékoliv šířce obsahu.
+
+     Pozor na to vnoření: třída karty nastavuje vlastní `padding`, a kdyby
+     seděla přímo na kontejneru, přebila by jeho vnitřní odsazení. Karta by
+     pak byla o 64 px na každou stranu širší než mřížka fotek nad ní.
 
      Tlačítko má gradient z loga Aurory (#F5BAA8 → #F4A36C → #F6C45D),
      stejný jako hlavní tlačítka na webu.
@@ -61,7 +62,8 @@
 </style>
 
 <div class="px-6 md:px-16 py-8 md:py-12" style="background:#FCF4F1;">
-  <div class="container mx-auto aurora-clenstvi">
+  <div class="container mx-auto">
+    <div class="aurora-clenstvi">
 
     <div style="flex:1 1 300px;min-width:0;">
       <p style="margin:0 0 10px;font-family:'Allura',cursive;font-size:40px;font-weight:400;line-height:1.1;color:#8C5F47;">
@@ -77,5 +79,6 @@
       Vybrat členství
     </a>
 
+    </div>
   </div>
 </div>
