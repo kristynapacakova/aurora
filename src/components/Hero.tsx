@@ -30,10 +30,17 @@ export default function Hero() {
           poster="/hero-poster.webp"
           className="absolute inset-0 h-full w-full object-cover"
         >
-          {/* Telefonům stačí menší soubor (891 kB místo 1,8 MB). Pořadí je
-              schválně takhle: prohlížeč, který by atribut media ignoroval,
-              sáhne po plné verzi, ne po té zmenšené. */}
+          {/* Telefonům stačí menší soubor. Pořadí je schválně takhle:
+              prohlížeč, který by atribut media ignoroval, sáhne po plné
+              verzi, ne po té zmenšené.
+
+              WebM (VP9) je u každé velikosti první, protože je zhruba
+              o polovinu menší než stejně vypadající MP4 — 937 kB místo
+              1,8 MB na počítači a 489 kB místo 870 kB na telefonu. MP4
+              zůstává jako záloha pro starší Safari, které VP9 neumí. */}
+          <source src="/hero-uvod.webm" type="video/webm" media="(min-width: 768px)" />
           <source src="/hero-uvod.mp4" type="video/mp4" media="(min-width: 768px)" />
+          <source src="/hero-uvod-mobil.webm" type="video/webm" />
           <source src="/hero-uvod-mobil.mp4" type="video/mp4" />
         </video>
         {/* Na telefonu se video dole ztrácí do pozadí; na počítači to řeší
