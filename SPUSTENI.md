@@ -6,37 +6,33 @@ Spuštění: **1. listopadu 2026**. Seznam je živý, odškrtává se průběžn
 
 ## Čeká na klientku
 
-### 1. Napojit Stripe v Uscreenu — a hned potom nastavit měnu
+### 1. Napojit Stripe v Uscreenu
 
 **Na kom:** klientka (je to její podnikání — na Stripe jdou peníze, takže
 tam patří její účet, IČO a bankovní spojení; nejde to udělat za ni).
+**Stav k 28. 10.: čeká se na vyřízení.**
 
-**Proč to spěchá:** základní měnu obchodu jde v Uscreenu změnit **jen dokud
-nemá studio žádnou aktivní předplatitelku**. Jakmile první žena zaplatí,
-výběr měny zešedne a odemkne se až zrušením jejího předplatného. Navíc si
-Stripe každou zákaznici zamkne na měnu jejího prvního nákupu — kdo jednou
-zaplatí v dolarech, platí v dolarech napořád.
+**Měna je hotová.** Studio počítá v korunách a tarify sedí s ceníkem na webu
+na korunu přesně: **399 Kč/měsíc** a **3 588 Kč/rok**, tedy 299 Kč měsíčně.
 
-**Souvislost:** `Settings → Checkout → Localized Pricing` se v administraci
-vůbec nenabízí. Skoro jistě proto, že není napojený Stripe — dokud nemá
-Uscreen přes co vybírat, nemá co nabízet v měnách. Po napojení by se volba
-měla objevit.
+To byla ta nevratná část a je dobře, že je za námi: základní měnu jde
+v Uscreenu změnit jen dokud studio nemá žádnou aktivní předplatitelku, a
+Stripe si navíc každou zákaznici zafixuje na měnu jejího prvního nákupu.
+Kdyby se to řešilo až po spuštění, znamenalo by to rušit předplatné ženám,
+které zrovna zaplatily. **Teď už Stripe na ničem nevratném nestojí** — jen
+do jeho napojení nejde členství koupit.
 
-**Postup, až bude klientka u toho:**
+**Zbývá:**
 
 1. Napojit Stripe (účet klientky).
-2. Přepnout základní měnu obchodu na **CZK**.
-3. Nastavit plány tak, aby seděly s webem: **399 Kč / měsíc** a
-   **299 Kč / měsíc při roční platbě**. Čísla ověřit v administraci Aurory
-   → Nastavení → Ceník, web a Uscreen musí říkat totéž.
-4. Zkušební platba na skutečné kartě, ne jen v testovacím režimu.
-5. **Přetestovat adresy** `/sign_up` a `/plans` (viz Otevřené otázky níž) —
-   po vytvoření plánů by měly začít fungovat. Pokud ano, vrátit je
-   v administraci Aurory → Nastavení → Uscreen zpět z hlavní stránky
-   na `…/sign_up` a `…/plans`.
+2. Zkušební platba na skutečné kartě, ne jen v testovacím režimu.
+3. Přiřadit videím přístup k předplatnému — bez existujícího předplatného
+   to nešlo a je to důvod toho upozornění u Bundles.
+4. Teprve pak doplnit cenu do úvodní sekce studia; dřív by se údaj
+   v heru rozcházel s pokladnou.
 
-**Pozor:** dokud tohle není hotové, nesmí studio dostat první platící členku.
-Web na Uscreen odkazuje už teď, ale je zatím za bránou `/vstup`.
+**Pozor:** dokud tohle není hotové, nejde ve studiu nic prodat. Web na
+Uscreen odkazuje už teď, ale je zatím za bránou `/vstup`.
 
 ### 2. Doplnit právní texty
 
