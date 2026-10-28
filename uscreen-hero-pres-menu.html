@@ -18,11 +18,12 @@
         hero někdy přesunulo jinam než na první místo, pravidlo přestane
         platit, ale nic nerozbije.
 
-     2) Na barvu textu v menu se nesahá. Obarvení položek na bílo kvůli
-        čitelnosti nad fotkou opakovaně rozbíjelo rozbalovací panel účtu,
-        kde bílý text na světlém pozadí mizel. Uscreen má hlavičku
-        provázanou s barevným schématem, takže zásah zvenčí se dřív nebo
-        později někde projeví. Místo toho se zesvětluje podklad pod menu.
+     2) Barvu textu v menu nesmí měnit plošné pravidlo na celou hlavičku.
+        Obarvení všech odkazů na bílo opakovaně rozbilo rozbalovací panel
+        účtu, kde bílý text na světlém pozadí zmizel. Položky lišty mají
+        ale vlastní obal `nav#website-links` a panel účtu je mimo něj —
+        přes něj se dají obarvit bezpečně. Zatím se místo toho jen
+        zesvětluje podklad pod menu, viz pravidlo 5.
      ─────────────────────────────────────────────────────────────────── -->
 
 <style>
@@ -68,11 +69,12 @@
   }
 
   /* 4c) Tlačítko účtu bez vlastního pozadí — s krémovou krabičkou sedělo na
-         fotce jako nálepka. Skrýt se schválně nesmí: je za ním knihovna,
-         nákupy a odhlášení, a v liště na ně jiná cesta nevede. */
-  header#website-header > .container > *:last-child {
+         fotce jako nálepka. Pozadí drží label o dvě úrovně hlouběji (třída
+         bg-ds-subtle), ne obalový div. Skrýt se tlačítko schválně nesmí: je
+         za ním knihovna, nákupy a odhlášení, a v liště na ně jiná cesta
+         nevede. */
+  header#website-header label[data-themeless--header-target="toggleBurger"] {
     background: transparent !important;
-    box-shadow: none !important;
   }
 
   /* 5) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
