@@ -111,17 +111,28 @@ e-maily ano).
    projeví. Místo toho je pod vycentrovanými položkami menu krémová skvrna
    v odstínu scheme color, která se vytrácí do stran — logo vlevo tak má
    pod sebou fotku a nebledne.
-4. **Nadpis a cena v heru.** Zbývá. Proti Yogitch tam pořád chybí to, co se
+4. ~~Sekce s Instagramem.~~ **Hotovo** (28. 10.) — stejná jako na webu,
+   podklad je v `uscreen-instagram.html`. Fotky se berou přímo z webu
+   (`public/ig-1.jpg` až `-5.jpg`), takže se mění na jednom místě a propíšou
+   se na web i do studia zároveň. Statické obrázky jsou z brány `/vstup`
+   vyloučené, proto fungují i před spuštěním.
+5. **Nadpis a cena v heru.** Zbývá. Proti Yogitch tam pořád chybí to, co se
    přečte za tři vteřiny — co to je a kolik to stojí. Text připravený:
    nadpis „Rozsviť své vnitřní světlo“ (stejný jako na webu), podnadpis
    „Online členství 399 Kč měsíčně“.
 
    **Cenu doplnit až po nastavení měny**, jinak by žena viděla v heru koruny
    a v pokladně dolary. Totéž platí pro slib zkušební doby.
-5. Katalog viditelný i bez přihlášení.
-6. Náhledové obrázky u videí.
+6. **Zaoblení tlačítek a karet.** Uscreen na to má nastavení v `Edit website
+   → Branding` (v kódu `button_border_radius` a `card_border_radius`, obojí
+   zatím 0.125rem, tedy prakticky ostré rohy). Web Aurory má karty zaoblené
+   kolem 20 px, takže tohle srovná vzhled víc než cokoliv kolem menu.
+   Nastavit nativně, ne přes CSS — nativní nastavení přežije i přestavbu
+   šablony.
+7. Katalog viditelný i bez přihlášení.
+8. Náhledové obrázky u videí.
 
-Body 5–6 jdou ladit i po spuštění.
+Body 6–8 jdou ladit i po spuštění.
 
 ---
 
