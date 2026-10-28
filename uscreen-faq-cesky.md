@@ -4,8 +4,9 @@ Výchozí texty Uscreenu přeložené do češtiny a přepsané do hlasu webu:
 tykání, první osoba jednotného čísla (mluví Anežka, ne „tým“), konkrétně
 a bez úředničiny.
 
-**Čtyři odpovědi nejsou jen přeložené — jsou věcně upravené.** Důvody jsou
-u nich poznamenané a vyžadují rozhodnutí, ne jen vložení. Hledej „⚠“.
+**Tři odpovědi nejsou jen přeložené — jsou věcně upravené**, protože vzor
+sliboval věci, které pro Auroru neplatí. Důvody jsou u nich poznamenané;
+hledej „⚠“. Odpověď o vrácení peněz vyžaduje rozhodnutí, ne jen vložení.
 
 Názvy tlačítek jsou podle českého překladu Uscreenu (Přihlásit se, Nákupy
 a platby, Přehled lekcí). **Zkontroluj je v živém studiu** — Uscreen některé
@@ -88,12 +89,11 @@ a ty členství nezaplatí ani po odblokování.
 vybereš členství, které chceš darovat, a na jak dlouho, a zaplatíš. Přijde
 ti potvrzení s kódem a odkazem, který obdarované pošleš.
 
-> ⚠ **Pozor, dvě různé věci.** Tohle je dárkové členství **v online studiu**.
-> Dárkové poukazy Aurory, které se kupují na webu a platí převodem, jsou něco
-> jiného a **na online členství je uplatnit nelze** — tak to stojí
-> i v obchodních podmínkách. Stojí za zvážení, jestli dárková členství
-> v Uscreenu vůbec nechat zapnutá; dvě soubežné podoby dárku se snadno
-> popletou a žena může koupit něco jiného, než chtěla.
+**Chceš darovat lekci naživo nebo pobyt?** Na ty je dárkový poukaz Aurory,
+který najdeš [na webu](https://www.aurorayoga.cz/darkovy-poukaz) a platí se
+převodem. Dárek z tohohle studia platí pro online lekce, poukaz z webu pro
+setkání naživo a pobyty — každý kryje něco jiného, tak ať nekupuješ to
+druhé.
 
 ## Jak uplatním dárkové členství?
 
