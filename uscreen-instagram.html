@@ -10,9 +10,9 @@
      ZKONTROLUJ ADRESU INSTAGRAMU níž (je na dvou místech) — má být stejná
      jako v administraci Aurory → Nastavení → Kontakt.
 
-     Šířka a odsazení po stranách se neřeší vlastními hodnotami, používají
-     se třídy Uscreenu (px-6 md:px-16, container mx-auto), aby sekce
-     lícovala se zbytkem stránky.
+     Šířka ani odsazení se neřeší vlastními hodnotami, používají se třídy
+     Uscreenu (px-6 md:px-16, pt-8 md:pt-12, container mx-auto), aby sekce
+     lícovala se zbytkem stránky a měla stejný rytmus mezer.
 
      Mřížka nemá media queries: `auto-fit` + `minmax` zalomí fotky samo
      podle šířky displeje — na mobilu budou dvě vedle sebe, na monitoru pět.
@@ -46,7 +46,7 @@
   }
 </style>
 
-<div class="px-6 md:px-16" style="background:#FCF4F1;padding-top:64px;padding-bottom:0;">
+<div class="px-6 md:px-16 pt-8 md:pt-12" style="background:#FCF4F1;">
   <div class="container mx-auto">
 
     <p style="margin:0 0 14px;text-align:center;font-family:'Poppins',system-ui,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;color:#F28D76;">
