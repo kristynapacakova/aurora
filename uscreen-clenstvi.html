@@ -1,0 +1,81 @@
+<!-- ───────────────────────────────────────────────────────────────────────
+     AURORA — proužek „Online členství“ pro hlavní stránku Uscreenu
+     Vloží se jako blok Custom HTML na místo šablonové sekce s předplatným
+     (tu pak smaž, ať tam nejsou obě).
+
+     ⚠ PŘED VLOŽENÍM nahraď ZDE_ODKAZ_NA_CLENSTVI adresou, kam vede výběr
+     předplatného. Zjistíš ji tak, že na současné tlačítko „Vybrat členství“
+     klikneš a zkopíruješ, co je v adresním řádku. Pozor, není to /plans —
+     ta adresa vrací chybovou stránku.
+
+     ── PROČ VLASTNÍ BLOK A NE ŠABLONA ────────────────────────────────
+
+     Šablonová sekce dává text doleva a tlačítko doprava a mezi nimi nechá
+     všechno, co zbyde — při šířce obsahu to bylo přes 600 px prázdna a
+     nedalo se to nastavit. Tady je karta užší (820 px) a text s tlačítkem
+     u sebe, takže prázdno nevzniká. Víc textu by problém nevyřešilo: levý
+     sloupec by byl jen vyšší, mezera stejná.
+
+     Tlačítko má gradient z loga Aurory (#F5BAA8 → #F4A36C → #F6C45D),
+     stejný jako hlavní tlačítka na webu.
+
+     Sloupce se zalamují přes flex-wrap, bez media queries — na mobilu
+     tlačítko spadne pod text.
+     ─────────────────────────────────────────────────────────────────── -->
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Allura&family=Poppins:wght@300;400&display=swap');
+
+  .aurora-clenstvi {
+    max-width: 820px;
+    margin: 0 auto;
+    background: #FBE9DE;
+    border-radius: 24px;
+    padding: 36px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 28px;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .aurora-clenstvi-cta {
+    flex: 0 0 auto;
+    display: inline-block;
+    padding: 15px 34px;
+    border-radius: 9999px;
+    background-image: linear-gradient(135deg, #F5BAA8 0%, #F4A36C 50%, #F6C45D 100%);
+    color: #8C5F47;
+    font-family: 'Poppins', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+
+  .aurora-clenstvi-cta:hover {
+    opacity: 0.9;
+  }
+</style>
+
+<div class="px-6 md:px-16 py-8 md:py-12" style="background:#FCF4F1;">
+  <div class="aurora-clenstvi">
+
+    <div style="flex:1 1 300px;min-width:0;">
+      <p style="margin:0 0 10px;font-family:'Allura',cursive;font-size:40px;font-weight:400;line-height:1.1;color:#8C5F47;">
+        Online členství
+      </p>
+      <p style="margin:0;font-family:'Poppins',system-ui,sans-serif;font-size:15px;font-weight:300;line-height:1.7;color:#A87860;">
+        Dopřej si chvíli jen pro sebe, kdykoliv ti to vyjde.<br>
+        Měsíčně, nebo na celý rok — bez závazku, zrušíš kdykoliv.
+      </p>
+    </div>
+
+    <a class="aurora-clenstvi-cta" href="ZDE_ODKAZ_NA_CLENSTVI">
+      Vybrat členství
+    </a>
+
+  </div>
+</div>
