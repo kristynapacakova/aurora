@@ -15,14 +15,17 @@ export const USCREEN = {
   // Hlavní stránka online studia
   home: USCREEN_DOMENA,
 
-  // Registrační stránka (nové členství)
-  signup: `${USCREEN_DOMENA}/sign_up`,
+  // Výběr členství. U Uscreenu je to /join — cesty /sign_up ani /plans
+  // neexistují a vracejí chybovou stránku (ověřeno proklikáním 26. 10.).
+  // Registrace probíhá právě tudy: žena si vybere předplatné a účet si
+  // založí v témže kroku, takže sem míří i odkaz „Vstoupit do studia“.
+  signup: `${USCREEN_DOMENA}/join`,
 
-  // Přihlašovací stránka (stávající členky)
+  // Přihlašovací stránka (stávající členky). Tahle cesta funguje.
   login: `${USCREEN_DOMENA}/sign_in`,
 
-  // Stránka s ceníkem/plány přímo v Uscreenu
-  plans: `${USCREEN_DOMENA}/plans`,
+  // Ceník vede na tutéž stránku — ceny jsou až u výběru členství.
+  plans: `${USCREEN_DOMENA}/join`,
 } as const;
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -148,16 +148,14 @@ Body 6–8 jdou ladit i po spuštění.
 
 ## Otevřené otázky
 
-- **`/sign_up` a `/plans` nefungují, `/sign_in` funguje.** (Ověřeno
-  proklikáním, 26. 10.) Podezření: obě padají proto, že zatím nejsou
-  vytvořené žádné plány — není k čemu se registrovat ani co vypsat.
-  Přihlášení existuje nezávisle, proto jediné funguje. Je to domněnka;
-  rozhodne, jestli adresy vracejí tvrdou 404, nebo jen přesměrují na
-  hlavní stránku.
+- ~~`/sign_up` a `/plans` nefungují.~~ **Vyřešeno** (28. 10.) — ty cesty
+  u Uscreenu prostě neexistují. Výběr členství je na **`/join`** a zastane
+  obojí: žena si tam vybere předplatné a účet si založí v témže kroku.
+  `/sign_in` funguje.
 
-  **Dočasné řešení:** obě pole v administraci Aurory → Nastavení → Uscreen
-  míří na hlavní stránku studia, aby na nich nikdo neskončil na chybové
-  stránce. Po vytvoření plánů přetestovat a případně vrátit zpět.
+  V `src/lib/config.ts` už na `/join` míří `signup` i `plans`. **Zkontroluj
+  ale pole v administraci Aurory → Nastavení → Uscreen** — co je vyplněné
+  tam, přebíjí kód, a provizorně tam byla hlavní stránka studia.
 
 - ~~Vrací 404 i samotná hlavní stránka studia?~~ **Nevrací** — hlavní
   stránka `aurorayoga.uscreen.io` se načítá normálně (ověřeno 26. 10.).
