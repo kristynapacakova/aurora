@@ -55,10 +55,16 @@
         (max-w-6xl), takže na sebe studio a web navazují.
 
         Fotku v heru to nezúží — ta leží mimo kontejner, je absolutně umístěná
-        vůči sekci. Zúží se i lišta menu, takže logo se zarovná s obsahem pod
-        sebou místo aby viselo na kraji obrazovky. */
+        vůči sekci. Lišta menu má výjimku níž a zůstává přes celou šířku. */
   .container {
     max-width: 1152px !important;
+  }
+
+  /* 4b) Výjimka: lišta menu používá stejný kontejner jako obsah, takže ji
+         strop výš zúžil taky. Vrací se jí plná šířka, aby logo zůstalo
+         u levého kraje a tlačítko účtu u pravého. */
+  header#website-header > .container {
+    max-width: 100% !important;
   }
 
   /* 5) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
