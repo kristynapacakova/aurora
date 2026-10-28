@@ -67,6 +67,14 @@
     max-width: 100% !important;
   }
 
+  /* 4c) Tlačítko účtu bez vlastního pozadí — s krémovou krabičkou sedělo na
+         fotce jako nálepka. Skrýt se schválně nesmí: je za ním knihovna,
+         nákupy a odhlášení, a v liště na ně jiná cesta nevede. */
+  header#website-header > .container > *:last-child {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
   /* 5) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
         Odstín je stejný jako scheme color v nastavení Brandingu (#FCF4F1).
         Leží nad fotkou, ale pod textem hera (ten má z-10).
