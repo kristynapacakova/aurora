@@ -123,12 +123,12 @@ e-maily ano).
 
    **Cenu doplnit až po nastavení měny**, jinak by žena viděla v heru koruny
    a v pokladně dolary. Totéž platí pro slib zkušební doby.
-6. **Zaoblení tlačítek a karet.** Uscreen na to má nastavení v `Edit website
-   → Branding` (v kódu `button_border_radius` a `card_border_radius`, obojí
-   zatím 0.125rem, tedy prakticky ostré rohy). Web Aurory má karty zaoblené
-   kolem 20 px, takže tohle srovná vzhled víc než cokoliv kolem menu.
-   Nastavit nativně, ne přes CSS — nativní nastavení přežije i přestavbu
-   šablony.
+6. ~~Zaoblení tlačítek a karet.~~ **Hotovo** (28. 10.) — řeší to CSS v bloku
+   `uscreen-hero-pres-menu.html`. Uscreen vysází tlačítka i karty
+   s poloměrem 0.125rem (prakticky ostré) a v `Branding` se to přepnout
+   nedá, ovládání tam chybí, i když třídy `button_border_radius` a
+   `card_border_radius` v kódu existují. Kdyby ho Uscreen doplnil, dají se
+   ta dvě pravidla smazat a nastavit nativně.
 7. Katalog viditelný i bez přihlášení.
 8. Náhledové obrázky u videí.
 

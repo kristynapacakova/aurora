@@ -77,6 +77,20 @@
     background: transparent !important;
   }
 
+  /* 4d) Zaoblené rohy u tlačítek a karet. Uscreen je vysází s poloměrem
+         0.125rem, tedy prakticky ostré, a v Brandingu se to přepnout nedá —
+         ovládání tam chybí, i když třídy v kódu existují. Web Aurory má
+         karty zaoblené kolem 20 px, takže tohle sjednocuje vzhled.
+         Kdyby Uscreen nastavení do Brandingu doplnil, tahle dvě pravidla
+         se dají smazat a nastavit nativně. */
+  .pb-button {
+    border-radius: 9999px !important;
+  }
+
+  .pb-card {
+    border-radius: 20px !important;
+  }
+
   /* 5) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
         Odstín je stejný jako scheme color v nastavení Brandingu (#FCF4F1).
         Leží nad fotkou, ale pod textem hera (ten má z-10).
