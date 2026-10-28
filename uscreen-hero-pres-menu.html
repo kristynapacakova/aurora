@@ -49,7 +49,19 @@
     padding-top: 8rem;
   }
 
-  /* 4) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
+  /* 4) Obsah sekcí nenatahovat přes celý monitor. Uscreen má kontejner na
+        plnou šířku s 3% odsazením, takže na širokém displeji se text roztáhne
+        přes celou plochu. 1152 px je stejná šířka, jakou drží web Aurory
+        (max-w-6xl), takže na sebe studio a web navazují.
+
+        Fotku v heru to nezúží — ta leží mimo kontejner, je absolutně umístěná
+        vůči sekci. Zúží se i lišta menu, takže logo se zarovná s obsahem pod
+        sebou místo aby viselo na kraji obrazovky. */
+  .container {
+    max-width: 1152px !important;
+  }
+
+  /* 5) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.
         Odstín je stejný jako scheme color v nastavení Brandingu (#FCF4F1).
         Leží nad fotkou, ale pod textem hera (ten má z-10).
 
