@@ -19,7 +19,7 @@
   <div style="max-width:1120px;margin:0 auto;display:flex;flex-wrap:wrap;gap:56px;align-items:center;">
 
     <!-- Text -->
-    <div style="flex:1 1 340px;min-width:0;">
+    <div style="flex:1 1 300px;min-width:0;">
       <p style="margin:0 0 18px;font-family:'Poppins',system-ui,sans-serif;font-size:11px;font-weight:400;letter-spacing:0.3em;text-transform:uppercase;color:#F28D76;">
         Můj jógový příběh
       </p>
@@ -41,8 +41,11 @@
       </p>
     </div>
 
-    <!-- Video -->
-    <div style="flex:1 1 380px;min-width:0;">
+    <!-- Video. Dostává v řádku víc místa než text (flex-grow 1.35 proti 1),
+         aby bylo širší, a tím i vyšší — jinak je proti vysokému sloupci
+         textu jen tenký pruh. Poměr stran zůstává 16:9 podle padding-bottom
+         níž; vyšší rámeček by u širokoúhlého videa znamenal černé pruhy. -->
+    <div style="flex:1.35 1 400px;min-width:0;">
       <div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:24px;background:#FBE9DE;">
         <iframe
           src="https://www.youtube-nocookie.com/embed/ZDE_ID_VIDEA?rel=0"
