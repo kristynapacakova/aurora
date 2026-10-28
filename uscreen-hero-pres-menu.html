@@ -6,6 +6,11 @@
      bude vidět jako prázdný přerušovaný rámeček — to je správně, projeví
      se to až na živé stránce po „Save & apply“.
 
+     Zaoblení tlačítek a karet tu schválně NENÍ — přestěhovalo se do
+     `uscreen-head-code.html`, tedy do Website → Advanced → Head Code.
+     Blok Custom HTML platí jen pro svoji stránku, takže na katalogu
+     a dalších stránkách zůstávaly rohy ostré.
+
      Vrácení zpět: smazat tenhle blok.
 
      ── DVĚ PASTI, NA KTERÉ SE TU UŽ NARAZILO ──────────────────────────
@@ -75,20 +80,6 @@
          nevede. */
   header#website-header label[data-themeless--header-target="toggleBurger"] {
     background: transparent !important;
-  }
-
-  /* 4d) Zaoblené rohy u tlačítek a karet. Uscreen je vysází s poloměrem
-         0.125rem, tedy prakticky ostré, a v Brandingu se to přepnout nedá —
-         ovládání tam chybí, i když třídy v kódu existují. Web Aurory má
-         karty zaoblené kolem 20 px, takže tohle sjednocuje vzhled.
-         Kdyby Uscreen nastavení do Brandingu doplnil, tahle dvě pravidla
-         se dají smazat a nastavit nativně. */
-  .pb-button {
-    border-radius: 9999px !important;
-  }
-
-  .pb-card {
-    border-radius: 20px !important;
   }
 
   /* 5) Krémový závoj pod položkami menu, aby na fotce zůstaly čitelné.

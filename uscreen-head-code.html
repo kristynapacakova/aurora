@@ -1,0 +1,37 @@
+<!-- ───────────────────────────────────────────────────────────────────────
+     AURORA — globální styly pro celé studio
+     Vloží se do: Website → Advanced → Head Code
+
+     Na rozdíl od bloků Custom HTML, které patří jedné stránce, tenhle kód
+     se vloží do hlavičky KAŽDÉ stránky storefrontu — včetně katalogu,
+     přihlášení a dalších systémových stránek, kam se bloky přidat nedají.
+
+     ── CO SEM PATŘÍ A CO NE ──────────────────────────────────────────
+
+     Sem patří jen to, co má platit všude. Úpravy kolem menu a úvodní fotky
+     (průhledné menu, vytažení fotky nahoru, krémový závoj) zůstávají
+     v bloku Custom HTML na hlavní stránce — tady by zprůhlednily hlavičku
+     i nad bílým obsahem katalogu a přihlašování, kde pod ní žádná fotka
+     není, a vypadalo by to rozbitě.
+
+     Pozor na široké selektory jako `header` nebo `body`: zasáhly by
+     i stránky, na které se člověk nedívá.
+     ─────────────────────────────────────────────────────────────────── -->
+
+<style>
+  /* Zaoblené rohy u tlačítek a karet.
+     Uscreen je vysází s poloměrem 0.125rem, tedy prakticky ostré, a přepnout
+     se to v Brandingu nedá — ovládání tam chybí, i když třídy
+     button_border_radius a card_border_radius v kódu existují.
+     Web Aurory má karty zaoblené kolem 20 px, tohle to sjednocuje.
+
+     Muselo to jít sem a ne do bloku na hlavní stránce: tlačítka a karty jsou
+     na všech stránkách a blok platí jen pro tu svoji. */
+  .pb-button {
+    border-radius: 9999px !important;
+  }
+
+  .pb-card {
+    border-radius: 20px !important;
+  }
+</style>
