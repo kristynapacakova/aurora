@@ -6,21 +6,23 @@
      bude vidět jako prázdný přerušovaný rámeček — to je správně, projeví
      se to až na živé stránce po „Save & apply“.
 
-     Postavené na třídách, které má Uscreen v kódu teď (říjen 2026):
-       header#website-header … hlavička; lepivost sedí na jejím obalu
-       section.pb-hero        … úvodní sekce s fotkou na pozadí
-     Kdyby Uscreen šablonu přestavěl, přestane to působit — nic se tím ale
-     nerozbije, jen se menu vrátí do původní podoby.
-
-     POZN. K BARVĚ TEXTU: dřívější verze obarvovala položky menu na bílo,
-     aby byly nad fotkou vidět. Vždycky se ale našel kousek, který tím
-     utrpěl — naposledy rozbalovací panel účtu, kde bílý text na světlém
-     pozadí zmizel úplně. Uscreen má hlavičku provázanou s barevným
-     schématem, takže zásah zvenčí se dřív nebo později někde projeví.
-     Proto se na barvu textu nesahá vůbec a místo toho se zesvětluje horní
-     okraj fotky. Menu si nechává svoji tmavou barvu a je čitelné všude.
-
      Vrácení zpět: smazat tenhle blok.
+
+     ── DVĚ PASTI, NA KTERÉ SE TU UŽ NARAZILO ──────────────────────────
+
+     1) Třídu `pb-hero` nemá jen hero. Uscreen ji dává i dalším sekcím,
+        takže plošné pravidlo na `.pb-hero` vytáhlo nahoru a překrylo
+        závojem i sekci s fotkami, která tím z živé stránky úplně zmizela.
+        Proto se míří na `div.sticky:has(> #website-header) + div[...]`,
+        tedy na sekci hned za menu — na hero z definice pořadí. Kdyby se
+        hero někdy přesunulo jinam než na první místo, pravidlo přestane
+        platit, ale nic nerozbije.
+
+     2) Na barvu textu v menu se nesahá. Obarvení položek na bílo kvůli
+        čitelnosti nad fotkou opakovaně rozbíjelo rozbalovací panel účtu,
+        kde bílý text na světlém pozadí mizel. Uscreen má hlavičku
+        provázanou s barevným schématem, takže zásah zvenčí se dřív nebo
+        později někde projeví. Místo toho se zesvětluje podklad pod menu.
      ─────────────────────────────────────────────────────────────────── -->
 
 <style>
@@ -42,7 +44,7 @@
   /* 3) Fotku vytáhnout nahoru pod menu.
         -5rem je přesně výška menu (h-20). Horní odsazení pak vrací obsah
         zpátky dolů, aby nadpis nezalezl pod položky menu. */
-  .pb-hero {
+  div.sticky:has(> #website-header) + div[data-editor="section"] .pb-hero {
     margin-top: -5rem;
     padding-top: 8rem;
   }
@@ -55,7 +57,7 @@
         světle broskvové a na krémovém podkladu bledlo. Do stran se závoj
         vytrácí, takže logo i tlačítko účtu mají pod sebou fotku, zatímco
         vycentrované položky menu podklad mají. */
-  .pb-hero::before {
+  div.sticky:has(> #website-header) + div[data-editor="section"] .pb-hero::before {
     content: "";
     position: absolute;
     top: 0;
