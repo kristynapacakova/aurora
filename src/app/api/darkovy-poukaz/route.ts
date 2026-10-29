@@ -170,7 +170,10 @@ export async function POST(request: Request) {
       ],
     },
     zavěr: sablona.zaver,
-    attachments: qrPriloha(qrDataUrl, `qr-poukaz-${poukaz.kod}.png`),
+    // V názvu přílohy je variabilní symbol, ne kód poukazu — ten se kupující
+    // nesmí dozvědět dřív, než zaplatí. Variabilní symbol je i v těle
+    // e-mailu, takže nic nového neprozrazuje.
+    attachments: qrPriloha(qrDataUrl, `qr-poukaz-${poukaz.variabilni_symbol}.png`),
   });
 
   if (!odeslano) {
@@ -186,9 +189,11 @@ export async function POST(request: Request) {
     });
   }
 
+  // Kód poukazu se do odpovědi záměrně nevrací. Formulář ho nepotřebuje
+  // a v prohlížeči by si ho kupující přečetl v odpovědi na dotaz ještě
+  // před zaplacením — stačilo by otevřít nástroje pro vývojáře.
   return NextResponse.json({
     ok: true,
-    kod: poukaz.kod,
     variabilniSymbol: poukaz.variabilni_symbol,
     cisloUctu: nastaveni.cislo_uctu_darky,
     qrDataUrl,
