@@ -86,7 +86,11 @@ export default async function Pricing() {
           <div className="mb-8 text-center">
             <div className="mb-4 flex items-center justify-center gap-3">
               <IconSparkle size={12} />
-              <p className="text-xs uppercase tracking-[0.3em] text-accent">Ceník členství</p>
+              {/* Schválně „online“ — vedle členství se prodávají i pobyty
+                  a lekce naživo a ty mají jiné ceny i jiný způsob platby. */}
+              <p className="text-xs uppercase tracking-[0.3em] text-accent">
+                Ceník online členství
+              </p>
               <IconSparkle size={12} />
             </div>
             <h2 className="font-allura text-4xl text-ink sm:text-5xl">
