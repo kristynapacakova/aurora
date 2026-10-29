@@ -5,9 +5,18 @@ import { IconSparkle } from "./BrandIcons";
 import { getNastaveni } from "@/lib/db";
 
 export default async function Pricing() {
-  const { uscreen_signup, uscreen_plans, cena_lekce, cena_mesicni, cena_rocni, kontakt_email } =
+  const { uscreen_home, uscreen_signup, cena_lekce, cena_mesicni, cena_rocni, kontakt_email } =
     await getNastaveni();
 
+  // Úspora u ročního se počítá, ať nemůže zastarat při změně cen v administraci.
+  // Dřív tu bylo natvrdo „Ušetříš 2 měsíce", přitom při 399 a 299 Kč jsou to
+  // tři měsíční platby (4 788 − 3 588 = 1 200 Kč).
+  const mesicne = Number(cena_mesicni) || 0;
+  const rocneZaMesic = Number(cena_rocni) || 0;
+  const usporaKc = Math.max(0, mesicne * 12 - rocneZaMesic * 12);
+  const usporaMesicu = mesicne > 0 ? Math.round(usporaKc / mesicne) : 0;
+
+  // Tarify odpovídají tomu, co jde opravdu koupit ve studiu.
   const PLANS = [
     {
       name: "Za lekci",
@@ -17,31 +26,30 @@ export default async function Pricing() {
       featured: false,
       shape: "arch-left",
       features: [
-        "Přístup k vybrané lekci na 3 dny",
+        "Přístup k vybrané lekci na jeden den",
         "Možnost pustit si ji opakovaně",
         "Bez měsíčního členství",
       ],
-      // Tenhle tarif je online nahrávka, ne živá lekce — vede proto na ceník
-      // Uscreenu, kde se lekce kupuje. Původní odkaz mířil na #lekce, což
-      // je kotva, která na webu nikde neexistuje, takže tlačítko nic nedělalo.
-      ctaLabel: "Koupit lekci",
-      ctaHref: uscreen_plans,
+      // Vede do studia mezi lekce, ne na výběr členství: lekce se pronajímá
+      // u konkrétního videa, kdežto /join nabízí jen měsíční a roční tarif.
+      ctaLabel: "Prohlédnout lekce",
+      ctaHref: uscreen_home,
       ctaExternal: true,
     },
     {
       name: "Měsíční",
       price: cena_mesicni,
       period: "/ měsíc",
-      description: "Ideální pro vyzkoušení studia.",
+      description: "Ideální, když chceš začít bez velkého rozhodování.",
       featured: false,
       shape: "plain",
       features: [
-        "Okamžitý přístup ke všem lekcím",
-        "Každý týden nová lekce",
-        "Možnost cvičit kdykoliv a odkudkoliv",
+        "Celá knihovna lekcí",
+        "Cvičíš kdykoliv a odkudkoliv",
         "Lekce různých délek a zaměření",
+        "Bez závazku — zrušíš kdykoliv",
       ],
-      ctaLabel: "Aktivovat členství",
+      ctaLabel: "Vybrat členství",
       ctaHref: uscreen_signup,
       ctaExternal: true,
     },
@@ -49,16 +57,19 @@ export default async function Pricing() {
       name: "Roční",
       price: cena_rocni,
       period: "/ měsíc",
-      description: "Ušetříš 2 měsíce. Nejoblíbenější volba.",
+      description:
+        usporaMesicu > 0
+          ? `Ušetříš ${usporaMesicu} měsíce oproti měsíčnímu členství.`
+          : "Výhodnější varianta na celý rok.",
       featured: true,
       shape: "arch-right",
       features: [
-        "Vše z Měsíčního plánu",
-        "Prioritní přístup k novinkám",
-        "Exkluzivní výzvy a programy",
-        "Osobní lekce se slevou 20 %",
+        "Vše z měsíčního členství",
+        usporaKc > 0 ? `Ušetříš ${usporaKc.toLocaleString("cs-CZ")} Kč za rok` : "Výhodnější cena",
+        "Zaplatíš jednou a máš celý rok klid",
+        "Cena ti zůstane stejná po celý rok",
       ],
-      ctaLabel: "Aktivovat členství",
+      ctaLabel: "Vybrat členství",
       ctaHref: uscreen_signup,
       ctaExternal: true,
     },
@@ -114,7 +125,7 @@ export default async function Pricing() {
                 >
                   {plan.featured && (
                     <span className={`bg-gradient-aurora absolute -top-3 rounded-full px-3 py-1 text-[10px] uppercase tracking-[0.25em] text-ink sm:-top-3.5 ${badgeSideClass}`}>
-                      Nejoblíbenější
+                      Nejvýhodnější
                     </span>
                   )}
 
