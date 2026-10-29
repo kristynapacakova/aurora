@@ -11,6 +11,10 @@ export default async function Pricing() {
   // Úspora u ročního se počítá, ať nemůže zastarat při změně cen v administraci.
   // Dřív tu bylo natvrdo „Ušetříš 2 měsíce", přitom při 399 a 299 Kč jsou to
   // tři měsíční platby (4 788 − 3 588 = 1 200 Kč).
+  // Lekce se pronajímají v katalogu studia. Adresa se odvozuje z hlavní
+  // adresy studia, aby platil i její přepis v administraci.
+  const katalog = `${uscreen_home.replace(/\/+$/, "")}/catalog`;
+
   const mesicne = Number(cena_mesicni) || 0;
   const rocneZaMesic = Number(cena_rocni) || 0;
   const usporaKc = Math.max(0, mesicne * 12 - rocneZaMesic * 12);
@@ -33,14 +37,14 @@ export default async function Pricing() {
       // Vede do studia mezi lekce, ne na výběr členství: lekce se pronajímá
       // u konkrétního videa, kdežto /join nabízí jen měsíční a roční tarif.
       ctaLabel: "Prohlédnout lekce",
-      ctaHref: uscreen_home,
+      ctaHref: katalog,
       ctaExternal: true,
     },
     {
       name: "Měsíční",
       price: cena_mesicni,
       period: "/ měsíc",
-      description: "Ideální, když chceš začít bez velkého rozhodování.",
+      description: "Ideální, když chceš prostě začít.",
       featured: false,
       shape: "plain",
       features: [
@@ -105,19 +109,22 @@ export default async function Pricing() {
 
         <div className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-3">
           {PLANS.map((plan, i) => {
+            // Svislé odsazení je u všech karet stejné, aby nadpisy i ceny
+            // seděly na jedné lince; liší se jen vodorovné, protože oblouk
+            // ukrajuje z jedné strany.
             const shapeClass =
               plan.shape === "arch-left"
-                ? "photo-arch-left pb-5 pl-8 pr-6 pt-9 sm:pb-6 sm:pl-10 sm:pr-7 sm:pt-11"
+                ? "photo-arch-left pl-8 pr-6 sm:pl-10 sm:pr-7"
                 : plan.shape === "arch-right"
-                  ? "photo-arch-right pb-5 pl-6 pr-8 pt-9 sm:pb-6 sm:pl-7 sm:pr-10 sm:pt-11"
-                  : "rounded-3xl p-6 pt-9 sm:p-7 sm:pt-11";
+                  ? "photo-arch-right pl-6 pr-8 sm:pl-7 sm:pr-10"
+                  : "rounded-3xl px-6 sm:px-7";
             const badgeSideClass =
               plan.shape === "arch-right" ? "left-5 sm:left-7" : "right-5 sm:right-7";
 
             return (
               <FadeUp key={plan.name} delay={i * 0.1} className="h-full">
                 <div
-                  className={`relative flex h-full flex-col items-center justify-center bg-cream text-ink ${shapeClass} ${
+                  className={`relative flex h-full flex-col items-center bg-cream pb-7 pt-9 text-ink sm:pb-8 sm:pt-11 ${shapeClass} ${
                     plan.featured
                       ? "border-2 border-accent shadow-lg"
                       : "border border-line"
@@ -139,10 +146,12 @@ export default async function Pricing() {
                   </div>
 
                   {plan.description && (
-                    <p className="mt-2 text-sm text-ink/70">{nbsp(plan.description)}</p>
+                    <p className="mt-2 min-h-[2.5rem] text-center text-sm text-ink/70">
+                      {nbsp(plan.description)}
+                    </p>
                   )}
 
-                  <ul className="mt-4 flex flex-col gap-1.5">
+                  <ul className="mt-4 mb-6 flex flex-col gap-1.5">
                     {plan.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm">
                         <span className="mt-0.5 text-base leading-none text-ink">
@@ -157,7 +166,7 @@ export default async function Pricing() {
                     href={plan.ctaHref}
                     target={plan.ctaExternal ? "_blank" : undefined}
                     rel={plan.ctaExternal ? "noopener noreferrer" : undefined}
-                    className={`mt-6 block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
+                    className={`mt-auto block w-fit rounded-full px-8 py-2.5 text-center text-xs uppercase tracking-[0.2em] transition-all duration-200 ${
                       plan.featured
                         ? "bg-gradient-aurora text-ink hover:opacity-90"
                         : "border border-ink/30 text-ink hover:border-accent hover:text-accent"
