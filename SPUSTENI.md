@@ -49,18 +49,22 @@ spadne brána, ne potom.
 
 ## Na nás, k 1. listopadu
 
-### 3. Sundat bránu `/vstup`
+### 3. ~~Sundat bránu `/vstup`~~ — hotovo (31. 10.)
 
-Celý web je zatím schovaný za přístupovým kódem. Přesměrování je
-v `src/proxy.ts`. Při sundávání zvážit i to, jestli rovnou neodstranit
-`/vstup`, `src/lib/siteAuth.ts`, `/api/site-login` a proměnné
-`SITE_ACCESS_CODE` a `SITE_COOKIE_SECRET`; `robots.ts` zakazuje `/vstup`.
+Brána je pryč celá, ne jen vypnutá: smazána stránka `/vstup`, její API
+i `lib/siteAuth.ts`, a z `robots.ts` zmizel zákaz indexace `/vstup`.
+V historii gitu to zůstává, kdyby se totéž někdy hodilo znovu.
 
-Až brána spadne, web je okamžitě k nalezení ve vyhledávačích — `robots.ts`
-povoluje celý web a sitemapa obsahuje jen existující stránky, takže tady
-není co dořešovat.
+Heslo do administrace zůstává beze změny.
 
----
+Ověřeno na sestaveném webu: veřejné stránky vracejí 200 bez jakékoliv
+cookie, `/studio` přesměrovává do Uscreenu, `robots.txt` i `sitemap.xml`
+jsou dostupné, `/admin` a `/admin/*` přesměrovávají na přihlášení a admin
+API bez přihlášení vracejí 401.
+
+**Zbývá ručně:** ve Vercelu smazat proměnné `SITE_ACCESS_CODE`
+a `SITE_COOKIE_SECRET`. Nic nerozbijí, už je nikdo nečte, ale nemají tam
+co dělat.
 
 ## Hotovo
 
