@@ -1,62 +1,29 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { ADMIN_COOKIE_NAME, verifyAdminToken } from "@/lib/adminAuth";
-import { SITE_COOKIE_NAME, verifySiteToken } from "@/lib/siteAuth";
 
+// Chrání administraci. Web samotný je veřejný — přístupový kód, který ho
+// držel schovaný před spuštěním (1. 11. 2026), byl odstraněn i se stránkou
+// /vstup a jejím API. V historii gitu je, kdyby se někdy hodil znovu.
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // ── Administrace (/admin/*, /api/admin/*) — vlastní ochrana, mimo bránu webu ──
-  if (pathname.startsWith("/admin") || pathname.startsWith("/api/admin")) {
-    if (pathname === "/admin/login" || pathname.startsWith("/api/admin")) {
-      // API routy si ověření admina hlídají samy (isAdminRequest uvnitř).
-      return NextResponse.next();
-    }
-    const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
-    const valid = await verifyAdminToken(token);
-    if (!valid) {
-      return NextResponse.redirect(new URL("/admin/login", request.url));
-    }
-    return NextResponse.next();
-  }
-  if (pathname === "/api/admin-login" || pathname === "/api/admin-logout") {
+  // Přihlašovací stránka musí zůstat dostupná, jinak se nejde přihlásit.
+  if (pathname === "/admin/login") {
     return NextResponse.next();
   }
 
-  // ── Brána vstupu — stránka s kódem a její API zůstávají volné ──
-  if (pathname === "/vstup" || pathname === "/api/site-login") {
-    return NextResponse.next();
-  }
-
-  // ── robots.txt a sitemap.xml musí být čitelné pro vyhledávače i přes bránu ──
-  if (pathname === "/robots.txt" || pathname === "/sitemap.xml") {
-    return NextResponse.next();
-  }
-
-  // ── Logo v potvrzovacích e-mailech ──
-  // E-mail si obrázek stahuje z webu, jenže poštovní program žádnou
-  // přístupovou cookie nemá — bez téhle výjimky by se logo nenačetlo nikomu,
-  // dokud je web za heslem. Je to veřejná grafika, nic se tím neodkrývá.
-  if (pathname === "/logo-email.png") {
-    return NextResponse.next();
-  }
-
-  // ── Web zatím není veřejný — vyžaduje přístupový kód ──
-  const siteToken = request.cookies.get(SITE_COOKIE_NAME)?.value;
-  const siteUnlocked = await verifySiteToken(siteToken);
-  if (!siteUnlocked) {
-    return NextResponse.redirect(new URL("/vstup", request.url));
+  const token = request.cookies.get(ADMIN_COOKIE_NAME)?.value;
+  if (!(await verifyAdminToken(token))) {
+    return NextResponse.redirect(new URL("/admin/login", request.url));
   }
 
   return NextResponse.next();
 }
 
-// Chrání celý veřejný web přístupovým kódem (/vstup), dokud není oficiálně
-// spuštěný. Administrace (/admin, /api/admin/*) má vlastní samostatné
-// heslo a branou webu neprochází. Statické soubory (obrázky, fonty, _next)
-// jsou vyloučené, aby fungovala i samotná stránka /vstup.
+// Jen administrace. Routy /api/admin/* tu schválně nejsou — ověřují si
+// přihlášení samy přes isAdminRequest a díky tomu proxy neběží při každém
+// požadavku na veřejný web.
 export const config = {
-  matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|mp4|ico|woff2?)$).*)",
-  ],
+  matcher: ["/admin", "/admin/:path*"],
 };
